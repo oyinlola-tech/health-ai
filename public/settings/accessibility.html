@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Accessibility &amp; Language - MedExplain AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet"/>
+
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f7f3f1",
+                        "secondary-fixed-dim": "#cfc5bc",
+                        "primary-fixed": "#e9e1dc",
+                        "on-surface-variant": "#4d4540",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#645d56",
+                        "inverse-surface": "#313030",
+                        "on-secondary-fixed": "#201b15",
+                        "surface-tint": "#635d5a",
+                        "primary": "#161310",
+                        "tertiary-container": "#27282a",
+                        "error-container": "#ffdad6",
+                        "on-background": "#1c1b1b",
+                        "primary-container": "#2b2724",
+                        "tertiary-fixed-dim": "#c7c6c8",
+                        "surface-dim": "#ddd9d8",
+                        "secondary-container": "#e9ded5",
+                        "inverse-on-surface": "#f4f0ee",
+                        "surface-container-high": "#ece7e6",
+                        "on-tertiary-fixed-variant": "#464749",
+                        "primary-fixed-dim": "#cdc5c0",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "on-surface": "#1c1b1b",
+                        "on-error": "#ffffff",
+                        "outline": "#7e756f",
+                        "inverse-primary": "#cdc5c0",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#8f8f91",
+                        "surface-container-highest": "#e6e1e0",
+                        "surface-bright": "#fdf8f7",
+                        "surface-variant": "#e6e1e0",
+                        "tertiary": "#121415",
+                        "secondary-fixed": "#ebe1d8",
+                        "error": "#ba1a1a",
+                        "surface-container": "#f1edec",
+                        "on-primary-fixed": "#1e1b18",
+                        "on-primary-fixed-variant": "#4b4642",
+                        "on-primary": "#ffffff",
+                        "surface": "#fdf8f7",
+                        "background": "#fdf8f7",
+                        "on-secondary-container": "#69615a",
+                        "tertiary-fixed": "#e3e2e4",
+                        "outline-variant": "#cfc4bd",
+                        "on-primary-container": "#948e89",
+                        "wellness-coral": "#FF6E5C",
+                        "wellness-coral-light": "rgba(255, 110, 92, 0.05)"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "bubble": "1rem"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "base": "8px",
+                        "xxl": "48px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "caption": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Spectral"],
+                        "headline-lg-mobile": ["Spectral"],
+                        "display-lg": ["Spectral"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Spectral"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    },
+                    "boxShadow": {
+                        "ambient-1": "0 4px 12px rgba(0, 0, 0, 0.04)",
+                        "ambient-2": "0 8px 20px rgba(0, 0, 0, 0.06)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom Toggle Switch Styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #FF6E5C;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #FF6E5C;
+        }
+        .toggle-checkbox:focus + .toggle-label {
+            box-shadow: 0 0 0 2px rgba(255, 110, 92, 0.2);
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen antialiased selection:bg-wellness-coral/20 selection:text-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface border-b border-outline-variant shadow-sm transition-colors duration-200">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md text-primary tracking-tight">MedExplain AI</span>
+</div>
+<div class="flex items-center gap-md">
+<button aria-label="Notifications" class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="Account" class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] w-64 z-40 bg-surface-container-low shadow-md">
+<div class="p-6">
+<h2 class="font-title-lg text-title-lg text-primary mb-1">Patient Portal</h2>
+<p class="font-caption text-caption text-secondary">Manage your health data</p>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-wellness-coral text-white font-label-md text-label-md py-3 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-ambient-1 hover:shadow-ambient-2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Consultation
+            </button>
+</div>
+<ul class="flex-1 flex flex-col gap-1 overflow-y-auto w-full">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+                    Find Doctor
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="medical_information">medical_information</span>
+                    Health Records
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+                    My Appointments
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+                    Consultation History
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-primary font-bold border-r-4 border-primary bg-secondary-container/30 px-4 py-3 font-label-md text-label-md hover:bg-surface-container-high transition-all scale-[0.99] duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+<div class="p-4 mt-auto border-t border-outline-variant w-full">
+<ul class="flex flex-col gap-1">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                        Support
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                        Logout
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="pt-[80px] lg:pl-[280px] px-margin-mobile md:px-margin-desktop pb-xxl max-w-[1120px] mx-auto min-h-screen">
+<!-- Header Section -->
+<div class="mb-xl md:mb-xxl max-w-2xl">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-sm">Accessibility &amp; Language</h1>
+<p class="font-body-lg text-body-lg text-secondary">Customize your MedExplain AI experience to ensure clear, comfortable, and accessible health insights.</p>
+</div>
+<!-- Bento Grid Layout for Settings -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Language Selection Card (Spans 8 cols on desktop) -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant/50 shadow-ambient-1 p-lg hover:shadow-ambient-2 transition-shadow duration-300">
+<div class="flex items-start gap-4 mb-lg">
+<div class="p-3 bg-wellness-coral-light rounded-lg text-wellness-coral">
+<span class="material-symbols-outlined icon-fill" data-icon="language">language</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg text-primary">Language Preferences</h2>
+<p class="font-body-md text-body-md text-secondary mt-1">Select the primary language for AI explanations and interface.</p>
+</div>
+</div>
+<div class="space-y-4">
+<label class="block">
+<span class="sr-only">Select Language</span>
+<div class="relative">
+<select class="block w-full appearance-none bg-surface border border-outline text-on-surface py-3 px-4 pr-10 rounded-lg font-body-md focus:outline-none focus:ring-2 focus:ring-wellness-coral/20 focus:border-primary transition-colors cursor-pointer">
+<option selected="" value="en">English (United States)</option>
+<option value="es">Español (América Latina)</option>
+<option value="fr">Français (France)</option>
+<option value="de">Deutsch (Deutschland)</option>
+<option value="zh">中文 (简体)</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-secondary">
+<span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</label>
+<p class="font-caption text-caption text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="info">info</span>
+                        Medical terminology will be localized to match your selection.
+                    </p>
+</div>
+</div>
+<!-- Font Size Card (Spans 4 cols on desktop) -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant/50 shadow-ambient-1 p-lg hover:shadow-ambient-2 transition-shadow duration-300">
+<div class="flex items-start gap-4 mb-md">
+<div class="p-3 bg-surface-container-low rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="text_fields">text_fields</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg text-primary">Text Size</h2>
+</div>
+</div>
+<div class="flex items-center justify-between mt-lg">
+<span class="font-body-md text-body-md text-secondary text-sm">A</span>
+<input aria-label="Adjust text size" class="w-2/3 h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer accent-wellness-coral" max="5" min="1" type="range" value="3"/>
+<span class="font-body-md text-body-md text-primary text-xl font-medium">A</span>
+</div>
+<div class="mt-6 p-4 bg-surface-container border border-outline-variant/30 rounded-lg">
+<p class="font-body-md text-body-md text-on-surface">Preview of your selected text size for reading medical summaries.</p>
+</div>
+</div>
+<!-- Accessibility Toggles (Spans full width) -->
+<div class="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- High Contrast -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 shadow-ambient-1 p-lg flex items-center justify-between hover:shadow-ambient-2 transition-shadow duration-300">
+<div class="flex items-start gap-4 max-w-[80%]">
+<div class="p-3 bg-surface-container-low rounded-lg text-primary shrink-0">
+<span class="material-symbols-outlined" data-icon="contrast">contrast</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-primary font-semibold mb-1">High Contrast Mode</h3>
+<p class="font-caption text-caption text-secondary">Increases visual contrast to improve readability of medical charts and text.</p>
+</div>
+</div>
+<!-- Toggle Switch -->
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input aria-label="Toggle High Contrast Mode" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-surface-container-high appearance-none cursor-pointer transition-all duration-300 z-10 top-0 left-0" id="contrast-toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-container-high cursor-pointer transition-colors duration-300" for="contrast-toggle"></label>
+</div>
+</div>
+<!-- Screen Reader -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 shadow-ambient-1 p-lg flex items-center justify-between hover:shadow-ambient-2 transition-shadow duration-300">
+<div class="flex items-start gap-4 max-w-[80%]">
+<div class="p-3 bg-surface-container-low rounded-lg text-primary shrink-0">
+<span class="material-symbols-outlined" data-icon="record_voice_over">record_voice_over</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-primary font-semibold mb-1">Screen Reader Optimization</h3>
+<p class="font-caption text-caption text-secondary">Enhances semantic structure and alt-text for assistive technologies.</p>
+</div>
+</div>
+<!-- Toggle Switch -->
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input aria-label="Toggle Screen Reader Optimization" checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-surface-container-high appearance-none cursor-pointer transition-all duration-300 z-10 top-0 left-0" id="screenreader-toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-wellness-coral cursor-pointer transition-colors duration-300" for="screenreader-toggle"></label>
+</div>
+</div>
+<!-- Reduced Motion -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 shadow-ambient-1 p-lg flex items-center justify-between hover:shadow-ambient-2 transition-shadow duration-300 md:col-span-2">
+<div class="flex items-start gap-4 max-w-[80%]">
+<div class="p-3 bg-surface-container-low rounded-lg text-primary shrink-0">
+<span class="material-symbols-outlined" data-icon="animation">animation</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-primary font-semibold mb-1">Reduced Motion</h3>
+<p class="font-caption text-caption text-secondary">Minimizes animations and transitions throughout the application for a calmer experience.</p>
+</div>
+</div>
+<!-- Toggle Switch -->
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input aria-label="Toggle Reduced Motion" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-surface-container-high appearance-none cursor-pointer transition-all duration-300 z-10 top-0 left-0" id="motion-toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-container-high cursor-pointer transition-colors duration-300" for="motion-toggle"></label>
+</div>
+</div>
+</div>
+<!-- AI Assistance Highlight -->
+<div class="md:col-span-12 mt-lg p-lg bg-surface-bright rounded-xl border-t-2 border-wellness-coral shadow-ambient-1">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-wellness-coral mt-1" data-icon="auto_awesome">auto_awesome</span>
+<div>
+<h4 class="font-label-md text-label-md text-primary font-semibold">AI Comprehension Level</h4>
+<p class="font-body-md text-body-md text-secondary mt-2">MedExplain AI automatically adjusts the complexity of medical explanations based on your profile settings. You can review your current comprehension preferences in your <a class="text-wellness-coral underline underline-offset-2 hover:text-primary transition-colors" href="#">Profile Details</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="mt-xl flex flex-col sm:flex-row justify-end gap-4 border-t border-outline-variant/50 pt-lg">
+<button aria-label="Discard changes" class="px-6 py-3 rounded-lg font-label-md text-label-md text-secondary hover:bg-surface-container-low transition-colors border border-outline-variant bg-surface">
+                Discard Changes
+            </button>
+<button aria-label="Save preferences" class="px-6 py-3 rounded-lg font-label-md text-label-md text-white bg-wellness-coral hover:bg-wellness-coral/90 transition-colors shadow-ambient-1 hover:shadow-ambient-2">
+                Save Preferences
+            </button>
+</div>
+</main>
+<script>
+        // Simple script to handle toggle visual states for custom checkboxes
+        document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if(this.checked) {
+                    label.style.backgroundColor = '#FF6E5C';
+                } else {
+                    label.style.backgroundColor = '#ece7e6'; // surface-container-high
+                }
+            });
+            // Initialize state
+            const label = toggle.nextElementSibling;
+            if(toggle.checked) {
+                label.style.backgroundColor = '#FF6E5C';
+            }
+        });
+    </script>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
