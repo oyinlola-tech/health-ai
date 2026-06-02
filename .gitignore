@@ -1,0 +1,43 @@
+# Runtime secrets
+.env
+.env.*
+!.env.example
+
+# Node/runtime artifacts
+node_modules/
+npm-debug.log*
+coverage/
+.nyc_output/
+tests
+
+# Build/cache output
+.cache/
+.parcel-cache/
+dist/
+tmp/
+AGENTS.md
+
+# Local logs
+logs/*
+src/logs/*
+!logs/.gitkeep
+!src/logs/.gitkeep
+
+# Local uploads are runtime data, not source.
+uploads/*
+src/uploads/*
+!uploads/.gitkeep
+!uploads/reports/.gitkeep
+!uploads/avatars/.gitkeep
+!uploads/certificates/.gitkeep
+!uploads/cv/.gitkeep
+!uploads/documents/.gitkeep
+!src/uploads/.gitkeep
+scripts
+
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
