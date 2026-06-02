@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Upload Progress - MedExplain AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#27282a",
+                      "on-primary-fixed-variant": "#4b4642",
+                      "primary-fixed": "#e9e1dc",
+                      "on-secondary-fixed-variant": "#4c463f",
+                      "surface-container-highest": "#e6e1e0",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed": "#e3e2e4",
+                      "secondary": "#645d56",
+                      "outline-variant": "#cfc4bd",
+                      "on-background": "#1c1b1b",
+                      "tertiary-fixed-dim": "#c7c6c8",
+                      "on-tertiary": "#ffffff",
+                      "surface-dim": "#ddd9d8",
+                      "surface-container-low": "#f7f3f1",
+                      "surface-variant": "#e6e1e0",
+                      "on-secondary-fixed": "#201b15",
+                      "primary-container": "#2b2724",
+                      "on-tertiary-fixed-variant": "#464749",
+                      "on-error-container": "#93000a",
+                      "surface-bright": "#fdf8f7",
+                      "surface-container-high": "#ece7e6",
+                      "on-secondary": "#ffffff",
+                      "inverse-on-surface": "#f4f0ee",
+                      "error-container": "#ffdad6",
+                      "surface": "#fdf8f7",
+                      "secondary-fixed": "#ebe1d8",
+                      "on-primary-container": "#948e89",
+                      "primary-fixed-dim": "#cdc5c0",
+                      "primary": "#161310",
+                      "background": "#fdf8f7",
+                      "tertiary": "#121415",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed": "#1a1c1e",
+                      "inverse-primary": "#cdc5c0",
+                      "on-surface": "#1c1b1b",
+                      "on-secondary-container": "#69615a",
+                      "on-primary-fixed": "#1e1b18",
+                      "surface-container": "#f1edec",
+                      "on-tertiary-container": "#8f8f91",
+                      "on-surface-variant": "#4d4540",
+                      "on-error": "#ffffff",
+                      "surface-tint": "#635d5a",
+                      "inverse-surface": "#313030",
+                      "error": "#ba1a1a",
+                      "outline": "#7e756f",
+                      "secondary-fixed-dim": "#cfc5bc",
+                      "secondary-container": "#e9ded5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "sm": "8px",
+                      "md": "16px",
+                      "xl": "32px",
+                      "xs": "4px",
+                      "gutter": "16px",
+                      "lg": "24px",
+                      "base": "8px",
+                      "xxl": "48px",
+                      "margin-mobile": "20px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Spectral"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "title-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Spectral"
+                      ],
+                      "caption": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Spectral"
+                      ],
+                      "headline-lg-mobile": [
+                              "Spectral"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "title-lg": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .progress-bar-fill {
+            transition: width 0.3s ease-in-out;
+        }
+        .shimmer {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            100% {
+                left: 200%;
+            }
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
+<!-- Top Navigation (Suppressed per rules for transactional/focused journey, but keeping a minimalist header for brand presence if needed, though instructions suggest suppressing entirely for linear flows. We will use a simplified header with a back button to indicate a task-focused view without the full nav shell.) -->
+<header class="w-full top-0 sticky bg-surface border-b border-surface-variant z-50">
+<div class="flex items-center px-margin-mobile md:px-margin-desktop py-md w-full max-w-[1120px] mx-auto">
+<button aria-label="Cancel upload and go back" class="flex items-center justify-center p-sm rounded-full text-on-surface hover:bg-surface-container-low transition-colors mr-sm">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+<div class="font-headline-md text-headline-md font-bold text-primary ml-sm">
+                MedExplain AI
+            </div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex items-center justify-center p-margin-mobile md:p-margin-desktop">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-surface-variant p-xl flex flex-col items-center text-center">
+<!-- Icon/Visual -->
+<div class="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mb-lg relative">
+<span class="material-symbols-outlined text-[40px] text-[#FF6E5C]">cloud_upload</span>
+<!-- Abstract scanning/uploading effect -->
+<div class="absolute inset-0 rounded-full border-2 border-[#FF6E5C] opacity-20 animate-ping"></div>
+</div>
+<!-- Typography -->
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-sm">
+                Uploading Document
+            </h1>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xl">
+                Please wait while we securely process your file.
+            </p>
+<!-- File Details Card -->
+<div class="w-full bg-surface-container-low rounded-lg p-md mb-lg flex items-center gap-md border border-outline-variant/30">
+<div class="bg-surface-container-highest p-sm rounded text-on-surface-variant">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div class="flex-grow text-left overflow-hidden">
+<div class="font-title-lg text-label-md text-on-surface truncate" title="Blood_Work_Oct_24.pdf">
+                        Blood_Work_Oct_24.pdf
+                    </div>
+<div class="font-caption text-caption text-on-surface-variant mt-xs">
+                        2.4 MB
+                    </div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full mb-sm">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-label-md text-label-md text-on-surface-variant">Uploading...</span>
+<span class="font-label-md text-label-md text-[#FF6E5C] font-semibold" id="progress-text">64%</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<!-- Wellness Coral fill with Muted Stone track -->
+<div class="h-full bg-[#FF6E5C] rounded-full progress-bar-fill shimmer" id="progress-bar" style="width: 64%;"></div>
+</div>
+</div>
+<!-- Security Reassurance -->
+<div class="w-full flex items-center justify-center gap-sm mt-lg pt-lg border-t border-surface-variant text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+<span class="font-caption text-caption">End-to-end encrypted &amp; HIPAA compliant</span>
+</div>
+<!-- Action -->
+<div class="w-full mt-xl">
+<button class="w-full py-3 px-6 rounded-lg font-label-md text-label-md border border-outline-variant text-on-surface hover:bg-surface-container-low transition-colors duration-200">
+                    Cancel Upload
+                </button>
+</div>
+</div>
+</main>
+<script>
+        // Simple simulation of progress for demonstration
+        document.addEventListener('DOMContentLoaded', () => {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            let currentProgress = 64;
+
+            const interval = setInterval(() => {
+                if (currentProgress < 95) {
+                    // Random small increments to simulate real upload
+                    currentProgress += Math.random() * 5;
+                    if (currentProgress > 95) currentProgress = 95; // Stop before 100 for dramatic effect
+                    
+                    const displayProgress = Math.round(currentProgress);
+                    progressBar.style.width = `${displayProgress}%`;
+                    progressText.textContent = `${displayProgress}%`;
+                }
+            }, 800);
+        });
+    </script>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
