@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MedExplain AI - Reports Empty State</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-surface": "#1c1b1b",
+                        "background": "#fdf8f7",
+                        "secondary-container": "#e9ded5",
+                        "outline": "#7e756f",
+                        "surface-dim": "#ddd9d8",
+                        "tertiary-fixed": "#e3e2e4",
+                        "tertiary-container": "#27282a",
+                        "surface-container-low": "#f7f3f1",
+                        "surface": "#fdf8f7",
+                        "inverse-surface": "#313030",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "on-primary-fixed": "#1e1b18",
+                        "surface-bright": "#fdf8f7",
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "primary": "#161310",
+                        "outline-variant": "#cfc4bd",
+                        "on-tertiary-container": "#8f8f91",
+                        "on-secondary-fixed": "#201b15",
+                        "on-background": "#1c1b1b",
+                        "secondary": "#645d56",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e6e1e0",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#cfc5bc",
+                        "on-secondary-container": "#69615a",
+                        "tertiary-fixed-dim": "#c7c6c8",
+                        "inverse-primary": "#cdc5c0",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#948e89",
+                        "on-primary-fixed-variant": "#4b4642",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#e9e1dc",
+                        "on-surface-variant": "#4d4540",
+                        "primary-fixed-dim": "#cdc5c0",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#2b2724",
+                        "surface-container-high": "#ece7e6",
+                        "on-tertiary-fixed-variant": "#464749",
+                        "inverse-on-surface": "#f4f0ee",
+                        "surface-variant": "#e6e1e0",
+                        "secondary-fixed": "#ebe1d8",
+                        "tertiary": "#121415",
+                        "surface-container": "#f1edec",
+                        "surface-tint": "#635d5a",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xxl": "48px",
+                        "margin-desktop": "64px",
+                        "md": "16px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "margin-mobile": "20px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "display-lg": ["Spectral"],
+                        "title-lg": ["Inter"],
+                        "headline-lg-mobile": ["Spectral"],
+                        "headline-md": ["Spectral"],
+                        "body-lg": ["Inter"],
+                        "caption": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Spectral"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Pulse Animation for Illustration */
+        @keyframes subtle-pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        .animate-subtle-pulse {
+            animation: subtle-pulse 3s ease-in-out infinite;
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 shadow-sm bg-surface dark:bg-surface-dim shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)]">
+<!-- Search Bar (on_left) -->
+<div class="flex items-center flex-1">
+<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary transition-colors max-w-sm w-full">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" style="font-variation-settings: 'FILL' 0;">search</span>
+<input class="bg-transparent border-none outline-none text-body-md font-body-md w-full placeholder:text-on-surface-variant focus:ring-0" placeholder="Search reports, insights..." type="text"/>
+</div>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+<!-- Brand Logo -->
+<div class="flex-shrink-0 flex items-center justify-center flex-1">
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary tracking-tight">MedExplain AI</h1>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center justify-end flex-1 gap-sm">
+<button class="p-2 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors rounded-full active:opacity-80 active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors rounded-full active:opacity-80 active:scale-95 duration-150 hidden sm:block">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="ml-sm w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden cursor-pointer">
+<img alt="Patient Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQOBfgaoMQKoc3jKNMeWDhlGg0NIz07OP0mA7tdPy_0t7prHmjukXa5LqUMc0RSLxzeb4HhACZt1F7KvoLCab0b7bxN763CzpiPJcORsNclxvRhnYcmL23Nh0gZPV4ApRjejR9A4EDvc5AqexvZG1cPzsdlLXjOmXCl_3sXpDBgaLJiKswG9KhK97wWArZqaRW3wiXJnt_QKHpN3eTwSw_gC7oODHtIcgjtHmwnOpIYFT6DcRIHBAuPZil5eU2Mc1cGNyR96w6A9ou"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 pt-16 relative">
+<!-- SideNavBar (Desktop Only) -->
+<aside class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex-col p-md z-40 bg-surface-container-low dark:bg-surface-container-high border-r border-outline-variant">
+<!-- Header -->
+<div class="flex items-center gap-md p-4 mb-xl">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest overflow-hidden shrink-0">
+<img alt="Patient Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAq1ve2TakhrU5amCO2kF7CodYQ1u9XQC-GdIvMX4vXUISNJIRmA7s8T0DARp5AeA3SmjHrEim-2uiecQVKzsPse7_Mez1Eo412u3iSdr0arH0w_tnSUU74_Tp6sgH44G6_tVKk4yC8NQiNcoYS5o4hxy5hrTFD8DaWULabu6XAcXTYhI-3EqCplfveZ-9Xidpmb8IuYisf7PB7EYSbxlg9XXRO8rULEh4vHhfUszb9_YY1AzT4woXGqpyPXq5pIE3DdzRUN2asQsI"/>
+</div>
+<div>
+<h2 class="text-title-lg font-title-lg text-primary dark:text-primary-fixed-dim leading-tight">Patient Portal</h2>
+<p class="text-label-md font-label-md text-on-surface-variant">Welcome back</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="w-full mb-xl bg-primary text-on-primary font-label-md text-label-md py-3 px-4 rounded-lg hover:opacity-90 transition-opacity flex justify-center items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Upload New Report
+            </button>
+<!-- Navigation Links -->
+<nav class="flex-1 space-y-sm">
+<!-- Inactive Tab -->
+<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<!-- Active Tab: Reports -->
+<a class="flex items-center gap-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-semibold rounded-lg px-4 py-3 translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="description" data-weight="fill" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<!-- Inactive Tab -->
+<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="text-label-md font-label-md">Insights</span>
+</a>
+<!-- Inactive Tab -->
+<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="text-label-md font-label-md">Health Trends</span>
+</a>
+</nav>
+<!-- Footer Links -->
+<div class="mt-auto pt-xl border-t border-outline-variant/30 space-y-sm">
+<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="text-label-md font-label-md">Support</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-label-md font-label-md">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop min-h-[calc(100vh-64px)] w-full">
+<!-- Empty State Container -->
+<div class="max-w-xl w-full flex flex-col items-center text-center bg-surface-container-lowest border border-outline-variant/50 rounded-2xl p-xxl shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)] relative overflow-hidden">
+<!-- Decorative Background Glow -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-error-container/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+<!-- Illustration Construction (Warm & Supportive) -->
+<div class="relative w-32 h-32 mb-xl flex items-center justify-center">
+<!-- Soft Background Circles -->
+<div class="absolute inset-0 bg-surface-container-high rounded-full opacity-50"></div>
+<div class="absolute inset-4 bg-secondary-container rounded-full animate-subtle-pulse"></div>
+<!-- Icons -->
+<div class="relative z-10 flex flex-col items-center">
+<span class="material-symbols-outlined text-[64px] text-primary" style="font-variation-settings: 'wght' 200;">description</span>
+<div class="absolute -bottom-2 -right-2 bg-surface-container-lowest rounded-full p-2 shadow-sm border border-outline-variant/30">
+<span class="material-symbols-outlined text-[24px] text-error">ecg_heart</span>
+</div>
+</div>
+</div>
+<!-- Typography -->
+<h2 class="text-headline-lg font-headline-lg text-primary mb-md tracking-tight">No Health Reports Yet</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-md mx-auto mb-xxl">
+                    This space is dedicated to your health history. Once you upload your medical reports, lab results, or imaging, our AI will provide clear, empathetic insights right here.
+                </p>
+<!-- Actions -->
+<div class="flex flex-col items-center gap-md w-full sm:w-auto">
+<button class="w-full sm:w-auto min-h-[48px] bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">upload_file</span>
+                        Upload Your First Report
+                    </button>
+<button class="w-full sm:w-auto min-h-[48px] text-secondary font-label-md text-label-md px-6 py-2 rounded-lg hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 group">
+                        View Sample Report
+                        <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Contextual Helper Text -->
+<p class="mt-xl text-caption font-caption text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                Your data is securely encrypted and private.
+            </p>
+</main>
+</div>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
