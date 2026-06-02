@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Privacy &amp; Data Sharing Preferences - MedExplain AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#4c463f",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f7f3f1",
+                    "secondary-fixed-dim": "#cfc5bc",
+                    "primary-fixed": "#e9e1dc",
+                    "on-surface-variant": "#4d4540",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "secondary": "#645d56",
+                    "inverse-surface": "#313030",
+                    "on-secondary-fixed": "#201b15",
+                    "surface-tint": "#635d5a",
+                    "primary": "#161310",
+                    "tertiary-container": "#27282a",
+                    "error-container": "#ffdad6",
+                    "on-background": "#1c1b1b",
+                    "primary-container": "#2b2724",
+                    "tertiary-fixed-dim": "#c7c6c8",
+                    "surface-dim": "#ddd9d8",
+                    "secondary-container": "#e9ded5",
+                    "inverse-on-surface": "#f4f0ee",
+                    "surface-container-high": "#ece7e6",
+                    "on-tertiary-fixed-variant": "#464749",
+                    "primary-fixed-dim": "#cdc5c0",
+                    "on-tertiary-fixed": "#1a1c1e",
+                    "on-surface": "#1c1b1b",
+                    "on-error": "#ffffff",
+                    "outline": "#7e756f",
+                    "inverse-primary": "#cdc5c0",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-container": "#8f8f91",
+                    "surface-container-highest": "#e6e1e0",
+                    "surface-bright": "#fdf8f7",
+                    "surface-variant": "#e6e1e0",
+                    "tertiary": "#121415",
+                    "secondary-fixed": "#ebe1d8",
+                    "error": "#ba1a1a",
+                    "surface-container": "#f1edec",
+                    "on-primary-fixed": "#1e1b18",
+                    "on-primary-fixed-variant": "#4b4642",
+                    "on-primary": "#ffffff",
+                    "surface": "#fdf8f7",
+                    "background": "#fdf8f7",
+                    "on-secondary-container": "#69615a",
+                    "tertiary-fixed": "#e3e2e4",
+                    "outline-variant": "#cfc4bd",
+                    "on-primary-container": "#948e89"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "base": "8px",
+                    "xxl": "48px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "margin-mobile": "20px",
+                    "margin-desktop": "64px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "title-lg": ["Inter"],
+                    "caption": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Spectral"],
+                    "headline-lg-mobile": ["Spectral"],
+                    "display-lg": ["Spectral"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Spectral"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: #FDF6F3; /* Using the level 0 background from guidelines */
+        }
+        /* Custom Toggle Switch Styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #FF6E5C;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #FF6E5C;
+        }
+        .toggle-checkbox:checked + .toggle-label:before {
+            transform: translateX(100%);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #E8E4E1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+        .ai-highlight-border {
+            border-top: 2px solid #FF6E5C;
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="text-on-background min-h-screen font-body-md antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface dark:bg-background border-b border-outline-variant dark:border-outline shadow-sm transition-colors duration-200">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md text-primary dark:text-on-primary-fixed tracking-tight">MedExplain AI</span>
+</div>
+<div class="flex items-center gap-4">
+<button aria-label="Notifications" class="p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200 text-primary dark:text-on-primary-fixed">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="Account" class="p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200 text-primary dark:text-on-primary-fixed">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] z-40 bg-surface-container-low dark:bg-surface-container-lowest shadow-md w-64">
+<div class="p-6 border-b border-outline-variant/30">
+<h2 class="font-title-lg text-title-lg text-primary dark:text-on-primary-fixed mb-1">Patient Portal</h2>
+<p class="font-caption text-caption text-secondary">Manage your health data</p>
+</div>
+<div class="flex-1 py-4 overflow-y-auto">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">search</span>
+                        Find Doctor
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">medical_information</span>
+                        Health Records
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">event_available</span>
+                        My Appointments
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+                        Consultation History
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 font-label-md text-label-md text-primary font-bold border-r-4 border-primary bg-secondary-container/30 transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+                        Settings
+                    </a>
+</li>
+</ul>
+</div>
+<div class="p-4 border-t border-outline-variant/30 mt-auto">
+<button class="w-full mb-4 bg-[#FF6E5C] text-white rounded-lg py-3 font-label-md text-label-md hover:bg-[#e56353] transition-colors shadow-sm">
+                New Consultation
+            </button>
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-4 py-2 font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-high transition-all rounded-md" href="#">
+<span class="material-symbols-outlined">help</span>
+                        Support
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-2 font-label-md text-label-md text-secondary hover:text-primary hover:bg-surface-container-high transition-all rounded-md" href="#">
+<span class="material-symbols-outlined">logout</span>
+                        Logout
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-12 px-margin-mobile md:px-margin-desktop lg:ml-64 max-w-[1120px] mx-auto min-h-screen">
+<!-- Header Section -->
+<div class="mb-xxl max-w-3xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full text-secondary font-caption text-caption mb-4">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+                HIPAA Compliant
+            </div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">Privacy &amp; Data Sharing</h1>
+<p class="font-body-lg text-body-lg text-secondary">
+                We believe in transparent healthcare. Control exactly how your medical information is used, stored, and shared within the MedExplain AI ecosystem.
+            </p>
+</div>
+<!-- Bento Grid Layout for Settings -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Core Privacy Settings (Spans 8 columns on desktop) -->
+<div class="md:col-span-8 space-y-lg">
+<!-- Data Sharing Card -->
+<section class="glass-card rounded-xl p-lg md:p-xl relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[120px]">share</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-md text-headline-md text-primary mb-2 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#FF6E5C]">database</span>
+                            Data Sharing Preferences
+                        </h2>
+<p class="font-body-md text-body-md text-secondary mb-6 max-w-2xl">
+                            Manage which healthcare providers and family members have access to your consultation history and AI-generated insights.
+                        </p>
+<div class="space-y-6">
+<!-- Toggle Item 1 -->
+<div class="flex items-start justify-between gap-4 p-4 rounded-lg bg-surface-container-lowest border border-outline-variant/40 hover:border-outline-variant transition-colors">
+<div>
+<h3 class="font-title-lg text-title-lg text-primary mb-1">Primary Care Physician</h3>
+<p class="font-body-md text-body-md text-secondary">Automatically share AI summaries and diagnosis insights with Dr. Sarah Jenkins.</p>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in mt-1 shrink-0">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#FF6E5C] transition-all duration-300 z-10 right-0" id="toggle1" name="toggle1" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-[#FF6E5C] cursor-pointer transition-colors duration-300" for="toggle1"></label>
+</div>
+</div>
+<!-- Toggle Item 2 -->
+<div class="flex items-start justify-between gap-4 p-4 rounded-lg bg-surface-container-lowest border border-outline-variant/40 hover:border-outline-variant transition-colors">
+<div>
+<h3 class="font-title-lg text-title-lg text-primary mb-1">Emergency Contact Access</h3>
+<p class="font-body-md text-body-md text-secondary">Allow emergency contacts to view your active medications and severe allergies.</p>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in mt-1 shrink-0">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-outline-variant appearance-none cursor-pointer transition-all duration-300 z-10 left-0" id="toggle2" name="toggle2" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-300" for="toggle2"></label>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Training Consent Card -->
+<section class="glass-card rounded-xl p-lg md:p-xl ai-highlight-border">
+<h2 class="font-headline-md text-headline-md text-primary mb-2 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#FF6E5C]">psychiatry</span>
+                        AI Training Consent
+                    </h2>
+<p class="font-body-md text-body-md text-secondary mb-6">
+                        Help us improve MedExplain AI for everyone. When enabled, your data is de-identified and used to train our diagnostic models.
+                    </p>
+<div class="bg-surface-container-low rounded-lg p-6 border border-outline-variant/30 mb-6">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary mt-1">info</span>
+<div>
+<h4 class="font-label-md text-label-md text-primary mb-2">How your data is protected:</h4>
+<ul class="space-y-2 font-body-md text-body-md text-secondary list-disc pl-4">
+<li>All Personally Identifiable Information (PII) is completely removed.</li>
+<li>Data is aggregated with thousands of other anonymous records.</li>
+<li>We never sell your data to third-party advertisers or insurance companies.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline-variant/30 pt-6">
+<div>
+<h3 class="font-title-lg text-title-lg text-primary">Contribute Anonymized Data</h3>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in shrink-0">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#FF6E5C] transition-all duration-300 z-10 right-0" id="toggle3" name="toggle3" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-[#FF6E5C] cursor-pointer transition-colors duration-300" for="toggle3"></label>
+</div>
+</div>
+</section>
+</div>
+<!-- Sidebar Content (Spans 4 columns on desktop) -->
+<div class="md:col-span-4 space-y-lg">
+<!-- Security Summary Card -->
+<section class="glass-card rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Security Status</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">End-to-End Encryption</p>
+<p class="font-caption text-caption text-secondary">Active on all connections</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">fingerprint</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Biometric Login</p>
+<p class="font-caption text-caption text-secondary">Enabled for this device</p>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-outline-variant/30">
+<button class="w-full text-center font-label-md text-label-md text-[#FF6E5C] hover:text-[#e56353] transition-colors">
+                            Manage Security Keys
+                        </button>
+</div>
+</section>
+<!-- Data Export Card -->
+<section class="glass-card rounded-xl p-6">
+<h3 class="font-title-lg text-title-lg text-primary mb-2">Take Your Data</h3>
+<p class="font-body-md text-body-md text-secondary mb-6 text-sm">
+                        Download a complete archive of your medical history, AI consultation transcripts, and uploaded documents.
+                    </p>
+<button class="w-full flex items-center justify-center gap-2 bg-surface-container-low border border-outline-variant hover:bg-surface-container-high text-primary rounded-lg py-3 font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined">download</span>
+                        Request Data Archive
+                    </button>
+</section>
+<!-- Floating Save Action (Desktop) -->
+<div class="pt-xl hidden md:block">
+<button class="w-full bg-[#FF6E5C] text-white rounded-lg py-4 font-label-md text-label-md text-lg hover:bg-[#e56353] transition-all shadow-[0_4px_12px_rgba(255,110,92,0.3)] hover:shadow-[0_8px_20px_rgba(255,110,92,0.4)]">
+                        Save Preferences
+                    </button>
+</div>
+</div>
+</div>
+<!-- Mobile Sticky Save Button -->
+<div class="md:hidden fixed bottom-0 left-0 w-full p-4 bg-surface/90 backdrop-blur-md border-t border-outline-variant/30 z-50">
+<button class="w-full bg-[#FF6E5C] text-white rounded-lg py-4 font-label-md text-label-md text-lg hover:bg-[#e56353] transition-all shadow-[0_4px_12px_rgba(255,110,92,0.3)]">
+                Save Preferences
+            </button>
+</div>
+</main>
+<script>
+        // Simple JS for toggle interactions to ensure visual state updates smoothly
+        document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if (this.checked) {
+                    this.classList.remove('border-outline-variant', 'left-0');
+                    this.classList.add('border-[#FF6E5C]', 'right-0');
+                    label.classList.remove('bg-surface-variant');
+                    label.classList.add('bg-[#FF6E5C]');
+                } else {
+                    this.classList.add('border-outline-variant', 'left-0');
+                    this.classList.remove('border-[#FF6E5C]', 'right-0');
+                    label.classList.add('bg-surface-variant');
+                    label.classList.remove('bg-[#FF6E5C]');
+                }
+            });
+        });
+    </script>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
