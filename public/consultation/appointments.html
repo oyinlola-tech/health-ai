@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Appointments - MedExplain AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet"/>
+
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#cfc5bc",
+                        "secondary-fixed": "#ebe1d8",
+                        "primary-container": "#2b2724",
+                        "surface-tint": "#635d5a",
+                        "on-background": "#1c1b1b",
+                        "outline-variant": "#cfc4bd",
+                        "surface-dim": "#ddd9d8",
+                        "secondary": "#645d56",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f4f0ee",
+                        "tertiary-fixed-dim": "#c7c6c8",
+                        "on-surface": "#1c1b1b",
+                        "primary": "#161310",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f7f3f1",
+                        "on-surface-variant": "#4d4540",
+                        "surface": "#fdf8f7",
+                        "secondary-container": "#e9ded5",
+                        "on-primary-container": "#948e89",
+                        "surface-container-high": "#ece7e6",
+                        "on-tertiary-container": "#8f8f91",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#121415",
+                        "primary-fixed-dim": "#cdc5c0",
+                        "surface-variant": "#e6e1e0",
+                        "on-tertiary-fixed-variant": "#464749",
+                        "on-primary-fixed": "#1e1b18",
+                        "inverse-surface": "#313030",
+                        "background": "#fdf8f7",
+                        "surface-container-highest": "#e6e1e0",
+                        "inverse-primary": "#cdc5c0",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#e3e2e4",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fdf8f7",
+                        "surface-container": "#f1edec",
+                        "outline": "#7e756f",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#e9e1dc",
+                        "on-primary-fixed-variant": "#4b4642",
+                        "on-secondary-container": "#69615a",
+                        "tertiary-container": "#27282a",
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "on-secondary-fixed": "#201b15"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "margin-mobile": "20px",
+                        "base": "8px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xxl": "48px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "headline-lg-mobile": ["Spectral"],
+                        "headline-md": ["Spectral"],
+                        "headline-lg": ["Spectral"],
+                        "display-lg": ["Spectral"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "caption": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #FDF6F3; /* Wellness Coral background */
+        }
+        .coral-accent {
+            background-color: #FF6E5C;
+            color: #FFFFFF;
+        }
+        .coral-text {
+            color: #FF6E5C;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .card-shadow-hover:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface dark:bg-background border-b border-outline-variant dark:border-outline shadow-sm transition-colors duration-200">
+<div class="flex items-center gap-4">
+<!-- Mobile Menu Trigger -->
+<button class="md:hidden p-2 text-on-surface hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-md text-headline-md text-primary dark:text-on-primary-fixed font-bold tracking-tight">MedExplain AI</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar & Main Content Wrapper -->
+<div class="flex pt-16 h-screen">
+<!-- SideNavBar -->
+<nav class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] z-40 bg-surface-container-low dark:bg-surface-container-lowest docked left-0 h-full w-64 shadow-md bg-surface-container-low dark:bg-surface-container-lowest">
+<div class="p-6 flex flex-col items-center border-b border-outline-variant/30">
+<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-3xl text-primary">person</span>
+</div>
+<div class="font-title-lg text-title-lg text-primary text-center">Patient Portal</div>
+<div class="font-caption text-caption text-secondary text-center mt-1">Manage your health data</div>
+</div>
+<div class="flex-1 overflow-y-auto py-4">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 font-label-md text-label-md text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span>Find Doctor</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 font-label-md text-label-md text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="medical_information">medical_information</span>
+<span>Health Records</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 font-label-md text-label-md text-primary font-bold border-r-4 border-primary bg-secondary-container/30 px-4 py-3 Active: scale-[0.99] duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="event_available" style="font-variation-settings: 'FILL' 1;">event_available</span>
+<span>My Appointments</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 font-label-md text-label-md text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span>Consultation History</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 font-label-md text-label-md text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="p-4">
+<button class="w-full coral-accent py-3 rounded-lg font-label-md text-label-md flex justify-center items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+                    New Consultation
+                </button>
+</div>
+<div class="mt-auto border-t border-outline-variant/30 py-2">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 font-label-md text-label-md text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 font-label-md text-label-md text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-64 p-margin-mobile md:p-margin-desktop overflow-y-auto">
+<div class="max-w-[1120px] mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-4">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Appointments</h1>
+<p class="font-body-md text-body-md text-secondary">Manage your upcoming and past consultations.</p>
+</div>
+</div>
+<!-- Tabs -->
+<div class="flex border-b border-outline-variant mb-xl">
+<button class="px-6 py-3 font-label-md text-label-md text-primary border-b-2 border-primary font-medium" onclick="switchTab('upcoming')">Upcoming</button>
+<button class="px-6 py-3 font-label-md text-label-md text-secondary hover:text-primary transition-colors" onclick="switchTab('past')">Past History</button>
+</div>
+<!-- Upcoming Tab Content -->
+<div class="space-y-lg" id="upcoming-content">
+<!-- Bento Grid for Upcoming -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Primary Upcoming Card (Featured) -->
+<div class="md:col-span-8 bg-surface rounded-xl border border-outline-variant/50 p-6 card-shadow card-shadow-hover relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-[#FF6E5C]"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person_search</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Dr. Sarah Jenkins</h3>
+<p class="font-body-md text-body-md text-secondary">Cardiology Specialist</p>
+</div>
+</div>
+<div class="bg-surface-container-low px-3 py-1 rounded-full flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="font-caption text-caption text-on-surface-variant font-medium">Starting Soon</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-8 bg-surface-container-low p-4 rounded-lg">
+<div>
+<p class="font-caption text-caption text-secondary mb-1">Date &amp; Time</p>
+<p class="font-body-lg text-body-lg text-primary font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                        Today, 2:30 PM
+                                    </p>
+</div>
+<div>
+<p class="font-caption text-caption text-secondary mb-1">Countdown</p>
+<p class="font-body-lg text-body-lg text-primary font-medium flex items-center gap-2 coral-text">
+<span class="material-symbols-outlined text-sm">timer</span>
+                                        00:45:20
+                                    </p>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 coral-accent py-3 rounded-lg font-label-md text-label-md flex justify-center items-center gap-2 hover:opacity-90 transition-opacity min-h-[48px]">
+<span class="material-symbols-outlined">videocam</span>
+                                    Join Call
+                                </button>
+<button class="px-6 py-3 border border-outline rounded-lg font-label-md text-label-md text-primary hover:bg-surface-container-low transition-colors min-h-[48px]">
+                                    Reschedule
+                                </button>
+</div>
+</div>
+<!-- Secondary Upcoming Card -->
+<div class="md:col-span-4 bg-surface rounded-xl border border-outline-variant/50 p-6 card-shadow card-shadow-hover flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">psychiatry</span>
+</div>
+<span class="font-caption text-caption text-secondary bg-surface-container px-2 py-1 rounded">In 3 days</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-primary mb-1">Dr. Alan Turing</h3>
+<p class="font-body-md text-body-md text-secondary mb-4">Neurology Consultation</p>
+<p class="font-body-md text-body-md text-primary flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-sm text-secondary">event</span>
+                                    Oct 28, 10:00 AM
+                                </p>
+</div>
+<button class="w-full mt-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-primary hover:bg-surface-container-low transition-colors">
+                                View Details
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+        function switchTab(tabId) {
+            // Simple tab logic for demonstration
+            console.log('Switched to tab:', tabId);
+            // In a real app, this would toggle visibility of #upcoming-content and #past-content
+            // and update tab styling.
+        }
+    </script>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
