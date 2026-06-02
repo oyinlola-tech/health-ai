@@ -1,0 +1,24 @@
+<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="60" rx="8" fill="none"/>
+  
+  <!-- Medical Cross Icon (Coral) -->
+  <g transform="translate(10, 15)">
+    <!-- Outer circle -->
+    <circle cx="15" cy="15" r="14" fill="#FF6E5C" opacity="0.1" stroke="#FF6E5C" stroke-width="1.5"/>
+    
+    <!-- Medical cross -->
+    <rect x="12.5" y="7" width="5" height="16" rx="2" fill="#FF6E5C"/>
+    <rect x="7" y="12.5" width="16" height="5" rx="2" fill="#FF6E5C"/>
+  </g>
+  
+  <!-- Text: MedExplain -->
+  <text x="38" y="35" font-family="'Spectral', serif" font-size="18" font-weight="600" fill="#2B2724">
+    MedExplain
+  </text>
+  
+  <!-- Text: AI (smaller, lighter) -->
+  <text x="38" y="50" font-family="'Inter', sans-serif" font-size="10" font-weight="500" fill="#A19890" letter-spacing="1">
+    AI
+  </text>
+</svg>

@@ -1,0 +1,10 @@
+<svg width="240" height="64" viewBox="0 0 240 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MedExplain AI logo</title>
+  <desc id="desc">A coral medical shield with a calm pulse mark and MedExplain AI wordmark.</desc>
+  <rect width="240" height="64" rx="8" fill="#FFFFFF"/>
+  <path d="M32 8L52 15V30C52 43 43.5 52.5 32 56C20.5 52.5 12 43 12 30V15L32 8Z" fill="#2B2724"/>
+  <path d="M32 15L45 19.5V30.5C45 39.5 39.2 45.8 32 48.5C24.8 45.8 19 39.5 19 30.5V19.5L32 15Z" fill="#FF6E5C"/>
+  <path d="M21.5 32H27L30 25L35 40L38 32H44.5" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="68" y="30" fill="#2B2724" font-family="Spectral, Georgia, serif" font-size="24" font-weight="600">MedExplain</text>
+  <text x="68" y="49" fill="#A19890" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="600">AI</text>
+</svg>

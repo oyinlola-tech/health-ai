@@ -1,0 +1,85 @@
+import dotenv from "dotenv";
+import { z } from "zod";
+
+dotenv.config();
+
+const booleanFromEnv = z
+  .union([z.boolean(), z.string()])
+  .default(false)
+  .transform((value) => value === true || value === "true");
+
+const developmentSecrets = new Set([
+  "development-access-secret-change-before-production",
+  "development-refresh-secret-change-before-production",
+  "development-cookie-secret-change-before-production",
+  "development-csrf-secret-change-before-production"
+]);
+
+const envSchema = z
+  .object({
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    PORT: z.coerce.number().int().positive().default(3000),
+    APP_NAME: z.string().default("MedExplain AI"),
+    APP_URL: z.string().url().default("http://localhost:3000"),
+    PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
+    DATABASE_URL: z.string().default("postgres://postgres:postgres@localhost:5432/medexplain_ai"),
+    DATABASE_SSL: booleanFromEnv,
+    SKIP_DB_STARTUP: booleanFromEnv,
+    JWT_ACCESS_SECRET: z.string().min(16).default("development-access-secret-change-before-production"),
+    JWT_REFRESH_SECRET: z.string().min(16).default("development-refresh-secret-change-before-production"),
+    JWT_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
+    JWT_REFRESH_TTL_SECONDS: z.coerce.number().int().positive().default(2592000),
+    COOKIE_SECRET: z.string().min(16).default("development-cookie-secret-change-before-production"),
+    CSRF_SECRET: z.string().min(16).default("development-csrf-secret-change-before-production"),
+    CORS_ORIGINS: z.string().default("http://localhost:3000"),
+    RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900000),
+    RATE_LIMIT_MAX: z.coerce.number().int().positive().default(120),
+    GEMINI_API_KEY: z.string().optional().default(""),
+    GEMINI_MODEL: z.string().default("gemini-1.5-flash"),
+    SMTP_HOST: z.string().optional().default(""),
+    SMTP_PORT: z.coerce.number().int().positive().default(587),
+    SMTP_SECURE: booleanFromEnv,
+    SMTP_USER: z.string().optional().default(""),
+    SMTP_PASS: z.string().optional().default(""),
+    SMTP_FROM: z.string().default("MedExplain AI <no-reply@medexplain.local>"),
+    UPLOAD_ROOT: z.string().default("uploads"),
+    MAX_UPLOAD_BYTES: z.coerce.number().int().positive().default(10485760),
+    ALLOWED_UPLOAD_MIME_TYPES: z.string().default("application/pdf,image/png,image/jpeg,image/webp"),
+    PAYMENT_PROVIDER: z.string().default("manual"),
+    PAYMENT_PUBLIC_KEY: z.string().optional().default(""),
+    PAYMENT_SECRET_KEY: z.string().optional().default("")
+  })
+  .superRefine((value, ctx) => {
+    if (value.NODE_ENV !== "production") return;
+
+    for (const key of ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET", "COOKIE_SECRET", "CSRF_SECRET"]) {
+      if (developmentSecrets.has(value[key])) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key],
+          message: `${key} must be explicitly configured for production.`
+        });
+      }
+    }
+  });
+
+export const env = envSchema.parse(process.env);
+
+export const publicConfig = {
+  appName: env.APP_NAME,
+  appUrl: env.PUBLIC_APP_URL,
+  paymentProvider: env.PAYMENT_PROVIDER,
+  paymentPublicKey: env.PAYMENT_PUBLIC_KEY || null
+};
+
+export function getAllowedOrigins() {
+  return env.CORS_ORIGINS.split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
+export function getAllowedMimeTypes() {
+  return env.ALLOWED_UPLOAD_MIME_TYPES.split(",")
+    .map((type) => type.trim())
+    .filter(Boolean);
+}

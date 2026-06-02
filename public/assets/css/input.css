@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --mx-primary: #2b2724;
+    --mx-muted: #a19890;
+    --mx-coral: #ff6e5c;
+    --mx-background: #fdf6f3;
+    --mx-surface: #ffffff;
+  }
+
+  html {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body {
+    background: var(--mx-background);
+    color: var(--mx-primary);
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-headline-md,
+  .font-headline-lg,
+  .font-display-lg {
+    font-family: Spectral, Georgia, serif;
+    letter-spacing: 0;
+  }
+}
+
+@layer components {
+  .mx-focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    --tw-ring-color: var(--mx-coral);
+  }
+
+  .mx-bottom-nav {
+    @apply md:hidden fixed bottom-0 left-0 z-50 flex w-full items-center justify-around border-t bg-white px-3 pb-3 pt-2 shadow-sm;
+    border-color: rgba(161, 152, 144, 0.35);
+  }
+
+  .mx-bottom-nav a {
+    @apply flex min-w-[64px] flex-col items-center justify-center gap-1 rounded-lg px-2 py-1 text-xs font-medium;
+    color: var(--mx-muted);
+  }
+
+  .mx-bottom-nav a[aria-current="page"] {
+    color: var(--mx-primary);
+    background: rgba(255, 110, 92, 0.12);
+  }
+}

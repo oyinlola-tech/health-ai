@@ -1,0 +1,16 @@
+{
+  "name": "MedExplain AI",
+  "short_name": "MedExplain",
+  "description": "Secure AI-assisted medical report explanations.",
+  "start_url": "/auth/welcome.html",
+  "display": "standalone",
+  "background_color": "#FDF6F3",
+  "theme_color": "#FF6E5C",
+  "icons": [
+    {
+      "src": "/assets/brand/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    }
+  ]
+}
