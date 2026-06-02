@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trusted Sources &amp; Recommendations - MedExplain AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#e9e1dc",
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "surface-container-highest": "#e6e1e0",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#27282a",
+                        "on-primary-fixed-variant": "#4b4642",
+                        "tertiary-fixed": "#e3e2e4",
+                        "secondary": "#645d56",
+                        "outline-variant": "#cfc4bd",
+                        "on-background": "#1c1b1b",
+                        "tertiary-fixed-dim": "#c7c6c8",
+                        "primary-container": "#2b2724",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#ddd9d8",
+                        "surface-container-low": "#f7f3f1",
+                        "surface-variant": "#e6e1e0",
+                        "on-secondary-fixed": "#201b15",
+                        "surface-bright": "#fdf8f7",
+                        "surface-container-high": "#ece7e6",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#464749",
+                        "on-error-container": "#93000a",
+                        "surface": "#fdf8f7",
+                        "secondary-fixed": "#ebe1d8",
+                        "on-primary-container": "#948e89",
+                        "primary-fixed-dim": "#cdc5c0",
+                        "primary": "#161310",
+                        "inverse-on-surface": "#f4f0ee",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "background": "#fdf8f7",
+                        "tertiary": "#121415",
+                        "surface-container": "#f1edec",
+                        "on-tertiary-container": "#8f8f91",
+                        "inverse-primary": "#cdc5c0",
+                        "on-surface": "#1c1b1b",
+                        "on-secondary-container": "#69615a",
+                        "on-primary-fixed": "#1e1b18",
+                        "outline": "#7e756f",
+                        "secondary-fixed-dim": "#cfc5bc",
+                        "secondary-container": "#e9ded5",
+                        "on-surface-variant": "#4d4540",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#635d5a",
+                        "inverse-surface": "#313030",
+                        "error": "#ba1a1a",
+                        "wellness-coral": "#FF6E5C",
+                        "muted-stone": "#E8E4E1",
+                        "deep-charcoal": "#1C1B1B"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "md": "16px",
+                        "margin-desktop": "64px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "xxl": "48px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Spectral"],
+                        "display-lg": ["Spectral"],
+                        "caption": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Spectral"],
+                        "title-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Spectral"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .shadow-soft { box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .shadow-lift { box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .ai-border { border-top: 2px solid #FF6E5C; }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md text-body-md flex flex-col md:flex-row antialiased">
+<!-- Side NavBar (Desktop) -->
+<nav class="bg-surface-container-low shadow-sm h-screen w-64 fixed left-0 top-0 hidden md:flex flex-col flex-col h-full p-md space-y-sm z-50">
+<div class="px-4 py-6 mb-4">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">MedExplain AI</h1>
+</div>
+<div class="flex-1 space-y-2 px-2">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">description</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-4 bg-secondary-container text-on-secondary-container rounded-xl px-4 py-3 transform scale-[0.98] duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<span class="font-label-md text-label-md">Insights</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">trending_up</span>
+<span class="font-label-md text-label-md">Health Trends</span>
+</a>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-wellness-coral text-white font-label-md text-label-md py-3 rounded-xl min-h-[48px] hover:opacity-90 transition-opacity">Upload New Report</button>
+</div>
+<div class="mt-auto space-y-2 px-2 pb-4 border-t border-outline-variant pt-4">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 relative pb-24 md:pb-0">
+<!-- Top App Bar (Mobile & Desktop) -->
+<header class="bg-surface shadow-sm docked full-width top-0 z-40 sticky">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-7xl mx-auto">
+<div class="md:hidden">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">MedExplain AI</h1>
+</div>
+<div class="hidden md:block">
+<!-- Placeholder for desktop alignment if search was here -->
+<span class="font-headline-md text-headline-md text-on-surface-variant">Trusted Insights</span>
+</div>
+<div class="flex items-center gap-4 text-primary">
+<button class="hover:text-wellness-coral transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="hover:text-wellness-coral transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<div class="px-margin-mobile md:px-margin-desktop py-xl max-w-[1120px] mx-auto space-y-xxl">
+<!-- Hero / Fact Check Section -->
+<section class="flex flex-col md:flex-row gap-lg items-start">
+<div class="flex-1 space-y-md">
+<div class="inline-flex items-center gap-2 bg-surface-container-low border border-outline-variant rounded-full px-3 py-1">
+<span class="material-symbols-outlined text-wellness-coral text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Clinically Verified Sources</span>
+</div>
+<h2 class="font-display-lg text-display-lg text-primary">Trusted Knowledge</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                        Your health insights are derived from the world’s leading medical institutions. We cross-reference AI analysis with peer-reviewed literature to ensure accuracy and safety.
+                    </p>
+</div>
+</section>
+<!-- Institutional Sources Bento Grid -->
+<section>
+<h3 class="font-title-lg text-title-lg text-primary mb-lg">Recognized Medical Authorities</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-muted-stone rounded-2xl p-lg shadow-soft hover:shadow-lift transition-shadow flex flex-col h-full group">
+<div class="mb-4 w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:text-wellness-coral transition-colors">
+<span class="material-symbols-outlined text-3xl">local_hospital</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Mayo Clinic</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 flex-1">
+                            A nonprofit American academic medical center focused on integrated healthcare, education, and research.
+                        </p>
+<a class="inline-flex items-center gap-1 font-label-md text-label-md text-wellness-coral hover:opacity-80 transition-opacity mt-auto" href="#">
+                            View guidelines <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-muted-stone rounded-2xl p-lg shadow-soft hover:shadow-lift transition-shadow flex flex-col h-full group">
+<div class="mb-4 w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:text-wellness-coral transition-colors">
+<span class="material-symbols-outlined text-3xl">favorite</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">American Heart Association</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 flex-1">
+                            Funding cardiovascular medical research, educates consumers on healthy living and fosters appropriate cardiac care.
+                        </p>
+<a class="inline-flex items-center gap-1 font-label-md text-label-md text-wellness-coral hover:opacity-80 transition-opacity mt-auto" href="#">
+                            Read statements <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-muted-stone rounded-2xl p-lg shadow-soft hover:shadow-lift transition-shadow flex flex-col h-full group">
+<div class="mb-4 w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:text-wellness-coral transition-colors">
+<span class="material-symbols-outlined text-3xl">biotech</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">National Institutes of Health</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 flex-1">
+                            The primary agency of the United States government responsible for biomedical and public health research.
+                        </p>
+<a class="inline-flex items-center gap-1 font-label-md text-label-md text-wellness-coral hover:opacity-80 transition-opacity mt-auto" href="#">
+                            Explore research <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Personalized Recommendations (AI Highlighted) -->
+<section class="bg-surface-container-lowest border border-muted-stone ai-border rounded-2xl shadow-soft p-lg md:p-xl relative overflow-hidden">
+<!-- Decorative background blob -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-wellness-coral/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col md:flex-row gap-xl">
+<div class="w-full md:w-1/3">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-wellness-coral">auto_awesome</span>
+<span class="font-label-md text-label-md text-wellness-coral">AI Curated For You</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-4">Recommended Reading</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                            Based on your recent lab results indicating mildly elevated cholesterol, we've selected these resources from trusted providers to help you manage your diet effectively.
+                        </p>
+</div>
+<div class="w-full md:w-2/3 space-y-md">
+<!-- Rec Item 1 -->
+<a class="flex items-start md:items-center gap-4 p-4 rounded-xl hover:bg-surface-container-low border border-transparent hover:border-muted-stone transition-all group" href="#">
+<div class="w-24 h-16 bg-surface-container-high rounded-lg overflow-hidden shrink-0 relative">
+<img alt="A beautifully arranged fresh salad with tomatoes, greens, and a light olive oil dressing on a pristine white plate, shot in bright, soft natural lighting to convey a healthy, fresh aesthetic." class="w-full h-full object-cover" data-alt="A beautifully arranged fresh salad with tomatoes, greens, and a light olive oil dressing on a pristine white plate, shot in bright, soft natural lighting to convey a healthy, fresh aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL0z4YccFGjRkqNszuHyUw9njoxhVG8OTct0Ai6NJOfIZlo1BLK2v3VnqovVEM6gRPp5skLH8fX-GgbV0uQJxHG_EydvdUk5fdrsWUVt1rwq2jb6csw1sYwpQ-8qz_oXB0tX2j8gm15H7u98D1gZpMKM-rDj-Y_x_of7tsBt4jy0WcziBSJ3bxVGT-IPXpZrGDBBIsy5zpcx-NA1oeQ380bYHmUqq7z2-Ga7l6X44r3k7AraoqVbiX0VclHi7Zu8vROhmxnH4mWjEr"/>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="font-label-md text-label-md text-primary mb-1 group-hover:text-wellness-coral transition-colors">Mediterranean Diet Basics: A Starter Guide</h4>
+<p class="font-caption text-caption text-on-surface-variant">Mayo Clinic • 5 min video</p>
+</div>
+</a>
+<!-- Rec Item 2 -->
+<a class="flex items-start md:items-center gap-4 p-4 rounded-xl hover:bg-surface-container-low border border-transparent hover:border-muted-stone transition-all group" href="#">
+<div class="w-24 h-16 bg-surface-container-high rounded-lg overflow-hidden shrink-0 relative flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-2xl">article</span>
+</div>
+<div class="flex-1">
+<h4 class="font-label-md text-label-md text-primary mb-1 group-hover:text-wellness-coral transition-colors">Understanding LDL vs HDL Cholesterol</h4>
+<p class="font-caption text-caption text-on-surface-variant">American Heart Association • Article</p>
+</div>
+</a>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Nav Bar (Mobile) -->
+<nav class="bg-surface shadow-lg docked full-width bottom-0 md:hidden fixed left-0 w-full z-50 flex justify-around items-center px-4 pb-safe pt-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors py-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-caption text-caption mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors py-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">description</span>
+<span class="font-caption text-caption mt-1">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors py-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">chat_bubble</span>
+<span class="font-caption text-caption mt-1">AI Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold scale-95 duration-150 py-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-caption text-caption mt-1">Trends</span>
+</a>
+</nav>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
