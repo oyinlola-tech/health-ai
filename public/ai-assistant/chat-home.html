@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MedExplain AI - Chat Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#e9e1dc",
+                        "secondary-fixed-dim": "#cfc5bc",
+                        "surface": "#fdf8f7",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#121415",
+                        "primary-fixed-dim": "#cdc5c0",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#ddd9d8",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "on-primary-fixed-variant": "#4b4642",
+                        "surface-container-highest": "#e6e1e0",
+                        "secondary-container": "#e9ded5",
+                        "on-surface-variant": "#4d4540",
+                        "inverse-primary": "#cdc5c0",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#464749",
+                        "secondary-fixed": "#ebe1d8",
+                        "on-tertiary-container": "#8f8f91",
+                        "on-background": "#1c1b1b",
+                        "on-primary-container": "#948e89",
+                        "surface-container": "#f1edec",
+                        "surface-variant": "#e6e1e0",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#2b2724",
+                        "background": "#fdf8f7",
+                        "on-error": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "tertiary-container": "#27282a",
+                        "surface-container-high": "#ece7e6",
+                        "tertiary-fixed-dim": "#c7c6c8",
+                        "outline-variant": "#cfc4bd",
+                        "on-secondary-fixed": "#201b15",
+                        "on-primary-fixed": "#1e1b18",
+                        "inverse-surface": "#313030",
+                        "on-secondary-container": "#69615a",
+                        "surface-container-low": "#f7f3f1",
+                        "outline": "#7e756f",
+                        "tertiary-fixed": "#e3e2e4",
+                        "secondary": "#645d56",
+                        "inverse-on-surface": "#f4f0ee",
+                        "surface-bright": "#fdf8f7",
+                        "surface-tint": "#635d5a",
+                        "primary": "#161310",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "sm": "8px",
+                        "margin-desktop": "64px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "margin-mobile": "20px",
+                        "xxl": "48px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "headline-lg": ["Spectral"],
+                        "caption": ["Inter"],
+                        "headline-lg-mobile": ["Spectral"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Spectral"],
+                        "headline-md": ["Spectral"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #FDF6F3; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E8E4E1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .coral-accent-border {
+            border-top: 2px solid #FF6E5C;
+        }
+        .coral-btn {
+            background-color: #FF6E5C;
+            color: #ffffff;
+        }
+        .coral-btn:hover {
+            background-color: #e56353;
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="text-on-surface antialiased min-h-screen flex flex-col md:flex-row">
+<!-- TopAppBar for Mobile -->
+<header class="md:hidden bg-surface border-b border-outline-variant shadow-sm docked full-width top-0 z-40 flex justify-between items-center w-full px-margin-mobile py-base sticky">
+<div class="text-headline-md font-headline-md text-primary">MedExplain AI</div>
+<div class="flex gap-4">
+<button class="hover:bg-surface-container-low transition-colors rounded-full p-2 active:scale-95 duration-150 text-primary">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="hover:bg-surface-container-low transition-colors rounded-full p-2 active:scale-95 duration-150 text-primary">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- SideNav for Desktop (Implied by instructions, mapping to BottomNav options for consistency if needed, but instructed to focus on canvas) -->
+<nav class="hidden md:flex flex-col w-64 bg-surface border-r border-outline-variant h-screen sticky top-0 py-base px-sm z-40">
+<div class="px-md py-lg mb-8">
+<div class="text-headline-md font-headline-md text-primary">MedExplain AI</div>
+</div>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-md py-3 rounded-full bg-secondary-container text-on-secondary-container font-bold transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="text-label-md font-label-md">Chat</span>
+</a>
+<a class="flex items-center gap-3 px-md py-3 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-label-md font-label-md">History</span>
+</a>
+<a class="flex items-center gap-3 px-md py-3 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="text-label-md font-label-md">Security</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-2 border-t border-outline-variant pt-4">
+<a class="flex items-center gap-3 px-md py-3 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="text-label-md font-label-md">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-md py-3 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 max-w-[1120px] mx-auto w-full px-margin-mobile md:px-margin-desktop py-lg md:py-xxl mb-24 md:mb-0">
+<!-- Welcome Section -->
+<section class="mb-xxl text-center md:text-left">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary mb-2">Good morning, Sarah.</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant">How can I help you understand your health today?</p>
+</section>
+<!-- Search / Input Area (Prominent) -->
+<section class="mb-xxl relative max-w-3xl mx-auto md:mx-0">
+<div class="relative group">
+<textarea class="w-full bg-white border border-[#E8E4E1] rounded-xl p-4 pr-16 text-body-lg font-body-lg text-on-surface focus:outline-none focus:border-tertiary focus:ring-2 focus:ring-[#FF6E5C] focus:ring-opacity-20 transition-all resize-none shadow-sm" placeholder="Ask about symptoms, lab results, or medical terms..." rows="3"></textarea>
+<button class="absolute right-4 bottom-4 coral-btn p-2 rounded-full shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+<div class="mt-3 flex flex-wrap gap-2 text-caption font-caption text-on-surface-variant justify-center md:justify-start">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">info</span> HIPAA Compliant</span>
+<span class="hidden md:inline">•</span>
+<span>AI-generated information is for educational purposes.</span>
+</div>
+</section>
+<!-- Bento Grid Layout for Suggestions & Actions -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg mb-xxl">
+<!-- Suggested Questions (Based on Context) -->
+<section class="md:col-span-8">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-[#FF6E5C]">lightbulb</span>
+<h2 class="text-title-lg font-title-lg text-primary">Suggested for You</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<button class="glass-card coral-accent-border p-4 rounded-xl text-left hover:shadow-lg transition-shadow group flex flex-col h-full">
+<span class="text-caption font-caption text-[#FF6E5C] font-semibold mb-1 uppercase tracking-wide">Recent Lab Result</span>
+<p class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors flex-1">"What does my slight LDL elevation mean for my daily diet?"</p>
+<div class="mt-4 flex justify-end">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-[#FF6E5C] transition-colors">arrow_forward</span>
+</div>
+</button>
+<button class="glass-card p-4 rounded-xl text-left hover:shadow-lg transition-shadow group flex flex-col h-full border-t-2 border-transparent">
+<span class="text-caption font-caption text-on-surface-variant font-semibold mb-1 uppercase tracking-wide">Follow-up</span>
+<p class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors flex-1">"Can you summarize the side effects of my new medication?"</p>
+<div class="mt-4 flex justify-end">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-[#FF6E5C] transition-colors">arrow_forward</span>
+</div>
+</button>
+</div>
+</section>
+<!-- Quick Actions -->
+<section class="md:col-span-4">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-on-surface-variant">bolt</span>
+<h2 class="text-title-lg font-title-lg text-primary">Quick Actions</h2>
+</div>
+<div class="flex flex-col gap-3">
+<button class="flex items-center gap-3 p-3 bg-white border border-[#E8E4E1] rounded-lg hover:shadow-md transition-shadow text-left">
+<div class="w-10 h-10 rounded-full bg-[#FDF6F3] flex items-center justify-center text-[#FF6E5C]">
+<span class="material-symbols-outlined">stethoscope</span>
+</div>
+<div>
+<div class="text-label-md font-label-md text-on-surface font-semibold">Analyze Symptom</div>
+<div class="text-caption font-caption text-on-surface-variant">Guided symptom check</div>
+</div>
+</button>
+<button class="flex items-center gap-3 p-3 bg-white border border-[#E8E4E1] rounded-lg hover:shadow-md transition-shadow text-left">
+<div class="w-10 h-10 rounded-full bg-[#FDF6F3] flex items-center justify-center text-[#FF6E5C]">
+<span class="material-symbols-outlined">summarize</span>
+</div>
+<div>
+<div class="text-label-md font-label-md text-on-surface font-semibold">Summarize Report</div>
+<div class="text-caption font-caption text-on-surface-variant">Upload PDF or image</div>
+</div>
+</button>
+</div>
+</section>
+</div>
+<!-- Recent Conversations -->
+<section>
+<div class="flex items-center justify-between mb-4 border-b border-outline-variant pb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">history</span>
+<h2 class="text-title-lg font-title-lg text-primary">Recent Conversations</h2>
+</div>
+<button class="text-label-md font-label-md text-[#FF6E5C] hover:underline">View All</button>
+</div>
+<div class="space-y-2">
+<a class="block p-4 rounded-xl hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-[#E8E4E1]" href="#">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-label-md font-label-md text-on-surface font-semibold truncate pr-4">Understanding Blood Pressure Readings</h3>
+<span class="text-caption font-caption text-on-surface-variant shrink-0">Yesterday</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant truncate">Discussed the difference between systolic and diastolic numbers...</p>
+</a>
+<a class="block p-4 rounded-xl hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-[#E8E4E1]" href="#">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-label-md font-label-md text-on-surface font-semibold truncate pr-4">Migraine Triggers and Prevention</h3>
+<span class="text-caption font-caption text-on-surface-variant shrink-0">Oct 24</span>
+</div>
+<p class="text-caption font-caption text-on-surface-variant truncate">Explored common dietary triggers and lifestyle adjustments...</p>
+</a>
+</div>
+</section>
+</main>
+<!-- BottomNavBar for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface shadow-[0_-4px_12px_rgba(0,0,0,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-1 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="text-label-md font-label-md mt-1">Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-label-md font-label-md mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="text-label-md font-label-md mt-1">Security</span>
+</a>
+</nav>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
