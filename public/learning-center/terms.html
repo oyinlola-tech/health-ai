@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Medical Terms Explained - MedExplain AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#e9e1dc",
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "surface-container-highest": "#e6e1e0",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#27282a",
+                        "on-primary-fixed-variant": "#4b4642",
+                        "tertiary-fixed": "#e3e2e4",
+                        "secondary": "#645d56",
+                        "outline-variant": "#cfc4bd",
+                        "on-background": "#1c1b1b",
+                        "tertiary-fixed-dim": "#c7c6c8",
+                        "primary-container": "#2b2724",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#ddd9d8",
+                        "surface-container-low": "#f7f3f1",
+                        "surface-variant": "#e6e1e0",
+                        "on-secondary-fixed": "#201b15",
+                        "surface-bright": "#fdf8f7",
+                        "surface-container-high": "#ece7e6",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#464749",
+                        "on-error-container": "#93000a",
+                        "surface": "#fdf8f7",
+                        "secondary-fixed": "#ebe1d8",
+                        "on-primary-container": "#948e89",
+                        "primary-fixed-dim": "#cdc5c0",
+                        "primary": "#161310",
+                        "inverse-on-surface": "#f4f0ee",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "background": "#fdf8f7",
+                        "tertiary": "#121415",
+                        "surface-container": "#f1edec",
+                        "on-tertiary-container": "#8f8f91",
+                        "inverse-primary": "#cdc5c0",
+                        "on-surface": "#1c1b1b",
+                        "on-secondary-container": "#69615a",
+                        "on-primary-fixed": "#1e1b18",
+                        "outline": "#7e756f",
+                        "secondary-fixed-dim": "#cfc5bc",
+                        "secondary-container": "#e9ded5",
+                        "on-surface-variant": "#4d4540",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#635d5a",
+                        "inverse-surface": "#313030",
+                        "error": "#ba1a1a",
+                        "coral": {
+                            50: '#fff1f0',
+                            100: '#ffe4e1',
+                            500: '#ff6e5c',
+                            600: '#eb5e4c'
+                        }
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "md": "16px",
+                        "margin-desktop": "64px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "xxl": "48px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Spectral"],
+                        "display-lg": ["Spectral"],
+                        "caption": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Spectral"],
+                        "title-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Spectral"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #FDF6F3; /* Theme Background */
+            color: #1c1b1b; /* on-background */
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .ai-bubble {
+            border-radius: 1rem 1rem 1rem 0;
+        }
+        
+        /* Smooth scrolling for A-Z */
+        html { scroll-behavior: smooth; }
+
+        /* Hide scrollbar for nav */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="min-h-screen flex flex-col md:flex-row relative">
+<!-- Desktop SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 hidden md:flex flex-col bg-surface-container-low shadow-sm z-40">
+<div class="p-md pb-0 flex-shrink-0">
+<h1 class="font-headline-md text-headline-md font-bold text-primary mb-xl">MedExplain AI</h1>
+</div>
+<div class="flex-1 overflow-y-auto p-md space-y-sm no-scrollbar">
+<!-- Inactive (Dashboard) -->
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-xl font-label-md text-label-md" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<!-- Active (Insights/Dictionary intent) -->
+<a class="flex items-center gap-4 bg-secondary-container text-on-secondary-container rounded-xl px-4 py-3 opacity-80 duration-150 font-label-md text-label-md" href="#">
+<span aria-hidden="true" class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+                Insights
+            </a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-xl font-label-md text-label-md" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">description</span>
+                Reports
+            </a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-xl font-label-md text-label-md" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">trending_up</span>
+                Health Trends
+            </a>
+</div>
+<div class="p-md mt-auto flex-shrink-0">
+<div class="bg-surface-container-high rounded-xl p-4 mb-4">
+<p class="font-label-md text-label-md text-on-surface mb-1">Welcome back</p>
+<p class="font-caption text-caption text-on-surface-variant mb-3">Health Overview</p>
+<button class="w-full bg-coral-500 hover:bg-coral-600 text-white rounded-lg py-2 px-4 font-label-md text-label-md transition-colors min-h-[48px]">
+                    Upload New Report
+                </button>
+</div>
+<div class="space-y-sm">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-2 hover:bg-surface-container-high transition-all rounded-xl font-label-md text-label-md" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-2 hover:bg-surface-container-high transition-all rounded-xl font-label-md text-label-md" href="#">
+<span aria-hidden="true" class="material-symbols-outlined">help</span>
+                    Support
+                </a>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col w-full md:ml-64 pb-24 md:pb-0 min-h-screen">
+<!-- Mobile TopAppBar -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile py-4 bg-surface shadow-sm sticky top-0 z-40">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">MedExplain AI</h1>
+<div class="flex items-center gap-4 text-primary">
+<button aria-label="Notifications" class="hover:text-coral-500 transition-colors p-2">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="Account" class="hover:text-coral-500 transition-colors p-2">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Desktop Header Area (Search) -->
+<div class="hidden md:flex justify-end items-center w-full px-margin-desktop py-4 bg-transparent max-w-7xl mx-auto">
+<div class="flex items-center gap-4 text-primary">
+<button aria-label="Notifications" class="hover:text-coral-500 transition-colors p-2">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="Account" class="hover:text-coral-500 transition-colors p-2">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+<!-- Dictionary Content -->
+<div class="flex-1 w-full max-w-5xl mx-auto px-margin-mobile md:px-margin-desktop py-lg md:py-xl">
+<!-- Header & Search -->
+<div class="mb-xxl">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-sm">Medical Dictionary</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg max-w-2xl">Plain-language explanations for complex medical terms, helping you understand your health reports clearly.</p>
+<div class="relative max-w-xl">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-lowest border border-outline-variant rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:border-tertiary-container focus:ring-2 focus:ring-coral-500/20 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.04)]" placeholder="Search for a medical term..." type="text"/>
+</div>
+</div>
+<!-- A-Z Nav -->
+<div class="mb-xl overflow-x-auto no-scrollbar pb-2">
+<div class="flex gap-2 min-w-max">
+<button class="w-10 h-10 rounded-full flex items-center justify-center font-label-md text-label-md bg-surface-container-highest text-on-surface hover:bg-surface-variant transition-colors">A</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center font-label-md text-label-md bg-surface-container-highest text-on-surface hover:bg-surface-variant transition-colors">B</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center font-label-md text-label-md bg-surface-container-highest text-on-surface hover:bg-surface-variant transition-colors">C</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center font-label-md text-label-md bg-surface-container-highest text-on-surface hover:bg-surface-variant transition-colors">D</button>
+<!-- Skipped for brevity, jumping to L -->
+<div class="w-4 flex items-center justify-center text-on-surface-variant">...</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center font-label-md text-label-md bg-coral-500 text-white shadow-md">L</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center font-label-md text-label-md bg-surface-container-highest text-on-surface hover:bg-surface-variant transition-colors">M</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center font-label-md text-label-md bg-surface-container-highest text-on-surface hover:bg-surface-variant transition-colors">N</button>
+</div>
+</div>
+<!-- Term Display Area -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg lg:gap-xl">
+<!-- Main Term Card -->
+<article class="lg:col-span-8 bg-surface-container-lowest rounded-3xl p-lg md:p-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-[#E8E4E1] relative overflow-hidden group hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-shadow duration-300">
+<!-- Subtle AI highlight -->
+<div class="absolute top-0 left-0 w-full h-1 bg-coral-500/20"></div>
+<header class="mb-lg border-b border-outline-variant pb-md">
+<h3 class="font-display-lg text-display-lg text-on-background mb-xs">LDL</h3>
+<p class="font-title-lg text-title-lg text-on-surface-variant">Low-Density Lipoprotein</p>
+</header>
+<!-- AI Assistant Explanation Bubble -->
+<div class="bg-coral-500/5 p-lg ai-bubble mb-lg border border-coral-500/10">
+<div class="flex items-center gap-2 mb-md text-coral-600">
+<span class="material-symbols-outlined text-[20px]" data-weight="fill" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h4 class="font-label-md text-label-md font-semibold tracking-wide uppercase">Simple Explanation</h4>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
+                            Think of LDL as a fleet of delivery trucks dropping off cholesterol to the cells in your body that need it. However, if there are too many trucks on the road (high LDL), they can cause a traffic jam and leave excess cargo (cholesterol) stuck on the walls of your blood vessels. Over time, this buildup can narrow or block the vessels.
+                        </p>
+</div>
+<div class="space-y-lg">
+<section>
+<h4 class="font-title-lg text-title-lg text-on-background mb-sm">Why it matters</h4>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                LDL is often called the "bad" cholesterol because high levels increase your risk for heart disease and stroke. Monitoring this number helps your doctor understand your cardiovascular risk and decide if lifestyle changes or medications are needed to keep your arteries clear.
+                            </p>
+</section>
+<section class="bg-surface-container p-md rounded-2xl">
+<h4 class="font-title-lg text-title-lg text-on-background mb-md">Common Ranges</h4>
+<div class="space-y-4">
+<!-- Range 1 -->
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface mb-1">
+<span>Optimal</span>
+<span>&lt; 100 mg/dL</span>
+</div>
+<div class="w-full bg-[#E8E4E1] h-2 rounded-full overflow-hidden">
+<div class="bg-green-600/80 h-full w-[40%] rounded-full"></div>
+</div>
+</div>
+<!-- Range 2 -->
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface mb-1">
+<span>Near Optimal</span>
+<span>100 - 129 mg/dL</span>
+</div>
+<div class="w-full bg-[#E8E4E1] h-2 rounded-full overflow-hidden">
+<div class="bg-yellow-500/80 h-full w-[60%] rounded-full"></div>
+</div>
+</div>
+<!-- Range 3 -->
+<div>
+<div class="flex justify-between font-label-md text-label-md text-on-surface mb-1">
+<span>High</span>
+<span class="text-coral-600 font-semibold">160 - 189 mg/dL</span>
+</div>
+<div class="w-full bg-[#E8E4E1] h-2 rounded-full overflow-hidden">
+<div class="bg-coral-500 h-full w-[85%] rounded-full"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</article>
+<!-- Sidebar Content -->
+<aside class="lg:col-span-4 space-y-lg">
+<!-- Related Terms Bento -->
+<div class="bg-surface-container-lowest rounded-3xl p-lg shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-[#E8E4E1]">
+<h4 class="font-headline-md text-headline-md text-on-background mb-md">Related Terms</h4>
+<ul class="space-y-sm">
+<li>
+<a class="flex items-center justify-between p-3 hover:bg-surface-container-low rounded-xl transition-colors group" href="#">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-coral-600 transition-colors">HDL (High-Density Lipoprotein)</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-coral-500 transition-colors">arrow_forward</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between p-3 hover:bg-surface-container-low rounded-xl transition-colors group" href="#">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-coral-600 transition-colors">Triglycerides</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-coral-500 transition-colors">arrow_forward</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between p-3 hover:bg-surface-container-low rounded-xl transition-colors group" href="#">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-coral-600 transition-colors">Atherosclerosis</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-coral-500 transition-colors">arrow_forward</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- Ask AI Prompt Card -->
+<div class="bg-gradient-to-br from-coral-50 to-surface-container-lowest rounded-3xl p-lg shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-coral-100 flex flex-col justify-center items-center text-center">
+<div class="w-12 h-12 rounded-full bg-coral-100 flex items-center justify-center text-coral-600 mb-md">
+<span class="material-symbols-outlined">psychology_alt</span>
+</div>
+<h4 class="font-title-lg text-title-lg text-on-background mb-xs">Still Confused?</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">Ask MedExplain to contextualize this term with your specific health report.</p>
+<button class="w-full bg-coral-500 hover:bg-coral-600 text-white rounded-xl py-3 px-4 font-label-md text-label-md transition-colors min-h-[48px] shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                            Ask AI Chat
+                        </button>
+</div>
+</aside>
+</div>
+</div>
+</main>
+<!-- Mobile BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe pt-2 bg-surface shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-md text-label-md text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1">description</span>
+<span class="font-label-md text-label-md text-[10px]">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1">chat_bubble</span>
+<span class="font-label-md text-label-md text-[10px]">AI Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold scale-95 duration-150 p-2" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-weight="fill" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-label-md text-label-md text-[10px]">Insights</span>
+</a>
+</nav>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
