@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account Created Successfully</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet"/>
+
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#cdc5c0",
+                        "outline": "#7e756f",
+                        "surface-container-highest": "#e6e1e0",
+                        "surface-bright": "#fdf8f7",
+                        "surface-variant": "#e6e1e0",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#8f8f91",
+                        "primary-fixed-dim": "#cdc5c0",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "on-surface": "#1c1b1b",
+                        "surface-container-high": "#ece7e6",
+                        "on-tertiary-fixed-variant": "#464749",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e3e2e4",
+                        "outline-variant": "#cfc4bd",
+                        "on-primary-container": "#948e89",
+                        "on-secondary-container": "#69615a",
+                        "tertiary": "#121415",
+                        "secondary-fixed": "#ebe1d8",
+                        "error": "#ba1a1a",
+                        "surface": "#fdf8f7",
+                        "background": "#fdf8f7",
+                        "surface-container": "#f1edec",
+                        "on-primary-fixed": "#1e1b18",
+                        "on-primary-fixed-variant": "#4b4642",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#201b15",
+                        "surface-tint": "#635d5a",
+                        "secondary": "#645d56",
+                        "inverse-surface": "#313030",
+                        "surface-container-low": "#f7f3f1",
+                        "secondary-fixed-dim": "#cfc5bc",
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#4d4540",
+                        "primary-fixed": "#e9e1dc",
+                        "surface-dim": "#ddd9d8",
+                        "secondary-container": "#e9ded5",
+                        "inverse-on-surface": "#f4f0ee",
+                        "tertiary-fixed-dim": "#c7c6c8",
+                        "primary": "#161310",
+                        "tertiary-container": "#27282a",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#2b2724",
+                        "on-background": "#1c1b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "xxl": "48px",
+                        "sm": "8px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-md": ["Spectral"],
+                        "headline-lg-mobile": ["Spectral"],
+                        "title-lg": ["Inter"],
+                        "caption": ["Inter"],
+                        "headline-lg": ["Spectral"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Spectral"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #FF6E5C;
+            border-radius: 50%;
+            animation: explode 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .success-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 110, 92, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 20px rgba(255, 110, 92, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 110, 92, 0);
+            }
+        }
+        
+        .fade-up {
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center font-body-md overflow-hidden antialiased">
+<!-- Suppressed Nav Shells for Transactional Success Screen -->
+<main class="w-full max-w-[1120px] mx-auto px-margin-desktop relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-128px)]">
+<div class="relative w-full max-w-lg mx-auto">
+<!-- Decorative Background Element -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary-container rounded-full blur-[100px] opacity-40 -z-10"></div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-xxl text-center relative overflow-hidden fade-up">
+<!-- Confetti Container -->
+<div class="absolute inset-0 pointer-events-none z-0" id="confetti-container"></div>
+<!-- Success Icon -->
+<div class="relative z-10 flex justify-center mb-xl fade-up delay-100">
+<div class="w-24 h-24 bg-[#FF6E5C] rounded-full flex items-center justify-center success-pulse shadow-[0_8px_20px_rgba(0,0,0,0.06)]">
+<span class="material-symbols-outlined text-white text-5xl" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Typography -->
+<div class="relative z-10 space-y-md mb-xxl fade-up delay-200">
+<h1 class="font-display-lg text-display-lg text-on-surface">Account Created Successfully!</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto">
+                        Your health journey begins now. Let’s get started with your first report.
+                    </p>
+</div>
+<!-- CTA -->
+<div class="relative z-10 fade-up delay-300">
+<button class="bg-[#FF6E5C] text-white font-label-md text-label-md rounded-lg px-xl py-3 min-h-[48px] inline-flex items-center justify-center hover:bg-opacity-90 transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:-translate-y-0.5">
+                        Go to Dashboard
+                        <span class="material-symbols-outlined ml-2 text-xl" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#FF6E5C', '#cfc4bd', '#645d56']; // Coral, Muted Stone, Secondary
+            const numConfetti = 50;
+
+            for (let i = 0; i < numConfetti; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Randomize position from center
+                const tx = (Math.random() - 0.5) * 400 + 'px';
+                const ty = (Math.random() - 0.5) * 400 + 'px';
+                
+                confetti.style.setProperty('--tx', tx);
+                confetti.style.setProperty('--ty', ty);
+                
+                // Randomize color
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Randomize size and delay
+                const size = Math.random() * 6 + 4 + 'px';
+                confetti.style.width = size;
+                confetti.style.height = size;
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                
+                // Initial position at center
+                confetti.style.left = '50%';
+                confetti.style.top = '30%'; // Slightly above center to match icon
+                
+                container.appendChild(confetti);
+            }
+        });
+    </script>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
