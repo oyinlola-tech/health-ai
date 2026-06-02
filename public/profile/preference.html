@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Health Preferences - MedExplain AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#c7c6c8",
+                        "outline-variant": "#cfc4bd",
+                        "surface-container-high": "#ece7e6",
+                        "tertiary-container": "#27282a",
+                        "on-surface": "#1c1b1b",
+                        "on-error": "#ffffff",
+                        "background": "#fdf8f7",
+                        "primary-container": "#2b2724",
+                        "surface-variant": "#e6e1e0",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#f1edec",
+                        "on-primary-container": "#948e89",
+                        "secondary-fixed": "#ebe1d8",
+                        "on-tertiary-container": "#8f8f91",
+                        "on-background": "#1c1b1b",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#1a1c1e",
+                        "primary": "#161310",
+                        "surface-tint": "#635d5a",
+                        "surface-bright": "#fdf8f7",
+                        "inverse-on-surface": "#f4f0ee",
+                        "tertiary-fixed": "#e3e2e4",
+                        "secondary": "#645d56",
+                        "surface-container-low": "#f7f3f1",
+                        "outline": "#7e756f",
+                        "on-secondary-container": "#69615a",
+                        "inverse-surface": "#313030",
+                        "on-secondary-fixed": "#201b15",
+                        "on-primary-fixed": "#1e1b18",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#cdc5c0",
+                        "tertiary": "#121415",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#fdf8f7",
+                        "secondary-fixed-dim": "#cfc5bc",
+                        "primary-fixed": "#e9e1dc",
+                        "on-tertiary-fixed-variant": "#464749",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e6e1e0",
+                        "secondary-container": "#e9ded5",
+                        "on-surface-variant": "#4d4540",
+                        "inverse-primary": "#cdc5c0",
+                        "on-secondary-fixed-variant": "#4c463f",
+                        "on-primary-fixed-variant": "#4b4642",
+                        "surface-dim": "#ddd9d8",
+                        "on-error-container": "#93000a",
+                        "coral": "#FF6E5C",
+                        "coral-light": "rgba(255, 110, 92, 0.05)"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "sm": "8px",
+                        "margin-desktop": "64px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "margin-mobile": "20px",
+                        "xxl": "48px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Spectral"],
+                        "headline-md": ["Spectral"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-lg": ["Spectral"],
+                        "caption": ["Inter"],
+                        "headline-lg-mobile": ["Spectral"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }]
+                    },
+                    "boxShadow": {
+                        'level1': '0 4px 12px rgba(0, 0, 0, 0.04)',
+                        'level2': '0 8px 20px rgba(0, 0, 0, 0.06)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #FDF6F3;
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #FF6E5C;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #FF6E5C;
+        }
+        .chip-selected {
+            background-color: #FF6E5C;
+            color: #ffffff;
+            border-color: #FF6E5C;
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="text-on-background font-body-md antialiased min-h-screen flex flex-col lg:flex-row">
+<!-- SideNavBar -->
+<nav class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] z-40 bg-surface-container-low w-64 shadow-md transition-all">
+<div class="px-4 py-6 border-b border-outline-variant">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A close-up portrait of a calm, professional individual with a warm smile, set against a soft, light-toned background. The lighting is natural and flattering, evoking a sense of trust and empathy consistent with a modern healthcare setting. The color palette features subtle earthy tones and soft whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBz0_nkONsyAd2ExPo8nY-d-lkc5nfmofiVjBZUFdiaGT06vrT1l5JYdBKdRbOqo7UUtzR0DPOWT9cHKpXicbxlQXZY0w1qqo-uKJehb97-zOrj94kAi6pC6rZ5Z5Q3tFTdLfSaHmvoqFiPmpLrvRXnMv_N8UOMDMcrHZDa2y7zHesGu996PHVNsedM1UHmRcFWeBGDcJIphswl6_dbPcUDEX8o6HoWLmBeNEYOIYDP6N4O52OQDm7A0d-jrUvLRwYGZyYpzdPJedMi"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Patient Portal</h2>
+<p class="font-caption text-caption text-secondary">Manage your health data</p>
+</div>
+</div>
+<button class="mt-4 w-full bg-coral text-white font-label-md text-label-md py-3 rounded-lg hover:bg-opacity-90 transition-colors shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Consultation
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto py-4">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all hover:text-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+                        Find Doctor
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all hover:text-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="medical_information">medical_information</span>
+                        Health Records
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all hover:text-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+                        My Appointments
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all hover:text-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+                        Consultation History
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-primary font-bold border-r-4 border-primary bg-secondary-container/30 px-4 py-3 hover:bg-surface-container-high transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="settings" data-weight="fill" style="font-variation-settings: 'FILL' 1;">settings</span>
+                        Settings
+                    </a>
+</li>
+</ul>
+</div>
+<div class="p-4 border-t border-outline-variant">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all hover:text-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                        Support
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:bg-surface-container-high transition-all hover:text-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                        Logout
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<div class="flex-1 flex flex-col min-w-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface border-b border-outline-variant shadow-sm transition-colors duration-200">
+<div class="flex items-center gap-4">
+<button class="lg:hidden text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary font-extrabold tracking-tight">MedExplain AI</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors duration-200 hidden md:block">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 mt-16 lg:ml-64 p-margin-mobile lg:p-margin-desktop max-w-[1120px] mx-auto w-full">
+<div class="mb-xl">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Health Preferences</h2>
+<p class="font-body-lg text-body-lg text-secondary">Customize your MedExplain AI experience. Tailor insights to fit your lifestyle, communication style, and health goals.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Dietary Preferences (Spans 8 cols on desktop) -->
+<section class="md:col-span-8 bg-surface-container-lowest rounded-2xl p-lg shadow-level1 border border-surface-variant hover:shadow-level2 transition-shadow duration-300">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-primary">Dietary Preferences</h3>
+</div>
+<p class="font-body-md text-body-md text-secondary mb-6">Select your dietary requirements to ensure nutritional AI advice aligns with your lifestyle.</p>
+<div class="flex flex-wrap gap-3">
+<button class="chip border border-outline-variant rounded-full px-4 py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors chip-selected">Vegetarian</button>
+<button class="chip border border-outline-variant rounded-full px-4 py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">Vegan</button>
+<button class="chip border border-outline-variant rounded-full px-4 py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors chip-selected">Gluten-Free</button>
+<button class="chip border border-outline-variant rounded-full px-4 py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">Dairy-Free</button>
+<button class="chip border border-outline-variant rounded-full px-4 py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">Keto</button>
+<button class="chip border border-outline-variant rounded-full px-4 py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">Low Sodium</button>
+</div>
+</section>
+<!-- Communication Tone (Spans 4 cols on desktop) -->
+<section class="md:col-span-4 bg-coral-light rounded-2xl p-lg shadow-level1 border-t-2 border-coral border-x border-b border-surface-variant hover:shadow-level2 transition-shadow duration-300 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-coral shadow-sm">
+<span class="material-symbols-outlined">record_voice_over</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-primary">AI Tone</h3>
+</div>
+<p class="font-body-md text-body-md text-secondary mb-6">How should MedExplain communicate with you?</p>
+<div class="space-y-4">
+<label class="flex items-center justify-between p-3 rounded-lg border border-coral bg-white cursor-pointer transition-colors">
+<div>
+<span class="block font-label-md text-label-md text-primary font-semibold">Empathetic &amp; Supportive</span>
+<span class="block font-caption text-caption text-secondary">Gentle, conversational tone.</span>
+</div>
+<input checked="" class="w-6 h-6 text-coral border-outline-variant focus:ring-coral" name="ai_tone" type="radio"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant bg-surface-container-lowest cursor-pointer hover:bg-surface-container-low transition-colors">
+<div>
+<span class="block font-label-md text-label-md text-primary font-semibold">Direct &amp; Clinical</span>
+<span class="block font-caption text-caption text-secondary">Straightforward, medical facts.</span>
+</div>
+<input class="w-6 h-6 text-coral border-outline-variant focus:ring-coral" name="ai_tone" type="radio"/>
+</label>
+</div>
+</div>
+</section>
+<!-- Interest Areas (Spans 12 cols on desktop) -->
+<section class="md:col-span-12 bg-surface-container-lowest rounded-2xl p-lg shadow-level1 border border-surface-variant hover:shadow-level2 transition-shadow duration-300">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-primary">Health Interest Areas</h3>
+</div>
+<p class="font-body-md text-body-md text-secondary mb-6">Select topics you'd like proactive insights and articles about on your dashboard.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-md">
+<!-- Toggle Card 1 -->
+<div class="flex items-center justify-between p-4 rounded-xl border border-outline-variant bg-surface-bright">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-coral">monitor_heart</span>
+<span class="font-label-md text-label-md text-primary">Heart Health</span>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle_heart" name="toggle_heart" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="toggle_heart"></label>
+</div>
+</div>
+<!-- Toggle Card 2 -->
+<div class="flex items-center justify-between p-4 rounded-xl border border-outline-variant bg-surface-bright">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-coral">bedtime</span>
+<span class="font-label-md text-label-md text-primary">Sleep Optimization</span>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle_sleep" name="toggle_sleep" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="toggle_sleep"></label>
+</div>
+</div>
+<!-- Toggle Card 3 -->
+<div class="flex items-center justify-between p-4 rounded-xl border border-outline-variant bg-surface-bright">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-coral">psychology</span>
+<span class="font-label-md text-label-md text-primary">Mental Wellbeing</span>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle_mental" name="toggle_mental" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="toggle_mental"></label>
+</div>
+</div>
+<!-- Toggle Card 4 -->
+<div class="flex items-center justify-between p-4 rounded-xl border border-outline-variant bg-surface-bright">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-coral">nutrition</span>
+<span class="font-label-md text-label-md text-primary">General Nutrition</span>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle_nutrition" name="toggle_nutrition" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="toggle_nutrition"></label>
+</div>
+</div>
+<!-- Toggle Card 5 -->
+<div class="flex items-center justify-between p-4 rounded-xl border border-outline-variant bg-surface-bright">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-coral">fitness_center</span>
+<span class="font-label-md text-label-md text-primary">Physical Fitness</span>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-outline-variant" id="toggle_fitness" name="toggle_fitness" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="toggle_fitness"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- Save Actions -->
+<div class="md:col-span-12 flex justify-end gap-4 mt-lg">
+<button class="px-6 py-3 rounded-lg font-label-md text-label-md text-primary bg-surface-container-low hover:bg-surface-variant border border-outline-variant transition-colors">Cancel</button>
+<button class="px-6 py-3 rounded-lg font-label-md text-label-md text-white bg-coral hover:bg-opacity-90 shadow-sm transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                        Save Preferences
+                    </button>
+</div>
+</div>
+</main>
+</div>
+<script>
+        // Simple chip selection toggle logic
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('chip-selected');
+                if(chip.classList.contains('chip-selected')) {
+                    chip.classList.add('bg-coral', 'text-white', 'border-coral');
+                    chip.classList.remove('text-on-surface');
+                } else {
+                    chip.classList.remove('bg-coral', 'text-white', 'border-coral');
+                    chip.classList.add('text-on-surface');
+                }
+            });
+        });
+    </script>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
