@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Camera Scan Report - MedExplain AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#27282a",
+                    "on-primary-fixed-variant": "#4b4642",
+                    "primary-fixed": "#e9e1dc",
+                    "on-secondary-fixed-variant": "#4c463f",
+                    "surface-container-highest": "#e6e1e0",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#e3e2e4",
+                    "secondary": "#645d56",
+                    "outline-variant": "#cfc4bd",
+                    "on-background": "#1c1b1b",
+                    "tertiary-fixed-dim": "#c7c6c8",
+                    "on-tertiary": "#ffffff",
+                    "surface-dim": "#ddd9d8",
+                    "surface-container-low": "#f7f3f1",
+                    "surface-variant": "#e6e1e0",
+                    "on-secondary-fixed": "#201b15",
+                    "primary-container": "#2b2724",
+                    "on-tertiary-fixed-variant": "#464749",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#fdf8f7",
+                    "surface-container-high": "#ece7e6",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f4f0ee",
+                    "error-container": "#ffdad6",
+                    "surface": "#fdf8f7",
+                    "secondary-fixed": "#ebe1d8",
+                    "on-primary-container": "#948e89",
+                    "primary-fixed-dim": "#cdc5c0",
+                    "primary": "#161310",
+                    "background": "#fdf8f7",
+                    "tertiary": "#121415",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#1a1c1e",
+                    "inverse-primary": "#cdc5c0",
+                    "on-surface": "#1c1b1b",
+                    "on-secondary-container": "#69615a",
+                    "on-primary-fixed": "#1e1b18",
+                    "surface-container": "#f1edec",
+                    "on-tertiary-container": "#8f8f91",
+                    "on-surface-variant": "#4d4540",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#635d5a",
+                    "inverse-surface": "#313030",
+                    "error": "#ba1a1a",
+                    "outline": "#7e756f",
+                    "secondary-fixed-dim": "#cfc5bc",
+                    "secondary-container": "#e9ded5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "xs": "4px",
+                    "gutter": "16px",
+                    "lg": "24px",
+                    "base": "8px",
+                    "xxl": "48px",
+                    "margin-mobile": "20px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Spectral"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Spectral"],
+                    "caption": ["Inter"],
+                    "display-lg": ["Spectral"],
+                    "headline-lg-mobile": ["Spectral"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .camera-overlay {
+            background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.4) 100%);
+        }
+        .viewfinder-corner {
+            width: 40px;
+            height: 40px;
+            border-color: rgba(255, 255, 255, 0.8);
+            position: absolute;
+        }
+    </style>
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="manifest" href="/assets/brand/site.webmanifest">
+<link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md antialiased h-screen overflow-hidden flex">
+<!-- SideNavBar (Shared Component) -->
+<aside class="hidden md:flex flex-col h-screen w-64 left-0 sticky shadow-md bg-surface-container-low border-r border-outline-variant py-xl px-md">
+<!-- Header -->
+<div class="mb-xl px-md">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">MedExplain AI</h1>
+<p class="font-caption text-caption text-on-surface-variant mt-xs">Empathetic Clarity</p>
+</div>
+<!-- CTA -->
+<button class="mb-xl w-full py-md px-lg bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity shadow-sm flex justify-center items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+            Upload New Report
+        </button>
+<!-- Main Navigation -->
+<nav class="flex-1 space-y-sm">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-md text-label-md">Assessment</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-lg px-md py-sm font-bold shadow-sm scale-98 active:scale-95 duration-200 cursor-pointer transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">Insights</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-label-md text-label-md">Health Trends</span>
+</a>
+</nav>
+<!-- Footer Navigation -->
+<div class="mt-auto space-y-sm pt-xl border-t border-outline-variant">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+<!-- User Profile Snippet -->
+<div class="flex items-center gap-md px-md py-sm mt-md">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-md text-label-md">
+                    JD
+                </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Jane Doe</span>
+<span class="font-caption text-caption text-on-surface-variant">Patient Portal</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-screen overflow-hidden bg-surface">
+<!-- TopAppBar (Shared Component modified for inner area) -->
+<header class="w-full top-0 sticky bg-surface shadow-sm z-10 flex justify-between items-center px-margin-desktop py-md">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary font-bold">Document Scanner</h2>
+</div>
+<div class="flex items-center gap-lg text-primary">
+<!-- Search (on right) -->
+<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-md py-sm border border-outline-variant focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mr-sm text-[20px]">search</span>
+<input class="bg-transparent border-none outline-none text-body-md font-body-md text-on-surface w-48 placeholder:text-on-surface-variant/70" placeholder="Search reports..." type="text"/>
+</div>
+<button class="cursor-pointer hover:bg-surface-container-low p-sm rounded-full transition-colors active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="cursor-pointer hover:bg-surface-container-low p-sm rounded-full transition-colors active:opacity-80">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Canvas Area -->
+<main class="flex-1 overflow-y-auto px-margin-desktop py-xxl">
+<div class="max-w-[1120px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-xxl">
+<!-- Camera Viewfinder Section -->
+<section class="col-span-1 lg:col-span-8 flex flex-col gap-lg">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-xs">Live View</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Position your medical document within the frame.</p>
+</div>
+<!-- Source Selector -->
+<div class="flex items-center gap-sm bg-surface-container-lowest border border-outline-variant rounded-lg px-md py-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">videocam</span>
+<select class="bg-transparent border-none outline-none text-label-md font-label-md text-on-surface cursor-pointer focus:ring-0 p-0">
+<option>Internal Webcam</option>
+<option>USB Camera</option>
+</select>
+</div>
+</div>
+<!-- Main Camera Container -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-md overflow-hidden relative group">
+<!-- The Video Feed Placeholder -->
+<div class="w-full aspect-[4/3] bg-cover bg-center relative" data-alt="A first-person point-of-view shot looking through a digital camera viewfinder at a crisp, white medical lab report resting on a clean, light wood desk. The lighting is bright, soft, and diffused, creating a modern, high-key, light-mode aesthetic. The focus is sharp on the center of the document, which features subtle typographic elements and clinical charts. The overall mood is professional, calm, and clinically precise, reflecting a high-end healthcare environment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDfAm6BZiyGEMvyge0A6KyV67eQkyINxoGfCcNZXd7BtBavVRXNCmJBJXmimzTto0SeOLlHb1fN9U6neyqi7fndxihqBlj3XGW1sHaHSUOcrz29Fg7D9iPX_5Es9YVwHnjU5JUcN2KQ4I1l1a2OukhdWJh3zRUrsT8YP6WmTLiUz5KI9vb6bw5z-wlpO7K83xW4heir6_ten8z_nMJJCHUtPOxjXwvsMjy1eL0biUT6tS3X94Xfarr9p8ejiVr8yP818JH1_0Hw4tTI');">
+<!-- Dark Gradient Overlay for better UI contrast -->
+<div class="absolute inset-0 camera-overlay"></div>
+<!-- Viewfinder Guides -->
+<div class="absolute inset-lg border border-white/20 border-dashed pointer-events-none"></div>
+<!-- Corners -->
+<div class="viewfinder-corner top-lg left-lg border-t-4 border-l-4 rounded-tl-lg pointer-events-none transition-transform group-hover:scale-105 duration-300"></div>
+<div class="viewfinder-corner top-lg right-lg border-t-4 border-r-4 rounded-tr-lg pointer-events-none transition-transform group-hover:scale-105 duration-300"></div>
+<div class="viewfinder-corner bottom-lg left-lg border-b-4 border-l-4 rounded-bl-lg pointer-events-none transition-transform group-hover:scale-105 duration-300"></div>
+<div class="viewfinder-corner bottom-lg right-lg border-b-4 border-r-4 rounded-br-lg pointer-events-none transition-transform group-hover:scale-105 duration-300"></div>
+<!-- Alignment Feedback (Mocked state) -->
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-surface-container-lowest/90 backdrop-blur-sm px-md py-sm rounded-full flex items-center gap-sm shadow-sm border border-outline-variant pointer-events-none opacity-0 transition-opacity">
+<span class="material-symbols-outlined text-secondary text-[20px]">done</span>
+<span class="font-label-md text-label-md text-on-surface">Perfect alignment</span>
+</div>
+</div>
+<!-- Camera Controls Bar -->
+<div class="bg-surface-container-lowest px-lg py-md border-t border-outline-variant flex justify-between items-center">
+<!-- Left Controls -->
+<div class="flex gap-md">
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors group relative">
+<span class="material-symbols-outlined text-[24px]">flash_auto</span>
+<!-- Tooltip -->
+<div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-caption text-caption px-sm py-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Auto Flash</div>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors group relative">
+<span class="material-symbols-outlined text-[24px]">grid_on</span>
+<div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface font-caption text-caption px-sm py-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Grid Lines</div>
+</button>
+</div>
+<!-- Shutter Button (Primary Action) -->
+<button class="relative group cursor-pointer active:scale-95 transition-transform duration-150">
+<!-- Outer Ring -->
+<div class="w-16 h-16 rounded-full border-4 border-primary/20 flex items-center justify-center group-hover:border-primary/40 transition-colors">
+<!-- Inner Button -->
+<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-on-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+</div>
+</div>
+</button>
+<!-- Right Controls -->
+<div class="flex gap-md">
+<button class="px-md py-sm rounded-lg hover:bg-surface-container-high font-label-md text-label-md text-on-surface-variant transition-colors">
+                                    Cancel
+                                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Information & Preview Side Panel -->
+<section class="col-span-1 lg:col-span-4 flex flex-col gap-lg mt-xl lg:mt-0">
+<!-- Guidance Card (Glassmorphism inspired, soft layers) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-lg">
+<div class="flex items-center gap-sm mb-md pb-md border-b border-outline-variant/50">
+<span class="material-symbols-outlined text-primary text-[24px]">info</span>
+<h3 class="font-title-lg text-title-lg text-on-surface">Scanning Guide</h3>
+</div>
+<ul class="space-y-md">
+<li class="flex items-start gap-md">
+<div class="mt-xs w-8 h-8 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">lightbulb</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-xs">Ensure Bright Lighting</h4>
+<p class="font-caption text-caption text-on-surface-variant">Avoid shadows over the document. Natural light works best for clear text recognition.</p>
+</div>
+</li>
+<li class="flex items-start gap-md">
+<div class="mt-xs w-8 h-8 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">crop_free</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-xs">Align All Corners</h4>
+<p class="font-caption text-caption text-on-surface-variant">Keep the document flat and within the white corner guides on the screen.</p>
+</div>
+</li>
+<li class="flex items-start gap-md">
+<div class="mt-xs w-8 h-8 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">pan_tool</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-xs">Hold Steady</h4>
+<p class="font-caption text-caption text-on-surface-variant">Keep the camera still until the capture is complete to prevent blurring.</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- Preview Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-lg flex flex-col h-full">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-title-lg text-title-lg text-on-surface">Preview</h3>
+<span class="font-caption text-caption bg-surface-container-high px-sm py-xs rounded text-on-surface-variant">0 captured</span>
+</div>
+<!-- Empty State Container -->
+<div class="flex-1 min-h-[200px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center text-center p-md bg-surface/50">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-sm text-outline">
+<span class="material-symbols-outlined text-[24px]">collections</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-xs">No scans yet</h4>
+<p class="font-caption text-caption text-on-surface-variant max-w-[200px]">Captured pages will appear here for review before saving.</p>
+</div>
+<!-- Action button (disabled initially) -->
+<button class="mt-md w-full py-md px-lg bg-surface-container-high text-on-surface-variant rounded-lg font-label-md text-label-md opacity-50 cursor-not-allowed" disabled="">
+                            Process Report
+                        </button>
+</div>
+</section>
+</div>
+</main>
+</div>
+<script type="module" src="/assets/js/page.js"></script>
+</body></html>
