@@ -1,163 +1,231 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Payment Failed - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Payment Failed - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "on-secondary-fixed-variant": "#4c463f",
-                      "background": "#fdf8f7",
-                      "on-tertiary-fixed": "#1a1c1e",
-                      "primary": "#161310",
-                      "inverse-primary": "#cdc5c0",
-                      "tertiary-fixed-dim": "#c7c6c8",
-                      "on-primary-container": "#948e89",
-                      "inverse-surface": "#313030",
-                      "on-primary": "#ffffff",
-                      "outline": "#7e756f",
-                      "on-tertiary": "#ffffff",
-                      "on-background": "#1c1b1b",
-                      "primary-container": "#2b2724",
-                      "on-error-container": "#93000a",
-                      "surface-container-lowest": "#ffffff",
-                      "surface-container-highest": "#e6e1e0",
-                      "surface-container-high": "#ece7e6",
-                      "error-container": "#ffdad6",
-                      "tertiary": "#121415",
-                      "primary-fixed": "#e9e1dc",
-                      "secondary": "#645d56",
-                      "on-primary-fixed": "#1e1b18",
-                      "surface-container": "#f1edec",
-                      "inverse-on-surface": "#f4f0ee",
-                      "on-secondary-container": "#69615a",
-                      "primary-fixed-dim": "#cdc5c0",
-                      "on-tertiary-fixed-variant": "#464749",
-                      "secondary-fixed-dim": "#cfc5bc",
-                      "on-primary-fixed-variant": "#4b4642",
-                      "surface-variant": "#e6e1e0",
-                      "secondary-container": "#e9ded5",
-                      "on-error": "#ffffff",
-                      "on-secondary": "#ffffff",
-                      "tertiary-container": "#27282a",
-                      "on-tertiary-container": "#8f8f91",
-                      "surface": "#fdf8f7",
-                      "on-surface": "#1c1b1b",
-                      "tertiary-fixed": "#e3e2e4",
-                      "surface-bright": "#fdf8f7",
-                      "surface-tint": "#635d5a",
-                      "on-surface-variant": "#4d4540",
-                      "on-secondary-fixed": "#201b15",
-                      "surface-container-low": "#f7f3f1",
-                      "surface-dim": "#ddd9d8",
-                      "outline-variant": "#cfc4bd",
-                      "secondary-fixed": "#ebe1d8",
-                      "error": "#ba1a1a"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "xs": "4px",
-                      "sm": "8px",
-                      "margin-desktop": "64px",
-                      "xl": "32px",
-                      "margin-mobile": "20px",
-                      "lg": "24px",
-                      "md": "16px",
-                      "base": "8px",
-                      "xxl": "48px",
-                      "gutter": "16px"
-              },
-              "fontFamily": {
-                      "headline-lg-mobile": ["Spectral"],
-                      "body-lg": ["Inter"],
-                      "headline-md": ["Spectral"],
-                      "headline-lg": ["Spectral"],
-                      "title-lg": ["Inter"],
-                      "caption": ["Inter"],
-                      "label-md": ["Inter"],
-                      "display-lg": ["Spectral"],
-                      "body-md": ["Inter"]
-              },
-              "fontSize": {
-                      "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
-                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
-                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
-                      "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                      "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
-                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
-                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
-              }
-            }
-          }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#4c463f",
+              background: "#fdf8f7",
+              "on-tertiary-fixed": "#1a1c1e",
+              primary: "#161310",
+              "inverse-primary": "#cdc5c0",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "on-primary-container": "#948e89",
+              "inverse-surface": "#313030",
+              "on-primary": "#ffffff",
+              outline: "#7e756f",
+              "on-tertiary": "#ffffff",
+              "on-background": "#1c1b1b",
+              "primary-container": "#2b2724",
+              "on-error-container": "#93000a",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-highest": "#e6e1e0",
+              "surface-container-high": "#ece7e6",
+              "error-container": "#ffdad6",
+              tertiary: "#121415",
+              "primary-fixed": "#e9e1dc",
+              secondary: "#645d56",
+              "on-primary-fixed": "#1e1b18",
+              "surface-container": "#f1edec",
+              "inverse-on-surface": "#f4f0ee",
+              "on-secondary-container": "#69615a",
+              "primary-fixed-dim": "#cdc5c0",
+              "on-tertiary-fixed-variant": "#464749",
+              "secondary-fixed-dim": "#cfc5bc",
+              "on-primary-fixed-variant": "#4b4642",
+              "surface-variant": "#e6e1e0",
+              "secondary-container": "#e9ded5",
+              "on-error": "#ffffff",
+              "on-secondary": "#ffffff",
+              "tertiary-container": "#27282a",
+              "on-tertiary-container": "#8f8f91",
+              surface: "#fdf8f7",
+              "on-surface": "#1c1b1b",
+              "tertiary-fixed": "#e3e2e4",
+              "surface-bright": "#fdf8f7",
+              "surface-tint": "#635d5a",
+              "on-surface-variant": "#4d4540",
+              "on-secondary-fixed": "#201b15",
+              "surface-container-low": "#f7f3f1",
+              "surface-dim": "#ddd9d8",
+              "outline-variant": "#cfc4bd",
+              "secondary-fixed": "#ebe1d8",
+              error: "#ba1a1a",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              xs: "4px",
+              sm: "8px",
+              "margin-desktop": "64px",
+              xl: "32px",
+              "margin-mobile": "20px",
+              lg: "24px",
+              md: "16px",
+              base: "8px",
+              xxl: "48px",
+              gutter: "16px",
+            },
+            fontFamily: {
+              "headline-lg-mobile": ["Spectral"],
+              "body-lg": ["Inter"],
+              "headline-md": ["Spectral"],
+              "headline-lg": ["Spectral"],
+              "title-lg": ["Inter"],
+              caption: ["Inter"],
+              "label-md": ["Inter"],
+              "display-lg": ["Spectral"],
+              "body-md": ["Inter"],
+            },
+            fontSize: {
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .ambient-shadow {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-        }
+    <style>
+      .ambient-shadow {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop">
-<main class="w-full max-w-[420px] bg-surface-container-lowest rounded-[24px] ambient-shadow border border-outline-variant/30 p-xl flex flex-col items-center text-center">
-<div class="w-[72px] h-[72px] rounded-full bg-error-container flex items-center justify-center mb-lg">
-<span class="material-symbols-outlined text-[36px] text-error" style="font-variation-settings: 'FILL' 1;">
-                credit_card_off
-            </span>
-</div>
-<h1 class="font-headline-md text-headline-md text-primary mb-sm">
-            Payment Unsuccessful
-        </h1>
-<p class="font-body-md text-body-md text-on-surface-variant mb-xl px-sm">
-            Your transaction couldn't be completed. Please check your card details or try a different payment method.
-        </p>
-<div class="w-full bg-surface-container-low rounded-xl p-md flex flex-col gap-sm text-left border border-outline-variant/20 mb-xl">
-<div class="flex justify-between items-center pb-sm border-b border-outline-variant/20">
-<span class="font-body-md text-body-md text-on-surface-variant">Plan</span>
-<span class="font-label-md text-label-md text-primary">MedExplain AI Premium</span>
-</div>
-<div class="flex justify-between items-center pb-sm border-b border-outline-variant/20">
-<span class="font-body-md text-body-md text-on-surface-variant">Amount</span>
-<span class="font-label-md text-label-md text-primary">$29.99 USD</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="font-body-md text-body-md text-on-surface-variant">Method</span>
-<span class="font-label-md text-label-md text-primary flex items-center gap-xs">
-<span class="material-symbols-outlined text-[16px]">credit_card</span>
-                    •••• 4242
-                </span>
-</div>
-</div>
-<div class="w-full flex flex-col gap-md">
-<button class="w-full bg-primary text-on-primary py-[14px] rounded-full font-label-md text-label-md flex justify-center items-center hover:opacity-90 transition-opacity">
-                Retry Payment
-            </button>
-<button class="w-full bg-transparent text-primary border border-outline py-[14px] rounded-full font-label-md text-label-md flex justify-center items-center hover:bg-surface-container transition-colors">
-                Update Payment Method
-            </button>
-</div>
-<div class="flex items-center justify-center gap-xs mt-lg text-on-surface-variant/80">
-<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">
-                lock
-            </span>
-<span class="font-caption text-caption">
-                256-bit Encryption • HIPAA Compliant
-            </span>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-background min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop"
+  >
+    <main
+      class="w-full max-w-[420px] bg-surface-container-lowest rounded-[24px] ambient-shadow border border-outline-variant/30 p-xl flex flex-col items-center text-center"
+    >
+      <div
+        class="w-[72px] h-[72px] rounded-full bg-error-container flex items-center justify-center mb-lg"
+      >
+        <span
+          class="material-symbols-outlined text-[36px] text-error"
+          style="font-variation-settings: &quot;FILL&quot; 1"
+        >
+          credit_card_off
+        </span>
+      </div>
+      <h1 class="font-headline-md text-headline-md text-primary mb-sm">
+        Payment Unsuccessful
+      </h1>
+      <p class="font-body-md text-body-md text-on-surface-variant mb-xl px-sm">
+        Your transaction couldn't be completed. Please check your card details
+        or try a different payment method.
+      </p>
+      <div
+        class="w-full bg-surface-container-low rounded-xl p-md flex flex-col gap-sm text-left border border-outline-variant/20 mb-xl"
+      >
+        <div
+          class="flex justify-between items-center pb-sm border-b border-outline-variant/20"
+        >
+          <span class="font-body-md text-body-md text-on-surface-variant"
+            >Plan</span
+          >
+          <span class="font-label-md text-label-md text-primary"
+            >MedExplain AI Premium</span
+          >
+        </div>
+        <div
+          class="flex justify-between items-center pb-sm border-b border-outline-variant/20"
+        >
+          <span class="font-body-md text-body-md text-on-surface-variant"
+            >Amount</span
+          >
+          <span class="font-label-md text-label-md text-primary"
+            >$29.99 USD</span
+          >
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="font-body-md text-body-md text-on-surface-variant"
+            >Method</span
+          >
+          <span
+            class="font-label-md text-label-md text-primary flex items-center gap-xs"
+          >
+            <span class="material-symbols-outlined text-[16px]"
+              >credit_card</span
+            >
+            •••• 4242
+          </span>
+        </div>
+      </div>
+      <div class="w-full flex flex-col gap-md">
+        <button
+          class="w-full bg-primary text-on-primary py-[14px] rounded-full font-label-md text-label-md flex justify-center items-center hover:opacity-90 transition-opacity"
+        >
+          Retry Payment
+        </button>
+        <button
+          class="w-full bg-transparent text-primary border border-outline py-[14px] rounded-full font-label-md text-label-md flex justify-center items-center hover:bg-surface-container transition-colors"
+        >
+          Update Payment Method
+        </button>
+      </div>
+      <div
+        class="flex items-center justify-center gap-xs mt-lg text-on-surface-variant/80"
+      >
+        <span
+          class="material-symbols-outlined text-[14px]"
+          style="font-variation-settings: &quot;FILL&quot; 1"
+        >
+          lock
+        </span>
+        <span class="font-caption text-caption">
+          256-bit Encryption • HIPAA Compliant
+        </span>
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

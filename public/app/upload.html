@@ -1,181 +1,272 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Upload Report - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Upload Report - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .material-symbols-outlined.fill {
-            font-variation-settings: 'FILL' 1;
-        }
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .material-symbols-outlined.fill {
+        font-variation-settings: "FILL" 1;
+      }
     </style>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "tertiary-container": "#27282a",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "primary-fixed": "#e9e1dc",
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "surface-container-highest": "#e6e1e0",
-                        "surface-container-lowest": "#ffffff",
-                        "tertiary-fixed": "#e3e2e4",
-                        "secondary": "#645d56",
-                        "outline-variant": "#cfc4bd",
-                        "on-background": "#1c1b1b",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "on-tertiary": "#ffffff",
-                        "surface-dim": "#ddd9d8",
-                        "surface-container-low": "#f7f3f1",
-                        "surface-variant": "#e6e1e0",
-                        "on-secondary-fixed": "#201b15",
-                        "primary-container": "#2b2724",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "on-error-container": "#93000a",
-                        "surface-bright": "#fdf8f7",
-                        "surface-container-high": "#ece7e6",
-                        "on-secondary": "#ffffff",
-                        "inverse-on-surface": "#f4f0ee",
-                        "error-container": "#ffdad6",
-                        "surface": "#fdf8f7",
-                        "secondary-fixed": "#ebe1d8",
-                        "on-primary-container": "#948e89",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "primary": "#161310",
-                        "background": "#fdf8f7",
-                        "tertiary": "#121415",
-                        "on-primary": "#ffffff",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "inverse-primary": "#cdc5c0",
-                        "on-surface": "#1c1b1b",
-                        "on-secondary-container": "#69615a",
-                        "on-primary-fixed": "#1e1b18",
-                        "surface-container": "#f1edec",
-                        "on-tertiary-container": "#8f8f91",
-                        "on-surface-variant": "#4d4540",
-                        "on-error": "#ffffff",
-                        "surface-tint": "#635d5a",
-                        "inverse-surface": "#313030",
-                        "error": "#ba1a1a",
-                        "outline": "#7e756f",
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "secondary-container": "#e9ded5",
-                        "coral": "#FF6E5C",
-                        "stone": "#E8E4E1"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "margin-desktop": "64px",
-                        "sm": "8px",
-                        "md": "16px",
-                        "xl": "32px",
-                        "xs": "4px",
-                        "gutter": "16px",
-                        "lg": "24px",
-                        "base": "8px",
-                        "xxl": "48px",
-                        "margin-mobile": "20px"
-                    },
-                    "fontFamily": {
-                        "headline-lg": ["Spectral"],
-                        "body-md": ["Inter"],
-                        "body-lg": ["Inter"],
-                        "title-lg": ["Inter"],
-                        "label-md": ["Inter"],
-                        "headline-md": ["Spectral"],
-                        "caption": ["Inter"],
-                        "display-lg": ["Spectral"],
-                        "headline-lg-mobile": ["Spectral"]
-                    },
-                    "fontSize": {
-                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
-                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
-                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
-                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}]
-                    }
-                }
-            }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#27282a",
+              "on-primary-fixed-variant": "#4b4642",
+              "primary-fixed": "#e9e1dc",
+              "on-secondary-fixed-variant": "#4c463f",
+              "surface-container-highest": "#e6e1e0",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed": "#e3e2e4",
+              secondary: "#645d56",
+              "outline-variant": "#cfc4bd",
+              "on-background": "#1c1b1b",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "on-tertiary": "#ffffff",
+              "surface-dim": "#ddd9d8",
+              "surface-container-low": "#f7f3f1",
+              "surface-variant": "#e6e1e0",
+              "on-secondary-fixed": "#201b15",
+              "primary-container": "#2b2724",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-error-container": "#93000a",
+              "surface-bright": "#fdf8f7",
+              "surface-container-high": "#ece7e6",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#f4f0ee",
+              "error-container": "#ffdad6",
+              surface: "#fdf8f7",
+              "secondary-fixed": "#ebe1d8",
+              "on-primary-container": "#948e89",
+              "primary-fixed-dim": "#cdc5c0",
+              primary: "#161310",
+              background: "#fdf8f7",
+              tertiary: "#121415",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed": "#1a1c1e",
+              "inverse-primary": "#cdc5c0",
+              "on-surface": "#1c1b1b",
+              "on-secondary-container": "#69615a",
+              "on-primary-fixed": "#1e1b18",
+              "surface-container": "#f1edec",
+              "on-tertiary-container": "#8f8f91",
+              "on-surface-variant": "#4d4540",
+              "on-error": "#ffffff",
+              "surface-tint": "#635d5a",
+              "inverse-surface": "#313030",
+              error: "#ba1a1a",
+              outline: "#7e756f",
+              "secondary-fixed-dim": "#cfc5bc",
+              "secondary-container": "#e9ded5",
+              coral: "#FF6E5C",
+              stone: "#E8E4E1",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-desktop": "64px",
+              sm: "8px",
+              md: "16px",
+              xl: "32px",
+              xs: "4px",
+              gutter: "16px",
+              lg: "24px",
+              base: "8px",
+              xxl: "48px",
+              "margin-mobile": "20px",
+            },
+            fontFamily: {
+              "headline-lg": ["Spectral"],
+              "body-md": ["Inter"],
+              "body-lg": ["Inter"],
+              "title-lg": ["Inter"],
+              "label-md": ["Inter"],
+              "headline-md": ["Spectral"],
+              caption: ["Inter"],
+              "display-lg": ["Spectral"],
+              "headline-lg-mobile": ["Spectral"],
+            },
+            fontSize: {
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+            },
+          },
+        },
+      };
     </script>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background antialiased min-h-screen flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop">
-<!-- Transactional Screen: Navigation Suppressed -->
-<main class="w-full max-w-2xl mx-auto flex flex-col gap-xl">
-<!-- Header Section -->
-<header class="text-center flex flex-col items-center gap-md">
-<div class="h-16 w-16 bg-surface-container-high rounded-full flex items-center justify-center mb-sm">
-<span class="material-symbols-outlined text-coral" style="font-size: 32px;">upload_file</span>
-</div>
-<h1 class="font-headline-lg text-headline-lg md:font-display-lg md:text-display-lg text-primary">Upload Medical Report</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
-                Securely upload your lab results or medical documents for AI-assisted analysis and translation into plain language.
-            </p>
-</header>
-<!-- Selection Grid -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
-<!-- Option 1: Camera Scan -->
-<button class="flex flex-col items-center text-center p-xl bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-primary">
-<div class="h-12 w-12 rounded-full bg-surface-container-low flex items-center justify-center mb-md group-hover:bg-coral/10 transition-colors">
-<span class="material-symbols-outlined text-primary group-hover:text-coral transition-colors">photo_camera</span>
-</div>
-<h2 class="font-title-lg text-title-lg text-primary mb-xs">Camera Scan</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">Take a clear photo of your physical document.</p>
-</button>
-<!-- Option 2: Select File -->
-<button class="flex flex-col items-center text-center p-xl bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-primary">
-<div class="h-12 w-12 rounded-full bg-surface-container-low flex items-center justify-center mb-md group-hover:bg-coral/10 transition-colors">
-<span class="material-symbols-outlined text-primary group-hover:text-coral transition-colors">folder_open</span>
-</div>
-<h2 class="font-title-lg text-title-lg text-primary mb-xs">Select File</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">Browse your device for a saved digital copy.</p>
-</button>
-<!-- Option 3: Paste Text -->
-<button class="flex flex-col items-center text-center p-xl bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-primary">
-<div class="h-12 w-12 rounded-full bg-surface-container-low flex items-center justify-center mb-md group-hover:bg-coral/10 transition-colors">
-<span class="material-symbols-outlined text-primary group-hover:text-coral transition-colors">content_paste</span>
-</div>
-<h2 class="font-title-lg text-title-lg text-primary mb-xs">Paste Text</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">Directly paste text from an online patient portal.</p>
-</button>
-</div>
-<!-- Supportive Info -->
-<div class="flex flex-col items-center justify-center text-center gap-sm mt-md">
-<p class="font-caption text-caption text-on-surface-variant flex items-center gap-xs">
-<span class="material-symbols-outlined" style="font-size: 16px;">info</span>
-                Supported formats: PDF, JPG, PNG. Maximum file size: 10MB.
-            </p>
-<p class="font-caption text-caption text-on-tertiary-container flex items-center gap-xs">
-<span class="material-symbols-outlined" style="font-size: 16px;">lock</span>
-                Your health data is encrypted and securely processed.
-            </p>
-</div>
-<!-- Actions -->
-<div class="flex justify-center mt-lg w-full max-w-sm mx-auto">
-<button class="w-full py-md px-xl bg-surface-container-low text-primary font-label-md text-label-md rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20">
-                Cancel
-            </button>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-background antialiased min-h-screen flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop"
+  >
+    <!-- Transactional Screen: Navigation Suppressed -->
+    <main class="w-full max-w-2xl mx-auto flex flex-col gap-xl">
+      <!-- Header Section -->
+      <header class="text-center flex flex-col items-center gap-md">
+        <div
+          class="h-16 w-16 bg-surface-container-high rounded-full flex items-center justify-center mb-sm"
+        >
+          <span
+            class="material-symbols-outlined text-coral"
+            style="font-size: 32px"
+            >upload_file</span
+          >
+        </div>
+        <h1
+          class="font-headline-lg text-headline-lg md:font-display-lg md:text-display-lg text-primary"
+        >
+          Upload Medical Report
+        </h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+          Securely upload your lab results or medical documents for AI-assisted
+          analysis and translation into plain language.
+        </p>
+      </header>
+      <!-- Selection Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+        <!-- Option 1: Camera Scan -->
+        <button
+          class="flex flex-col items-center text-center p-xl bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-primary"
+        >
+          <div
+            class="h-12 w-12 rounded-full bg-surface-container-low flex items-center justify-center mb-md group-hover:bg-coral/10 transition-colors"
+          >
+            <span
+              class="material-symbols-outlined text-primary group-hover:text-coral transition-colors"
+              >photo_camera</span
+            >
+          </div>
+          <h2 class="font-title-lg text-title-lg text-primary mb-xs">
+            Camera Scan
+          </h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            Take a clear photo of your physical document.
+          </p>
+        </button>
+        <!-- Option 2: Select File -->
+        <button
+          class="flex flex-col items-center text-center p-xl bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-primary"
+        >
+          <div
+            class="h-12 w-12 rounded-full bg-surface-container-low flex items-center justify-center mb-md group-hover:bg-coral/10 transition-colors"
+          >
+            <span
+              class="material-symbols-outlined text-primary group-hover:text-coral transition-colors"
+              >folder_open</span
+            >
+          </div>
+          <h2 class="font-title-lg text-title-lg text-primary mb-xs">
+            Select File
+          </h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            Browse your device for a saved digital copy.
+          </p>
+        </button>
+        <!-- Option 3: Paste Text -->
+        <button
+          class="flex flex-col items-center text-center p-xl bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-primary"
+        >
+          <div
+            class="h-12 w-12 rounded-full bg-surface-container-low flex items-center justify-center mb-md group-hover:bg-coral/10 transition-colors"
+          >
+            <span
+              class="material-symbols-outlined text-primary group-hover:text-coral transition-colors"
+              >content_paste</span
+            >
+          </div>
+          <h2 class="font-title-lg text-title-lg text-primary mb-xs">
+            Paste Text
+          </h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            Directly paste text from an online patient portal.
+          </p>
+        </button>
+      </div>
+      <!-- Supportive Info -->
+      <div
+        class="flex flex-col items-center justify-center text-center gap-sm mt-md"
+      >
+        <p
+          class="font-caption text-caption text-on-surface-variant flex items-center gap-xs"
+        >
+          <span class="material-symbols-outlined" style="font-size: 16px"
+            >info</span
+          >
+          Supported formats: PDF, JPG, PNG. Maximum file size: 10MB.
+        </p>
+        <p
+          class="font-caption text-caption text-on-tertiary-container flex items-center gap-xs"
+        >
+          <span class="material-symbols-outlined" style="font-size: 16px"
+            >lock</span
+          >
+          Your health data is encrypted and securely processed.
+        </p>
+      </div>
+      <!-- Actions -->
+      <div class="flex justify-center mt-lg w-full max-w-sm mx-auto">
+        <button
+          class="w-full py-md px-xl bg-surface-container-low text-primary font-label-md text-label-md rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20"
+        >
+          Cancel
+        </button>
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

@@ -1,247 +1,379 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>MedExplain AI - Admin Portal</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MedExplain AI - Admin Portal</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface": "#fdf8f7",
-                        "secondary-fixed": "#ebe1d8",
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "tertiary": "#121415",
-                        "outline-variant": "#cfc4bd",
-                        "on-tertiary": "#ffffff",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "on-tertiary-container": "#8f8f91",
-                        "secondary": "#645d56",
-                        "surface-variant": "#e6e1e0",
-                        "on-surface": "#1c1b1b",
-                        "primary-fixed": "#e9e1dc",
-                        "surface-bright": "#fdf8f7",
-                        "surface-container-low": "#f7f3f1",
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "error-container": "#ffdad6",
-                        "error": "#ba1a1a",
-                        "on-secondary-fixed": "#201b15",
-                        "surface-container-lowest": "#ffffff",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "secondary-container": "#e9ded5",
-                        "on-primary": "#ffffff",
-                        "tertiary-fixed": "#e3e2e4",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "on-surface-variant": "#4d4540",
-                        "background": "#fdf8f7",
-                        "tertiary-container": "#27282a",
-                        "inverse-surface": "#313030",
-                        "on-error": "#ffffff",
-                        "surface-dim": "#ddd9d8",
-                        "on-secondary": "#ffffff",
-                        "on-secondary-container": "#69615a",
-                        "inverse-on-surface": "#f4f0ee",
-                        "surface-tint": "#635d5a",
-                        "on-background": "#1c1b1b",
-                        "surface-container": "#f1edec",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "on-primary-container": "#948e89",
-                        "on-error-container": "#93000a",
-                        "outline": "#7e756f",
-                        "on-primary-fixed": "#1e1b18",
-                        "surface-container-high": "#ece7e6",
-                        "primary": "#161310",
-                        "primary-container": "#2b2724",
-                        "inverse-primary": "#cdc5c0",
-                        "surface-container-highest": "#e6e1e0",
-                        "wellness-coral": "#FF6E5C",
-                        "muted-stone": "#E8E4E1"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "xs": "4px",
-                        "sm": "8px",
-                        "margin-mobile": "20px",
-                        "xxl": "48px",
-                        "xl": "32px",
-                        "margin-desktop": "64px",
-                        "md": "16px",
-                        "lg": "24px",
-                        "gutter": "16px",
-                        "base": "8px"
-                    },
-                    "fontFamily": {
-                        "headline-lg-mobile": ["Spectral"],
-                        "caption": ["Inter"],
-                        "headline-md": ["Spectral"],
-                        "display-lg": ["Spectral"],
-                        "body-md": ["Inter"],
-                        "label-md": ["Inter"],
-                        "title-lg": ["Inter"],
-                        "headline-lg": ["Spectral"],
-                        "body-lg": ["Inter"]
-                    }
-                }
-            }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              surface: "#fdf8f7",
+              "secondary-fixed": "#ebe1d8",
+              "on-secondary-fixed-variant": "#4c463f",
+              tertiary: "#121415",
+              "outline-variant": "#cfc4bd",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "on-tertiary-container": "#8f8f91",
+              secondary: "#645d56",
+              "surface-variant": "#e6e1e0",
+              "on-surface": "#1c1b1b",
+              "primary-fixed": "#e9e1dc",
+              "surface-bright": "#fdf8f7",
+              "surface-container-low": "#f7f3f1",
+              "secondary-fixed-dim": "#cfc5bc",
+              "error-container": "#ffdad6",
+              error: "#ba1a1a",
+              "on-secondary-fixed": "#201b15",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#4b4642",
+              "secondary-container": "#e9ded5",
+              "on-primary": "#ffffff",
+              "tertiary-fixed": "#e3e2e4",
+              "on-tertiary-fixed-variant": "#464749",
+              "primary-fixed-dim": "#cdc5c0",
+              "on-surface-variant": "#4d4540",
+              background: "#fdf8f7",
+              "tertiary-container": "#27282a",
+              "inverse-surface": "#313030",
+              "on-error": "#ffffff",
+              "surface-dim": "#ddd9d8",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#69615a",
+              "inverse-on-surface": "#f4f0ee",
+              "surface-tint": "#635d5a",
+              "on-background": "#1c1b1b",
+              "surface-container": "#f1edec",
+              "on-tertiary-fixed": "#1a1c1e",
+              "on-primary-container": "#948e89",
+              "on-error-container": "#93000a",
+              outline: "#7e756f",
+              "on-primary-fixed": "#1e1b18",
+              "surface-container-high": "#ece7e6",
+              primary: "#161310",
+              "primary-container": "#2b2724",
+              "inverse-primary": "#cdc5c0",
+              "surface-container-highest": "#e6e1e0",
+              "wellness-coral": "#FF6E5C",
+              "muted-stone": "#E8E4E1",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              xs: "4px",
+              sm: "8px",
+              "margin-mobile": "20px",
+              xxl: "48px",
+              xl: "32px",
+              "margin-desktop": "64px",
+              md: "16px",
+              lg: "24px",
+              gutter: "16px",
+              base: "8px",
+            },
+            fontFamily: {
+              "headline-lg-mobile": ["Spectral"],
+              caption: ["Inter"],
+              "headline-md": ["Spectral"],
+              "display-lg": ["Spectral"],
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              "title-lg": ["Inter"],
+              "headline-lg": ["Spectral"],
+              "body-lg": ["Inter"],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid #E8E4E1;
-        }
-        .coral-glow:focus-within {
-            box-shadow: 0 0 0 4px rgba(255, 110, 92, 0.15);
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+    <style>
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid #e8e4e1;
+      }
+      .coral-glow:focus-within {
+        box-shadow: 0 0 0 4px rgba(255, 110, 92, 0.15);
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col items-center overflow-x-hidden selection:bg-wellness-coral/20">
-<!-- Header / Logo Only -->
-<header class="w-full max-w-[1120px] px-margin-mobile md:px-margin-desktop py-xl flex justify-center md:justify-start">
-<div class="flex items-center gap-sm">
-<div class="w-10 h-10 bg-wellness-coral rounded-xl flex items-center justify-center text-white">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">medical_services</span>
-</div>
-<span class="font-headline-md text-headline-md text-primary tracking-tight">MedExplain AI</span>
-</div>
-</header>
-<!-- Main Content Canvas -->
-<main class="flex-grow flex flex-col items-center justify-center w-full px-margin-mobile py-xl relative">
-<!-- Atmospheric Background Elements -->
-<div class="absolute top-1/4 -left-20 w-64 h-64 bg-wellness-coral/5 rounded-full blur-3xl pointer-events-none"></div>
-<div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-secondary-container/30 rounded-full blur-3xl pointer-events-none"></div>
-<!-- Login Card -->
-<div class="w-full max-w-md glass-effect rounded-xl p-lg md:p-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] z-10">
-<div class="mb-xl text-center md:text-left">
-<h1 class="font-headline-lg text-headline-lg md:text-headline-lg text-primary mb-xs">Secure Admin Portal</h1>
-<p class="font-body-md text-body-md text-on-surface-variant">Access the healthcare data management core.</p>
-</div>
-<form class="space-y-lg" onsubmit="event.preventDefault();">
-<!-- Email Field -->
-<div class="space-y-xs group">
-<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="email">Admin Email</label>
-<div class="relative coral-glow transition-all duration-200">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60">alternate_email</span>
-<input class="w-full h-12 pl-12 pr-4 bg-surface-container-lowest border border-muted-stone rounded-lg focus:border-primary focus:ring-0 transition-colors outline-none font-body-md" id="email" placeholder="admin@medexplain.ai" type="email">
-</div>
-</div>
-<!-- Password Field -->
-<div class="space-y-xs group">
-<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="password">Password</label>
-<div class="relative coral-glow transition-all duration-200">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60">lock</span>
-<input class="w-full h-12 pl-12 pr-12 bg-surface-container-lowest border border-muted-stone rounded-lg focus:border-primary focus:ring-0 transition-colors outline-none font-body-md" id="password" placeholder="••••••••" type="password">
-<button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60 hover:text-primary transition-colors" type="button">
-<span class="material-symbols-outlined">visibility</span>
-</button>
-</div>
-</div>
-<!-- MFA Notice -->
-<div class="bg-surface-container-low border-l-4 border-wellness-coral p-md rounded-r-lg flex gap-md items-start">
-<span class="material-symbols-outlined text-wellness-coral mt-1" style="font-variation-settings: 'FILL' 1;">verified_user</span>
-<div class="space-y-1">
-<p class="font-label-md text-label-md text-primary">Multi-factor Authentication Required</p>
-<p class="text-caption text-on-surface-variant">After login, a secondary verification code will be sent to your registered device for enhanced security.</p>
-</div>
-</div>
-<!-- Submit Button -->
-<button class="w-full h-12 bg-wellness-coral hover:bg-[#E85C4B] text-white font-label-md text-label-md rounded-lg shadow-lg shadow-wellness-coral/20 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-sm" type="submit">
-                    Enter Portal
-                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-</button>
-<div class="text-center pt-md">
-<a class="font-label-md text-label-md text-on-surface-variant hover:text-wellness-coral transition-colors" href="mailto:support@medexplain.ai">Forgot your credentials?</a>
-</div>
-</form>
-</div>
-<!-- Decorative Info Section (Mobile Hidden) -->
-<div class="hidden md:grid grid-cols-3 gap-lg max-w-[1120px] w-full mt-xxl border-t border-muted-stone pt-xl">
-<div class="flex flex-col gap-sm">
-<span class="material-symbols-outlined text-wellness-coral">security</span>
-<h3 class="font-title-lg text-title-lg text-primary">Zero-Trust Access</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Every administrative action is authenticated and encrypted to prevent unauthorized data exposure.</p>
-</div>
-<div class="flex flex-col gap-sm">
-<span class="material-symbols-outlined text-wellness-coral">history_edu</span>
-<h3 class="font-title-lg text-title-lg text-primary">Full Audit Logs</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Compliance-ready logging monitors all administrative activity for HIPAA and GDPR reporting.</p>
-</div>
-<div class="flex flex-col gap-sm">
-<span class="material-symbols-outlined text-wellness-coral">support_agent</span>
-<h3 class="font-title-lg text-title-lg text-primary">24/7 Ops Support</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Technical issues? Contact the Systems Operations center immediately at internal ext: 900.</p>
-</div>
-</div>
-</main>
-<!-- Footer with Compliance -->
-<footer class="w-full border-t border-muted-stone mt-xxl py-xl bg-surface-container-low">
-<div class="max-w-[1120px] mx-auto px-margin-mobile flex flex-col md:flex-row justify-between items-center gap-lg">
-<!-- Badges -->
-<div class="flex items-center gap-xl opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-[20px]">verified</span>
-<span class="font-label-md text-label-md">HIPAA Compliant</span>
-</div>
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-[20px]">gavel</span>
-<span class="font-label-md text-label-md">SOC 2 Type II</span>
-</div>
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-[20px]">language</span>
-<span class="font-label-md text-label-md">GDPR Ready</span>
-</div>
-</div>
-<!-- Links -->
-<nav class="flex gap-lg">
-<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="/settings/security.html">Security Policy</a>
-<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="/admin/system-health.html">System Status</a>
-<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="/learning-center/terms.html">Terms of Use</a>
-</nav>
-</div>
-<div class="max-w-[1120px] mx-auto px-margin-mobile mt-lg text-center md:text-left">
-<p class="text-caption text-on-surface-variant/60">© 2024 MedExplain AI. Professional Administrative Control Interface. All rights reserved.</p>
-</div>
-</footer>
-<script>
-        // Micro-interaction for password toggle
-        document.querySelector('button[type="button"]').addEventListener('click', function() {
-            const input = document.getElementById('password');
-            const icon = this.querySelector('.material-symbols-outlined');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.innerText = 'visibility_off';
-            } else {
-                input.type = 'password';
-                icon.innerText = 'visibility';
-            }
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md min-h-screen flex flex-col items-center overflow-x-hidden selection:bg-wellness-coral/20"
+  >
+    <!-- Header / Logo Only -->
+    <header
+      class="w-full max-w-[1120px] px-margin-mobile md:px-margin-desktop py-xl flex justify-center md:justify-start"
+    >
+      <div class="flex items-center gap-sm">
+        <div
+          class="w-10 h-10 bg-wellness-coral rounded-xl flex items-center justify-center text-white"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >medical_services</span
+          >
+        </div>
+        <span
+          class="font-headline-md text-headline-md text-primary tracking-tight"
+          >MedExplain AI</span
+        >
+      </div>
+    </header>
+    <!-- Main Content Canvas -->
+    <main
+      class="flex-grow flex flex-col items-center justify-center w-full px-margin-mobile py-xl relative"
+    >
+      <!-- Atmospheric Background Elements -->
+      <div
+        class="absolute top-1/4 -left-20 w-64 h-64 bg-wellness-coral/5 rounded-full blur-3xl pointer-events-none"
+      ></div>
+      <div
+        class="absolute bottom-1/4 -right-20 w-80 h-80 bg-secondary-container/30 rounded-full blur-3xl pointer-events-none"
+      ></div>
+      <!-- Login Card -->
+      <div
+        class="w-full max-w-md glass-effect rounded-xl p-lg md:p-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] z-10"
+      >
+        <div class="mb-xl text-center md:text-left">
+          <h1
+            class="font-headline-lg text-headline-lg md:text-headline-lg text-primary mb-xs"
+          >
+            Secure Admin Portal
+          </h1>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            Access the healthcare data management core.
+          </p>
+        </div>
+        <form class="space-y-lg" onsubmit="event.preventDefault()">
+          <!-- Email Field -->
+          <div class="space-y-xs group">
+            <label
+              class="font-label-md text-label-md text-on-surface-variant ml-1"
+              for="email"
+              >Admin Email</label
+            >
+            <div class="relative coral-glow transition-all duration-200">
+              <span
+                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60"
+                >alternate_email</span
+              >
+              <input
+                class="w-full h-12 pl-12 pr-4 bg-surface-container-lowest border border-muted-stone rounded-lg focus:border-primary focus:ring-0 transition-colors outline-none font-body-md"
+                id="email"
+                placeholder="admin@medexplain.ai"
+                type="email"
+              />
+            </div>
+          </div>
+          <!-- Password Field -->
+          <div class="space-y-xs group">
+            <label
+              class="font-label-md text-label-md text-on-surface-variant ml-1"
+              for="password"
+              >Password</label
+            >
+            <div class="relative coral-glow transition-all duration-200">
+              <span
+                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60"
+                >lock</span
+              >
+              <input
+                class="w-full h-12 pl-12 pr-12 bg-surface-container-lowest border border-muted-stone rounded-lg focus:border-primary focus:ring-0 transition-colors outline-none font-body-md"
+                id="password"
+                placeholder="••••••••"
+                type="password"
+              />
+              <button
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60 hover:text-primary transition-colors"
+                type="button"
+              >
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <!-- MFA Notice -->
+          <div
+            class="bg-surface-container-low border-l-4 border-wellness-coral p-md rounded-r-lg flex gap-md items-start"
+          >
+            <span
+              class="material-symbols-outlined text-wellness-coral mt-1"
+              style="font-variation-settings: &quot;FILL&quot; 1"
+              >verified_user</span
+            >
+            <div class="space-y-1">
+              <p class="font-label-md text-label-md text-primary">
+                Multi-factor Authentication Required
+              </p>
+              <p class="text-caption text-on-surface-variant">
+                After login, a secondary verification code will be sent to your
+                registered device for enhanced security.
+              </p>
+            </div>
+          </div>
+          <!-- Submit Button -->
+          <button
+            class="w-full h-12 bg-wellness-coral hover:bg-[#E85C4B] text-white font-label-md text-label-md rounded-lg shadow-lg shadow-wellness-coral/20 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-sm"
+            type="submit"
+          >
+            Enter Portal
+            <span class="material-symbols-outlined text-[20px]"
+              >arrow_forward</span
+            >
+          </button>
+          <div class="text-center pt-md">
+            <a
+              class="font-label-md text-label-md text-on-surface-variant hover:text-wellness-coral transition-colors"
+              href="mailto:support@medexplain.ai"
+              >Forgot your credentials?</a
+            >
+          </div>
+        </form>
+      </div>
+      <!-- Decorative Info Section (Mobile Hidden) -->
+      <div
+        class="hidden md:grid grid-cols-3 gap-lg max-w-[1120px] w-full mt-xxl border-t border-muted-stone pt-xl"
+      >
+        <div class="flex flex-col gap-sm">
+          <span class="material-symbols-outlined text-wellness-coral"
+            >security</span
+          >
+          <h3 class="font-title-lg text-title-lg text-primary">
+            Zero-Trust Access
+          </h3>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            Every administrative action is authenticated and encrypted to
+            prevent unauthorized data exposure.
+          </p>
+        </div>
+        <div class="flex flex-col gap-sm">
+          <span class="material-symbols-outlined text-wellness-coral"
+            >history_edu</span
+          >
+          <h3 class="font-title-lg text-title-lg text-primary">
+            Full Audit Logs
+          </h3>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            Compliance-ready logging monitors all administrative activity for
+            HIPAA and GDPR reporting.
+          </p>
+        </div>
+        <div class="flex flex-col gap-sm">
+          <span class="material-symbols-outlined text-wellness-coral"
+            >support_agent</span
+          >
+          <h3 class="font-title-lg text-title-lg text-primary">
+            24/7 Ops Support
+          </h3>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            Technical issues? Contact the Systems Operations center immediately
+            at internal ext: 900.
+          </p>
+        </div>
+      </div>
+    </main>
+    <!-- Footer with Compliance -->
+    <footer
+      class="w-full border-t border-muted-stone mt-xxl py-xl bg-surface-container-low"
+    >
+      <div
+        class="max-w-[1120px] mx-auto px-margin-mobile flex flex-col md:flex-row justify-between items-center gap-lg"
+      >
+        <!-- Badges -->
+        <div
+          class="flex items-center gap-xl opacity-60 grayscale hover:grayscale-0 transition-all duration-500"
+        >
+          <div class="flex items-center gap-xs">
+            <span class="material-symbols-outlined text-[20px]">verified</span>
+            <span class="font-label-md text-label-md">HIPAA Compliant</span>
+          </div>
+          <div class="flex items-center gap-xs">
+            <span class="material-symbols-outlined text-[20px]">gavel</span>
+            <span class="font-label-md text-label-md">SOC 2 Type II</span>
+          </div>
+          <div class="flex items-center gap-xs">
+            <span class="material-symbols-outlined text-[20px]">language</span>
+            <span class="font-label-md text-label-md">GDPR Ready</span>
+          </div>
+        </div>
+        <!-- Links -->
+        <nav class="flex gap-lg">
+          <a
+            class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
+            href="/settings/security.html"
+            >Security Policy</a
+          >
+          <a
+            class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
+            href="/admin/system-health.html"
+            >System Status</a
+          >
+          <a
+            class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
+            href="/learning-center/terms.html"
+            >Terms of Use</a
+          >
+        </nav>
+      </div>
+      <div
+        class="max-w-[1120px] mx-auto px-margin-mobile mt-lg text-center md:text-left"
+      >
+        <p class="text-caption text-on-surface-variant/60">
+          © 2024 MedExplain AI. Professional Administrative Control Interface.
+          All rights reserved.
+        </p>
+      </div>
+    </footer>
+    <script>
+      // Micro-interaction for password toggle
+      document
+        .querySelector('button[type="button"]')
+        .addEventListener("click", function () {
+          const input = document.getElementById("password");
+          const icon = this.querySelector(".material-symbols-outlined");
+          if (input.type === "password") {
+            input.type = "text";
+            icon.innerText = "visibility_off";
+          } else {
+            input.type = "password";
+            icon.innerText = "visibility";
+          }
         });
 
-        // Floating background effect
-        document.addEventListener('mousemove', (e) => {
-            const amount = 20;
-            const x = (e.clientX / window.innerWidth - 0.5) * amount;
-            const y = (e.clientY / window.innerHeight - 0.5) * amount;
-            const shadows = document.querySelectorAll('.blur-3xl');
-            shadows.forEach(s => {
-                s.style.transform = `translate(${x}px, ${y}px)`;
-            });
+      // Floating background effect
+      document.addEventListener("mousemove", (e) => {
+        const amount = 20;
+        const x = (e.clientX / window.innerWidth - 0.5) * amount;
+        const y = (e.clientY / window.innerHeight - 0.5) * amount;
+        const shadows = document.querySelectorAll(".blur-3xl");
+        shadows.forEach((s) => {
+          s.style.transform = `translate(${x}px, ${y}px)`;
         });
+      });
     </script>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

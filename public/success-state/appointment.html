@@ -1,174 +1,243 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Appointment Confirmed - MedExplain AI</title>
-<!-- Material Symbols -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Appointment Confirmed - MedExplain AI</title>
+    <!-- Material Symbols -->
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Spectral:wght@100..900&amp;display=swap" rel="stylesheet">
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Tailwind Config -->
-<script id="tailwind-config">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Spectral:wght@100..900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Tailwind Config -->
+    <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
         theme: {
           extend: {
-            "colors": {
-                    "on-tertiary": "#ffffff",
-                    "on-error-container": "#93000a",
-                    "on-background": "#1c1b1b",
-                    "surface-dim": "#ddd9d8",
-                    "on-primary-fixed": "#1e1b18",
-                    "error": "#ba1a1a",
-                    "on-secondary": "#ffffff",
-                    "primary-container": "#2b2724",
-                    "on-primary-fixed-variant": "#4b4642",
-                    "surface-bright": "#fdf8f7",
-                    "surface-container-low": "#f7f3f1",
-                    "primary": "#161310",
-                    "on-surface": "#1c1b1b",
-                    "on-error": "#ffffff",
-                    "surface": "#fdf8f7",
-                    "secondary": "#645d56",
-                    "primary-fixed": "#e9e1dc",
-                    "surface-container": "#f1edec",
-                    "primary-fixed-dim": "#cdc5c0",
-                    "secondary-fixed": "#ebe1d8",
-                    "secondary-container": "#e9ded5",
-                    "surface-container-lowest": "#ffffff",
-                    "surface-tint": "#635d5a",
-                    "inverse-primary": "#cdc5c0",
-                    "surface-variant": "#e6e1e0",
-                    "tertiary-fixed": "#e3e2e4",
-                    "on-tertiary-fixed-variant": "#464749",
-                    "on-tertiary-fixed": "#1a1c1e",
-                    "on-tertiary-container": "#8f8f91",
-                    "on-surface-variant": "#4d4540",
-                    "on-secondary-fixed": "#201b15",
-                    "tertiary": "#121415",
-                    "surface-container-highest": "#e6e1e0",
-                    "secondary-fixed-dim": "#cfc5bc",
-                    "inverse-surface": "#313030",
-                    "tertiary-container": "#27282a",
-                    "outline-variant": "#cfc4bd",
-                    "on-secondary-fixed-variant": "#4c463f",
-                    "tertiary-fixed-dim": "#c7c6c8",
-                    "background": "#fdf8f7",
-                    "on-primary": "#ffffff",
-                    "inverse-on-surface": "#f4f0ee",
-                    "on-secondary-container": "#69615a",
-                    "error-container": "#ffdad6",
-                    "on-primary-container": "#948e89",
-                    "surface-container-high": "#ece7e6",
-                    "outline": "#7e756f"
+            colors: {
+              "on-tertiary": "#ffffff",
+              "on-error-container": "#93000a",
+              "on-background": "#1c1b1b",
+              "surface-dim": "#ddd9d8",
+              "on-primary-fixed": "#1e1b18",
+              error: "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "primary-container": "#2b2724",
+              "on-primary-fixed-variant": "#4b4642",
+              "surface-bright": "#fdf8f7",
+              "surface-container-low": "#f7f3f1",
+              primary: "#161310",
+              "on-surface": "#1c1b1b",
+              "on-error": "#ffffff",
+              surface: "#fdf8f7",
+              secondary: "#645d56",
+              "primary-fixed": "#e9e1dc",
+              "surface-container": "#f1edec",
+              "primary-fixed-dim": "#cdc5c0",
+              "secondary-fixed": "#ebe1d8",
+              "secondary-container": "#e9ded5",
+              "surface-container-lowest": "#ffffff",
+              "surface-tint": "#635d5a",
+              "inverse-primary": "#cdc5c0",
+              "surface-variant": "#e6e1e0",
+              "tertiary-fixed": "#e3e2e4",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-tertiary-fixed": "#1a1c1e",
+              "on-tertiary-container": "#8f8f91",
+              "on-surface-variant": "#4d4540",
+              "on-secondary-fixed": "#201b15",
+              tertiary: "#121415",
+              "surface-container-highest": "#e6e1e0",
+              "secondary-fixed-dim": "#cfc5bc",
+              "inverse-surface": "#313030",
+              "tertiary-container": "#27282a",
+              "outline-variant": "#cfc4bd",
+              "on-secondary-fixed-variant": "#4c463f",
+              "tertiary-fixed-dim": "#c7c6c8",
+              background: "#fdf8f7",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#f4f0ee",
+              "on-secondary-container": "#69615a",
+              "error-container": "#ffdad6",
+              "on-primary-container": "#948e89",
+              "surface-container-high": "#ece7e6",
+              outline: "#7e756f",
             },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
             },
-            "spacing": {
-                    "xs": "4px",
-                    "xl": "32px",
-                    "md": "16px",
-                    "base": "8px",
-                    "margin-mobile": "20px",
-                    "lg": "24px",
-                    "gutter": "16px",
-                    "xxl": "48px",
-                    "margin-desktop": "64px",
-                    "sm": "8px"
+            spacing: {
+              xs: "4px",
+              xl: "32px",
+              md: "16px",
+              base: "8px",
+              "margin-mobile": "20px",
+              lg: "24px",
+              gutter: "16px",
+              xxl: "48px",
+              "margin-desktop": "64px",
+              sm: "8px",
             },
-            "fontFamily": {
-                    "title-lg": ["Inter"],
-                    "caption": ["Inter"],
-                    "body-md": ["Inter"],
-                    "label-md": ["Inter"],
-                    "body-lg": ["Inter"],
-                    "headline-md": ["Spectral"],
-                    "headline-lg": ["Spectral"],
-                    "headline-lg-mobile": ["Spectral"],
-                    "display-lg": ["Spectral"]
+            fontFamily: {
+              "title-lg": ["Inter"],
+              caption: ["Inter"],
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              "body-lg": ["Inter"],
+              "headline-md": ["Spectral"],
+              "headline-lg": ["Spectral"],
+              "headline-lg-mobile": ["Spectral"],
+              "display-lg": ["Spectral"],
             },
-            "fontSize": {
-                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
-                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
-                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
-                    "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
-                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
-            }
-          }
-        }
-      }
+            fontSize: {
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        /* Ambient shadow utility to match brand guidelines */
-        .shadow-ambient {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-        }
+    <style>
+      /* Ambient shadow utility to match brand guidelines */
+      .shadow-ambient {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-surface-container-low text-on-background font-body-md text-body-md antialiased min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop">
-<!-- Main Success Card Canvas -->
-<main class="w-full max-w-[560px] bg-surface-container-lowest rounded-xl shadow-ambient border border-outline-variant overflow-hidden flex flex-col items-center text-center p-xl">
-<!-- Success Icon -->
-<div class="w-20 h-20 bg-primary-container rounded-full flex items-center justify-center mb-lg">
-<span class="material-symbols-outlined text-[40px] text-on-primary-container" style="font-variation-settings: 'FILL' 1;">
-                check_circle
-            </span>
-</div>
-<!-- Headline -->
-<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary mb-xs">
-            Appointment Confirmed
-        </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-xxl">
-            Your consultation has been successfully scheduled.
-        </p>
-<!-- Details Card -->
-<div class="w-full bg-surface rounded-lg border border-surface-variant p-lg text-left mb-xl">
-<!-- Doctor Info -->
-<div class="flex items-center gap-md mb-lg pb-md border-b border-surface-variant">
-<img alt="Dr. Emily Chen" class="w-16 h-16 rounded-full object-cover border-2 border-surface-container-lowest shadow-sm" data-alt="A professional headshot of a female doctor in her mid-40s with a warm, empathetic smile. She is wearing a white medical coat over a soft-toned blouse, standing in a brightly lit, modern clinical environment. The lighting is soft and flattering, emphasizing a calm and trustworthy demeanor. The color palette is composed of crisp whites, soft greys, and warm skin tones, aligning with a premium healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdRleU7HJKrVIQORV198TOYFtj3G0bkciVIFSdoLYelsyQ6_JPbvDXm35qciGbRfWbzjD_z79H4wxzlmScmcb-y7f2i0u0v_Z7TWFrn4GeQG8-My0PRhCZACjdessI5wIOJlq_xNanm9OWdMM-LQ08jddFIi8PFdtWrtLSLTy8zwyLEpkFW1S9BGqFusZHTgpeDp-nTYNxCCfM6VZDsCKxrtFasIxjXJNQB8clpUiYP4DSd6llXiCPVjnBQF9QLVkCylPG0FlkShEG">
-<div>
-<h2 class="font-title-lg text-title-lg text-on-surface">Dr. Emily Chen, MD</h2>
-<p class="font-label-md text-label-md text-on-surface-variant">Internal Medicine Specialist</p>
-</div>
-</div>
-<!-- Time & Location -->
-<div class="flex flex-col gap-md">
-<div class="flex items-start gap-md">
-<span class="material-symbols-outlined text-on-surface-variant mt-1">calendar_today</span>
-<div>
-<p class="font-label-md text-label-md text-on-surface">Thursday, November 16, 2023</p>
-<p class="font-body-md text-body-md text-on-surface-variant">10:00 AM - 10:45 AM (PST)</p>
-</div>
-</div>
-<div class="flex items-start gap-md">
-<span class="material-symbols-outlined text-on-surface-variant mt-1">videocam</span>
-<div>
-<p class="font-label-md text-label-md text-on-surface">Telehealth Consultation</p>
-<p class="font-body-md text-body-md text-on-surface-variant">Link will be active 15 mins prior</p>
-</div>
-</div>
-</div>
-</div>
-<!-- Actions -->
-<div class="w-full flex flex-col gap-md">
-<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg hover:bg-inverse-surface transition-colors duration-200 shadow-sm">
-                Add to Calendar
-            </button>
-<button class="w-full bg-transparent text-primary border border-outline font-label-md text-label-md py-3 rounded-lg hover:bg-surface-container-low transition-colors duration-200">
-                View Appointment Details
-            </button>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-surface-container-low text-on-background font-body-md text-body-md antialiased min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop"
+  >
+    <!-- Main Success Card Canvas -->
+    <main
+      class="w-full max-w-[560px] bg-surface-container-lowest rounded-xl shadow-ambient border border-outline-variant overflow-hidden flex flex-col items-center text-center p-xl"
+    >
+      <!-- Success Icon -->
+      <div
+        class="w-20 h-20 bg-primary-container rounded-full flex items-center justify-center mb-lg"
+      >
+        <span
+          class="material-symbols-outlined text-[40px] text-on-primary-container"
+          style="font-variation-settings: &quot;FILL&quot; 1"
+        >
+          check_circle
+        </span>
+      </div>
+      <!-- Headline -->
+      <h1
+        class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary mb-xs"
+      >
+        Appointment Confirmed
+      </h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant mb-xxl">
+        Your consultation has been successfully scheduled.
+      </p>
+      <!-- Details Card -->
+      <div
+        class="w-full bg-surface rounded-lg border border-surface-variant p-lg text-left mb-xl"
+      >
+        <!-- Doctor Info -->
+        <div
+          class="flex items-center gap-md mb-lg pb-md border-b border-surface-variant"
+        >
+          <img
+            alt="Dr. Emily Chen"
+            class="w-16 h-16 rounded-full object-cover border-2 border-surface-container-lowest shadow-sm"
+            data-alt="A professional headshot of a female doctor in her mid-40s with a warm, empathetic smile. She is wearing a white medical coat over a soft-toned blouse, standing in a brightly lit, modern clinical environment. The lighting is soft and flattering, emphasizing a calm and trustworthy demeanor. The color palette is composed of crisp whites, soft greys, and warm skin tones, aligning with a premium healthcare aesthetic."
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdRleU7HJKrVIQORV198TOYFtj3G0bkciVIFSdoLYelsyQ6_JPbvDXm35qciGbRfWbzjD_z79H4wxzlmScmcb-y7f2i0u0v_Z7TWFrn4GeQG8-My0PRhCZACjdessI5wIOJlq_xNanm9OWdMM-LQ08jddFIi8PFdtWrtLSLTy8zwyLEpkFW1S9BGqFusZHTgpeDp-nTYNxCCfM6VZDsCKxrtFasIxjXJNQB8clpUiYP4DSd6llXiCPVjnBQF9QLVkCylPG0FlkShEG"
+          />
+          <div>
+            <h2 class="font-title-lg text-title-lg text-on-surface">
+              Dr. Emily Chen, MD
+            </h2>
+            <p class="font-label-md text-label-md text-on-surface-variant">
+              Internal Medicine Specialist
+            </p>
+          </div>
+        </div>
+        <!-- Time & Location -->
+        <div class="flex flex-col gap-md">
+          <div class="flex items-start gap-md">
+            <span class="material-symbols-outlined text-on-surface-variant mt-1"
+              >calendar_today</span
+            >
+            <div>
+              <p class="font-label-md text-label-md text-on-surface">
+                Thursday, November 16, 2023
+              </p>
+              <p class="font-body-md text-body-md text-on-surface-variant">
+                10:00 AM - 10:45 AM (PST)
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start gap-md">
+            <span class="material-symbols-outlined text-on-surface-variant mt-1"
+              >videocam</span
+            >
+            <div>
+              <p class="font-label-md text-label-md text-on-surface">
+                Telehealth Consultation
+              </p>
+              <p class="font-body-md text-body-md text-on-surface-variant">
+                Link will be active 15 mins prior
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Actions -->
+      <div class="w-full flex flex-col gap-md">
+        <button
+          class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg hover:bg-inverse-surface transition-colors duration-200 shadow-sm"
+        >
+          Add to Calendar
+        </button>
+        <button
+          class="w-full bg-transparent text-primary border border-outline font-label-md text-label-md py-3 rounded-lg hover:bg-surface-container-low transition-colors duration-200"
+        >
+          View Appointment Details
+        </button>
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

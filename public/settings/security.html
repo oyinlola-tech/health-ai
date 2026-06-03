@@ -1,334 +1,563 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Security Settings - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Security Settings - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "on-error-container": "#93000a",
-                        "surface-container-low": "#f7f3f1",
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "primary-fixed": "#e9e1dc",
-                        "on-surface-variant": "#4d4540",
-                        "surface-container-lowest": "#ffffff",
-                        "on-tertiary": "#ffffff",
-                        "secondary": "#645d56",
-                        "inverse-surface": "#313030",
-                        "on-secondary-fixed": "#201b15",
-                        "surface-tint": "#635d5a",
-                        "primary": "#161310",
-                        "tertiary-container": "#27282a",
-                        "error-container": "#ffdad6",
-                        "on-background": "#1c1b1b",
-                        "primary-container": "#2b2724",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "surface-dim": "#ddd9d8",
-                        "secondary-container": "#e9ded5",
-                        "inverse-on-surface": "#f4f0ee",
-                        "surface-container-high": "#ece7e6",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "on-surface": "#1c1b1b",
-                        "on-error": "#ffffff",
-                        "outline": "#7e756f",
-                        "inverse-primary": "#cdc5c0",
-                        "on-secondary": "#ffffff",
-                        "on-tertiary-container": "#8f8f91",
-                        "surface-container-highest": "#e6e1e0",
-                        "surface-bright": "#fdf8f7",
-                        "surface-variant": "#e6e1e0",
-                        "tertiary": "#121415",
-                        "secondary-fixed": "#ebe1d8",
-                        "error": "#ba1a1a",
-                        "surface-container": "#f1edec",
-                        "on-primary-fixed": "#1e1b18",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "on-primary": "#ffffff",
-                        "surface": "#fdf8f7",
-                        "background": "#fdf8f7",
-                        "on-secondary-container": "#69615a",
-                        "tertiary-fixed": "#e3e2e4",
-                        "outline-variant": "#cfc4bd",
-                        "on-primary-container": "#948e89",
-                        "wellness-coral": "#FF6E5C" // Added specific brand accent not in config
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "xl": "32px",
-                        "md": "16px",
-                        "sm": "8px",
-                        "base": "8px",
-                        "xxl": "48px",
-                        "xs": "4px",
-                        "lg": "24px",
-                        "margin-mobile": "20px",
-                        "margin-desktop": "64px",
-                        "gutter": "16px"
-                    },
-                    "fontFamily": {
-                        "title-lg": ["Inter"],
-                        "caption": ["Inter"],
-                        "label-md": ["Inter"],
-                        "headline-md": ["Spectral"],
-                        "headline-lg-mobile": ["Spectral"],
-                        "display-lg": ["Spectral"],
-                        "body-lg": ["Inter"],
-                        "headline-lg": ["Spectral"],
-                        "body-md": ["Inter"]
-                    },
-                    "fontSize": {
-                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
-                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
-                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
-                    }
-                }
-            }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#4c463f",
+              "on-error-container": "#93000a",
+              "surface-container-low": "#f7f3f1",
+              "secondary-fixed-dim": "#cfc5bc",
+              "primary-fixed": "#e9e1dc",
+              "on-surface-variant": "#4d4540",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              secondary: "#645d56",
+              "inverse-surface": "#313030",
+              "on-secondary-fixed": "#201b15",
+              "surface-tint": "#635d5a",
+              primary: "#161310",
+              "tertiary-container": "#27282a",
+              "error-container": "#ffdad6",
+              "on-background": "#1c1b1b",
+              "primary-container": "#2b2724",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "surface-dim": "#ddd9d8",
+              "secondary-container": "#e9ded5",
+              "inverse-on-surface": "#f4f0ee",
+              "surface-container-high": "#ece7e6",
+              "on-tertiary-fixed-variant": "#464749",
+              "primary-fixed-dim": "#cdc5c0",
+              "on-tertiary-fixed": "#1a1c1e",
+              "on-surface": "#1c1b1b",
+              "on-error": "#ffffff",
+              outline: "#7e756f",
+              "inverse-primary": "#cdc5c0",
+              "on-secondary": "#ffffff",
+              "on-tertiary-container": "#8f8f91",
+              "surface-container-highest": "#e6e1e0",
+              "surface-bright": "#fdf8f7",
+              "surface-variant": "#e6e1e0",
+              tertiary: "#121415",
+              "secondary-fixed": "#ebe1d8",
+              error: "#ba1a1a",
+              "surface-container": "#f1edec",
+              "on-primary-fixed": "#1e1b18",
+              "on-primary-fixed-variant": "#4b4642",
+              "on-primary": "#ffffff",
+              surface: "#fdf8f7",
+              background: "#fdf8f7",
+              "on-secondary-container": "#69615a",
+              "tertiary-fixed": "#e3e2e4",
+              "outline-variant": "#cfc4bd",
+              "on-primary-container": "#948e89",
+              "wellness-coral": "#FF6E5C", // Added specific brand accent not in config
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              xl: "32px",
+              md: "16px",
+              sm: "8px",
+              base: "8px",
+              xxl: "48px",
+              xs: "4px",
+              lg: "24px",
+              "margin-mobile": "20px",
+              "margin-desktop": "64px",
+              gutter: "16px",
+            },
+            fontFamily: {
+              "title-lg": ["Inter"],
+              caption: ["Inter"],
+              "label-md": ["Inter"],
+              "headline-md": ["Spectral"],
+              "headline-lg-mobile": ["Spectral"],
+              "display-lg": ["Spectral"],
+              "body-lg": ["Inter"],
+              "headline-lg": ["Spectral"],
+              "body-md": ["Inter"],
+            },
+            fontSize: {
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .material-symbols-outlined[data-weight="fill"] {
-            font-variation-settings: 'FILL' 1;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        input:focus {
-            outline: none;
-            border-color: #161310 !important;
-            box-shadow: 0 0 0 2px rgba(255, 110, 92, 0.2) !important;
-        }
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .material-symbols-outlined[data-weight="fill"] {
+        font-variation-settings: "FILL" 1;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      input:focus {
+        outline: none;
+        border-color: #161310 !important;
+        box-shadow: 0 0 0 2px rgba(255, 110, 92, 0.2) !important;
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background min-h-screen antialiased selection:bg-surface-variant selection:text-primary">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface dark:bg-background border-b border-outline-variant shadow-sm transition-colors duration-200">
-<div class="flex items-center gap-sm">
-<span class="font-headline-md text-headline-md text-primary font-bold tracking-tight">MedExplain AI</span>
-</div>
-<div class="flex items-center gap-md">
-<button class="p-2 rounded-full hover:bg-surface-container-low text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
-<button class="p-2 rounded-full hover:bg-surface-container-low text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
-</button>
-</div>
-</header>
-<!-- Main Layout Grid -->
-<div class="flex pt-16 min-h-screen">
-<!-- SideNavBar -->
-<aside class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] z-40 bg-surface-container-low w-64 shadow-md bg-surface-container-low dark:bg-surface-container-lowest justify-between">
-<div>
-<div class="p-margin-desktop border-b border-outline-variant pb-md mb-md">
-<div class="flex items-center gap-sm mb-xs">
-<img alt="User Profile Avatar" class="w-10 h-10 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCbytJf8XqQtObpBQ4AiqMbHuQDE5PWzV_2lpq6rPEaI5ZOMeZaOPkX_rpMFK91UIj-S0OP-idM431AWzRInwCmkN6rHtU2UuqRWT2wuMEYf_sSQNu6hhCkotjcEZZY_NCs_UgTXOq45F63c0mZ7xPLR8uORUWeP-QBcWegwCSE7NgbyufN9DN_DdzYsjYOvjgIY7D_kN-oXY1SQG9pqKs9NuuxjCPtTnrzn3a4q_Xr1Q4akV91Znz0j9f5n496vmbQkeEKgLN37xy">
-<div>
-<h2 class="font-label-md text-label-md font-bold text-primary">Patient Portal</h2>
-<p class="font-caption text-caption text-secondary">Manage your health data</p>
-</div>
-</div>
-</div>
-<nav class="flex flex-col gap-xs py-sm">
-<a class="flex items-center gap-sm text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all font-label-md text-label-md" href="/consultation/find-doctor.html">
-<span class="material-symbols-outlined">search</span>
-                        Find Doctor
-                    </a>
-<a class="flex items-center gap-sm text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all font-label-md text-label-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined">medical_information</span>
-                        Health Records
-                    </a>
-<a class="flex items-center gap-sm text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all font-label-md text-label-md" href="/consultation/appointments.html">
-<span class="material-symbols-outlined">event_available</span>
-                        My Appointments
-                    </a>
-<a class="flex items-center gap-sm text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all font-label-md text-label-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined">history_edu</span>
-                        Consultation History
-                    </a>
-<!-- Active State Applied Here -->
-<a class="flex items-center gap-sm text-primary font-bold border-r-4 border-primary bg-secondary-container/30 px-4 py-3 font-label-md text-label-md scale-[0.99] duration-150" href="/settings/home.html">
-<span class="material-symbols-outlined" data-weight="fill">settings</span>
-                        Settings
-                    </a>
-</nav>
-</div>
-<div class="p-margin-desktop border-t border-outline-variant pt-md mt-auto">
-<button class="w-full bg-[#FF6E5C] text-on-primary py-3 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity mb-md flex justify-center items-center gap-xs">
-                    New Consultation
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-background min-h-screen antialiased selection:bg-surface-variant selection:text-primary"
+  >
+    <!-- TopAppBar -->
+    <header
+      class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface dark:bg-background border-b border-outline-variant shadow-sm transition-colors duration-200"
+    >
+      <div class="flex items-center gap-sm">
+        <span
+          class="font-headline-md text-headline-md text-primary font-bold tracking-tight"
+          >MedExplain AI</span
+        >
+      </div>
+      <div class="flex items-center gap-md">
+        <button
+          class="p-2 rounded-full hover:bg-surface-container-low text-primary transition-colors"
+        >
+          <span class="material-symbols-outlined" data-icon="notifications"
+            >notifications</span
+          >
+        </button>
+        <button
+          class="p-2 rounded-full hover:bg-surface-container-low text-primary transition-colors"
+        >
+          <span class="material-symbols-outlined" data-icon="account_circle"
+            >account_circle</span
+          >
+        </button>
+      </div>
+    </header>
+    <!-- Main Layout Grid -->
+    <div class="flex pt-16 min-h-screen">
+      <!-- SideNavBar -->
+      <aside
+        class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] z-40 bg-surface-container-low w-64 shadow-md bg-surface-container-low dark:bg-surface-container-lowest justify-between"
+      >
+        <div>
+          <div
+            class="p-margin-desktop border-b border-outline-variant pb-md mb-md"
+          >
+            <div class="flex items-center gap-sm mb-xs">
+              <img
+                alt="User Profile Avatar"
+                class="w-10 h-10 rounded-full border border-outline-variant"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCbytJf8XqQtObpBQ4AiqMbHuQDE5PWzV_2lpq6rPEaI5ZOMeZaOPkX_rpMFK91UIj-S0OP-idM431AWzRInwCmkN6rHtU2UuqRWT2wuMEYf_sSQNu6hhCkotjcEZZY_NCs_UgTXOq45F63c0mZ7xPLR8uORUWeP-QBcWegwCSE7NgbyufN9DN_DdzYsjYOvjgIY7D_kN-oXY1SQG9pqKs9NuuxjCPtTnrzn3a4q_Xr1Q4akV91Znz0j9f5n496vmbQkeEKgLN37xy"
+              />
+              <div>
+                <h2 class="font-label-md text-label-md font-bold text-primary">
+                  Patient Portal
+                </h2>
+                <p class="font-caption text-caption text-secondary">
+                  Manage your health data
+                </p>
+              </div>
+            </div>
+          </div>
+          <nav class="flex flex-col gap-xs py-sm">
+            <a
+              class="flex items-center gap-sm text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all font-label-md text-label-md"
+              href="/consultation/find-doctor.html"
+            >
+              <span class="material-symbols-outlined">search</span>
+              Find Doctor
+            </a>
+            <a
+              class="flex items-center gap-sm text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all font-label-md text-label-md"
+              href="/app/dashboard.html"
+            >
+              <span class="material-symbols-outlined">medical_information</span>
+              Health Records
+            </a>
+            <a
+              class="flex items-center gap-sm text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all font-label-md text-label-md"
+              href="/consultation/appointments.html"
+            >
+              <span class="material-symbols-outlined">event_available</span>
+              My Appointments
+            </a>
+            <a
+              class="flex items-center gap-sm text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all font-label-md text-label-md"
+              href="/app/dashboard.html"
+            >
+              <span class="material-symbols-outlined">history_edu</span>
+              Consultation History
+            </a>
+            <!-- Active State Applied Here -->
+            <a
+              class="flex items-center gap-sm text-primary font-bold border-r-4 border-primary bg-secondary-container/30 px-4 py-3 font-label-md text-label-md scale-[0.99] duration-150"
+              href="/settings/home.html"
+            >
+              <span class="material-symbols-outlined" data-weight="fill"
+                >settings</span
+              >
+              Settings
+            </a>
+          </nav>
+        </div>
+        <div
+          class="p-margin-desktop border-t border-outline-variant pt-md mt-auto"
+        >
+          <button
+            class="w-full bg-[#FF6E5C] text-on-primary py-3 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity mb-md flex justify-center items-center gap-xs"
+          >
+            New Consultation
+          </button>
+          <nav class="flex flex-col gap-xs">
+            <a
+              class="flex items-center gap-sm text-secondary px-4 py-2 hover:text-primary transition-all font-label-md text-label-md"
+              href="/app/dashboard.html"
+            >
+              <span class="material-symbols-outlined">help</span>
+              Support
+            </a>
+            <a
+              class="flex items-center gap-sm text-secondary px-4 py-2 hover:text-primary transition-all font-label-md text-label-md"
+              href="/auth/login.html"
+            >
+              <span class="material-symbols-outlined">logout</span>
+              Logout
+            </a>
+          </nav>
+        </div>
+      </aside>
+      <!-- Main Content Area -->
+      <main
+        class="flex-1 lg:ml-64 p-margin-mobile md:p-margin-desktop bg-background w-full max-w-[1120px] mx-auto"
+      >
+        <div class="mb-xxl max-w-3xl">
+          <h1
+            class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-sm"
+          >
+            Security &amp; Protection
+          </h1>
+          <p class="font-body-lg text-body-lg text-secondary">
+            Manage your account security, passwords, and active sessions to
+            ensure your medical data remains private and protected.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-lg lg:gap-xl">
+          <!-- Left Column: Core Security Actions -->
+          <div class="md:col-span-7 flex flex-col gap-lg">
+            <!-- Password Change Bento Card -->
+            <section
+              class="glass-card bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-shadow duration-300"
+            >
+              <div
+                class="flex items-center gap-sm border-b border-outline-variant pb-sm mb-md"
+              >
+                <div
+                  class="bg-surface-container w-10 h-10 rounded-full flex items-center justify-center text-primary"
+                >
+                  <span class="material-symbols-outlined">key</span>
+                </div>
+                <div>
+                  <h2 class="font-headline-md text-headline-md text-primary">
+                    Password Change
+                  </h2>
+                </div>
+              </div>
+              <form class="space-y-md">
+                <div>
+                  <label
+                    class="block font-label-md text-label-md text-on-surface-variant mb-xs"
+                    >Current Password</label
+                  >
+                  <input
+                    class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-primary transition-all"
+                    placeholder="Enter current password"
+                    type="password"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="block font-label-md text-label-md text-on-surface-variant mb-xs"
+                    >New Password</label
+                  >
+                  <input
+                    class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-primary transition-all"
+                    placeholder="Enter new password"
+                    type="password"
+                  />
+                  <p class="font-caption text-caption text-secondary mt-1">
+                    Must be at least 12 characters and include a symbol.
+                  </p>
+                </div>
+                <div>
+                  <label
+                    class="block font-label-md text-label-md text-on-surface-variant mb-xs"
+                    >Confirm New Password</label
+                  >
+                  <input
+                    class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-primary transition-all"
+                    placeholder="Re-enter new password"
+                    type="password"
+                  />
+                </div>
+                <div class="pt-sm">
+                  <button
+                    class="bg-primary text-on-primary px-6 py-3 rounded-lg font-label-md text-label-md hover:bg-on-surface transition-colors w-full md:w-auto"
+                    type="button"
+                  >
+                    Update Password
+                  </button>
+                </div>
+              </form>
+            </section>
+            <!-- Active Sessions Card -->
+            <section
+              class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-shadow duration-300"
+            >
+              <div
+                class="flex items-center justify-between border-b border-outline-variant pb-sm mb-md"
+              >
+                <div class="flex items-center gap-sm">
+                  <div
+                    class="bg-surface-container w-10 h-10 rounded-full flex items-center justify-center text-primary"
+                  >
+                    <span class="material-symbols-outlined">devices</span>
+                  </div>
+                  <h2 class="font-headline-md text-headline-md text-primary">
+                    Active Sessions
+                  </h2>
+                </div>
+                <button
+                  class="font-label-md text-label-md text-[#FF6E5C] hover:underline"
+                >
+                  Log out all
                 </button>
-<nav class="flex flex-col gap-xs">
-<a class="flex items-center gap-sm text-secondary px-4 py-2 hover:text-primary transition-all font-label-md text-label-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined">help</span>
-                        Support
-                    </a>
-<a class="flex items-center gap-sm text-secondary px-4 py-2 hover:text-primary transition-all font-label-md text-label-md" href="/auth/login.html">
-<span class="material-symbols-outlined">logout</span>
-                        Logout
-                    </a>
-</nav>
-</div>
-</aside>
-<!-- Main Content Area -->
-<main class="flex-1 lg:ml-64 p-margin-mobile md:p-margin-desktop bg-background w-full max-w-[1120px] mx-auto">
-<div class="mb-xxl max-w-3xl">
-<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-sm">Security &amp; Protection</h1>
-<p class="font-body-lg text-body-lg text-secondary">Manage your account security, passwords, and active sessions to ensure your medical data remains private and protected.</p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-12 gap-lg lg:gap-xl">
-<!-- Left Column: Core Security Actions -->
-<div class="md:col-span-7 flex flex-col gap-lg">
-<!-- Password Change Bento Card -->
-<section class="glass-card bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-shadow duration-300">
-<div class="flex items-center gap-sm border-b border-outline-variant pb-sm mb-md">
-<div class="bg-surface-container w-10 h-10 rounded-full flex items-center justify-center text-primary">
-<span class="material-symbols-outlined">key</span>
-</div>
-<div>
-<h2 class="font-headline-md text-headline-md text-primary">Password Change</h2>
-</div>
-</div>
-<form class="space-y-md">
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Current Password</label>
-<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-primary transition-all" placeholder="Enter current password" type="password">
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">New Password</label>
-<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-primary transition-all" placeholder="Enter new password" type="password">
-<p class="font-caption text-caption text-secondary mt-1">Must be at least 12 characters and include a symbol.</p>
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Confirm New Password</label>
-<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-primary transition-all" placeholder="Re-enter new password" type="password">
-</div>
-<div class="pt-sm">
-<button class="bg-primary text-on-primary px-6 py-3 rounded-lg font-label-md text-label-md hover:bg-on-surface transition-colors w-full md:w-auto" type="button">Update Password</button>
-</div>
-</form>
-</section>
-<!-- Active Sessions Card -->
-<section class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-shadow duration-300">
-<div class="flex items-center justify-between border-b border-outline-variant pb-sm mb-md">
-<div class="flex items-center gap-sm">
-<div class="bg-surface-container w-10 h-10 rounded-full flex items-center justify-center text-primary">
-<span class="material-symbols-outlined">devices</span>
-</div>
-<h2 class="font-headline-md text-headline-md text-primary">Active Sessions</h2>
-</div>
-<button class="font-label-md text-label-md text-[#FF6E5C] hover:underline">Log out all</button>
-</div>
-<div class="space-y-4">
-<!-- Session 1 (Current) -->
-<div class="flex items-start justify-between p-sm bg-surface rounded-lg border-l-2 border-[#FF6E5C]">
-<div class="flex gap-md">
-<span class="material-symbols-outlined text-secondary mt-1">laptop_mac</span>
-<div>
-<p class="font-title-lg text-title-lg text-primary text-[16px] leading-tight">MacBook Pro - Safari</p>
-<p class="font-caption text-caption text-secondary">New York, USA • Active now</p>
-<span class="inline-block mt-1 font-caption text-caption bg-surface-container-high px-2 py-0.5 rounded text-secondary">Current Session</span>
-</div>
-</div>
-</div>
-<!-- Session 2 -->
-<div class="flex items-center justify-between p-sm border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors">
-<div class="flex items-center gap-md">
-<span class="material-symbols-outlined text-secondary">smartphone</span>
-<div>
-<p class="font-title-lg text-title-lg text-primary text-[16px] leading-tight">iPhone 13 - MedExplain App</p>
-<p class="font-caption text-caption text-secondary">Boston, USA • Last active 2h ago</p>
-</div>
-</div>
-<button class="text-secondary hover:text-error transition-colors p-2" title="Revoke Session">
-<span class="material-symbols-outlined">logout</span>
-</button>
-</div>
-</div>
-</section>
-</div>
-<!-- Right Column: 2FA & Secondary Actions -->
-<div class="md:col-span-5 flex flex-col gap-lg">
-<!-- 2FA Setup Card -->
-<section class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden">
-<!-- Subtle AI Highlight origin hint -->
-<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF6E5C] to-surface-container-lowest opacity-20"></div>
-<div class="flex items-start justify-between mb-md">
-<div class="flex items-center gap-sm">
-<div class="bg-surface-container w-10 h-10 rounded-full flex items-center justify-center text-primary">
-<span class="material-symbols-outlined">security</span>
-</div>
-<div>
-<h2 class="font-headline-md text-headline-md text-primary">Two-Factor Auth</h2>
-</div>
-</div>
-<div class="bg-surface-container-high px-2 py-1 rounded text-secondary font-caption text-caption flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-error inline-block"></span> Disabled
-                            </div>
-</div>
-<p class="font-body-md text-body-md text-secondary mb-md">Add an extra layer of security to your account. When enabled, you'll need to enter a code from your authenticator app.</p>
-<button class="w-full bg-[#FF6E5C] text-on-primary py-3 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
-                            Enable 2FA
-                        </button>
-</section>
-<!-- Security Logs (Simple list format within a card) -->
-<section class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
-<div class="flex items-center gap-sm border-b border-outline-variant pb-sm mb-sm">
-<span class="material-symbols-outlined text-secondary">manage_search</span>
-<h2 class="font-title-lg text-title-lg text-primary text-[18px]">Recent Activity</h2>
-</div>
-<ul class="space-y-3">
-<li class="flex justify-between items-start font-body-md text-body-md text-[14px]">
-<span class="text-on-surface-variant">Successful login (MacBook)</span>
-<span class="text-secondary font-caption text-caption">10:42 AM</span>
-</li>
-<li class="flex justify-between items-start font-body-md text-body-md text-[14px]">
-<span class="text-on-surface-variant">Password changed</span>
-<span class="text-secondary font-caption text-caption">Oct 12</span>
-</li>
-<li class="flex justify-between items-start font-body-md text-body-md text-[14px]">
-<span class="text-error">Failed login attempt (Unknown)</span>
-<span class="text-secondary font-caption text-caption">Oct 10</span>
-</li>
-</ul>
-<button class="mt-md w-full text-center font-label-md text-label-md text-secondary border border-outline-variant py-2 rounded hover:bg-surface-container-low transition-colors">View All Logs</button>
-</section>
-<!-- Danger Zone -->
-<section class="mt-auto pt-lg">
-<div class="border border-error-container bg-error-container/10 rounded-xl p-lg">
-<h3 class="font-title-lg text-title-lg text-error mb-xs">Danger Zone</h3>
-<p class="font-body-md text-body-md text-secondary mb-md text-sm">Once you delete your account, there is no going back. All medical data will be permanently erased.</p>
-<button class="text-error font-label-md text-label-md border border-error px-4 py-2 rounded hover:bg-error hover:text-on-error transition-colors">Delete Account</button>
-</div>
-</section>
-</div>
-</div>
-</main>
-</div>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+              </div>
+              <div class="space-y-4">
+                <!-- Session 1 (Current) -->
+                <div
+                  class="flex items-start justify-between p-sm bg-surface rounded-lg border-l-2 border-[#FF6E5C]"
+                >
+                  <div class="flex gap-md">
+                    <span class="material-symbols-outlined text-secondary mt-1"
+                      >laptop_mac</span
+                    >
+                    <div>
+                      <p
+                        class="font-title-lg text-title-lg text-primary text-[16px] leading-tight"
+                      >
+                        MacBook Pro - Safari
+                      </p>
+                      <p class="font-caption text-caption text-secondary">
+                        New York, USA • Active now
+                      </p>
+                      <span
+                        class="inline-block mt-1 font-caption text-caption bg-surface-container-high px-2 py-0.5 rounded text-secondary"
+                        >Current Session</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <!-- Session 2 -->
+                <div
+                  class="flex items-center justify-between p-sm border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors"
+                >
+                  <div class="flex items-center gap-md">
+                    <span class="material-symbols-outlined text-secondary"
+                      >smartphone</span
+                    >
+                    <div>
+                      <p
+                        class="font-title-lg text-title-lg text-primary text-[16px] leading-tight"
+                      >
+                        iPhone 13 - MedExplain App
+                      </p>
+                      <p class="font-caption text-caption text-secondary">
+                        Boston, USA • Last active 2h ago
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    class="text-secondary hover:text-error transition-colors p-2"
+                    title="Revoke Session"
+                  >
+                    <span class="material-symbols-outlined">logout</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+          <!-- Right Column: 2FA & Secondary Actions -->
+          <div class="md:col-span-5 flex flex-col gap-lg">
+            <!-- 2FA Setup Card -->
+            <section
+              class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-[0_4px_12px_rgba(0,0,0,0.04)] relative overflow-hidden"
+            >
+              <!-- Subtle AI Highlight origin hint -->
+              <div
+                class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF6E5C] to-surface-container-lowest opacity-20"
+              ></div>
+              <div class="flex items-start justify-between mb-md">
+                <div class="flex items-center gap-sm">
+                  <div
+                    class="bg-surface-container w-10 h-10 rounded-full flex items-center justify-center text-primary"
+                  >
+                    <span class="material-symbols-outlined">security</span>
+                  </div>
+                  <div>
+                    <h2 class="font-headline-md text-headline-md text-primary">
+                      Two-Factor Auth
+                    </h2>
+                  </div>
+                </div>
+                <div
+                  class="bg-surface-container-high px-2 py-1 rounded text-secondary font-caption text-caption flex items-center gap-1"
+                >
+                  <span
+                    class="w-2 h-2 rounded-full bg-error inline-block"
+                  ></span>
+                  Disabled
+                </div>
+              </div>
+              <p class="font-body-md text-body-md text-secondary mb-md">
+                Add an extra layer of security to your account. When enabled,
+                you'll need to enter a code from your authenticator app.
+              </p>
+              <button
+                class="w-full bg-[#FF6E5C] text-on-primary py-3 rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity"
+              >
+                Enable 2FA
+              </button>
+            </section>
+            <!-- Security Logs (Simple list format within a card) -->
+            <section
+              class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant shadow-[0_4px_12px_rgba(0,0,0,0.04)]"
+            >
+              <div
+                class="flex items-center gap-sm border-b border-outline-variant pb-sm mb-sm"
+              >
+                <span class="material-symbols-outlined text-secondary"
+                  >manage_search</span
+                >
+                <h2
+                  class="font-title-lg text-title-lg text-primary text-[18px]"
+                >
+                  Recent Activity
+                </h2>
+              </div>
+              <ul class="space-y-3">
+                <li
+                  class="flex justify-between items-start font-body-md text-body-md text-[14px]"
+                >
+                  <span class="text-on-surface-variant"
+                    >Successful login (MacBook)</span
+                  >
+                  <span class="text-secondary font-caption text-caption"
+                    >10:42 AM</span
+                  >
+                </li>
+                <li
+                  class="flex justify-between items-start font-body-md text-body-md text-[14px]"
+                >
+                  <span class="text-on-surface-variant">Password changed</span>
+                  <span class="text-secondary font-caption text-caption"
+                    >Oct 12</span
+                  >
+                </li>
+                <li
+                  class="flex justify-between items-start font-body-md text-body-md text-[14px]"
+                >
+                  <span class="text-error">Failed login attempt (Unknown)</span>
+                  <span class="text-secondary font-caption text-caption"
+                    >Oct 10</span
+                  >
+                </li>
+              </ul>
+              <button
+                class="mt-md w-full text-center font-label-md text-label-md text-secondary border border-outline-variant py-2 rounded hover:bg-surface-container-low transition-colors"
+              >
+                View All Logs
+              </button>
+            </section>
+            <!-- Danger Zone -->
+            <section class="mt-auto pt-lg">
+              <div
+                class="border border-error-container bg-error-container/10 rounded-xl p-lg"
+              >
+                <h3 class="font-title-lg text-title-lg text-error mb-xs">
+                  Danger Zone
+                </h3>
+                <p
+                  class="font-body-md text-body-md text-secondary mb-md text-sm"
+                >
+                  Once you delete your account, there is no going back. All
+                  medical data will be permanently erased.
+                </p>
+                <button
+                  class="text-error font-label-md text-label-md border border-error px-4 py-2 rounded hover:bg-error hover:text-on-error transition-colors"
+                >
+                  Delete Account
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

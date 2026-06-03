@@ -1,182 +1,259 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Upload Failed - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Upload Failed - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "background": "#fdf8f7",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "primary": "#161310",
-                        "inverse-primary": "#cdc5c0",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "on-primary-container": "#948e89",
-                        "inverse-surface": "#313030",
-                        "on-primary": "#ffffff",
-                        "outline": "#7e756f",
-                        "on-tertiary": "#ffffff",
-                        "on-background": "#1c1b1b",
-                        "primary-container": "#2b2724",
-                        "on-error-container": "#93000a",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container-highest": "#e6e1e0",
-                        "surface-container-high": "#ece7e6",
-                        "error-container": "#ffdad6",
-                        "tertiary": "#121415",
-                        "primary-fixed": "#e9e1dc",
-                        "secondary": "#645d56",
-                        "on-primary-fixed": "#1e1b18",
-                        "surface-container": "#f1edec",
-                        "inverse-on-surface": "#f4f0ee",
-                        "on-secondary-container": "#69615a",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "surface-variant": "#e6e1e0",
-                        "secondary-container": "#e9ded5",
-                        "on-error": "#ffffff",
-                        "on-secondary": "#ffffff",
-                        "tertiary-container": "#27282a",
-                        "on-tertiary-container": "#8f8f91",
-                        "surface": "#fdf8f7",
-                        "on-surface": "#1c1b1b",
-                        "tertiary-fixed": "#e3e2e4",
-                        "surface-bright": "#fdf8f7",
-                        "surface-tint": "#635d5a",
-                        "on-surface-variant": "#4d4540",
-                        "on-secondary-fixed": "#201b15",
-                        "surface-container-low": "#f7f3f1",
-                        "surface-dim": "#ddd9d8",
-                        "outline-variant": "#cfc4bd",
-                        "secondary-fixed": "#ebe1d8",
-                        "error": "#ba1a1a",
-                        "wellness-coral": "#FF6E5C",
-                        "muted-stone": "#E8E4E1",
-                        "deep-charcoal": "#1c1b1b"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "xs": "4px",
-                        "sm": "8px",
-                        "margin-desktop": "64px",
-                        "xl": "32px",
-                        "margin-mobile": "20px",
-                        "lg": "24px",
-                        "md": "16px",
-                        "base": "8px",
-                        "xxl": "48px",
-                        "gutter": "16px"
-                    },
-                    "fontFamily": {
-                        "headline-lg-mobile": ["Spectral"],
-                        "body-lg": ["Inter"],
-                        "headline-md": ["Spectral"],
-                        "headline-lg": ["Spectral"],
-                        "title-lg": ["Inter"],
-                        "caption": ["Inter"],
-                        "label-md": ["Inter"],
-                        "display-lg": ["Spectral"],
-                        "body-md": ["Inter"]
-                    },
-                    "fontSize": {
-                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
-                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
-                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
-                    }
-                }
-            }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#4c463f",
+              background: "#fdf8f7",
+              "on-tertiary-fixed": "#1a1c1e",
+              primary: "#161310",
+              "inverse-primary": "#cdc5c0",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "on-primary-container": "#948e89",
+              "inverse-surface": "#313030",
+              "on-primary": "#ffffff",
+              outline: "#7e756f",
+              "on-tertiary": "#ffffff",
+              "on-background": "#1c1b1b",
+              "primary-container": "#2b2724",
+              "on-error-container": "#93000a",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-highest": "#e6e1e0",
+              "surface-container-high": "#ece7e6",
+              "error-container": "#ffdad6",
+              tertiary: "#121415",
+              "primary-fixed": "#e9e1dc",
+              secondary: "#645d56",
+              "on-primary-fixed": "#1e1b18",
+              "surface-container": "#f1edec",
+              "inverse-on-surface": "#f4f0ee",
+              "on-secondary-container": "#69615a",
+              "primary-fixed-dim": "#cdc5c0",
+              "on-tertiary-fixed-variant": "#464749",
+              "secondary-fixed-dim": "#cfc5bc",
+              "on-primary-fixed-variant": "#4b4642",
+              "surface-variant": "#e6e1e0",
+              "secondary-container": "#e9ded5",
+              "on-error": "#ffffff",
+              "on-secondary": "#ffffff",
+              "tertiary-container": "#27282a",
+              "on-tertiary-container": "#8f8f91",
+              surface: "#fdf8f7",
+              "on-surface": "#1c1b1b",
+              "tertiary-fixed": "#e3e2e4",
+              "surface-bright": "#fdf8f7",
+              "surface-tint": "#635d5a",
+              "on-surface-variant": "#4d4540",
+              "on-secondary-fixed": "#201b15",
+              "surface-container-low": "#f7f3f1",
+              "surface-dim": "#ddd9d8",
+              "outline-variant": "#cfc4bd",
+              "secondary-fixed": "#ebe1d8",
+              error: "#ba1a1a",
+              "wellness-coral": "#FF6E5C",
+              "muted-stone": "#E8E4E1",
+              "deep-charcoal": "#1c1b1b",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              xs: "4px",
+              sm: "8px",
+              "margin-desktop": "64px",
+              xl: "32px",
+              "margin-mobile": "20px",
+              lg: "24px",
+              md: "16px",
+              base: "8px",
+              xxl: "48px",
+              gutter: "16px",
+            },
+            fontFamily: {
+              "headline-lg-mobile": ["Spectral"],
+              "body-lg": ["Inter"],
+              "headline-md": ["Spectral"],
+              "headline-lg": ["Spectral"],
+              "title-lg": ["Inter"],
+              caption: ["Inter"],
+              "label-md": ["Inter"],
+              "display-lg": ["Spectral"],
+              "body-md": ["Inter"],
+            },
+            fontSize: {
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .ai-bubble {
-            border-radius: 1rem;
-            border-bottom-left-radius: 0;
-            background-color: rgba(255, 110, 92, 0.05); /* 5% Wellness Coral */
-            border-top: 2px solid #FF6E5C;
-        }
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .ai-bubble {
+        border-radius: 1rem;
+        border-bottom-left-radius: 0;
+        background-color: rgba(255, 110, 92, 0.05); /* 5% Wellness Coral */
+        border-top: 2px solid #ff6e5c;
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
-<!-- TopNavBar (Transactional Screen - Suppressed typical nav cluster, keeping brand anchor and close) -->
-<header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-md w-full sticky top-0 z-50 bg-background flat no shadows">
-<div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">
-            MedExplain AI
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-background min-h-screen flex flex-col font-body-md"
+  >
+    <!-- TopNavBar (Transactional Screen - Suppressed typical nav cluster, keeping brand anchor and close) -->
+    <header
+      class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-md w-full sticky top-0 z-50 bg-background flat no shadows"
+    >
+      <div
+        class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight"
+      >
+        MedExplain AI
+      </div>
+      <div>
+        <button
+          aria-label="Close"
+          class="text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-70 flex items-center justify-center p-sm rounded-full hover:bg-surface-container-high"
+        >
+          <span class="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+    </header>
+    <!-- Main Content Canvas -->
+    <main
+      class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop py-xxl"
+    >
+      <div
+        class="w-full max-w-lg mx-auto bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-muted-stone overflow-hidden transition-all duration-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] relative"
+      >
+        <!-- AI Assist Top Indicator -->
+        <div class="h-1 w-full bg-wellness-coral opacity-80"></div>
+        <div class="p-lg md:p-xl flex flex-col items-center text-center">
+          <div
+            class="w-48 h-48 mb-lg rounded-full bg-surface-container flex items-center justify-center overflow-hidden relative border border-surface-variant"
+          >
+            <img
+              alt="A calming, abstract 3D illustration of softly floating spheres and organic shapes in warm, pastel coral and light beige tones. The lighting is soft and diffused, creating a serene and supportive atmosphere, avoiding any harsh or clinical medical imagery. The aesthetic is modern, empathetic, and cleanly designed to reassure a stressed user."
+              class="object-cover w-full h-full opacity-80 mix-blend-multiply"
+              data-alt="A calming, abstract 3D illustration of softly floating spheres and organic shapes in warm, pastel coral and light beige tones. The lighting is soft and diffused, creating a serene and supportive atmosphere, avoiding any harsh or clinical medical imagery. The aesthetic is modern, empathetic, and cleanly designed to reassure a stressed user."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9lFBxkYdYhZ75FHXtRzrrXn3Cse3rPb7LHyA8TfDevf9Sr2V02NT9GZEVkPQhUic__X0C0NMb4DX3y8PCtL9kKr7rWlvW0sv51CmwijfuK1xCoHwQ3NtdFvaeTacYzo8KKmleIejnpRbnocJunqlVPgPB4-G_AlW6UFYtMUBQQkGm3zR1tB_vlH7u_NMspnREsaZQgHCzJm4vpEKy9a6DUt5GuRmf_dVOeC7NeQiM033v-FIeZcZbE4aP9_C6WAEdxNdqh0KflgER"
+            />
+            <div class="absolute inset-0 bg-wellness-coral/10"></div>
+          </div>
+          <!-- Error Messaging -->
+          <h1 class="font-headline-md text-headline-md text-primary mb-sm">
+            Upload Interrupted
+          </h1>
+          <p
+            class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-sm"
+          >
+            We couldn't process your medical report. Let's try again to get
+            those insights ready for you.
+          </p>
+          <!-- AI Diagnostic Bubble -->
+          <div class="ai-bubble p-md w-full text-left mb-xl">
+            <div class="flex items-center gap-sm mb-xs">
+              <span
+                class="material-symbols-outlined text-wellness-coral text-xl"
+                data-weight="fill"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >info</span
+              >
+              <span
+                class="font-label-md text-label-md text-on-surface-variant font-medium"
+                >Common Reasons</span
+              >
+            </div>
+            <ul
+              class="font-body-md text-body-md text-on-background space-y-xs ml-lg list-disc list-outside"
+            >
+              <li>File size exceeds the 50MB limit.</li>
+              <li>Format is unsupported (please use PDF, JPG, or PNG).</li>
+              <li>A brief connection drop during transfer.</li>
+            </ul>
+          </div>
+          <!-- Action Buttons -->
+          <div class="w-full flex flex-col gap-md">
+            <button
+              class="w-full min-h-[48px] bg-wellness-coral text-on-primary font-title-lg text-title-lg rounded-full hover:opacity-90 active:scale-95 transition-all duration-200 shadow-sm flex items-center justify-center gap-sm"
+            >
+              <span class="material-symbols-outlined">refresh</span>
+              Retry Upload
+            </button>
+            <button
+              class="w-full min-h-[48px] bg-surface-container-lowest text-primary font-title-lg text-title-lg rounded-full border border-outline-variant hover:bg-surface-container transition-all duration-200 active:scale-95 flex items-center justify-center gap-sm"
+            >
+              <span class="material-symbols-outlined">folder_open</span>
+              Select Different File
+            </button>
+          </div>
+          <p class="font-caption text-caption text-on-surface-variant mt-lg">
+            Need help?
+            <a
+              class="text-wellness-coral hover:underline"
+              href="mailto:support@medexplain.ai"
+              >Contact Support</a
+            >
+          </p>
         </div>
-<div>
-<button aria-label="Close" class="text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-70 flex items-center justify-center p-sm rounded-full hover:bg-surface-container-high">
-<span class="material-symbols-outlined text-2xl">close</span>
-</button>
-</div>
-</header>
-<!-- Main Content Canvas -->
-<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop py-xxl">
-<div class="w-full max-w-lg mx-auto bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-muted-stone overflow-hidden transition-all duration-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] relative">
-<!-- AI Assist Top Indicator -->
-<div class="h-1 w-full bg-wellness-coral opacity-80"></div>
-<div class="p-lg md:p-xl flex flex-col items-center text-center">
-<div class="w-48 h-48 mb-lg rounded-full bg-surface-container flex items-center justify-center overflow-hidden relative border border-surface-variant">
-<img alt="A calming, abstract 3D illustration of softly floating spheres and organic shapes in warm, pastel coral and light beige tones. The lighting is soft and diffused, creating a serene and supportive atmosphere, avoiding any harsh or clinical medical imagery. The aesthetic is modern, empathetic, and cleanly designed to reassure a stressed user." class="object-cover w-full h-full opacity-80 mix-blend-multiply" data-alt="A calming, abstract 3D illustration of softly floating spheres and organic shapes in warm, pastel coral and light beige tones. The lighting is soft and diffused, creating a serene and supportive atmosphere, avoiding any harsh or clinical medical imagery. The aesthetic is modern, empathetic, and cleanly designed to reassure a stressed user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9lFBxkYdYhZ75FHXtRzrrXn3Cse3rPb7LHyA8TfDevf9Sr2V02NT9GZEVkPQhUic__X0C0NMb4DX3y8PCtL9kKr7rWlvW0sv51CmwijfuK1xCoHwQ3NtdFvaeTacYzo8KKmleIejnpRbnocJunqlVPgPB4-G_AlW6UFYtMUBQQkGm3zR1tB_vlH7u_NMspnREsaZQgHCzJm4vpEKy9a6DUt5GuRmf_dVOeC7NeQiM033v-FIeZcZbE4aP9_C6WAEdxNdqh0KflgER">
-<div class="absolute inset-0 bg-wellness-coral/10"></div>
-</div>
-<!-- Error Messaging -->
-<h1 class="font-headline-md text-headline-md text-primary mb-sm">Upload Interrupted</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-sm">
-                    We couldn't process your medical report. Let's try again to get those insights ready for you.
-                </p>
-<!-- AI Diagnostic Bubble -->
-<div class="ai-bubble p-md w-full text-left mb-xl">
-<div class="flex items-center gap-sm mb-xs">
-<span class="material-symbols-outlined text-wellness-coral text-xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">info</span>
-<span class="font-label-md text-label-md text-on-surface-variant font-medium">Common Reasons</span>
-</div>
-<ul class="font-body-md text-body-md text-on-background space-y-xs ml-lg list-disc list-outside">
-<li>File size exceeds the 50MB limit.</li>
-<li>Format is unsupported (please use PDF, JPG, or PNG).</li>
-<li>A brief connection drop during transfer.</li>
-</ul>
-</div>
-<!-- Action Buttons -->
-<div class="w-full flex flex-col gap-md">
-<button class="w-full min-h-[48px] bg-wellness-coral text-on-primary font-title-lg text-title-lg rounded-full hover:opacity-90 active:scale-95 transition-all duration-200 shadow-sm flex items-center justify-center gap-sm">
-<span class="material-symbols-outlined">refresh</span>
-                        Retry Upload
-                    </button>
-<button class="w-full min-h-[48px] bg-surface-container-lowest text-primary font-title-lg text-title-lg rounded-full border border-outline-variant hover:bg-surface-container transition-all duration-200 active:scale-95 flex items-center justify-center gap-sm">
-<span class="material-symbols-outlined">folder_open</span>
-                        Select Different File
-                    </button>
-</div>
-<p class="font-caption text-caption text-on-surface-variant mt-lg">
-                    Need help? <a class="text-wellness-coral hover:underline" href="mailto:support@medexplain.ai">Contact Support</a>
-</p>
-</div>
-</div>
-</main>
-<!-- BottomNavBar intentionally suppressed as this is a transactional/error screen -->
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+      </div>
+    </main>
+    <!-- BottomNavBar intentionally suppressed as this is a transactional/error screen -->
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

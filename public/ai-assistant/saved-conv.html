@@ -1,287 +1,464 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>MedExplain AI - History</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "primary-fixed": "#e9e1dc",
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "surface": "#fdf8f7",
-                        "on-tertiary": "#ffffff",
-                        "tertiary": "#121415",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "on-secondary": "#ffffff",
-                        "error": "#ba1a1a",
-                        "surface-dim": "#ddd9d8",
-                        "on-error-container": "#93000a",
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "surface-container-highest": "#e6e1e0",
-                        "secondary-container": "#e9ded5",
-                        "on-surface-variant": "#4d4540",
-                        "inverse-primary": "#cdc5c0",
-                        "on-primary": "#ffffff",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "secondary-fixed": "#ebe1d8",
-                        "on-tertiary-container": "#8f8f91",
-                        "on-background": "#1c1b1b",
-                        "on-primary-container": "#948e89",
-                        "surface-container": "#f1edec",
-                        "surface-variant": "#e6e1e0",
-                        "error-container": "#ffdad6",
-                        "primary-container": "#2b2724",
-                        "background": "#fdf8f7",
-                        "on-error": "#ffffff",
-                        "on-surface": "#1c1b1b",
-                        "tertiary-container": "#27282a",
-                        "surface-container-high": "#ece7e6",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "outline-variant": "#cfc4bd",
-                        "on-secondary-fixed": "#201b15",
-                        "on-primary-fixed": "#1e1b18",
-                        "inverse-surface": "#313030",
-                        "on-secondary-container": "#69615a",
-                        "surface-container-low": "#f7f3f1",
-                        "outline": "#7e756f",
-                        "tertiary-fixed": "#e3e2e4",
-                        "secondary": "#645d56",
-                        "inverse-on-surface": "#f4f0ee",
-                        "surface-bright": "#fdf8f7",
-                        "surface-tint": "#635d5a",
-                        "primary": "#161310",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "surface-container-lowest": "#ffffff"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "xs": "4px",
-                        "gutter": "16px",
-                        "base": "8px",
-                        "sm": "8px",
-                        "margin-desktop": "64px",
-                        "lg": "24px",
-                        "xl": "32px",
-                        "margin-mobile": "20px",
-                        "xxl": "48px",
-                        "md": "16px"
-                    },
-                    "fontFamily": {
-                        "title-lg": ["Inter"],
-                        "headline-lg": ["Spectral"],
-                        "caption": ["Inter"],
-                        "headline-lg-mobile": ["Spectral"],
-                        "label-md": ["Inter"],
-                        "display-lg": ["Spectral"],
-                        "headline-md": ["Spectral"],
-                        "body-lg": ["Inter"],
-                        "body-md": ["Inter"]
-                    },
-                    "fontSize": {
-                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
-                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
-                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
-                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
-                    }
-                }
-            }
-        }
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MedExplain AI - History</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed": "#e9e1dc",
+              "secondary-fixed-dim": "#cfc5bc",
+              surface: "#fdf8f7",
+              "on-tertiary": "#ffffff",
+              tertiary: "#121415",
+              "primary-fixed-dim": "#cdc5c0",
+              "on-secondary": "#ffffff",
+              error: "#ba1a1a",
+              "surface-dim": "#ddd9d8",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed-variant": "#4c463f",
+              "on-primary-fixed-variant": "#4b4642",
+              "surface-container-highest": "#e6e1e0",
+              "secondary-container": "#e9ded5",
+              "on-surface-variant": "#4d4540",
+              "inverse-primary": "#cdc5c0",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#464749",
+              "secondary-fixed": "#ebe1d8",
+              "on-tertiary-container": "#8f8f91",
+              "on-background": "#1c1b1b",
+              "on-primary-container": "#948e89",
+              "surface-container": "#f1edec",
+              "surface-variant": "#e6e1e0",
+              "error-container": "#ffdad6",
+              "primary-container": "#2b2724",
+              background: "#fdf8f7",
+              "on-error": "#ffffff",
+              "on-surface": "#1c1b1b",
+              "tertiary-container": "#27282a",
+              "surface-container-high": "#ece7e6",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "outline-variant": "#cfc4bd",
+              "on-secondary-fixed": "#201b15",
+              "on-primary-fixed": "#1e1b18",
+              "inverse-surface": "#313030",
+              "on-secondary-container": "#69615a",
+              "surface-container-low": "#f7f3f1",
+              outline: "#7e756f",
+              "tertiary-fixed": "#e3e2e4",
+              secondary: "#645d56",
+              "inverse-on-surface": "#f4f0ee",
+              "surface-bright": "#fdf8f7",
+              "surface-tint": "#635d5a",
+              primary: "#161310",
+              "on-tertiary-fixed": "#1a1c1e",
+              "surface-container-lowest": "#ffffff",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              xs: "4px",
+              gutter: "16px",
+              base: "8px",
+              sm: "8px",
+              "margin-desktop": "64px",
+              lg: "24px",
+              xl: "32px",
+              "margin-mobile": "20px",
+              xxl: "48px",
+              md: "16px",
+            },
+            fontFamily: {
+              "title-lg": ["Inter"],
+              "headline-lg": ["Spectral"],
+              caption: ["Inter"],
+              "headline-lg-mobile": ["Spectral"],
+              "label-md": ["Inter"],
+              "display-lg": ["Spectral"],
+              "headline-md": ["Spectral"],
+              "body-lg": ["Inter"],
+              "body-md": ["Inter"],
+            },
+            fontSize: {
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        body {
-            background-color: theme('colors.background');
-            color: theme('colors.on-background');
-        }
-        .coral-accent {
-            color: #FF6E5C;
-        }
-        .bg-coral {
-            background-color: #FF6E5C;
-        }
-        .border-coral {
-            border-color: #FF6E5C;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid theme('colors.surface-container-highest');
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-        }
-        .glass-card:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
-        }
+    <style>
+      body {
+        background-color: theme("colors.background");
+        color: theme("colors.on-background");
+      }
+      .coral-accent {
+        color: #ff6e5c;
+      }
+      .bg-coral {
+        background-color: #ff6e5c;
+      }
+      .border-coral {
+        border-color: #ff6e5c;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid theme("colors.surface-container-highest");
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      }
+      .glass-card:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="font-body-md text-body-md antialiased min-h-screen flex flex-col md:flex-row">
-<!-- TopAppBar (Mobile & Desktop Header) -->
-<header class="bg-surface border-b border-outline-variant shadow-sm w-full top-0 z-40 md:hidden flex justify-between items-center px-margin-mobile py-base sticky">
-<div class="text-headline-md font-headline-md text-primary">MedExplain AI</div>
-<div class="flex gap-4">
-<span class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-low transition-colors rounded-full p-1">account_circle</span>
-<span class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-low transition-colors rounded-full p-1">settings</span>
-</div>
-</header>
-<!-- Desktop SideNav (Derived from TopAppBar actions + App structure) -->
-<nav class="hidden md:flex flex-col w-64 bg-surface border-r border-outline-variant h-screen sticky top-0 px-lg py-xl z-40 shadow-sm">
-<div class="text-headline-md font-headline-md text-primary mb-xxl">MedExplain AI</div>
-<ul class="flex flex-col gap-lg">
-<li>
-<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined">chat_bubble</span>
-                    Chat
-                </a>
-</li>
-<li>
-<a class="flex items-center gap-sm px-4 py-3 rounded-lg bg-primary-container text-on-primary-container font-bold text-label-md font-label-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined">history</span>
-                    History
-                </a>
-</li>
-<li>
-<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined">verified_user</span>
-                    Security
-                </a>
-</li>
-</ul>
-<div class="mt-auto flex flex-col gap-md">
-<a class="flex items-center gap-sm px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined">account_circle</span>
-                    Profile
-                </a>
-<a class="flex items-center gap-sm px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="/settings/home.html">
-<span class="material-symbols-outlined">settings</span>
-                    Settings
-                </a>
-</div>
-</nav>
-<!-- Main Content Canvas -->
-<main class="flex-1 px-margin-mobile md:px-margin-desktop py-xl md:py-xxl max-w-[1120px] mx-auto w-full mb-24 md:mb-0">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md">
-<div>
-<h1 class="text-display-lg font-display-lg text-primary mb-xs">Saved Conversations</h1>
-<p class="text-body-lg font-body-lg text-on-surface-variant">Review your past medical explanations and insights.</p>
-</div>
-</div>
-<!-- Search and Filter Bar -->
-<div class="glass-card rounded-xl p-md mb-xl flex flex-col md:flex-row gap-md items-center justify-between relative overflow-hidden">
-<!-- AI Highlight Top Border -->
-<div class="absolute top-0 left-0 right-0 h-[2px] bg-coral opacity-50"></div>
-<div class="relative w-full md:w-96">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-tertiary focus:ring-2 focus:ring-[#FF6E5C] focus:ring-opacity-20 transition-all text-body-md font-body-md text-on-surface" placeholder="Search conversations..." type="text">
-</div>
-<div class="flex gap-sm w-full md:w-auto">
-<button class="flex-1 md:flex-none flex items-center justify-center gap-xs px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface text-label-md font-label-md hover:bg-surface-container-low transition-colors">
-<span class="material-symbols-outlined text-[18px]">calendar_month</span>
-                    Date
-                </button>
-<button class="flex-1 md:flex-none flex items-center justify-center gap-xs px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface text-label-md font-label-md hover:bg-surface-container-low transition-colors">
-<span class="material-symbols-outlined text-[18px]">filter_list</span>
-                    Type
-                </button>
-</div>
-</div>
-<!-- History List Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
-<!-- Card 1 -->
-<a class="glass-card rounded-xl p-lg block relative overflow-hidden group" href="/app/dashboard.html">
-<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-coral opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="flex justify-between items-start mb-md">
-<h2 class="text-title-lg font-title-lg text-primary">Understanding Lipid Panel</h2>
-<span class="text-caption font-caption text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Oct 24, 2023</span>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2 mb-md">
-                    AI explanation of the recent blood work results, focusing on LDL cholesterol levels and lifestyle recommendations for cardiovascular health.
-                </p>
-<div class="flex items-center gap-xs text-on-surface-variant text-caption font-caption">
-<span class="material-symbols-outlined text-[16px]">science</span>
-                    Blood Work
-                </div>
-</a>
-<!-- Card 2 -->
-<a class="glass-card rounded-xl p-lg block relative overflow-hidden group" href="/app/dashboard.html">
-<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-coral opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="flex justify-between items-start mb-md">
-<h2 class="text-title-lg font-title-lg text-primary">MRI Results Breakdown</h2>
-<span class="text-caption font-caption text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Oct 15, 2023</span>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2 mb-md">
-                    Detailed breakdown of the lumbar spine MRI, explaining L4-L5 disc desiccation and potential management strategies discussed.
-                </p>
-<div class="flex items-center gap-xs text-on-surface-variant text-caption font-caption">
-<span class="material-symbols-outlined text-[16px]">medical_services</span>
-                    Imaging
-                </div>
-</a>
-<!-- Card 3 -->
-<a class="glass-card rounded-xl p-lg block relative overflow-hidden group" href="/app/dashboard.html">
-<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-coral opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="flex justify-between items-start mb-md">
-<h2 class="text-title-lg font-title-lg text-primary">Metformin Prescription FAQ</h2>
-<span class="text-caption font-caption text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Sep 28, 2023</span>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2 mb-md">
-                    Common side effects, optimal timing for doses, and interactions with other supplements for newly prescribed Metformin.
-                </p>
-<div class="flex items-center gap-xs text-on-surface-variant text-caption font-caption">
-<span class="material-symbols-outlined text-[16px]">medication</span>
-                    Prescription
-                </div>
-</a>
-<!-- Card 4 -->
-<a class="glass-card rounded-xl p-lg block relative overflow-hidden group" href="/app/dashboard.html">
-<div class="absolute left-0 top-0 bottom-0 w-[4px] bg-coral opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="flex justify-between items-start mb-md">
-<h2 class="text-title-lg font-title-lg text-primary">Thyroid Panel Overview</h2>
-<span class="text-caption font-caption text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Sep 10, 2023</span>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2 mb-md">
-                    Analysis of TSH, T3, and T4 levels, clarifying the difference between subclinical hypothyroidism and normal ranges.
-                </p>
-<div class="flex items-center gap-xs text-on-surface-variant text-caption font-caption">
-<span class="material-symbols-outlined text-[16px]">science</span>
-                    Blood Work
-                </div>
-</a>
-</div>
-</main>
-<!-- BottomNavBar (Mobile Only) -->
-<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface shadow-[0_-4px_12px_rgba(0,0,0,0.04)] rounded-t-xl">
-<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="/app/dashboard.html">
-<span class="material-symbols-outlined mb-1 text-[24px]">chat_bubble</span>
-<span class="text-label-md font-label-md">Chat</span>
-</a>
-<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-6 py-1 active:scale-90 duration-200" href="/app/dashboard.html">
-<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">history</span>
-<span class="text-label-md font-label-md">History</span>
-</a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="/app/dashboard.html">
-<span class="material-symbols-outlined mb-1 text-[24px]">verified_user</span>
-<span class="text-label-md font-label-md">Security</span>
-</a>
-</nav>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="font-body-md text-body-md antialiased min-h-screen flex flex-col md:flex-row"
+  >
+    <!-- TopAppBar (Mobile & Desktop Header) -->
+    <header
+      class="bg-surface border-b border-outline-variant shadow-sm w-full top-0 z-40 md:hidden flex justify-between items-center px-margin-mobile py-base sticky"
+    >
+      <div class="text-headline-md font-headline-md text-primary">
+        MedExplain AI
+      </div>
+      <div class="flex gap-4">
+        <span
+          class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-low transition-colors rounded-full p-1"
+          >account_circle</span
+        >
+        <span
+          class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-low transition-colors rounded-full p-1"
+          >settings</span
+        >
+      </div>
+    </header>
+    <!-- Desktop SideNav (Derived from TopAppBar actions + App structure) -->
+    <nav
+      class="hidden md:flex flex-col w-64 bg-surface border-r border-outline-variant h-screen sticky top-0 px-lg py-xl z-40 shadow-sm"
+    >
+      <div class="text-headline-md font-headline-md text-primary mb-xxl">
+        MedExplain AI
+      </div>
+      <ul class="flex flex-col gap-lg">
+        <li>
+          <a
+            class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined">chat_bubble</span>
+            Chat
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-sm px-4 py-3 rounded-lg bg-primary-container text-on-primary-container font-bold text-label-md font-label-md"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined">history</span>
+            History
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined">verified_user</span>
+            Security
+          </a>
+        </li>
+      </ul>
+      <div class="mt-auto flex flex-col gap-md">
+        <a
+          class="flex items-center gap-sm px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md"
+          href="/app/dashboard.html"
+        >
+          <span class="material-symbols-outlined">account_circle</span>
+          Profile
+        </a>
+        <a
+          class="flex items-center gap-sm px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md"
+          href="/settings/home.html"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          Settings
+        </a>
+      </div>
+    </nav>
+    <!-- Main Content Canvas -->
+    <main
+      class="flex-1 px-margin-mobile md:px-margin-desktop py-xl md:py-xxl max-w-[1120px] mx-auto w-full mb-24 md:mb-0"
+    >
+      <div
+        class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md"
+      >
+        <div>
+          <h1 class="text-display-lg font-display-lg text-primary mb-xs">
+            Saved Conversations
+          </h1>
+          <p class="text-body-lg font-body-lg text-on-surface-variant">
+            Review your past medical explanations and insights.
+          </p>
+        </div>
+      </div>
+      <!-- Search and Filter Bar -->
+      <div
+        class="glass-card rounded-xl p-md mb-xl flex flex-col md:flex-row gap-md items-center justify-between relative overflow-hidden"
+      >
+        <!-- AI Highlight Top Border -->
+        <div
+          class="absolute top-0 left-0 right-0 h-[2px] bg-coral opacity-50"
+        ></div>
+        <div class="relative w-full md:w-96">
+          <span
+            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
+            >search</span
+          >
+          <input
+            class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-tertiary focus:ring-2 focus:ring-[#FF6E5C] focus:ring-opacity-20 transition-all text-body-md font-body-md text-on-surface"
+            placeholder="Search conversations..."
+            type="text"
+          />
+        </div>
+        <div class="flex gap-sm w-full md:w-auto">
+          <button
+            class="flex-1 md:flex-none flex items-center justify-center gap-xs px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface text-label-md font-label-md hover:bg-surface-container-low transition-colors"
+          >
+            <span class="material-symbols-outlined text-[18px]"
+              >calendar_month</span
+            >
+            Date
+          </button>
+          <button
+            class="flex-1 md:flex-none flex items-center justify-center gap-xs px-4 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface text-label-md font-label-md hover:bg-surface-container-low transition-colors"
+          >
+            <span class="material-symbols-outlined text-[18px]"
+              >filter_list</span
+            >
+            Type
+          </button>
+        </div>
+      </div>
+      <!-- History List Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+        <!-- Card 1 -->
+        <a
+          class="glass-card rounded-xl p-lg block relative overflow-hidden group"
+          href="/app/dashboard.html"
+        >
+          <div
+            class="absolute left-0 top-0 bottom-0 w-[4px] bg-coral opacity-0 group-hover:opacity-100 transition-opacity"
+          ></div>
+          <div class="flex justify-between items-start mb-md">
+            <h2 class="text-title-lg font-title-lg text-primary">
+              Understanding Lipid Panel
+            </h2>
+            <span
+              class="text-caption font-caption text-on-surface-variant bg-surface-container-low px-2 py-1 rounded"
+              >Oct 24, 2023</span
+            >
+          </div>
+          <p
+            class="text-body-md font-body-md text-on-surface-variant line-clamp-2 mb-md"
+          >
+            AI explanation of the recent blood work results, focusing on LDL
+            cholesterol levels and lifestyle recommendations for cardiovascular
+            health.
+          </p>
+          <div
+            class="flex items-center gap-xs text-on-surface-variant text-caption font-caption"
+          >
+            <span class="material-symbols-outlined text-[16px]">science</span>
+            Blood Work
+          </div>
+        </a>
+        <!-- Card 2 -->
+        <a
+          class="glass-card rounded-xl p-lg block relative overflow-hidden group"
+          href="/app/dashboard.html"
+        >
+          <div
+            class="absolute left-0 top-0 bottom-0 w-[4px] bg-coral opacity-0 group-hover:opacity-100 transition-opacity"
+          ></div>
+          <div class="flex justify-between items-start mb-md">
+            <h2 class="text-title-lg font-title-lg text-primary">
+              MRI Results Breakdown
+            </h2>
+            <span
+              class="text-caption font-caption text-on-surface-variant bg-surface-container-low px-2 py-1 rounded"
+              >Oct 15, 2023</span
+            >
+          </div>
+          <p
+            class="text-body-md font-body-md text-on-surface-variant line-clamp-2 mb-md"
+          >
+            Detailed breakdown of the lumbar spine MRI, explaining L4-L5 disc
+            desiccation and potential management strategies discussed.
+          </p>
+          <div
+            class="flex items-center gap-xs text-on-surface-variant text-caption font-caption"
+          >
+            <span class="material-symbols-outlined text-[16px]"
+              >medical_services</span
+            >
+            Imaging
+          </div>
+        </a>
+        <!-- Card 3 -->
+        <a
+          class="glass-card rounded-xl p-lg block relative overflow-hidden group"
+          href="/app/dashboard.html"
+        >
+          <div
+            class="absolute left-0 top-0 bottom-0 w-[4px] bg-coral opacity-0 group-hover:opacity-100 transition-opacity"
+          ></div>
+          <div class="flex justify-between items-start mb-md">
+            <h2 class="text-title-lg font-title-lg text-primary">
+              Metformin Prescription FAQ
+            </h2>
+            <span
+              class="text-caption font-caption text-on-surface-variant bg-surface-container-low px-2 py-1 rounded"
+              >Sep 28, 2023</span
+            >
+          </div>
+          <p
+            class="text-body-md font-body-md text-on-surface-variant line-clamp-2 mb-md"
+          >
+            Common side effects, optimal timing for doses, and interactions with
+            other supplements for newly prescribed Metformin.
+          </p>
+          <div
+            class="flex items-center gap-xs text-on-surface-variant text-caption font-caption"
+          >
+            <span class="material-symbols-outlined text-[16px]"
+              >medication</span
+            >
+            Prescription
+          </div>
+        </a>
+        <!-- Card 4 -->
+        <a
+          class="glass-card rounded-xl p-lg block relative overflow-hidden group"
+          href="/app/dashboard.html"
+        >
+          <div
+            class="absolute left-0 top-0 bottom-0 w-[4px] bg-coral opacity-0 group-hover:opacity-100 transition-opacity"
+          ></div>
+          <div class="flex justify-between items-start mb-md">
+            <h2 class="text-title-lg font-title-lg text-primary">
+              Thyroid Panel Overview
+            </h2>
+            <span
+              class="text-caption font-caption text-on-surface-variant bg-surface-container-low px-2 py-1 rounded"
+              >Sep 10, 2023</span
+            >
+          </div>
+          <p
+            class="text-body-md font-body-md text-on-surface-variant line-clamp-2 mb-md"
+          >
+            Analysis of TSH, T3, and T4 levels, clarifying the difference
+            between subclinical hypothyroidism and normal ranges.
+          </p>
+          <div
+            class="flex items-center gap-xs text-on-surface-variant text-caption font-caption"
+          >
+            <span class="material-symbols-outlined text-[16px]">science</span>
+            Blood Work
+          </div>
+        </a>
+      </div>
+    </main>
+    <!-- BottomNavBar (Mobile Only) -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface shadow-[0_-4px_12px_rgba(0,0,0,0.04)] rounded-t-xl"
+    >
+      <a
+        class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200"
+        href="/app/dashboard.html"
+      >
+        <span class="material-symbols-outlined mb-1 text-[24px]"
+          >chat_bubble</span
+        >
+        <span class="text-label-md font-label-md">Chat</span>
+      </a>
+      <a
+        class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-6 py-1 active:scale-90 duration-200"
+        href="/app/dashboard.html"
+      >
+        <span
+          class="material-symbols-outlined mb-1 text-[24px]"
+          style="font-variation-settings: &quot;FILL&quot; 1"
+          >history</span
+        >
+        <span class="text-label-md font-label-md">History</span>
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-200"
+        href="/app/dashboard.html"
+      >
+        <span class="material-symbols-outlined mb-1 text-[24px]"
+          >verified_user</span
+        >
+        <span class="text-label-md font-label-md">Security</span>
+      </a>
+    </nav>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

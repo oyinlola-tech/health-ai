@@ -1,222 +1,362 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Appointment Confirmation</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "secondary-fixed": "#ebe1d8",
-                        "primary-container": "#2b2724",
-                        "surface-tint": "#635d5a",
-                        "on-background": "#1c1b1b",
-                        "outline-variant": "#cfc4bd",
-                        "surface-dim": "#ddd9d8",
-                        "secondary": "#645d56",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "on-tertiary": "#ffffff",
-                        "inverse-on-surface": "#f4f0ee",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "on-surface": "#1c1b1b",
-                        "primary": "#161310",
-                        "error-container": "#ffdad6",
-                        "surface-container-low": "#f7f3f1",
-                        "on-surface-variant": "#4d4540",
-                        "surface": "#fdf8f7",
-                        "secondary-container": "#e9ded5",
-                        "on-primary-container": "#948e89",
-                        "surface-container-high": "#ece7e6",
-                        "on-tertiary-container": "#8f8f91",
-                        "on-secondary": "#ffffff",
-                        "tertiary": "#121415",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "surface-variant": "#e6e1e0",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "on-primary-fixed": "#1e1b18",
-                        "inverse-surface": "#313030",
-                        "background": "#fdf8f7",
-                        "surface-container-highest": "#e6e1e0",
-                        "inverse-primary": "#cdc5c0",
-                        "error": "#ba1a1a",
-                        "tertiary-fixed": "#e3e2e4",
-                        "on-error-container": "#93000a",
-                        "on-primary": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-bright": "#fdf8f7",
-                        "surface-container": "#f1edec",
-                        "outline": "#7e756f",
-                        "on-error": "#ffffff",
-                        "primary-fixed": "#e9e1dc",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "on-secondary-container": "#69615a",
-                        "tertiary-container": "#27282a",
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "on-secondary-fixed": "#201b15"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "margin-desktop": "64px",
-                        "xs": "4px",
-                        "sm": "8px",
-                        "xl": "32px",
-                        "margin-mobile": "20px",
-                        "base": "8px",
-                        "lg": "24px",
-                        "gutter": "16px",
-                        "xxl": "48px",
-                        "md": "16px"
-                    },
-                    "fontFamily": {
-                        "title-lg": ["Inter"],
-                        "headline-lg-mobile": ["Spectral"],
-                        "headline-md": ["Spectral"],
-                        "headline-lg": ["Spectral"],
-                        "display-lg": ["Spectral"],
-                        "body-lg": ["Inter"],
-                        "body-md": ["Inter"],
-                        "label-md": ["Inter"],
-                        "caption": ["Inter"]
-                    },
-                    "fontSize": {
-                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
-                    }
-                }
-            }
-        }
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Appointment Confirmation</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed-dim": "#cfc5bc",
+              "secondary-fixed": "#ebe1d8",
+              "primary-container": "#2b2724",
+              "surface-tint": "#635d5a",
+              "on-background": "#1c1b1b",
+              "outline-variant": "#cfc4bd",
+              "surface-dim": "#ddd9d8",
+              secondary: "#645d56",
+              "on-tertiary-fixed": "#1a1c1e",
+              "on-tertiary": "#ffffff",
+              "inverse-on-surface": "#f4f0ee",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "on-surface": "#1c1b1b",
+              primary: "#161310",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f7f3f1",
+              "on-surface-variant": "#4d4540",
+              surface: "#fdf8f7",
+              "secondary-container": "#e9ded5",
+              "on-primary-container": "#948e89",
+              "surface-container-high": "#ece7e6",
+              "on-tertiary-container": "#8f8f91",
+              "on-secondary": "#ffffff",
+              tertiary: "#121415",
+              "primary-fixed-dim": "#cdc5c0",
+              "surface-variant": "#e6e1e0",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-primary-fixed": "#1e1b18",
+              "inverse-surface": "#313030",
+              background: "#fdf8f7",
+              "surface-container-highest": "#e6e1e0",
+              "inverse-primary": "#cdc5c0",
+              error: "#ba1a1a",
+              "tertiary-fixed": "#e3e2e4",
+              "on-error-container": "#93000a",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#fdf8f7",
+              "surface-container": "#f1edec",
+              outline: "#7e756f",
+              "on-error": "#ffffff",
+              "primary-fixed": "#e9e1dc",
+              "on-primary-fixed-variant": "#4b4642",
+              "on-secondary-container": "#69615a",
+              "tertiary-container": "#27282a",
+              "on-secondary-fixed-variant": "#4c463f",
+              "on-secondary-fixed": "#201b15",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-desktop": "64px",
+              xs: "4px",
+              sm: "8px",
+              xl: "32px",
+              "margin-mobile": "20px",
+              base: "8px",
+              lg: "24px",
+              gutter: "16px",
+              xxl: "48px",
+              md: "16px",
+            },
+            fontFamily: {
+              "title-lg": ["Inter"],
+              "headline-lg-mobile": ["Spectral"],
+              "headline-md": ["Spectral"],
+              "headline-lg": ["Spectral"],
+              "display-lg": ["Spectral"],
+              "body-lg": ["Inter"],
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              caption: ["Inter"],
+            },
+            fontSize: {
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--tw-colors-surface-variant);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    <style>
+      .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--tw-colors-surface-variant);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      }
+      .coral-accent {
+        background-color: #ff6e5c;
+      }
+      .coral-text {
+        color: #ff6e5c;
+      }
+      .ai-border {
+        border-top: 2px solid #ff6e5c;
+      }
+      .success-animation {
+        animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      }
+      @keyframes scaleIn {
+        0% {
+          transform: scale(0);
+          opacity: 0;
         }
-        .coral-accent {
-            background-color: #FF6E5C;
+        100% {
+          transform: scale(1);
+          opacity: 1;
         }
-        .coral-text {
-            color: #FF6E5C;
+      }
+      .fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeUpAnim 0.6s ease-out forwards;
+      }
+      @keyframes fadeUpAnim {
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        .ai-border {
-            border-top: 2px solid #FF6E5C;
-        }
-        .success-animation {
-            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes scaleIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .fade-up {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUpAnim 0.6s ease-out forwards;
-        }
-        @keyframes fadeUpAnim {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .delay-100 { animation-delay: 100ms; }
-        .delay-200 { animation-delay: 200ms; }
-        .delay-300 { animation-delay: 300ms; }
+      }
+      .delay-100 {
+        animation-delay: 100ms;
+      }
+      .delay-200 {
+        animation-delay: 200ms;
+      }
+      .delay-300 {
+        animation-delay: 300ms;
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background min-h-screen flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop antialiased">
-<!-- Top App Bar (Suppressed due to transactional nature of screen, but keeping a simplified close/back option) -->
-<div class="fixed top-0 w-full z-50 flex justify-end px-margin-mobile md:px-margin-desktop h-16 items-center">
-<button aria-label="Close" class="p-2 rounded-full hover:bg-surface-container-low transition-colors duration-200 text-secondary">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">close</span>
-</button>
-</div>
-<!-- Main Content Canvas -->
-<main class="w-full max-w-[600px] flex flex-col items-center">
-<!-- Success Graphic -->
-<div class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center mb-lg success-animation">
-<span class="material-symbols-outlined text-[48px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-</div>
-<!-- Headers -->
-<div class="text-center mb-xxl fade-up">
-<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-sm">Appointment Confirmed</h1>
-<p class="font-body-lg text-body-lg text-secondary">Your consultation is scheduled and confirmed.</p>
-</div>
-<!-- Details Card (Glassmorphism) -->
-<div class="glass-card w-full rounded-xl p-lg mb-lg fade-up delay-100">
-<div class="flex items-center gap-md border-b border-surface-variant pb-md mb-md">
-<div class="w-16 h-16 rounded-full bg-surface-container overflow-hidden shrink-0">
-<img alt="Doctor Portrait" class="w-full h-full object-cover" data-alt="A professional headshot of a female doctor in her 40s with a warm, reassuring smile. She is wearing a white coat over a soft blue blouse, set against a clean, softly lit modern clinical background. The lighting is bright and high-key, emphasizing a light-mode, modern healthcare aesthetic with subtle warm tones. The composition is centered and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASkPnINhj6wXPi3q6HME_LQkGwRaXEYxSeH0feGw0Ww330uDOL1XqmHhp8NCyIUSzr0G3cYWTM7TumCTm2g06f6PXmv-vA_JBAwyed__QnDMvMdBxAKJ67P0AqV1Z4Tq6hs9sqLFxQ2ykQ_VPVo7wW2NZNmAQhDno5_9WONvH3ttA5Lo2kv1WIDI3FU_CHZzSuzcsJA2OAS_eu9GG6cY1tsEtSo-CIkbmuoRRgxKqxvxQFTI9Rgw-61SeYu9d0i9D4JIQr6ggBTwsc">
-</div>
-<div>
-<h2 class="font-title-lg text-title-lg text-primary">Dr. Sarah Smith</h2>
-<p class="font-body-md text-body-md text-secondary">Cardiology Specialist</p>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
-<div class="flex items-start gap-sm">
-<span class="material-symbols-outlined text-secondary mt-1" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
-<div>
-<p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Date &amp; Time</p>
-<p class="font-body-md text-body-md text-primary font-medium">Oct 28 at 10:00 AM</p>
-</div>
-</div>
-<div class="flex items-start gap-sm">
-<span class="material-symbols-outlined text-secondary mt-1" style="font-variation-settings: 'FILL' 0;">location_on</span>
-<div>
-<p class="font-label-md text-label-md text-secondary uppercase tracking-wider">Location</p>
-<p class="font-body-md text-body-md text-primary font-medium">Main Medical Center</p>
-<p class="font-caption text-caption text-secondary">123 Health Way, Suite 400</p>
-</div>
-</div>
-</div>
-</div>
-<!-- AI Preparation Note (Bento style) -->
-<div class="w-full bg-surface-container-low rounded-xl p-md mb-xxl ai-border fade-up delay-200 shadow-sm relative overflow-hidden">
-<div class="absolute top-0 right-0 p-3 opacity-10">
-<span class="material-symbols-outlined text-[64px]" style="font-variation-settings: 'FILL' 1;">medical_services</span>
-</div>
-<div class="flex items-center gap-sm mb-xs relative z-10">
-<span class="material-symbols-outlined coral-text text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
-<h3 class="font-label-md text-label-md text-primary font-bold">How to prepare</h3>
-</div>
-<p class="font-body-md text-body-md text-secondary relative z-10">Please arrive 15 minutes early. Bring your ID, insurance card, and a list of any current medications. Fasting is not required for this consultation.</p>
-</div>
-<!-- Actions -->
-<div class="w-full flex flex-col md:flex-row gap-md fade-up delay-300">
-<button class="flex-1 min-h-[48px] rounded-lg border border-outline flex items-center justify-center gap-sm font-label-md text-label-md text-primary hover:bg-surface-container-low transition-colors">
-<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">event</span>
-                Add to Calendar
-            </button>
-<button class="flex-1 min-h-[48px] rounded-lg coral-accent text-on-primary flex items-center justify-center gap-sm font-label-md text-label-md hover:opacity-90 transition-opacity shadow-sm hover:shadow-md">
-<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">directions</span>
-                View Directions
-            </button>
-</div>
-<div class="mt-xl fade-up delay-300">
-<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors border-b border-transparent hover:border-primary" href="/app/dashboard.html">Return to Dashboard</a>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-background min-h-screen flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop antialiased"
+  >
+    <!-- Top App Bar (Suppressed due to transactional nature of screen, but keeping a simplified close/back option) -->
+    <div
+      class="fixed top-0 w-full z-50 flex justify-end px-margin-mobile md:px-margin-desktop h-16 items-center"
+    >
+      <button
+        aria-label="Close"
+        class="p-2 rounded-full hover:bg-surface-container-low transition-colors duration-200 text-secondary"
+      >
+        <span
+          class="material-symbols-outlined"
+          style="font-variation-settings: &quot;FILL&quot; 0"
+          >close</span
+        >
+      </button>
+    </div>
+    <!-- Main Content Canvas -->
+    <main class="w-full max-w-[600px] flex flex-col items-center">
+      <!-- Success Graphic -->
+      <div
+        class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center mb-lg success-animation"
+      >
+        <span
+          class="material-symbols-outlined text-[48px] text-primary"
+          style="font-variation-settings: &quot;FILL&quot; 1"
+          >check_circle</span
+        >
+      </div>
+      <!-- Headers -->
+      <div class="text-center mb-xxl fade-up">
+        <h1
+          class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-sm"
+        >
+          Appointment Confirmed
+        </h1>
+        <p class="font-body-lg text-body-lg text-secondary">
+          Your consultation is scheduled and confirmed.
+        </p>
+      </div>
+      <!-- Details Card (Glassmorphism) -->
+      <div class="glass-card w-full rounded-xl p-lg mb-lg fade-up delay-100">
+        <div
+          class="flex items-center gap-md border-b border-surface-variant pb-md mb-md"
+        >
+          <div
+            class="w-16 h-16 rounded-full bg-surface-container overflow-hidden shrink-0"
+          >
+            <img
+              alt="Doctor Portrait"
+              class="w-full h-full object-cover"
+              data-alt="A professional headshot of a female doctor in her 40s with a warm, reassuring smile. She is wearing a white coat over a soft blue blouse, set against a clean, softly lit modern clinical background. The lighting is bright and high-key, emphasizing a light-mode, modern healthcare aesthetic with subtle warm tones. The composition is centered and trustworthy."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuASkPnINhj6wXPi3q6HME_LQkGwRaXEYxSeH0feGw0Ww330uDOL1XqmHhp8NCyIUSzr0G3cYWTM7TumCTm2g06f6PXmv-vA_JBAwyed__QnDMvMdBxAKJ67P0AqV1Z4Tq6hs9sqLFxQ2ykQ_VPVo7wW2NZNmAQhDno5_9WONvH3ttA5Lo2kv1WIDI3FU_CHZzSuzcsJA2OAS_eu9GG6cY1tsEtSo-CIkbmuoRRgxKqxvxQFTI9Rgw-61SeYu9d0i9D4JIQr6ggBTwsc"
+            />
+          </div>
+          <div>
+            <h2 class="font-title-lg text-title-lg text-primary">
+              Dr. Sarah Smith
+            </h2>
+            <p class="font-body-md text-body-md text-secondary">
+              Cardiology Specialist
+            </p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+          <div class="flex items-start gap-sm">
+            <span
+              class="material-symbols-outlined text-secondary mt-1"
+              style="font-variation-settings: &quot;FILL&quot; 0"
+              >calendar_today</span
+            >
+            <div>
+              <p
+                class="font-label-md text-label-md text-secondary uppercase tracking-wider"
+              >
+                Date &amp; Time
+              </p>
+              <p class="font-body-md text-body-md text-primary font-medium">
+                Oct 28 at 10:00 AM
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start gap-sm">
+            <span
+              class="material-symbols-outlined text-secondary mt-1"
+              style="font-variation-settings: &quot;FILL&quot; 0"
+              >location_on</span
+            >
+            <div>
+              <p
+                class="font-label-md text-label-md text-secondary uppercase tracking-wider"
+              >
+                Location
+              </p>
+              <p class="font-body-md text-body-md text-primary font-medium">
+                Main Medical Center
+              </p>
+              <p class="font-caption text-caption text-secondary">
+                123 Health Way, Suite 400
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- AI Preparation Note (Bento style) -->
+      <div
+        class="w-full bg-surface-container-low rounded-xl p-md mb-xxl ai-border fade-up delay-200 shadow-sm relative overflow-hidden"
+      >
+        <div class="absolute top-0 right-0 p-3 opacity-10">
+          <span
+            class="material-symbols-outlined text-[64px]"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >medical_services</span
+          >
+        </div>
+        <div class="flex items-center gap-sm mb-xs relative z-10">
+          <span
+            class="material-symbols-outlined coral-text text-[20px]"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >auto_awesome</span
+          >
+          <h3 class="font-label-md text-label-md text-primary font-bold">
+            How to prepare
+          </h3>
+        </div>
+        <p class="font-body-md text-body-md text-secondary relative z-10">
+          Please arrive 15 minutes early. Bring your ID, insurance card, and a
+          list of any current medications. Fasting is not required for this
+          consultation.
+        </p>
+      </div>
+      <!-- Actions -->
+      <div class="w-full flex flex-col md:flex-row gap-md fade-up delay-300">
+        <button
+          class="flex-1 min-h-[48px] rounded-lg border border-outline flex items-center justify-center gap-sm font-label-md text-label-md text-primary hover:bg-surface-container-low transition-colors"
+        >
+          <span
+            class="material-symbols-outlined text-[20px]"
+            style="font-variation-settings: &quot;FILL&quot; 0"
+            >event</span
+          >
+          Add to Calendar
+        </button>
+        <button
+          class="flex-1 min-h-[48px] rounded-lg coral-accent text-on-primary flex items-center justify-center gap-sm font-label-md text-label-md hover:opacity-90 transition-opacity shadow-sm hover:shadow-md"
+        >
+          <span
+            class="material-symbols-outlined text-[20px]"
+            style="font-variation-settings: &quot;FILL&quot; 0"
+            >directions</span
+          >
+          View Directions
+        </button>
+      </div>
+      <div class="mt-xl fade-up delay-300">
+        <a
+          class="font-label-md text-label-md text-secondary hover:text-primary transition-colors border-b border-transparent hover:border-primary"
+          href="/app/dashboard.html"
+          >Return to Dashboard</a
+        >
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

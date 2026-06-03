@@ -1,168 +1,244 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>MedExplain AI - Onboarding</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MedExplain AI - Onboarding</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "inverse-primary": "#cdc5c0",
-                        "outline": "#7e756f",
-                        "surface-container-highest": "#e6e1e0",
-                        "surface-bright": "#fdf8f7",
-                        "surface-variant": "#e6e1e0",
-                        "on-secondary": "#ffffff",
-                        "on-tertiary-container": "#8f8f91",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "on-surface": "#1c1b1b",
-                        "surface-container-high": "#ece7e6",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "on-error": "#ffffff",
-                        "tertiary-fixed": "#e3e2e4",
-                        "outline-variant": "#cfc4bd",
-                        "on-primary-container": "#948e89",
-                        "on-secondary-container": "#69615a",
-                        "tertiary": "#121415",
-                        "secondary-fixed": "#ebe1d8",
-                        "error": "#ba1a1a",
-                        "surface": "#fdf8f7",
-                        "background": "#fdf8f7",
-                        "surface-container": "#f1edec",
-                        "on-primary-fixed": "#1e1b18",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "on-primary": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
-                        "on-tertiary": "#ffffff",
-                        "on-secondary-fixed": "#201b15",
-                        "surface-tint": "#635d5a",
-                        "secondary": "#645d56",
-                        "inverse-surface": "#313030",
-                        "surface-container-low": "#f7f3f1",
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "on-error-container": "#93000a",
-                        "on-surface-variant": "#4d4540",
-                        "primary-fixed": "#e9e1dc",
-                        "surface-dim": "#ddd9d8",
-                        "secondary-container": "#e9ded5",
-                        "inverse-on-surface": "#f4f0ee",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "primary": "#161310",
-                        "tertiary-container": "#27282a",
-                        "error-container": "#ffdad6",
-                        "primary-container": "#2b2724",
-                        "on-background": "#1c1b1b"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "margin-mobile": "20px",
-                        "margin-desktop": "64px",
-                        "gutter": "16px",
-                        "xl": "32px",
-                        "md": "16px",
-                        "xxl": "48px",
-                        "sm": "8px",
-                        "base": "8px",
-                        "xs": "4px",
-                        "lg": "24px"
-                    },
-                    "fontFamily": {
-                        "label-md": ["Inter"],
-                        "headline-md": ["Spectral"],
-                        "headline-lg-mobile": ["Spectral"],
-                        "title-lg": ["Inter"],
-                        "caption": ["Inter"],
-                        "headline-lg": ["Spectral"],
-                        "body-md": ["Inter"],
-                        "display-lg": ["Spectral"],
-                        "body-lg": ["Inter"]
-                    },
-                    "fontSize": {
-                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
-                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
-                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
-                    }
-                }
-            }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-primary": "#cdc5c0",
+              outline: "#7e756f",
+              "surface-container-highest": "#e6e1e0",
+              "surface-bright": "#fdf8f7",
+              "surface-variant": "#e6e1e0",
+              "on-secondary": "#ffffff",
+              "on-tertiary-container": "#8f8f91",
+              "primary-fixed-dim": "#cdc5c0",
+              "on-tertiary-fixed": "#1a1c1e",
+              "on-surface": "#1c1b1b",
+              "surface-container-high": "#ece7e6",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-error": "#ffffff",
+              "tertiary-fixed": "#e3e2e4",
+              "outline-variant": "#cfc4bd",
+              "on-primary-container": "#948e89",
+              "on-secondary-container": "#69615a",
+              tertiary: "#121415",
+              "secondary-fixed": "#ebe1d8",
+              error: "#ba1a1a",
+              surface: "#fdf8f7",
+              background: "#fdf8f7",
+              "surface-container": "#f1edec",
+              "on-primary-fixed": "#1e1b18",
+              "on-primary-fixed-variant": "#4b4642",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed": "#201b15",
+              "surface-tint": "#635d5a",
+              secondary: "#645d56",
+              "inverse-surface": "#313030",
+              "surface-container-low": "#f7f3f1",
+              "secondary-fixed-dim": "#cfc5bc",
+              "on-secondary-fixed-variant": "#4c463f",
+              "on-error-container": "#93000a",
+              "on-surface-variant": "#4d4540",
+              "primary-fixed": "#e9e1dc",
+              "surface-dim": "#ddd9d8",
+              "secondary-container": "#e9ded5",
+              "inverse-on-surface": "#f4f0ee",
+              "tertiary-fixed-dim": "#c7c6c8",
+              primary: "#161310",
+              "tertiary-container": "#27282a",
+              "error-container": "#ffdad6",
+              "primary-container": "#2b2724",
+              "on-background": "#1c1b1b",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-mobile": "20px",
+              "margin-desktop": "64px",
+              gutter: "16px",
+              xl: "32px",
+              md: "16px",
+              xxl: "48px",
+              sm: "8px",
+              base: "8px",
+              xs: "4px",
+              lg: "24px",
+            },
+            fontFamily: {
+              "label-md": ["Inter"],
+              "headline-md": ["Spectral"],
+              "headline-lg-mobile": ["Spectral"],
+              "title-lg": ["Inter"],
+              caption: ["Inter"],
+              "headline-lg": ["Spectral"],
+              "body-md": ["Inter"],
+              "display-lg": ["Spectral"],
+              "body-lg": ["Inter"],
+            },
+            fontSize: {
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .fade-in-up {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        .fade-in-up {
-            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
-<!-- Top Action Area (Skip) -->
-<header class="w-full flex justify-end items-center px-margin-mobile md:px-margin-desktop py-md pt-safe">
-<button class="text-on-surface-variant font-label-md text-label-md px-4 py-2 hover:bg-surface-container-low rounded-full transition-colors duration-200">
-            Skip
-        </button>
-</header>
-<!-- Main Content Canvas -->
-<main class="flex-grow flex flex-col justify-center items-center px-margin-mobile md:px-margin-desktop w-full max-w-[1120px] mx-auto">
-<!-- Illustration -->
-<div class="w-full max-w-[320px] md:max-w-[480px] aspect-square mb-xl md:mb-xxl fade-in-up" style="animation-delay: 0.1s;">
-<div class="w-full h-full rounded-[2rem] bg-surface-container-lowest border border-outline-variant/30 shadow-[0_4px_12px_rgba(0,0,0,0.04)] overflow-hidden flex items-center justify-center p-md relative group">
-<!-- Abstract scanning effect overlay -->
-<div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-transparent -translate-y-full group-hover:animate-[scan_3s_ease-in-out_infinite]"></div>
-<img alt="Scanning medical report illustration" class="w-full h-full object-cover rounded-xl" data-alt="A modern, high-quality photograph of a pristine medical laboratory report lying flat on a minimalist desk, illuminated by a warm, glowing soft light that mimics a digital scanning process. The setting is bright and clean, utilizing a sophisticated light-mode aesthetic with soft white surfaces and muted warm gray undertones. The composition is calm and professional, embodying empathetic clarity and technological trust without feeling overly clinical." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyky8_sHXpId-EVB8x8wbECn2hc0_L_VQes7QiCK98EV8FGid1dGxc1MZy4zc6Bk_0_tFxzXdjmJLwq1JiK6Bw9y3mw4V3C83EvysodWeBRo4T_HTzpRSRXDz9Z478AzXMLPWwQzMUuRDNG8frIFeZ19UAFmoSV6ifVGjOLxA8R4B_mT94NU7LjWD22J-SxyrYVsPXPn2OhoKbAx3VXD5alJWsopm5icLcgTZzNQUNo1cpTgigUZxO0geSqjrTqeFxpa89ug65zOgr">
-</div>
-</div>
-<!-- Typography -->
-<div class="text-center max-w-[500px] flex flex-col items-center fade-in-up" style="animation-delay: 0.2s;">
-<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-md">
-                Upload &amp; Simplify
-            </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-                No more medical jargon. Upload your lab results and get an instant, easy-to-understand summary.
-            </p>
-</div>
-</main>
-<!-- Bottom Action Area -->
-<footer class="w-full px-margin-mobile md:px-margin-desktop py-lg pb-safe flex flex-col sm:flex-row items-center justify-between gap-xl max-w-[1120px] mx-auto fade-in-up" style="animation-delay: 0.3s;">
-<!-- Progress Indicators -->
-<div class="flex gap-sm items-center justify-center sm:justify-start w-full sm:w-auto order-2 sm:order-1">
-<div class="w-8 h-2 rounded-full bg-primary transition-all duration-300"></div>
-<div class="w-2 h-2 rounded-full bg-surface-container-highest transition-all duration-300"></div>
-<div class="w-2 h-2 rounded-full bg-surface-container-highest transition-all duration-300"></div>
-</div>
-<!-- Primary Action -->
-<button class="w-full sm:w-auto min-w-[160px] min-h-[48px] bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-full hover:bg-inverse-surface hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all duration-200 flex items-center justify-center gap-sm order-1 sm:order-2">
-<span>Next</span>
-<span aria-hidden="true" class="material-symbols-outlined text-[20px]">arrow_forward</span>
-</button>
-</footer>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-surface text-on-surface antialiased min-h-screen flex flex-col font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed"
+  >
+    <!-- Top Action Area (Skip) -->
+    <header
+      class="w-full flex justify-end items-center px-margin-mobile md:px-margin-desktop py-md pt-safe"
+    >
+      <button
+        class="text-on-surface-variant font-label-md text-label-md px-4 py-2 hover:bg-surface-container-low rounded-full transition-colors duration-200"
+      >
+        Skip
+      </button>
+    </header>
+    <!-- Main Content Canvas -->
+    <main
+      class="flex-grow flex flex-col justify-center items-center px-margin-mobile md:px-margin-desktop w-full max-w-[1120px] mx-auto"
+    >
+      <!-- Illustration -->
+      <div
+        class="w-full max-w-[320px] md:max-w-[480px] aspect-square mb-xl md:mb-xxl fade-in-up"
+        style="animation-delay: 0.1s"
+      >
+        <div
+          class="w-full h-full rounded-[2rem] bg-surface-container-lowest border border-outline-variant/30 shadow-[0_4px_12px_rgba(0,0,0,0.04)] overflow-hidden flex items-center justify-center p-md relative group"
+        >
+          <!-- Abstract scanning effect overlay -->
+          <div
+            class="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-transparent -translate-y-full group-hover:animate-[scan_3s_ease-in-out_infinite]"
+          ></div>
+          <img
+            alt="Scanning medical report illustration"
+            class="w-full h-full object-cover rounded-xl"
+            data-alt="A modern, high-quality photograph of a pristine medical laboratory report lying flat on a minimalist desk, illuminated by a warm, glowing soft light that mimics a digital scanning process. The setting is bright and clean, utilizing a sophisticated light-mode aesthetic with soft white surfaces and muted warm gray undertones. The composition is calm and professional, embodying empathetic clarity and technological trust without feeling overly clinical."
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyky8_sHXpId-EVB8x8wbECn2hc0_L_VQes7QiCK98EV8FGid1dGxc1MZy4zc6Bk_0_tFxzXdjmJLwq1JiK6Bw9y3mw4V3C83EvysodWeBRo4T_HTzpRSRXDz9Z478AzXMLPWwQzMUuRDNG8frIFeZ19UAFmoSV6ifVGjOLxA8R4B_mT94NU7LjWD22J-SxyrYVsPXPn2OhoKbAx3VXD5alJWsopm5icLcgTZzNQUNo1cpTgigUZxO0geSqjrTqeFxpa89ug65zOgr"
+          />
+        </div>
+      </div>
+      <!-- Typography -->
+      <div
+        class="text-center max-w-[500px] flex flex-col items-center fade-in-up"
+        style="animation-delay: 0.2s"
+      >
+        <h1
+          class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-md"
+        >
+          Upload &amp; Simplify
+        </h1>
+        <p
+          class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed"
+        >
+          No more medical jargon. Upload your lab results and get an instant,
+          easy-to-understand summary.
+        </p>
+      </div>
+    </main>
+    <!-- Bottom Action Area -->
+    <footer
+      class="w-full px-margin-mobile md:px-margin-desktop py-lg pb-safe flex flex-col sm:flex-row items-center justify-between gap-xl max-w-[1120px] mx-auto fade-in-up"
+      style="animation-delay: 0.3s"
+    >
+      <!-- Progress Indicators -->
+      <div
+        class="flex gap-sm items-center justify-center sm:justify-start w-full sm:w-auto order-2 sm:order-1"
+      >
+        <div
+          class="w-8 h-2 rounded-full bg-primary transition-all duration-300"
+        ></div>
+        <div
+          class="w-2 h-2 rounded-full bg-surface-container-highest transition-all duration-300"
+        ></div>
+        <div
+          class="w-2 h-2 rounded-full bg-surface-container-highest transition-all duration-300"
+        ></div>
+      </div>
+      <!-- Primary Action -->
+      <button
+        class="w-full sm:w-auto min-w-[160px] min-h-[48px] bg-primary text-on-primary font-label-md text-label-md px-8 py-3 rounded-full hover:bg-inverse-surface hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-all duration-200 flex items-center justify-center gap-sm order-1 sm:order-2"
+      >
+        <span>Next</span>
+        <span aria-hidden="true" class="material-symbols-outlined text-[20px]"
+          >arrow_forward</span
+        >
+      </button>
+    </footer>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

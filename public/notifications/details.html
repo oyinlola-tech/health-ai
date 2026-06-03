@@ -1,242 +1,385 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Notification Details - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Notification Details - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "surface-dim": "#ddd9d8",
-                      "secondary-fixed-dim": "#cfc5bc",
-                      "on-tertiary-fixed-variant": "#464749",
-                      "on-error-container": "#93000a",
-                      "primary": "#161310",
-                      "on-background": "#1c1b1b",
-                      "surface-bright": "#fdf8f7",
-                      "error": "#ba1a1a",
-                      "surface-container-lowest": "#ffffff",
-                      "tertiary-fixed": "#e3e2e4",
-                      "secondary-fixed": "#ebe1d8",
-                      "on-error": "#ffffff",
-                      "inverse-primary": "#cdc5c0",
-                      "inverse-on-surface": "#f4f0ee",
-                      "on-tertiary": "#ffffff",
-                      "on-primary": "#ffffff",
-                      "on-tertiary-fixed": "#1a1c1e",
-                      "surface-container": "#f1edec",
-                      "primary-fixed": "#e9e1dc",
-                      "tertiary": "#121415",
-                      "surface-container-high": "#ece7e6",
-                      "on-secondary-container": "#69615a",
-                      "on-secondary-fixed": "#201b15",
-                      "on-secondary": "#ffffff",
-                      "outline-variant": "#cfc4bd",
-                      "on-primary-container": "#948e89",
-                      "tertiary-fixed-dim": "#c7c6c8",
-                      "primary-fixed-dim": "#cdc5c0",
-                      "outline": "#7e756f",
-                      "error-container": "#ffdad6",
-                      "background": "#fdf8f7",
-                      "on-surface-variant": "#4d4540",
-                      "tertiary-container": "#27282a",
-                      "primary-container": "#2b2724",
-                      "secondary": "#645d56",
-                      "on-surface": "#1c1b1b",
-                      "surface-container-low": "#f7f3f1",
-                      "surface-container-highest": "#e6e1e0",
-                      "on-secondary-fixed-variant": "#4c463f",
-                      "surface-variant": "#e6e1e0",
-                      "surface-tint": "#635d5a",
-                      "inverse-surface": "#313030",
-                      "secondary-container": "#e9ded5",
-                      "on-primary-fixed": "#1e1b18",
-                      "surface": "#fdf8f7",
-                      "on-tertiary-container": "#8f8f91",
-                      "on-primary-fixed-variant": "#4b4642",
-                      "wellness-coral": "#FF6E5C" /* Added specific brand color requested via inline instructions, mapped as custom extension to respect config rules while satisfying visual requirements */
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "xxl": "48px",
-                      "md": "16px",
-                      "margin-mobile": "20px",
-                      "lg": "24px",
-                      "base": "8px",
-                      "margin-desktop": "64px",
-                      "gutter": "16px",
-                      "xl": "32px",
-                      "sm": "8px",
-                      "xs": "4px"
-              },
-              "fontFamily": {
-                      "headline-lg": ["Spectral"],
-                      "body-md": ["Inter"],
-                      "title-lg": ["Inter"],
-                      "display-lg": ["Spectral"],
-                      "body-lg": ["Inter"],
-                      "headline-md": ["Spectral"],
-                      "headline-lg-mobile": ["Spectral"],
-                      "label-md": ["Inter"],
-                      "caption": ["Inter"]
-              },
-              "fontSize": {
-                      "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
-                      "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                      "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                      "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
-                      "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                      "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
-                      "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
-                      "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                      "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
-              }
-            }
-          }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#ddd9d8",
+              "secondary-fixed-dim": "#cfc5bc",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-error-container": "#93000a",
+              primary: "#161310",
+              "on-background": "#1c1b1b",
+              "surface-bright": "#fdf8f7",
+              error: "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed": "#e3e2e4",
+              "secondary-fixed": "#ebe1d8",
+              "on-error": "#ffffff",
+              "inverse-primary": "#cdc5c0",
+              "inverse-on-surface": "#f4f0ee",
+              "on-tertiary": "#ffffff",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed": "#1a1c1e",
+              "surface-container": "#f1edec",
+              "primary-fixed": "#e9e1dc",
+              tertiary: "#121415",
+              "surface-container-high": "#ece7e6",
+              "on-secondary-container": "#69615a",
+              "on-secondary-fixed": "#201b15",
+              "on-secondary": "#ffffff",
+              "outline-variant": "#cfc4bd",
+              "on-primary-container": "#948e89",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "primary-fixed-dim": "#cdc5c0",
+              outline: "#7e756f",
+              "error-container": "#ffdad6",
+              background: "#fdf8f7",
+              "on-surface-variant": "#4d4540",
+              "tertiary-container": "#27282a",
+              "primary-container": "#2b2724",
+              secondary: "#645d56",
+              "on-surface": "#1c1b1b",
+              "surface-container-low": "#f7f3f1",
+              "surface-container-highest": "#e6e1e0",
+              "on-secondary-fixed-variant": "#4c463f",
+              "surface-variant": "#e6e1e0",
+              "surface-tint": "#635d5a",
+              "inverse-surface": "#313030",
+              "secondary-container": "#e9ded5",
+              "on-primary-fixed": "#1e1b18",
+              surface: "#fdf8f7",
+              "on-tertiary-container": "#8f8f91",
+              "on-primary-fixed-variant": "#4b4642",
+              "wellness-coral":
+                "#FF6E5C" /* Added specific brand color requested via inline instructions, mapped as custom extension to respect config rules while satisfying visual requirements */,
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              xxl: "48px",
+              md: "16px",
+              "margin-mobile": "20px",
+              lg: "24px",
+              base: "8px",
+              "margin-desktop": "64px",
+              gutter: "16px",
+              xl: "32px",
+              sm: "8px",
+              xs: "4px",
+            },
+            fontFamily: {
+              "headline-lg": ["Spectral"],
+              "body-md": ["Inter"],
+              "title-lg": ["Inter"],
+              "display-lg": ["Spectral"],
+              "body-lg": ["Inter"],
+              "headline-md": ["Spectral"],
+              "headline-lg-mobile": ["Spectral"],
+              "label-md": ["Inter"],
+              caption: ["Inter"],
+            },
+            fontSize: {
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        /* Ambient shadows and AI Highlight rules */
-        .shadow-ambient {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-        }
-        .shadow-ambient-hover:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-        }
-        .ai-highlight-border {
-            border-top: 2px solid theme('colors.wellness-coral');
-        }
-        .ai-bubble {
-            border-radius: 1rem 1rem 1rem 0;
-            background-color: rgba(255, 110, 92, 0.05); /* 5% Wellness Coral */
-        }
-        .btn-coral {
-            background-color: theme('colors.wellness-coral');
-            color: #ffffff;
-        }
-        .btn-coral:hover {
-            opacity: 0.9;
-        }
+    <style>
+      /* Ambient shadows and AI Highlight rules */
+      .shadow-ambient {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      }
+      .shadow-ambient-hover:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+      }
+      .ai-highlight-border {
+        border-top: 2px solid theme("colors.wellness-coral");
+      }
+      .ai-bubble {
+        border-radius: 1rem 1rem 1rem 0;
+        background-color: rgba(255, 110, 92, 0.05); /* 5% Wellness Coral */
+      }
+      .btn-coral {
+        background-color: theme("colors.wellness-coral");
+        color: #ffffff;
+      }
+      .btn-coral:hover {
+        opacity: 0.9;
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-surface font-body-md text-body-md antialiased flex h-screen overflow-hidden">
-<!-- TopNavBar (Mobile Only) -->
-<header class="md:hidden flex justify-between items-center w-full px-margin-mobile py-base z-50 bg-surface border-b border-outline-variant shadow-sm fixed top-0 left-0 right-0 h-16">
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary text-2xl">menu</span>
-<span class="font-headline-md text-headline-md font-semibold text-primary">MedExplain AI</span>
-</div>
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200">settings</span>
-<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200">account_circle</span>
-</div>
-</header>
-<!-- SideNavBar (Desktop) -->
-<nav class="hidden md:flex flex-col h-screen w-64 left-0 top-0 fixed bg-surface-container-low border-r border-outline-variant p-md gap-base z-40">
-<div class="px-sm py-md mb-lg">
-<h1 class="font-headline-md text-headline-md text-primary font-semibold">MedExplain AI</h1>
-<p class="font-caption text-caption text-on-surface-variant mt-xs">Empathetic Insights</p>
-</div>
-<div class="flex flex-col gap-xs flex-1">
-<!-- Dashboard -->
-<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors" href="/app/dashboard.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
-<span class="font-label-md text-label-md">Dashboard</span>
-</a>
-<!-- Reports -->
-<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors" href="/report/summary.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">description</span>
-<span class="font-label-md text-label-md">Reports</span>
-</a>
-<!-- Insights -->
-<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors" href="/app/dashboard.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">lightbulb</span>
-<span class="font-label-md text-label-md">Insights</span>
-</a>
-<!-- Health Trends -->
-<a class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors" href="/app/dashboard.html">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">trending_up</span>
-<span class="font-label-md text-label-md">Health Trends</span>
-</a>
-<!-- Notifications (ACTIVE) -->
-<a class="flex items-center gap-sm px-md py-sm rounded-lg text-primary font-bold bg-secondary-container scale-[0.98] transition-transform duration-150" href="/notifications/list.html">
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">notifications</span>
-<span class="font-label-md text-label-md">Notifications</span>
-</a>
-</div>
-<div class="mt-auto pt-md border-t border-outline-variant flex items-center gap-sm px-sm">
-<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
-<span class="material-symbols-outlined text-sm">person</span>
-</div>
-<span class="font-label-md text-label-md text-on-surface-variant">User profile</span>
-</div>
-</nav>
-<!-- Main Content Area -->
-<main class="flex-1 flex flex-col h-screen overflow-y-auto md:ml-64 pt-16 md:pt-0 relative">
-<!-- Generous Whitespace Container -->
-<div class="w-full max-w-[800px] mx-auto px-margin-mobile md:px-margin-desktop py-lg md:py-xxl flex flex-col gap-lg">
-<!-- Back Navigation -->
-<button class="group flex items-center gap-xs w-fit text-on-surface-variant hover:text-primary transition-colors duration-200">
-<span class="material-symbols-outlined text-xl group-hover:-translate-x-1 transition-transform duration-200">arrow_back</span>
-<span class="font-label-md text-label-md font-medium">Back to Notifications</span>
-</button>
-<!-- Detailed Notification Card -->
-<article class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-ambient ai-highlight-border overflow-hidden flex flex-col">
-<!-- Card Header -->
-<div class="p-lg md:p-xl flex items-start gap-md border-b border-outline-variant/50">
-<div class="w-12 h-12 rounded-full bg-error-container/30 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-3xl text-wellness-coral" style="font-variation-settings: 'FILL' 1;">science</span>
-</div>
-<div class="flex flex-col gap-xs pt-1">
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Your Lipid Panel analysis is ready</h2>
-<div class="flex items-center gap-sm text-on-surface-variant mt-1">
-<span class="material-symbols-outlined text-sm">schedule</span>
-<span class="font-caption text-caption">Today, 10:42 AM</span>
-</div>
-</div>
-</div>
-<!-- Card Body (AI Explanation) -->
-<div class="p-lg md:p-xl flex flex-col gap-md">
-<div class="flex items-start gap-sm">
-<span class="material-symbols-outlined text-wellness-coral mt-1" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
-<div class="ai-bubble p-md border border-wellness-coral/10">
-<p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
-                                Our AI has finished processing your recent blood work from <span class="font-semibold text-primary">Oct 24th</span>. You have new insights regarding your cholesterol levels.
-                            </p>
-<p class="font-body-md text-body-md text-on-surface-variant mt-sm">
-                                While your overall HDL (good cholesterol) remains strong, there is a slight upward trend in your LDL levels compared to your previous test six months ago. We've prepared a detailed breakdown of these metrics and customized dietary recommendations to help manage this trend.
-                            </p>
-</div>
-</div>
-</div>
-<!-- Card Actions -->
-<div class="p-lg md:p-xl bg-surface-container-low/50 flex flex-col sm:flex-row gap-sm md:gap-md items-center justify-end border-t border-outline-variant/50">
-<button class="w-full sm:w-auto bg-surface-container-lowest text-primary border border-outline-variant rounded-full px-lg py-sm min-h-[48px] font-label-md text-label-md flex items-center justify-center gap-xs hover:bg-surface-container-highest transition-colors shadow-sm">
-<span class="material-symbols-outlined text-lg">chat</span>
-                        Ask AI about this
-                    </button>
-<button class="w-full sm:w-auto btn-coral rounded-full px-lg py-sm min-h-[48px] font-label-md text-label-md flex items-center justify-center gap-xs transition-opacity shadow-ambient">
-                        View Report
-                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
-</button>
-</div>
-</article>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-surface font-body-md text-body-md antialiased flex h-screen overflow-hidden"
+  >
+    <!-- TopNavBar (Mobile Only) -->
+    <header
+      class="md:hidden flex justify-between items-center w-full px-margin-mobile py-base z-50 bg-surface border-b border-outline-variant shadow-sm fixed top-0 left-0 right-0 h-16"
+    >
+      <div class="flex items-center gap-sm">
+        <span class="material-symbols-outlined text-primary text-2xl"
+          >menu</span
+        >
+        <span
+          class="font-headline-md text-headline-md font-semibold text-primary"
+          >MedExplain AI</span
+        >
+      </div>
+      <div class="flex items-center gap-sm">
+        <span
+          class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200"
+          >settings</span
+        >
+        <span
+          class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200"
+          >account_circle</span
+        >
+      </div>
+    </header>
+    <!-- SideNavBar (Desktop) -->
+    <nav
+      class="hidden md:flex flex-col h-screen w-64 left-0 top-0 fixed bg-surface-container-low border-r border-outline-variant p-md gap-base z-40"
+    >
+      <div class="px-sm py-md mb-lg">
+        <h1
+          class="font-headline-md text-headline-md text-primary font-semibold"
+        >
+          MedExplain AI
+        </h1>
+        <p class="font-caption text-caption text-on-surface-variant mt-xs">
+          Empathetic Insights
+        </p>
+      </div>
+      <div class="flex flex-col gap-xs flex-1">
+        <!-- Dashboard -->
+        <a
+          class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors"
+          href="/app/dashboard.html"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 0"
+            >dashboard</span
+          >
+          <span class="font-label-md text-label-md">Dashboard</span>
+        </a>
+        <!-- Reports -->
+        <a
+          class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors"
+          href="/report/summary.html"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 0"
+            >description</span
+          >
+          <span class="font-label-md text-label-md">Reports</span>
+        </a>
+        <!-- Insights -->
+        <a
+          class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors"
+          href="/app/dashboard.html"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 0"
+            >lightbulb</span
+          >
+          <span class="font-label-md text-label-md">Insights</span>
+        </a>
+        <!-- Health Trends -->
+        <a
+          class="flex items-center gap-sm px-md py-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors"
+          href="/app/dashboard.html"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 0"
+            >trending_up</span
+          >
+          <span class="font-label-md text-label-md">Health Trends</span>
+        </a>
+        <!-- Notifications (ACTIVE) -->
+        <a
+          class="flex items-center gap-sm px-md py-sm rounded-lg text-primary font-bold bg-secondary-container scale-[0.98] transition-transform duration-150"
+          href="/notifications/list.html"
+        >
+          <span
+            class="material-symbols-outlined text-primary"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >notifications</span
+          >
+          <span class="font-label-md text-label-md">Notifications</span>
+        </a>
+      </div>
+      <div
+        class="mt-auto pt-md border-t border-outline-variant flex items-center gap-sm px-sm"
+      >
+        <div
+          class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed"
+        >
+          <span class="material-symbols-outlined text-sm">person</span>
+        </div>
+        <span class="font-label-md text-label-md text-on-surface-variant"
+          >User profile</span
+        >
+      </div>
+    </nav>
+    <!-- Main Content Area -->
+    <main
+      class="flex-1 flex flex-col h-screen overflow-y-auto md:ml-64 pt-16 md:pt-0 relative"
+    >
+      <!-- Generous Whitespace Container -->
+      <div
+        class="w-full max-w-[800px] mx-auto px-margin-mobile md:px-margin-desktop py-lg md:py-xxl flex flex-col gap-lg"
+      >
+        <!-- Back Navigation -->
+        <button
+          class="group flex items-center gap-xs w-fit text-on-surface-variant hover:text-primary transition-colors duration-200"
+        >
+          <span
+            class="material-symbols-outlined text-xl group-hover:-translate-x-1 transition-transform duration-200"
+            >arrow_back</span
+          >
+          <span class="font-label-md text-label-md font-medium"
+            >Back to Notifications</span
+          >
+        </button>
+        <!-- Detailed Notification Card -->
+        <article
+          class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-ambient ai-highlight-border overflow-hidden flex flex-col"
+        >
+          <!-- Card Header -->
+          <div
+            class="p-lg md:p-xl flex items-start gap-md border-b border-outline-variant/50"
+          >
+            <div
+              class="w-12 h-12 rounded-full bg-error-container/30 flex items-center justify-center shrink-0"
+            >
+              <span
+                class="material-symbols-outlined text-3xl text-wellness-coral"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >science</span
+              >
+            </div>
+            <div class="flex flex-col gap-xs pt-1">
+              <h2
+                class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary"
+              >
+                Your Lipid Panel analysis is ready
+              </h2>
+              <div
+                class="flex items-center gap-sm text-on-surface-variant mt-1"
+              >
+                <span class="material-symbols-outlined text-sm">schedule</span>
+                <span class="font-caption text-caption">Today, 10:42 AM</span>
+              </div>
+            </div>
+          </div>
+          <!-- Card Body (AI Explanation) -->
+          <div class="p-lg md:p-xl flex flex-col gap-md">
+            <div class="flex items-start gap-sm">
+              <span
+                class="material-symbols-outlined text-wellness-coral mt-1"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >smart_toy</span
+              >
+              <div class="ai-bubble p-md border border-wellness-coral/10">
+                <p
+                  class="font-body-lg text-body-lg text-on-surface leading-relaxed"
+                >
+                  Our AI has finished processing your recent blood work from
+                  <span class="font-semibold text-primary">Oct 24th</span>. You
+                  have new insights regarding your cholesterol levels.
+                </p>
+                <p
+                  class="font-body-md text-body-md text-on-surface-variant mt-sm"
+                >
+                  While your overall HDL (good cholesterol) remains strong,
+                  there is a slight upward trend in your LDL levels compared to
+                  your previous test six months ago. We've prepared a detailed
+                  breakdown of these metrics and customized dietary
+                  recommendations to help manage this trend.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Card Actions -->
+          <div
+            class="p-lg md:p-xl bg-surface-container-low/50 flex flex-col sm:flex-row gap-sm md:gap-md items-center justify-end border-t border-outline-variant/50"
+          >
+            <button
+              class="w-full sm:w-auto bg-surface-container-lowest text-primary border border-outline-variant rounded-full px-lg py-sm min-h-[48px] font-label-md text-label-md flex items-center justify-center gap-xs hover:bg-surface-container-highest transition-colors shadow-sm"
+            >
+              <span class="material-symbols-outlined text-lg">chat</span>
+              Ask AI about this
+            </button>
+            <button
+              class="w-full sm:w-auto btn-coral rounded-full px-lg py-sm min-h-[48px] font-label-md text-label-md flex items-center justify-center gap-xs transition-opacity shadow-ambient"
+            >
+              View Report
+              <span class="material-symbols-outlined text-lg"
+                >arrow_forward</span
+              >
+            </button>
+          </div>
+        </article>
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

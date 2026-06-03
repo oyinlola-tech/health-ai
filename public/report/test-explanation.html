@@ -1,402 +1,584 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Individual Test Result - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Individual Test Result - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
+    <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
         theme: {
           extend: {
-            "colors": {
-                    "on-background": "#1c1b1b",
-                    "secondary-fixed": "#ebe1d8",
-                    "surface-container-highest": "#e6e1e0",
-                    "primary-fixed-dim": "#cdc5c0",
-                    "on-primary": "#ffffff",
-                    "surface-variant": "#e6e1e0",
-                    "surface-container-low": "#f7f3f1",
-                    "inverse-primary": "#cdc5c0",
-                    "on-error-container": "#93000a",
-                    "tertiary": "#121415",
-                    "on-primary-fixed-variant": "#4b4642",
-                    "surface-container-high": "#ece7e6",
-                    "surface-bright": "#fdf8f7",
-                    "error-container": "#ffdad6",
-                    "inverse-on-surface": "#f4f0ee",
-                    "on-error": "#ffffff",
-                    "outline": "#7e756f",
-                    "on-secondary-fixed-variant": "#4c463f",
-                    "primary-container": "#2b2724",
-                    "surface": "#fdf8f7",
-                    "secondary-fixed-dim": "#cfc5bc",
-                    "error": "#ba1a1a",
-                    "on-secondary": "#ffffff",
-                    "tertiary-container": "#27282a",
-                    "on-tertiary-fixed": "#1a1c1e",
-                    "tertiary-fixed": "#e3e2e4",
-                    "secondary-container": "#e9ded5",
-                    "outline-variant": "#cfc4bd",
-                    "on-primary-fixed": "#1e1b18",
-                    "primary": "#161310",
-                    "on-secondary-container": "#69615a",
-                    "on-secondary-fixed": "#201b15",
-                    "surface-tint": "#635d5a",
-                    "on-surface": "#1c1b1b",
-                    "background": "#fdf8f7",
-                    "secondary": "#645d56",
-                    "on-tertiary-fixed-variant": "#464749",
-                    "on-primary-container": "#948e89",
-                    "on-tertiary-container": "#8f8f91",
-                    "primary-fixed": "#e9e1dc",
-                    "on-tertiary": "#ffffff",
-                    "inverse-surface": "#313030",
-                    "surface-container": "#f1edec",
-                    "tertiary-fixed-dim": "#c7c6c8",
-                    "surface-dim": "#ddd9d8",
-                    "on-surface-variant": "#4d4540",
-                    "surface-container-lowest": "#ffffff",
-                    "wellness-coral": "#FF6E5C",
-                    "wellness-coral-dim": "rgba(255, 110, 92, 0.05)"
+            colors: {
+              "on-background": "#1c1b1b",
+              "secondary-fixed": "#ebe1d8",
+              "surface-container-highest": "#e6e1e0",
+              "primary-fixed-dim": "#cdc5c0",
+              "on-primary": "#ffffff",
+              "surface-variant": "#e6e1e0",
+              "surface-container-low": "#f7f3f1",
+              "inverse-primary": "#cdc5c0",
+              "on-error-container": "#93000a",
+              tertiary: "#121415",
+              "on-primary-fixed-variant": "#4b4642",
+              "surface-container-high": "#ece7e6",
+              "surface-bright": "#fdf8f7",
+              "error-container": "#ffdad6",
+              "inverse-on-surface": "#f4f0ee",
+              "on-error": "#ffffff",
+              outline: "#7e756f",
+              "on-secondary-fixed-variant": "#4c463f",
+              "primary-container": "#2b2724",
+              surface: "#fdf8f7",
+              "secondary-fixed-dim": "#cfc5bc",
+              error: "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "tertiary-container": "#27282a",
+              "on-tertiary-fixed": "#1a1c1e",
+              "tertiary-fixed": "#e3e2e4",
+              "secondary-container": "#e9ded5",
+              "outline-variant": "#cfc4bd",
+              "on-primary-fixed": "#1e1b18",
+              primary: "#161310",
+              "on-secondary-container": "#69615a",
+              "on-secondary-fixed": "#201b15",
+              "surface-tint": "#635d5a",
+              "on-surface": "#1c1b1b",
+              background: "#fdf8f7",
+              secondary: "#645d56",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-primary-container": "#948e89",
+              "on-tertiary-container": "#8f8f91",
+              "primary-fixed": "#e9e1dc",
+              "on-tertiary": "#ffffff",
+              "inverse-surface": "#313030",
+              "surface-container": "#f1edec",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "surface-dim": "#ddd9d8",
+              "on-surface-variant": "#4d4540",
+              "surface-container-lowest": "#ffffff",
+              "wellness-coral": "#FF6E5C",
+              "wellness-coral-dim": "rgba(255, 110, 92, 0.05)",
             },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px",
-                    "ai-bubble": "1rem 1rem 1rem 0"
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+              "ai-bubble": "1rem 1rem 1rem 0",
             },
-            "spacing": {
-                    "margin-mobile": "20px",
-                    "xxl": "48px",
-                    "xl": "32px",
-                    "sm": "8px",
-                    "gutter": "16px",
-                    "xs": "4px",
-                    "md": "16px",
-                    "margin-desktop": "64px",
-                    "lg": "24px",
-                    "base": "8px"
+            spacing: {
+              "margin-mobile": "20px",
+              xxl: "48px",
+              xl: "32px",
+              sm: "8px",
+              gutter: "16px",
+              xs: "4px",
+              md: "16px",
+              "margin-desktop": "64px",
+              lg: "24px",
+              base: "8px",
             },
-            "fontFamily": {
-                    "title-lg": ["Inter"],
-                    "headline-lg": ["Spectral"],
-                    "headline-lg-mobile": ["Spectral"],
-                    "body-md": ["Inter"],
-                    "label-md": ["Inter"],
-                    "display-lg": ["Spectral"],
-                    "headline-md": ["Spectral"],
-                    "caption": ["Inter"],
-                    "body-lg": ["Inter"]
+            fontFamily: {
+              "title-lg": ["Inter"],
+              "headline-lg": ["Spectral"],
+              "headline-lg-mobile": ["Spectral"],
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              "display-lg": ["Spectral"],
+              "headline-md": ["Spectral"],
+              caption: ["Inter"],
+              "body-lg": ["Inter"],
             },
-            "fontSize": {
-                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
-                    "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
-                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
-                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
-                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
-                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
-            }
-          }
-        }
-      }
+            fontSize: {
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        body {
-            background-color: #FDF6F3;
-        }
-        .medical-card {
-            background-color: #FFFFFF;
-            border: 1px solid #E8E4E1;
-            box-shadow: 0 4px 12px 0 rgba(0,0,0,0.04);
-            border-radius: 0.75rem;
-            transition: all 0.2s ease;
-        }
-        .medical-card:hover {
-            box-shadow: 0 8px 20px 0 rgba(0,0,0,0.06);
-            transform: translateY(-2px);
-        }
-        .ai-highlight {
-            border-top: 2px solid #FF6E5C;
-        }
-        .progress-track {
-            background-color: #7e756f;
-            height: 4px;
-            border-radius: 2px;
-            width: 100%;
-            position: relative;
-        }
-        .progress-fill {
-            background-color: #FF6E5C;
-            height: 4px;
-            border-radius: 2px;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .marker-pin {
-            position: absolute;
-            top: -6px;
-            width: 16px;
-            height: 16px;
-            background-color: #161310;
-            border: 2px solid #FFFFFF;
-            border-radius: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+    <style>
+      body {
+        background-color: #fdf6f3;
+      }
+      .medical-card {
+        background-color: #ffffff;
+        border: 1px solid #e8e4e1;
+        box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.04);
+        border-radius: 0.75rem;
+        transition: all 0.2s ease;
+      }
+      .medical-card:hover {
+        box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+      }
+      .ai-highlight {
+        border-top: 2px solid #ff6e5c;
+      }
+      .progress-track {
+        background-color: #7e756f;
+        height: 4px;
+        border-radius: 2px;
+        width: 100%;
+        position: relative;
+      }
+      .progress-fill {
+        background-color: #ff6e5c;
+        height: 4px;
+        border-radius: 2px;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .marker-pin {
+        position: absolute;
+        top: -6px;
+        width: 16px;
+        height: 16px;
+        background-color: #161310;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background min-h-screen font-body-md">
-<!-- TopNavBar -->
-<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 shadow-sm bg-surface dark:bg-surface-dim hidden md:flex">
-<div class="flex items-center gap-md">
-<span class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary">MedExplain AI</span>
-</div>
-<div class="flex items-center gap-md">
-<button class="p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors text-primary dark:text-primary-fixed-dim">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
-</button>
-<button class="p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors text-primary dark:text-primary-fixed-dim">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
-</button>
-<img alt="Patient Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant ml-2" data-alt="A small, circular avatar portrait of a smiling woman with warm lighting, used for a profile picture in a clean medical interface. The style is professional yet approachable, fitting the modern healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf7lNCX9fu5z735bdlZhzQ-GTBeDPdyKT7GjRSEg-oEzPd_ryeeGxJPEukNJ25RihmhHX5KF_sgxHCZFCJ-Lm9HfqE1lnq2EMylt84OepGYrNr_O_2Rc_spTLF3wz6q3XEFCYi6R7YQ_4VG5RXYo_082O8BozkSloyh4BeODTCcTyek8cKAsBKo-H7Qjlusqs8JRSB1LqLvUNSkvjcHzBphnCKBotu-FpfRjEQ3F70FazpemTOIl9fdt3_33Tklj5KjeBtS6uh5NG1">
-</div>
-</header>
-<!-- SideNavBar -->
-<nav class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col p-md z-40 bg-surface-container-low dark:bg-surface-container-high border-r border-outline-variant hidden md:flex">
-<div class="mb-lg px-4">
-<h2 class="text-title-lg font-title-lg text-primary">Patient Portal</h2>
-<p class="text-body-md font-body-md text-on-surface-variant">Welcome back</p>
-</div>
-<ul class="flex flex-col gap-sm flex-grow">
-<li>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-all duration-200" href="/app/dashboard.html">
-<span class="material-symbols-outlined">dashboard</span>
-<span class="text-label-md font-label-md">Dashboard</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-semibold rounded-lg px-4 py-3 active opacity-80 scale-95 duration-150" href="/report/summary.html">
-<span class="material-symbols-outlined">description</span>
-<span class="text-label-md font-label-md">Reports</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-all duration-200" href="/ai-assistant/chat-home.html">
-<span class="material-symbols-outlined">psychology</span>
-<span class="text-label-md font-label-md">Insights</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-all duration-200" href="/app/dashboard.html">
-<span class="material-symbols-outlined">monitoring</span>
-<span class="text-label-md font-label-md">Health Trends</span>
-</a>
-</li>
-</ul>
-<button class="w-full bg-[#FF6E5C] text-white rounded-lg py-3 text-label-md font-label-md font-medium mt-auto mb-4 hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-sm">upload</span>
-            Upload New Report
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body class="bg-background text-on-background min-h-screen font-body-md">
+    <!-- TopNavBar -->
+    <header
+      class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 shadow-sm bg-surface dark:bg-surface-dim hidden md:flex"
+    >
+      <div class="flex items-center gap-md">
+        <span
+          class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary"
+          >MedExplain AI</span
+        >
+      </div>
+      <div class="flex items-center gap-md">
+        <button
+          class="p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors text-primary dark:text-primary-fixed-dim"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 0"
+            >notifications</span
+          >
         </button>
-<ul class="flex flex-col gap-sm mt-auto border-t border-outline-variant pt-4">
-<li>
-<a class="flex items-center gap-md text-on-surface-variant px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-colors" href="/app/dashboard.html">
-<span class="material-symbols-outlined">help</span>
-<span class="text-label-md font-label-md">Support</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-md text-on-surface-variant px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-colors" href="/auth/login.html">
-<span class="material-symbols-outlined">logout</span>
-<span class="text-label-md font-label-md">Sign Out</span>
-</a>
-</li>
-</ul>
-</nav>
-<!-- Main Content Area -->
-<main class="md:ml-64 pt-20 md:pt-24 px-margin-mobile md:px-margin-desktop pb-xxl max-w-[1120px] mx-auto">
-<!-- Header Section -->
-<div class="mb-xl flex flex-col md:flex-row justify-between items-start md:items-end gap-md">
-<div>
-<div class="flex items-center gap-2 mb-2">
-<a class="text-secondary hover:text-primary transition-colors flex items-center gap-1 text-label-md font-label-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined text-sm">arrow_back</span>
-                        Back to Comprehensive Panel
-                    </a>
-</div>
-<h1 class="text-display-lg font-headline-lg text-primary">Lipid Panel Results</h1>
-<p class="text-body-lg font-body-lg text-on-surface-variant mt-2">Collected date appears when a saved report is opened.</p>
-</div>
-<div class="flex gap-4">
-<button class="px-4 py-2 rounded-lg border border-outline text-primary font-label-md hover:bg-surface-container transition-colors flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">download</span>
-                    Download PDF
-                </button>
-</div>
-</div>
-<!-- Bento Grid Layout for Results -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
-<!-- Left Column: Individual Markers -->
-<div class="col-span-1 md:col-span-8 flex flex-col gap-lg">
-<!-- Marker 1: LDL Cholesterol (Elevated) -->
-<div class="medical-card p-6 ai-highlight relative overflow-hidden">
-<div class="absolute top-0 right-0 bg-error-container text-on-error-container px-3 py-1 rounded-bl-lg text-caption font-label-md font-medium flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">warning</span>
-                        Elevated
-                    </div>
-<div class="flex flex-col md:flex-row justify-between mb-6 pt-2">
-<div>
-<h2 class="text-headline-md font-headline-lg text-primary">LDL Cholesterol</h2>
-<p class="text-body-md font-body-md text-on-surface-variant">"Bad" Cholesterol</p>
-</div>
-<div class="text-left md:text-right mt-4 md:mt-0">
-<div class="flex items-baseline md:justify-end gap-1">
-<span class="text-display-lg font-headline-lg text-error">145</span>
-<span class="text-body-md font-body-md text-on-surface-variant">mg/dL</span>
-</div>
-<p class="text-caption font-caption text-outline">Reference: &lt; 100 mg/dL</p>
-</div>
-</div>
-<!-- Visual Scale -->
-<div class="mb-8 px-2">
-<div class="flex justify-between text-caption font-caption text-outline mb-2">
-<span>Optimal</span>
-<span>Borderline</span>
-<span>High</span>
-</div>
-<div class="progress-track">
-<div class="absolute top-0 left-0 h-full w-1/3 bg-emerald-400 rounded-l-sm"></div>
-<div class="absolute top-0 left-1/3 h-full w-1/3 bg-amber-400"></div>
-<div class="absolute top-0 left-2/3 h-full w-1/3 bg-error rounded-r-sm"></div>
-<div class="marker-pin" style="left: 80%;"></div>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-surface-container-high pt-6">
-<div>
-<h3 class="text-title-lg font-title-lg text-primary flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined text-[#FF6E5C]">info</span>
-                                What this means
-                            </h3>
-<p class="text-body-md font-body-md text-on-surface-variant">
-                                Your LDL cholesterol is higher than the optimal range. LDL is often called "bad" cholesterol because it can build up in the walls of your blood vessels, increasing the risk of heart disease over time.
-                            </p>
-</div>
-<div class="bg-wellness-coral-dim p-4 rounded-xl">
-<h3 class="text-title-lg font-title-lg text-primary flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined text-[#FF6E5C]">lightbulb</span>
-                                AI Recommendations
-                            </h3>
-<ul class="text-body-md font-body-md text-on-surface-variant list-disc pl-5 space-y-1">
-<li>Increase soluble fiber (oats, beans).</li>
-<li>Reduce saturated fats (red meat, full-fat dairy).</li>
-<li>Aim for 150 mins of moderate exercise per week.</li>
-</ul>
-</div>
-</div>
-</div>
-<!-- Marker 2: HDL Cholesterol (Normal) -->
-<div class="medical-card p-6 relative overflow-hidden">
-<div class="absolute top-0 right-0 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-bl-lg text-caption font-label-md font-medium flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">check_circle</span>
-                        Optimal
-                    </div>
-<div class="flex flex-col md:flex-row justify-between mb-6 pt-2">
-<div>
-<h2 class="text-headline-md font-headline-lg text-primary">HDL Cholesterol</h2>
-<p class="text-body-md font-body-md text-on-surface-variant">"Good" Cholesterol</p>
-</div>
-<div class="text-left md:text-right mt-4 md:mt-0">
-<div class="flex items-baseline md:justify-end gap-1">
-<span class="text-display-lg font-headline-lg text-primary">55</span>
-<span class="text-body-md font-body-md text-on-surface-variant">mg/dL</span>
-</div>
-<p class="text-caption font-caption text-outline">Reference: &gt; 40 mg/dL</p>
-</div>
-</div>
-<!-- Visual Scale -->
-<div class="mb-8 px-2">
-<div class="flex justify-between text-caption font-caption text-outline mb-2">
-<span>Low (Risk)</span>
-<span>Acceptable</span>
-<span>Optimal</span>
-</div>
-<div class="progress-track">
-<div class="absolute top-0 left-0 h-full w-1/3 bg-error rounded-l-sm"></div>
-<div class="absolute top-0 left-1/3 h-full w-1/3 bg-amber-400"></div>
-<div class="absolute top-0 left-2/3 h-full w-1/3 bg-emerald-400 rounded-r-sm"></div>
-<div class="marker-pin" style="left: 70%;"></div>
-</div>
-</div>
-<div class="border-t border-surface-container-high pt-4">
-<p class="text-body-md font-body-md text-on-surface-variant">
-                            Your HDL is in a healthy range. This type of cholesterol helps carry "bad" cholesterol away from your arteries and back to the liver to be processed.
-                        </p>
-</div>
-</div>
-</div>
-<!-- Right Column: AI Assistant & Summary -->
-<div class="col-span-1 md:col-span-4 flex flex-col gap-lg">
-<!-- ELI5 AI Tooltip/Section -->
-<div class="medical-card p-6 bg-surface-bright sticky top-24">
-<div class="flex items-center gap-3 mb-4">
-<div class="w-10 h-10 rounded-full bg-wellness-coral-dim flex items-center justify-center text-[#FF6E5C]">
-<span class="material-symbols-outlined">psychology</span>
-</div>
-<h2 class="text-title-lg font-title-lg text-primary">Explain it simply</h2>
-</div>
-<div class="bg-wellness-coral-dim p-4 rounded-[1rem_1rem_1rem_0] mb-4">
-<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
-                            Think of your blood vessels like a highway. 
-                            <br><br>
-<strong>LDL</strong> is like slow-moving dump trucks that can drop junk on the road and cause traffic jams (plaque). Yours are a bit too crowded right now.
-                            <br><br>
-<strong>HDL</strong> is like the street sweepers that come and clean up the junk. Yours are doing a great job!
-                        </p>
-</div>
-<button class="w-full py-2 px-4 rounded-lg border border-outline text-primary font-label-md hover:bg-surface-container transition-colors mt-2">
-                        Ask Follow-up Question
-                    </button>
-</div>
-<!-- Next Steps -->
-<div class="medical-card p-6">
-<h2 class="text-title-lg font-title-lg text-primary mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined">calendar_today</span>
-                        Next Steps
-                    </h2>
-<div class="space-y-4">
-<div class="flex gap-3">
-<div class="mt-1 text-primary">
-<span class="material-symbols-outlined">event</span>
-</div>
-<div>
-<p class="text-label-md font-label-md text-primary font-medium">Schedule Follow-up</p>
-<p class="text-caption font-caption text-on-surface-variant">Review these results with Dr. Smith within 2 weeks.</p>
-<a class="text-wellness-coral text-caption font-medium hover:underline mt-1 inline-block" href="/app/dashboard.html">Book Appointment</a>
-</div>
-</div>
-<div class="flex gap-3 pt-3 border-t border-surface-container-high">
-<div class="mt-1 text-primary">
-<span class="material-symbols-outlined">restaurant_menu</span>
-</div>
-<div>
-<p class="text-label-md font-label-md text-primary font-medium">Dietary Adjustment</p>
-<p class="text-caption font-caption text-on-surface-variant">Focus on Mediterranean diet principles.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-
-</body></html>
+        <button
+          class="p-2 rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors text-primary dark:text-primary-fixed-dim"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 0"
+            >settings</span
+          >
+        </button>
+        <img
+          alt="Patient Profile Avatar"
+          class="w-8 h-8 rounded-full border border-outline-variant ml-2"
+          data-alt="A small, circular avatar portrait of a smiling woman with warm lighting, used for a profile picture in a clean medical interface. The style is professional yet approachable, fitting the modern healthcare aesthetic."
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf7lNCX9fu5z735bdlZhzQ-GTBeDPdyKT7GjRSEg-oEzPd_ryeeGxJPEukNJ25RihmhHX5KF_sgxHCZFCJ-Lm9HfqE1lnq2EMylt84OepGYrNr_O_2Rc_spTLF3wz6q3XEFCYi6R7YQ_4VG5RXYo_082O8BozkSloyh4BeODTCcTyek8cKAsBKo-H7Qjlusqs8JRSB1LqLvUNSkvjcHzBphnCKBotu-FpfRjEQ3F70FazpemTOIl9fdt3_33Tklj5KjeBtS6uh5NG1"
+        />
+      </div>
+    </header>
+    <!-- SideNavBar -->
+    <nav
+      class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col p-md z-40 bg-surface-container-low dark:bg-surface-container-high border-r border-outline-variant hidden md:flex"
+    >
+      <div class="mb-lg px-4">
+        <h2 class="text-title-lg font-title-lg text-primary">Patient Portal</h2>
+        <p class="text-body-md font-body-md text-on-surface-variant">
+          Welcome back
+        </p>
+      </div>
+      <ul class="flex flex-col gap-sm flex-grow">
+        <li>
+          <a
+            class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-all duration-200"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-label-md font-label-md">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-semibold rounded-lg px-4 py-3 active opacity-80 scale-95 duration-150"
+            href="/report/summary.html"
+          >
+            <span class="material-symbols-outlined">description</span>
+            <span class="text-label-md font-label-md">Reports</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-all duration-200"
+            href="/ai-assistant/chat-home.html"
+          >
+            <span class="material-symbols-outlined">psychology</span>
+            <span class="text-label-md font-label-md">Insights</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest rounded-lg transition-all duration-200"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined">monitoring</span>
+            <span class="text-label-md font-label-md">Health Trends</span>
+          </a>
+        </li>
+      </ul>
+      <button
+        class="w-full bg-[#FF6E5C] text-white rounded-lg py-3 text-label-md font-label-md font-medium mt-auto mb-4 hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+      >
+        <span class="material-symbols-outlined text-sm">upload</span>
+        Upload New Report
+      </button>
+      <ul
+        class="flex flex-col gap-sm mt-auto border-t border-outline-variant pt-4"
+      >
+        <li>
+          <a
+            class="flex items-center gap-md text-on-surface-variant px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-colors"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined">help</span>
+            <span class="text-label-md font-label-md">Support</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-md text-on-surface-variant px-4 py-2 hover:bg-surface-container-highest rounded-lg transition-colors"
+            href="/auth/login.html"
+          >
+            <span class="material-symbols-outlined">logout</span>
+            <span class="text-label-md font-label-md">Sign Out</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- Main Content Area -->
+    <main
+      class="md:ml-64 pt-20 md:pt-24 px-margin-mobile md:px-margin-desktop pb-xxl max-w-[1120px] mx-auto"
+    >
+      <!-- Header Section -->
+      <div
+        class="mb-xl flex flex-col md:flex-row justify-between items-start md:items-end gap-md"
+      >
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <a
+              class="text-secondary hover:text-primary transition-colors flex items-center gap-1 text-label-md font-label-md"
+              href="/app/dashboard.html"
+            >
+              <span class="material-symbols-outlined text-sm">arrow_back</span>
+              Back to Comprehensive Panel
+            </a>
+          </div>
+          <h1 class="text-display-lg font-headline-lg text-primary">
+            Lipid Panel Results
+          </h1>
+          <p class="text-body-lg font-body-lg text-on-surface-variant mt-2">
+            Collected date appears when a saved report is opened.
+          </p>
+        </div>
+        <div class="flex gap-4">
+          <button
+            class="px-4 py-2 rounded-lg border border-outline text-primary font-label-md hover:bg-surface-container transition-colors flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-sm">download</span>
+            Download PDF
+          </button>
+        </div>
+      </div>
+      <!-- Bento Grid Layout for Results -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+        <!-- Left Column: Individual Markers -->
+        <div class="col-span-1 md:col-span-8 flex flex-col gap-lg">
+          <!-- Marker 1: LDL Cholesterol (Elevated) -->
+          <div class="medical-card p-6 ai-highlight relative overflow-hidden">
+            <div
+              class="absolute top-0 right-0 bg-error-container text-on-error-container px-3 py-1 rounded-bl-lg text-caption font-label-md font-medium flex items-center gap-1"
+            >
+              <span class="material-symbols-outlined text-[14px]">warning</span>
+              Elevated
+            </div>
+            <div class="flex flex-col md:flex-row justify-between mb-6 pt-2">
+              <div>
+                <h2 class="text-headline-md font-headline-lg text-primary">
+                  LDL Cholesterol
+                </h2>
+                <p class="text-body-md font-body-md text-on-surface-variant">
+                  "Bad" Cholesterol
+                </p>
+              </div>
+              <div class="text-left md:text-right mt-4 md:mt-0">
+                <div class="flex items-baseline md:justify-end gap-1">
+                  <span class="text-display-lg font-headline-lg text-error"
+                    >145</span
+                  >
+                  <span
+                    class="text-body-md font-body-md text-on-surface-variant"
+                    >mg/dL</span
+                  >
+                </div>
+                <p class="text-caption font-caption text-outline">
+                  Reference: &lt; 100 mg/dL
+                </p>
+              </div>
+            </div>
+            <!-- Visual Scale -->
+            <div class="mb-8 px-2">
+              <div
+                class="flex justify-between text-caption font-caption text-outline mb-2"
+              >
+                <span>Optimal</span>
+                <span>Borderline</span>
+                <span>High</span>
+              </div>
+              <div class="progress-track">
+                <div
+                  class="absolute top-0 left-0 h-full w-1/3 bg-emerald-400 rounded-l-sm"
+                ></div>
+                <div
+                  class="absolute top-0 left-1/3 h-full w-1/3 bg-amber-400"
+                ></div>
+                <div
+                  class="absolute top-0 left-2/3 h-full w-1/3 bg-error rounded-r-sm"
+                ></div>
+                <div class="marker-pin" style="left: 80%"></div>
+              </div>
+            </div>
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-surface-container-high pt-6"
+            >
+              <div>
+                <h3
+                  class="text-title-lg font-title-lg text-primary flex items-center gap-2 mb-2"
+                >
+                  <span class="material-symbols-outlined text-[#FF6E5C]"
+                    >info</span
+                  >
+                  What this means
+                </h3>
+                <p class="text-body-md font-body-md text-on-surface-variant">
+                  Your LDL cholesterol is higher than the optimal range. LDL is
+                  often called "bad" cholesterol because it can build up in the
+                  walls of your blood vessels, increasing the risk of heart
+                  disease over time.
+                </p>
+              </div>
+              <div class="bg-wellness-coral-dim p-4 rounded-xl">
+                <h3
+                  class="text-title-lg font-title-lg text-primary flex items-center gap-2 mb-2"
+                >
+                  <span class="material-symbols-outlined text-[#FF6E5C]"
+                    >lightbulb</span
+                  >
+                  AI Recommendations
+                </h3>
+                <ul
+                  class="text-body-md font-body-md text-on-surface-variant list-disc pl-5 space-y-1"
+                >
+                  <li>Increase soluble fiber (oats, beans).</li>
+                  <li>Reduce saturated fats (red meat, full-fat dairy).</li>
+                  <li>Aim for 150 mins of moderate exercise per week.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- Marker 2: HDL Cholesterol (Normal) -->
+          <div class="medical-card p-6 relative overflow-hidden">
+            <div
+              class="absolute top-0 right-0 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-bl-lg text-caption font-label-md font-medium flex items-center gap-1"
+            >
+              <span class="material-symbols-outlined text-[14px]"
+                >check_circle</span
+              >
+              Optimal
+            </div>
+            <div class="flex flex-col md:flex-row justify-between mb-6 pt-2">
+              <div>
+                <h2 class="text-headline-md font-headline-lg text-primary">
+                  HDL Cholesterol
+                </h2>
+                <p class="text-body-md font-body-md text-on-surface-variant">
+                  "Good" Cholesterol
+                </p>
+              </div>
+              <div class="text-left md:text-right mt-4 md:mt-0">
+                <div class="flex items-baseline md:justify-end gap-1">
+                  <span class="text-display-lg font-headline-lg text-primary"
+                    >55</span
+                  >
+                  <span
+                    class="text-body-md font-body-md text-on-surface-variant"
+                    >mg/dL</span
+                  >
+                </div>
+                <p class="text-caption font-caption text-outline">
+                  Reference: &gt; 40 mg/dL
+                </p>
+              </div>
+            </div>
+            <!-- Visual Scale -->
+            <div class="mb-8 px-2">
+              <div
+                class="flex justify-between text-caption font-caption text-outline mb-2"
+              >
+                <span>Low (Risk)</span>
+                <span>Acceptable</span>
+                <span>Optimal</span>
+              </div>
+              <div class="progress-track">
+                <div
+                  class="absolute top-0 left-0 h-full w-1/3 bg-error rounded-l-sm"
+                ></div>
+                <div
+                  class="absolute top-0 left-1/3 h-full w-1/3 bg-amber-400"
+                ></div>
+                <div
+                  class="absolute top-0 left-2/3 h-full w-1/3 bg-emerald-400 rounded-r-sm"
+                ></div>
+                <div class="marker-pin" style="left: 70%"></div>
+              </div>
+            </div>
+            <div class="border-t border-surface-container-high pt-4">
+              <p class="text-body-md font-body-md text-on-surface-variant">
+                Your HDL is in a healthy range. This type of cholesterol helps
+                carry "bad" cholesterol away from your arteries and back to the
+                liver to be processed.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Right Column: AI Assistant & Summary -->
+        <div class="col-span-1 md:col-span-4 flex flex-col gap-lg">
+          <!-- ELI5 AI Tooltip/Section -->
+          <div class="medical-card p-6 bg-surface-bright sticky top-24">
+            <div class="flex items-center gap-3 mb-4">
+              <div
+                class="w-10 h-10 rounded-full bg-wellness-coral-dim flex items-center justify-center text-[#FF6E5C]"
+              >
+                <span class="material-symbols-outlined">psychology</span>
+              </div>
+              <h2 class="text-title-lg font-title-lg text-primary">
+                Explain it simply
+              </h2>
+            </div>
+            <div
+              class="bg-wellness-coral-dim p-4 rounded-[1rem_1rem_1rem_0] mb-4"
+            >
+              <p
+                class="text-body-md font-body-md text-on-surface-variant leading-relaxed"
+              >
+                Think of your blood vessels like a highway.
+                <br /><br />
+                <strong>LDL</strong> is like slow-moving dump trucks that can
+                drop junk on the road and cause traffic jams (plaque). Yours are
+                a bit too crowded right now. <br /><br />
+                <strong>HDL</strong> is like the street sweepers that come and
+                clean up the junk. Yours are doing a great job!
+              </p>
+            </div>
+            <button
+              class="w-full py-2 px-4 rounded-lg border border-outline text-primary font-label-md hover:bg-surface-container transition-colors mt-2"
+            >
+              Ask Follow-up Question
+            </button>
+          </div>
+          <!-- Next Steps -->
+          <div class="medical-card p-6">
+            <h2
+              class="text-title-lg font-title-lg text-primary mb-4 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined">calendar_today</span>
+              Next Steps
+            </h2>
+            <div class="space-y-4">
+              <div class="flex gap-3">
+                <div class="mt-1 text-primary">
+                  <span class="material-symbols-outlined">event</span>
+                </div>
+                <div>
+                  <p
+                    class="text-label-md font-label-md text-primary font-medium"
+                  >
+                    Schedule Follow-up
+                  </p>
+                  <p class="text-caption font-caption text-on-surface-variant">
+                    Review these results with Dr. Smith within 2 weeks.
+                  </p>
+                  <a
+                    class="text-wellness-coral text-caption font-medium hover:underline mt-1 inline-block"
+                    href="/app/dashboard.html"
+                    >Book Appointment</a
+                  >
+                </div>
+              </div>
+              <div
+                class="flex gap-3 pt-3 border-t border-surface-container-high"
+              >
+                <div class="mt-1 text-primary">
+                  <span class="material-symbols-outlined">restaurant_menu</span>
+                </div>
+                <div>
+                  <p
+                    class="text-label-md font-label-md text-primary font-medium"
+                  >
+                    Dietary Adjustment
+                  </p>
+                  <p class="text-caption font-caption text-on-surface-variant">
+                    Focus on Mediterranean diet principles.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

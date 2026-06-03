@@ -1,373 +1,624 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Find Doctor - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Find Doctor - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "secondary-fixed": "#ebe1d8",
-                        "primary-container": "#2b2724",
-                        "surface-tint": "#635d5a",
-                        "on-background": "#1c1b1b",
-                        "outline-variant": "#cfc4bd",
-                        "surface-dim": "#ddd9d8",
-                        "secondary": "#645d56",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "on-tertiary": "#ffffff",
-                        "inverse-on-surface": "#f4f0ee",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "on-surface": "#1c1b1b",
-                        "primary": "#161310",
-                        "error-container": "#ffdad6",
-                        "surface-container-low": "#f7f3f1",
-                        "on-surface-variant": "#4d4540",
-                        "surface": "#fdf8f7",
-                        "secondary-container": "#e9ded5",
-                        "on-primary-container": "#948e89",
-                        "surface-container-high": "#ece7e6",
-                        "on-tertiary-container": "#8f8f91",
-                        "on-secondary": "#ffffff",
-                        "tertiary": "#121415",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "surface-variant": "#e6e1e0",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "on-primary-fixed": "#1e1b18",
-                        "inverse-surface": "#313030",
-                        "background": "#fdf8f7",
-                        "surface-container-highest": "#e6e1e0",
-                        "inverse-primary": "#cdc5c0",
-                        "error": "#ba1a1a",
-                        "tertiary-fixed": "#e3e2e4",
-                        "on-error-container": "#93000a",
-                        "on-primary": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-bright": "#fdf8f7",
-                        "surface-container": "#f1edec",
-                        "outline": "#7e756f",
-                        "on-error": "#ffffff",
-                        "primary-fixed": "#e9e1dc",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "on-secondary-container": "#69615a",
-                        "tertiary-container": "#27282a",
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "on-secondary-fixed": "#201b15",
-                        "wellness-coral": "#FF6E5C",
-                        "wellness-coral-light": "rgba(255, 110, 92, 0.05)"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px",
-                        "bubble": "1rem 1rem 1rem 0"
-                    },
-                    "spacing": {
-                        "margin-desktop": "64px",
-                        "xs": "4px",
-                        "sm": "8px",
-                        "xl": "32px",
-                        "margin-mobile": "20px",
-                        "base": "8px",
-                        "lg": "24px",
-                        "gutter": "16px",
-                        "xxl": "48px",
-                        "md": "16px"
-                    },
-                    "fontFamily": {
-                        "title-lg": ["Inter"],
-                        "headline-lg-mobile": ["Spectral"],
-                        "headline-md": ["Spectral"],
-                        "headline-lg": ["Spectral"],
-                        "display-lg": ["Spectral"],
-                        "body-lg": ["Inter"],
-                        "body-md": ["Inter"],
-                        "label-md": ["Inter"],
-                        "caption": ["Inter"]
-                    },
-                    "fontSize": {
-                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
-                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
-                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
-                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
-                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
-                    },
-                    "boxShadow": {
-                        "level-1": "0 4px 12px rgba(0, 0, 0, 0.04)",
-                        "level-2": "0 8px 20px rgba(0, 0, 0, 0.06)"
-                    }
-                }
-            }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed-dim": "#cfc5bc",
+              "secondary-fixed": "#ebe1d8",
+              "primary-container": "#2b2724",
+              "surface-tint": "#635d5a",
+              "on-background": "#1c1b1b",
+              "outline-variant": "#cfc4bd",
+              "surface-dim": "#ddd9d8",
+              secondary: "#645d56",
+              "on-tertiary-fixed": "#1a1c1e",
+              "on-tertiary": "#ffffff",
+              "inverse-on-surface": "#f4f0ee",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "on-surface": "#1c1b1b",
+              primary: "#161310",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f7f3f1",
+              "on-surface-variant": "#4d4540",
+              surface: "#fdf8f7",
+              "secondary-container": "#e9ded5",
+              "on-primary-container": "#948e89",
+              "surface-container-high": "#ece7e6",
+              "on-tertiary-container": "#8f8f91",
+              "on-secondary": "#ffffff",
+              tertiary: "#121415",
+              "primary-fixed-dim": "#cdc5c0",
+              "surface-variant": "#e6e1e0",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-primary-fixed": "#1e1b18",
+              "inverse-surface": "#313030",
+              background: "#fdf8f7",
+              "surface-container-highest": "#e6e1e0",
+              "inverse-primary": "#cdc5c0",
+              error: "#ba1a1a",
+              "tertiary-fixed": "#e3e2e4",
+              "on-error-container": "#93000a",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#fdf8f7",
+              "surface-container": "#f1edec",
+              outline: "#7e756f",
+              "on-error": "#ffffff",
+              "primary-fixed": "#e9e1dc",
+              "on-primary-fixed-variant": "#4b4642",
+              "on-secondary-container": "#69615a",
+              "tertiary-container": "#27282a",
+              "on-secondary-fixed-variant": "#4c463f",
+              "on-secondary-fixed": "#201b15",
+              "wellness-coral": "#FF6E5C",
+              "wellness-coral-light": "rgba(255, 110, 92, 0.05)",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+              bubble: "1rem 1rem 1rem 0",
+            },
+            spacing: {
+              "margin-desktop": "64px",
+              xs: "4px",
+              sm: "8px",
+              xl: "32px",
+              "margin-mobile": "20px",
+              base: "8px",
+              lg: "24px",
+              gutter: "16px",
+              xxl: "48px",
+              md: "16px",
+            },
+            fontFamily: {
+              "title-lg": ["Inter"],
+              "headline-lg-mobile": ["Spectral"],
+              "headline-md": ["Spectral"],
+              "headline-lg": ["Spectral"],
+              "display-lg": ["Spectral"],
+              "body-lg": ["Inter"],
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              caption: ["Inter"],
+            },
+            fontSize: {
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            },
+            boxShadow: {
+              "level-1": "0 4px 12px rgba(0, 0, 0, 0.04)",
+              "level-2": "0 8px 20px rgba(0, 0, 0, 0.06)",
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .fill-icon {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        body {
-            background-color: #FDF6F3;
-        }
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .fill-icon {
+        font-variation-settings:
+          "FILL" 1,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      body {
+        background-color: #fdf6f3;
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="text-on-surface antialiased flex flex-col md:flex-row min-h-screen">
-<!-- TopAppBar (Mobile & Desktop) -->
-<header class="bg-surface dark:bg-background text-primary dark:text-on-primary-fixed border-b border-outline-variant dark:border-outline shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16">
-<div class="flex items-center gap-4">
-<!-- Mobile Menu Toggle (Hidden on Desktop) -->
-<button class="lg:hidden p-2 hover:bg-surface-container-low rounded-full transition-colors duration-200">
-<span class="material-symbols-outlined">menu</span>
-</button>
-<div class="font-headline-md text-headline-md text-primary dark:text-on-primary-fixed font-bold tracking-tight">
-                MedExplain AI
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="text-on-surface antialiased flex flex-col md:flex-row min-h-screen"
+  >
+    <!-- TopAppBar (Mobile & Desktop) -->
+    <header
+      class="bg-surface dark:bg-background text-primary dark:text-on-primary-fixed border-b border-outline-variant dark:border-outline shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16"
+    >
+      <div class="flex items-center gap-4">
+        <!-- Mobile Menu Toggle (Hidden on Desktop) -->
+        <button
+          class="lg:hidden p-2 hover:bg-surface-container-low rounded-full transition-colors duration-200"
+        >
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div
+          class="font-headline-md text-headline-md text-primary dark:text-on-primary-fixed font-bold tracking-tight"
+        >
+          MedExplain AI
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          class="p-2 hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200 rounded-full"
+        >
+          <span class="material-symbols-outlined text-secondary"
+            >notifications</span
+          >
+        </button>
+        <button
+          class="p-2 hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200 rounded-full"
+        >
+          <span class="material-symbols-outlined text-secondary"
+            >account_circle</span
+          >
+        </button>
+      </div>
+    </header>
+    <!-- SideNavBar (Desktop Only) -->
+    <nav
+      class="bg-surface-container-low dark:bg-surface-container-lowest hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] w-64 z-40 shadow-md border-r border-outline-variant"
+    >
+      <div class="p-6 border-b border-outline-variant">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden"
+          >
+            <img
+              alt="User Profile Avatar"
+              class="w-full h-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi-PLWLjaKK4T_eXH5rQZ95iyhOEK6yx7hBDC2Yz7TU5AVs6opZkByJN0xz_RD2LQxr15_v5R9yWMhZ2kqXqQIQ_IaCdt-6QYX3yCnmBpmgelf8bppyidF_FS9MExvrrUUl0IuXhGjkgW-l0WjCUJLTbGDhHGN_dCbOO2TfdFcbwC7l-nuaWTC8lHVku6aZe5nOfgbvU7DtjX3BXmpf1uISKFKrdGIDDizjw3ZX_R_5HUzR1zsyiqGYAM_DiqDZlM7VIiFsLtM6RCj"
+            />
+          </div>
+          <div>
+            <h3 class="font-label-md text-label-md font-bold">
+              Patient Portal
+            </h3>
+            <p class="font-caption text-caption text-secondary">
+              Manage your health data
+            </p>
+          </div>
+        </div>
+        <button
+          class="w-full bg-[#FF6E5C] text-white font-label-md text-label-md py-3 rounded-lg hover:bg-opacity-90 transition-colors min-h-[48px]"
+        >
+          New Consultation
+        </button>
+      </div>
+      <ul class="flex-1 py-4 flex flex-col gap-1 overflow-y-auto">
+        <li>
+          <a
+            class="flex items-center gap-3 text-primary font-bold border-r-4 border-primary bg-secondary-container/30 px-4 py-3 active:scale-[0.99] duration-150"
+            href="/consultation/find-doctor.html"
+          >
+            <span class="material-symbols-outlined fill-icon">search</span>
+            <span class="font-label-md text-label-md">Find Doctor</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-3 text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined">medical_information</span>
+            <span class="font-label-md text-label-md">Health Records</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-3 text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all"
+            href="/consultation/appointments.html"
+          >
+            <span class="material-symbols-outlined">event_available</span>
+            <span class="font-label-md text-label-md">My Appointments</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-3 text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined">history_edu</span>
+            <span class="font-label-md text-label-md"
+              >Consultation History</span
+            >
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-3 text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all"
+            href="/settings/home.html"
+          >
+            <span class="material-symbols-outlined">settings</span>
+            <span class="font-label-md text-label-md">Settings</span>
+          </a>
+        </li>
+      </ul>
+      <div class="p-4 border-t border-outline-variant">
+        <ul class="flex flex-col gap-1">
+          <li>
+            <a
+              class="flex items-center gap-3 text-secondary px-4 py-2 hover:text-primary hover:bg-surface-container-high transition-all rounded-md"
+              href="/app/dashboard.html"
+            >
+              <span class="material-symbols-outlined">help</span>
+              <span class="font-label-md text-label-md">Support</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center gap-3 text-secondary px-4 py-2 hover:text-primary hover:bg-surface-container-high transition-all rounded-md"
+              href="/auth/login.html"
+            >
+              <span class="material-symbols-outlined">logout</span>
+              <span class="font-label-md text-label-md">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- Main Content Canvas -->
+    <main
+      class="flex-1 mt-16 lg:ml-64 p-margin-mobile md:p-margin-desktop max-w-[1120px] mx-auto w-full"
+    >
+      <!-- Header Section -->
+      <div class="mb-xxl">
+        <h1
+          class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2"
+        >
+          Find a Specialist
+        </h1>
+        <p class="font-body-lg text-body-lg text-secondary">
+          Search by name, specialty, or condition to find the right care for
+          you.
+        </p>
+      </div>
+      <!-- Search & Filter Container (Glassmorphism inspired) -->
+      <div
+        class="bg-surface/80 backdrop-blur-md rounded-xl p-6 shadow-level-1 border border-surface-variant mb-xl relative overflow-hidden"
+      >
+        <!-- Subtle gradient background accent -->
+        <div
+          class="absolute -top-24 -right-24 w-48 h-48 bg-wellness-coral/5 rounded-full blur-3xl pointer-events-none"
+        ></div>
+        <div class="relative z-10 flex flex-col gap-6">
+          <!-- Main Search Bar -->
+          <div class="relative flex-1">
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant"
+              >search</span
+            >
+            <input
+              class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-12 pr-4 py-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-wellness-coral/20 transition-all shadow-sm"
+              placeholder="Search doctors, specialties, or symptoms..."
+              type="text"
+            />
+            <button
+              class="absolute right-2 top-1/2 -translate-y-1/2 bg-[#FF6E5C] text-white p-2 rounded-md hover:bg-opacity-90 transition-colors"
+            >
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div>
+          <!-- Filter Chips -->
+          <div class="flex flex-wrap gap-3">
+            <button
+              class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-label-md font-label-md text-on-surface-variant shadow-sm"
+            >
+              <span class="material-symbols-outlined text-[18px]">today</span>
+              Available Today
+            </button>
+            <button
+              class="flex items-center gap-2 px-4 py-2 rounded-full border border-[#FF6E5C] bg-wellness-coral-light text-[#FF6E5C] transition-colors text-label-md font-label-md shadow-sm"
+            >
+              <span class="material-symbols-outlined text-[18px] fill-icon"
+                >star</span
+              >
+              Highly Rated
+              <span
+                class="material-symbols-outlined text-[16px] ml-1 cursor-pointer"
+                >close</span
+              >
+            </button>
+            <button
+              class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-label-md font-label-md text-on-surface-variant shadow-sm"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >verified_user</span
+              >
+              Accepts Insurance
+            </button>
+            <button
+              class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-label-md font-label-md text-on-surface-variant shadow-sm ml-auto"
+            >
+              <span class="material-symbols-outlined text-[18px]">tune</span>
+              More Filters
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- AI Recommendation Bubble -->
+      <div
+        class="bg-wellness-coral-light rounded-bubble p-4 border-t-2 border-[#FF6E5C] mb-xl flex gap-4 items-start shadow-level-1"
+      >
+        <div
+          class="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-outline-variant"
+        >
+          <span class="material-symbols-outlined text-[#FF6E5C] text-[18px]"
+            >smart_toy</span
+          >
+        </div>
+        <div>
+          <p class="font-body-md text-body-md text-on-surface mb-1">
+            Based on your recent search for "chronic migraines", I've
+            highlighted highly-rated neurologists available this week.
+          </p>
+          <button
+            class="text-[#FF6E5C] font-label-md text-label-md hover:underline"
+          >
+            Refine AI search
+          </button>
+        </div>
+      </div>
+      <!-- Results Bento Grid -->
+      <h2 class="font-headline-md text-headline-md text-primary mb-6">
+        Recommended Specialists
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Doctor Card 1 -->
+        <div
+          class="bg-white rounded-xl p-6 shadow-level-1 border border-surface-variant hover:shadow-level-2 transition-shadow duration-300 flex flex-col h-full group relative overflow-hidden"
+        >
+          <!-- Subtle top border on hover -->
+          <div
+            class="absolute top-0 left-0 w-full h-1 bg-[#FF6E5C] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+          ></div>
+          <div class="flex items-start gap-4 mb-4">
+            <div
+              class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-surface-container-low"
+            >
+              <img
+                alt="Dr. Sarah Jenkins Portrait"
+                class="w-full h-full object-cover"
+                data-alt="A professional portrait of a female doctor in a crisp white coat smiling warmly. She is in a brightly lit, modern medical office with soft natural light streaming in. The overall aesthetic is clean, modern healthcare with a focus on trust and approachability, featuring soft white and grey tones."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJkRKNDDo4vgLrjSy1KUVx7eR_AS1Um_iYtjQjT27wp4U6Nf56GrS2VbySZU8QcbB6vtsz0jidzMaz6vLgCDuBExCSMWqdnM7AzF88rq94x3GdTW8TOoo_V3O6prU1ymdCRDcFHXfrFDSHoGBQXOVWU4N1v8o6PTqFFOaTp1veaaJwF2DGTRzS0LsNyXP0QBSgyQC6-Ch0VWKeGCIL1PucaF3uAx1Xr8QhVvXmm2ug9L0IHBDtl5O-_MPeknHIY-SdmstJfZz-tRy3"
+              />
             </div>
-</div>
-<div class="flex items-center gap-4">
-<button class="p-2 hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200 rounded-full">
-<span class="material-symbols-outlined text-secondary">notifications</span>
-</button>
-<button class="p-2 hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors duration-200 rounded-full">
-<span class="material-symbols-outlined text-secondary">account_circle</span>
-</button>
-</div>
-</header>
-<!-- SideNavBar (Desktop Only) -->
-<nav class="bg-surface-container-low dark:bg-surface-container-lowest hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-64px)] w-64 z-40 shadow-md border-r border-outline-variant">
-<div class="p-6 border-b border-outline-variant">
-<div class="flex items-center gap-3 mb-4">
-<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
-<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi-PLWLjaKK4T_eXH5rQZ95iyhOEK6yx7hBDC2Yz7TU5AVs6opZkByJN0xz_RD2LQxr15_v5R9yWMhZ2kqXqQIQ_IaCdt-6QYX3yCnmBpmgelf8bppyidF_FS9MExvrrUUl0IuXhGjkgW-l0WjCUJLTbGDhHGN_dCbOO2TfdFcbwC7l-nuaWTC8lHVku6aZe5nOfgbvU7DtjX3BXmpf1uISKFKrdGIDDizjw3ZX_R_5HUzR1zsyiqGYAM_DiqDZlM7VIiFsLtM6RCj">
-</div>
-<div>
-<h3 class="font-label-md text-label-md font-bold">Patient Portal</h3>
-<p class="font-caption text-caption text-secondary">Manage your health data</p>
-</div>
-</div>
-<button class="w-full bg-[#FF6E5C] text-white font-label-md text-label-md py-3 rounded-lg hover:bg-opacity-90 transition-colors min-h-[48px]">
-                New Consultation
-            </button>
-</div>
-<ul class="flex-1 py-4 flex flex-col gap-1 overflow-y-auto">
-<li>
-<a class="flex items-center gap-3 text-primary font-bold border-r-4 border-primary bg-secondary-container/30 px-4 py-3 active:scale-[0.99] duration-150" href="/consultation/find-doctor.html">
-<span class="material-symbols-outlined fill-icon">search</span>
-<span class="font-label-md text-label-md">Find Doctor</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="/app/dashboard.html">
-<span class="material-symbols-outlined">medical_information</span>
-<span class="font-label-md text-label-md">Health Records</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="/consultation/appointments.html">
-<span class="material-symbols-outlined">event_available</span>
-<span class="font-label-md text-label-md">My Appointments</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="/app/dashboard.html">
-<span class="material-symbols-outlined">history_edu</span>
-<span class="font-label-md text-label-md">Consultation History</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 text-secondary px-4 py-3 hover:text-primary hover:bg-surface-container-high transition-all" href="/settings/home.html">
-<span class="material-symbols-outlined">settings</span>
-<span class="font-label-md text-label-md">Settings</span>
-</a>
-</li>
-</ul>
-<div class="p-4 border-t border-outline-variant">
-<ul class="flex flex-col gap-1">
-<li>
-<a class="flex items-center gap-3 text-secondary px-4 py-2 hover:text-primary hover:bg-surface-container-high transition-all rounded-md" href="/app/dashboard.html">
-<span class="material-symbols-outlined">help</span>
-<span class="font-label-md text-label-md">Support</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 text-secondary px-4 py-2 hover:text-primary hover:bg-surface-container-high transition-all rounded-md" href="/auth/login.html">
-<span class="material-symbols-outlined">logout</span>
-<span class="font-label-md text-label-md">Logout</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<!-- Main Content Canvas -->
-<main class="flex-1 mt-16 lg:ml-64 p-margin-mobile md:p-margin-desktop max-w-[1120px] mx-auto w-full">
-<!-- Header Section -->
-<div class="mb-xxl">
-<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Find a Specialist</h1>
-<p class="font-body-lg text-body-lg text-secondary">Search by name, specialty, or condition to find the right care for you.</p>
-</div>
-<!-- Search & Filter Container (Glassmorphism inspired) -->
-<div class="bg-surface/80 backdrop-blur-md rounded-xl p-6 shadow-level-1 border border-surface-variant mb-xl relative overflow-hidden">
-<!-- Subtle gradient background accent -->
-<div class="absolute -top-24 -right-24 w-48 h-48 bg-wellness-coral/5 rounded-full blur-3xl pointer-events-none"></div>
-<div class="relative z-10 flex flex-col gap-6">
-<!-- Main Search Bar -->
-<div class="relative flex-1">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-12 pr-4 py-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-wellness-coral/20 transition-all shadow-sm" placeholder="Search doctors, specialties, or symptoms..." type="text">
-<button class="absolute right-2 top-1/2 -translate-y-1/2 bg-[#FF6E5C] text-white p-2 rounded-md hover:bg-opacity-90 transition-colors">
-<span class="material-symbols-outlined">arrow_forward</span>
-</button>
-</div>
-<!-- Filter Chips -->
-<div class="flex flex-wrap gap-3">
-<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-label-md font-label-md text-on-surface-variant shadow-sm">
-<span class="material-symbols-outlined text-[18px]">today</span>
-                        Available Today
-                    </button>
-<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-[#FF6E5C] bg-wellness-coral-light text-[#FF6E5C] transition-colors text-label-md font-label-md shadow-sm">
-<span class="material-symbols-outlined text-[18px] fill-icon">star</span>
-                        Highly Rated
-                        <span class="material-symbols-outlined text-[16px] ml-1 cursor-pointer">close</span>
-</button>
-<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-label-md font-label-md text-on-surface-variant shadow-sm">
-<span class="material-symbols-outlined text-[18px]">verified_user</span>
-                        Accepts Insurance
-                    </button>
-<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors text-label-md font-label-md text-on-surface-variant shadow-sm ml-auto">
-<span class="material-symbols-outlined text-[18px]">tune</span>
-                        More Filters
-                    </button>
-</div>
-</div>
-</div>
-<!-- AI Recommendation Bubble -->
-<div class="bg-wellness-coral-light rounded-bubble p-4 border-t-2 border-[#FF6E5C] mb-xl flex gap-4 items-start shadow-level-1">
-<div class="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-outline-variant">
-<span class="material-symbols-outlined text-[#FF6E5C] text-[18px]">smart_toy</span>
-</div>
-<div>
-<p class="font-body-md text-body-md text-on-surface mb-1">Based on your recent search for "chronic migraines", I've highlighted highly-rated neurologists available this week.</p>
-<button class="text-[#FF6E5C] font-label-md text-label-md hover:underline">Refine AI search</button>
-</div>
-</div>
-<!-- Results Bento Grid -->
-<h2 class="font-headline-md text-headline-md text-primary mb-6">Recommended Specialists</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-<!-- Doctor Card 1 -->
-<div class="bg-white rounded-xl p-6 shadow-level-1 border border-surface-variant hover:shadow-level-2 transition-shadow duration-300 flex flex-col h-full group relative overflow-hidden">
-<!-- Subtle top border on hover -->
-<div class="absolute top-0 left-0 w-full h-1 bg-[#FF6E5C] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-<div class="flex items-start gap-4 mb-4">
-<div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-surface-container-low">
-<img alt="Dr. Sarah Jenkins Portrait" class="w-full h-full object-cover" data-alt="A professional portrait of a female doctor in a crisp white coat smiling warmly. She is in a brightly lit, modern medical office with soft natural light streaming in. The overall aesthetic is clean, modern healthcare with a focus on trust and approachability, featuring soft white and grey tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJkRKNDDo4vgLrjSy1KUVx7eR_AS1Um_iYtjQjT27wp4U6Nf56GrS2VbySZU8QcbB6vtsz0jidzMaz6vLgCDuBExCSMWqdnM7AzF88rq94x3GdTW8TOoo_V3O6prU1ymdCRDcFHXfrFDSHoGBQXOVWU4N1v8o6PTqFFOaTp1veaaJwF2DGTRzS0LsNyXP0QBSgyQC6-Ch0VWKeGCIL1PucaF3uAx1Xr8QhVvXmm2ug9L0IHBDtl5O-_MPeknHIY-SdmstJfZz-tRy3">
-</div>
-<div>
-<h3 class="font-headline-md text-headline-md text-primary leading-tight mb-1">Dr. Sarah Jenkins</h3>
-<p class="font-body-md text-body-md text-secondary">Neurologist</p>
-<div class="flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-[#FF6E5C] text-[16px] fill-icon">star</span>
-<span class="font-label-md text-label-md text-on-surface">4.9</span>
-<span class="font-caption text-caption text-on-surface-variant">(124 reviews)</span>
-</div>
-</div>
-</div>
-<div class="space-y-3 mb-6 flex-1">
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]">location_on</span>
-<span class="font-body-md text-body-md text-sm">Downtown Medical Center (2.1 mi)</span>
-</div>
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]">schedule</span>
-<span class="font-body-md text-body-md text-sm">Next available: <strong class="text-on-surface">Today, 2:30 PM</strong></span>
-</div>
-</div>
-<button class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-colors min-h-[48px]">
-                    View Profile
-                </button>
-</div>
-<!-- Doctor Card 2 -->
-<div class="bg-white rounded-xl p-6 shadow-level-1 border border-surface-variant hover:shadow-level-2 transition-shadow duration-300 flex flex-col h-full group relative overflow-hidden">
-<div class="absolute top-0 left-0 w-full h-1 bg-[#FF6E5C] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-<div class="flex items-start gap-4 mb-4">
-<div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-surface-container-low">
-<img alt="Dr. Marcus Chen Portrait" class="w-full h-full object-cover" data-alt="A professional headshot of a male doctor with glasses, wearing scrubs and a stethoscope. He has a calm, reassuring expression. The background is a slightly blurred hospital corridor with cool, clean lighting typical of a modern healthcare environment. The image feels professional and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAsRU94J69PVWXIMEgK84H9DqGi7l_UPHjvxflXLQVRKJUhdWVRPYCF22hFqHULg1K0SD1s9C-qlwJ4VVswAOIWSZiZjxQS1QfucmP9JcB-dyzxqiqq-m4lUErRM_KaRqhxlJ5Poh-sYk8XovTC3tt-3aArUrmm_hb2_C9fM6lIKheBrIoSCWqCYLSDCqUotdA2HtDcSpya0ufegfp-geKmzT_jSBY5O4Sv7Kx9J8ENVRL2n1UNZ-IhhtoUq1h4hKm-uoHPtBTPwm8">
-</div>
-<div>
-<h3 class="font-headline-md text-headline-md text-primary leading-tight mb-1">Dr. Marcus Chen</h3>
-<p class="font-body-md text-body-md text-secondary">Neurologist</p>
-<div class="flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-[#FF6E5C] text-[16px] fill-icon">star</span>
-<span class="font-label-md text-label-md text-on-surface">4.8</span>
-<span class="font-caption text-caption text-on-surface-variant">(98 reviews)</span>
-</div>
-</div>
-</div>
-<div class="space-y-3 mb-6 flex-1">
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]">location_on</span>
-<span class="font-body-md text-body-md text-sm">Westside Clinic (4.5 mi)</span>
-</div>
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]">schedule</span>
-<span class="font-body-md text-body-md text-sm">Next available: <strong class="text-on-surface">Tomorrow, 9:00 AM</strong></span>
-</div>
-</div>
-<button class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-colors min-h-[48px]">
-                    View Profile
-                </button>
-</div>
-<!-- Doctor Card 3 -->
-<div class="bg-white rounded-xl p-6 shadow-level-1 border border-surface-variant hover:shadow-level-2 transition-shadow duration-300 flex flex-col h-full group relative overflow-hidden">
-<div class="absolute top-0 left-0 w-full h-1 bg-[#FF6E5C] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-<div class="flex items-start gap-4 mb-4">
-<div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-surface-container-low">
-<img alt="Dr. Emily Patel Portrait" class="w-full h-full object-cover" data-alt="A portrait of a confident female physician of Indian descent, wearing a dark blue blazer over a white top, standing in a brightly lit consultation room. The image conveys empathetic clarity with soft, ambient lighting and a neutral, calm color palette emphasizing whites and soft greys." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW9Cz0JnQhp3_1cCiQd0dbbOxMU3bq5-rCD3bI3IR2NYWrLgMy9FObKCA4XkIITbQc9Y6yoRUZsOOMokjBIod9YTNTpu1SWxcjPAIM9DrhlE3va_yiry3ndbvwCFFzZdYyaVhJH3wH7hh4eBv2W2MP7KIFVVDLDJsp08J2vA57YRg0oS3omi2pG6dGWNAWyyEvhIDxYME11FFU6N_mdmrV_WwI20RcldOmJMNwSzu99nWT5mVOl9F1GOAXqRP_KUhqSuFXEHvLetpS">
-</div>
-<div>
-<h3 class="font-headline-md text-headline-md text-primary leading-tight mb-1">Dr. Emily Patel</h3>
-<p class="font-body-md text-body-md text-secondary">General Practitioner</p>
-<div class="flex items-center gap-1 mt-1">
-<span class="material-symbols-outlined text-[#FF6E5C] text-[16px] fill-icon">star</span>
-<span class="font-label-md text-label-md text-on-surface">4.9</span>
-<span class="font-caption text-caption text-on-surface-variant">(215 reviews)</span>
-</div>
-</div>
-</div>
-<div class="space-y-3 mb-6 flex-1">
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]">location_on</span>
-<span class="font-body-md text-body-md text-sm">Northway Health (1.2 mi)</span>
-</div>
-<div class="flex items-center gap-2 text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]">schedule</span>
-<span class="font-body-md text-body-md text-sm">Next available: <strong class="text-on-surface">Wed, 11:15 AM</strong></span>
-</div>
-</div>
-<button class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-colors min-h-[48px]">
-                    View Profile
-                </button>
-</div>
-</div>
-<!-- Loading More Indicator -->
-<div class="mt-12 flex justify-center pb-12">
-<button class="text-[#FF6E5C] font-label-md text-label-md hover:underline flex items-center gap-2">
-<span class="material-symbols-outlined animate-spin text-[20px]">autorenew</span>
-                Load More Results
-            </button>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+            <div>
+              <h3
+                class="font-headline-md text-headline-md text-primary leading-tight mb-1"
+              >
+                Dr. Sarah Jenkins
+              </h3>
+              <p class="font-body-md text-body-md text-secondary">
+                Neurologist
+              </p>
+              <div class="flex items-center gap-1 mt-1">
+                <span
+                  class="material-symbols-outlined text-[#FF6E5C] text-[16px] fill-icon"
+                  >star</span
+                >
+                <span class="font-label-md text-label-md text-on-surface"
+                  >4.9</span
+                >
+                <span class="font-caption text-caption text-on-surface-variant"
+                  >(124 reviews)</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="space-y-3 mb-6 flex-1">
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px]"
+                >location_on</span
+              >
+              <span class="font-body-md text-body-md text-sm"
+                >Downtown Medical Center (2.1 mi)</span
+              >
+            </div>
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px]"
+                >schedule</span
+              >
+              <span class="font-body-md text-body-md text-sm"
+                >Next available:
+                <strong class="text-on-surface">Today, 2:30 PM</strong></span
+              >
+            </div>
+          </div>
+          <button
+            class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-colors min-h-[48px]"
+          >
+            View Profile
+          </button>
+        </div>
+        <!-- Doctor Card 2 -->
+        <div
+          class="bg-white rounded-xl p-6 shadow-level-1 border border-surface-variant hover:shadow-level-2 transition-shadow duration-300 flex flex-col h-full group relative overflow-hidden"
+        >
+          <div
+            class="absolute top-0 left-0 w-full h-1 bg-[#FF6E5C] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+          ></div>
+          <div class="flex items-start gap-4 mb-4">
+            <div
+              class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-surface-container-low"
+            >
+              <img
+                alt="Dr. Marcus Chen Portrait"
+                class="w-full h-full object-cover"
+                data-alt="A professional headshot of a male doctor with glasses, wearing scrubs and a stethoscope. He has a calm, reassuring expression. The background is a slightly blurred hospital corridor with cool, clean lighting typical of a modern healthcare environment. The image feels professional and trustworthy."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAsRU94J69PVWXIMEgK84H9DqGi7l_UPHjvxflXLQVRKJUhdWVRPYCF22hFqHULg1K0SD1s9C-qlwJ4VVswAOIWSZiZjxQS1QfucmP9JcB-dyzxqiqq-m4lUErRM_KaRqhxlJ5Poh-sYk8XovTC3tt-3aArUrmm_hb2_C9fM6lIKheBrIoSCWqCYLSDCqUotdA2HtDcSpya0ufegfp-geKmzT_jSBY5O4Sv7Kx9J8ENVRL2n1UNZ-IhhtoUq1h4hKm-uoHPtBTPwm8"
+              />
+            </div>
+            <div>
+              <h3
+                class="font-headline-md text-headline-md text-primary leading-tight mb-1"
+              >
+                Dr. Marcus Chen
+              </h3>
+              <p class="font-body-md text-body-md text-secondary">
+                Neurologist
+              </p>
+              <div class="flex items-center gap-1 mt-1">
+                <span
+                  class="material-symbols-outlined text-[#FF6E5C] text-[16px] fill-icon"
+                  >star</span
+                >
+                <span class="font-label-md text-label-md text-on-surface"
+                  >4.8</span
+                >
+                <span class="font-caption text-caption text-on-surface-variant"
+                  >(98 reviews)</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="space-y-3 mb-6 flex-1">
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px]"
+                >location_on</span
+              >
+              <span class="font-body-md text-body-md text-sm"
+                >Westside Clinic (4.5 mi)</span
+              >
+            </div>
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px]"
+                >schedule</span
+              >
+              <span class="font-body-md text-body-md text-sm"
+                >Next available:
+                <strong class="text-on-surface">Tomorrow, 9:00 AM</strong></span
+              >
+            </div>
+          </div>
+          <button
+            class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-colors min-h-[48px]"
+          >
+            View Profile
+          </button>
+        </div>
+        <!-- Doctor Card 3 -->
+        <div
+          class="bg-white rounded-xl p-6 shadow-level-1 border border-surface-variant hover:shadow-level-2 transition-shadow duration-300 flex flex-col h-full group relative overflow-hidden"
+        >
+          <div
+            class="absolute top-0 left-0 w-full h-1 bg-[#FF6E5C] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+          ></div>
+          <div class="flex items-start gap-4 mb-4">
+            <div
+              class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-surface-container-low"
+            >
+              <img
+                alt="Dr. Emily Patel Portrait"
+                class="w-full h-full object-cover"
+                data-alt="A portrait of a confident female physician of Indian descent, wearing a dark blue blazer over a white top, standing in a brightly lit consultation room. The image conveys empathetic clarity with soft, ambient lighting and a neutral, calm color palette emphasizing whites and soft greys."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW9Cz0JnQhp3_1cCiQd0dbbOxMU3bq5-rCD3bI3IR2NYWrLgMy9FObKCA4XkIITbQc9Y6yoRUZsOOMokjBIod9YTNTpu1SWxcjPAIM9DrhlE3va_yiry3ndbvwCFFzZdYyaVhJH3wH7hh4eBv2W2MP7KIFVVDLDJsp08J2vA57YRg0oS3omi2pG6dGWNAWyyEvhIDxYME11FFU6N_mdmrV_WwI20RcldOmJMNwSzu99nWT5mVOl9F1GOAXqRP_KUhqSuFXEHvLetpS"
+              />
+            </div>
+            <div>
+              <h3
+                class="font-headline-md text-headline-md text-primary leading-tight mb-1"
+              >
+                Dr. Emily Patel
+              </h3>
+              <p class="font-body-md text-body-md text-secondary">
+                General Practitioner
+              </p>
+              <div class="flex items-center gap-1 mt-1">
+                <span
+                  class="material-symbols-outlined text-[#FF6E5C] text-[16px] fill-icon"
+                  >star</span
+                >
+                <span class="font-label-md text-label-md text-on-surface"
+                  >4.9</span
+                >
+                <span class="font-caption text-caption text-on-surface-variant"
+                  >(215 reviews)</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="space-y-3 mb-6 flex-1">
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px]"
+                >location_on</span
+              >
+              <span class="font-body-md text-body-md text-sm"
+                >Northway Health (1.2 mi)</span
+              >
+            </div>
+            <div class="flex items-center gap-2 text-on-surface-variant">
+              <span class="material-symbols-outlined text-[18px]"
+                >schedule</span
+              >
+              <span class="font-body-md text-body-md text-sm"
+                >Next available:
+                <strong class="text-on-surface">Wed, 11:15 AM</strong></span
+              >
+            </div>
+          </div>
+          <button
+            class="w-full bg-surface-container-lowest border border-outline-variant text-primary font-label-md text-label-md py-2.5 rounded-lg hover:bg-surface-container-low transition-colors min-h-[48px]"
+          >
+            View Profile
+          </button>
+        </div>
+      </div>
+      <!-- Loading More Indicator -->
+      <div class="mt-12 flex justify-center pb-12">
+        <button
+          class="text-[#FF6E5C] font-label-md text-label-md hover:underline flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined animate-spin text-[20px]"
+            >autorenew</span
+          >
+          Load More Results
+        </button>
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

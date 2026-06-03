@@ -1,275 +1,469 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Consultation Payment - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Consultation Payment - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .material-symbols-outlined.fill {
-            font-variation-settings: 'FILL' 1;
-        }
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .material-symbols-outlined.fill {
+        font-variation-settings: "FILL" 1;
+      }
     </style>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "secondary-fixed": "#ebe1d8",
-                        "primary-container": "#2b2724",
-                        "surface-tint": "#635d5a",
-                        "on-background": "#1c1b1b",
-                        "outline-variant": "#cfc4bd",
-                        "surface-dim": "#ddd9d8",
-                        "secondary": "#645d56",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "on-tertiary": "#ffffff",
-                        "inverse-on-surface": "#f4f0ee",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "on-surface": "#1c1b1b",
-                        "primary": "#161310",
-                        "error-container": "#ffdad6",
-                        "surface-container-low": "#f7f3f1",
-                        "on-surface-variant": "#4d4540",
-                        "surface": "#fdf8f7",
-                        "secondary-container": "#e9ded5",
-                        "on-primary-container": "#948e89",
-                        "surface-container-high": "#ece7e6",
-                        "on-tertiary-container": "#8f8f91",
-                        "on-secondary": "#ffffff",
-                        "tertiary": "#121415",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "surface-variant": "#e6e1e0",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "on-primary-fixed": "#1e1b18",
-                        "inverse-surface": "#313030",
-                        "background": "#fdf8f7",
-                        "surface-container-highest": "#e6e1e0",
-                        "inverse-primary": "#cdc5c0",
-                        "error": "#ba1a1a",
-                        "tertiary-fixed": "#e3e2e4",
-                        "on-error-container": "#93000a",
-                        "on-primary": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-bright": "#fdf8f7",
-                        "surface-container": "#f1edec",
-                        "outline": "#7e756f",
-                        "on-error": "#ffffff",
-                        "primary-fixed": "#e9e1dc",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "on-secondary-container": "#69615a",
-                        "tertiary-container": "#27282a",
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "on-secondary-fixed": "#201b15"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "margin-desktop": "64px",
-                        "xs": "4px",
-                        "sm": "8px",
-                        "xl": "32px",
-                        "margin-mobile": "20px",
-                        "base": "8px",
-                        "lg": "24px",
-                        "gutter": "16px",
-                        "xxl": "48px",
-                        "md": "16px"
-                    },
-                    "fontFamily": {
-                        "title-lg": ["Inter"],
-                        "headline-lg-mobile": ["Spectral"],
-                        "headline-md": ["Spectral"],
-                        "headline-lg": ["Spectral"],
-                        "display-lg": ["Spectral"],
-                        "body-lg": ["Inter"],
-                        "body-md": ["Inter"],
-                        "label-md": ["Inter"],
-                        "caption": ["Inter"]
-                    },
-                    "fontSize": {
-                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
-                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "600" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
-                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
-                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
-                    }
-                }
-            }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed-dim": "#cfc5bc",
+              "secondary-fixed": "#ebe1d8",
+              "primary-container": "#2b2724",
+              "surface-tint": "#635d5a",
+              "on-background": "#1c1b1b",
+              "outline-variant": "#cfc4bd",
+              "surface-dim": "#ddd9d8",
+              secondary: "#645d56",
+              "on-tertiary-fixed": "#1a1c1e",
+              "on-tertiary": "#ffffff",
+              "inverse-on-surface": "#f4f0ee",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "on-surface": "#1c1b1b",
+              primary: "#161310",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f7f3f1",
+              "on-surface-variant": "#4d4540",
+              surface: "#fdf8f7",
+              "secondary-container": "#e9ded5",
+              "on-primary-container": "#948e89",
+              "surface-container-high": "#ece7e6",
+              "on-tertiary-container": "#8f8f91",
+              "on-secondary": "#ffffff",
+              tertiary: "#121415",
+              "primary-fixed-dim": "#cdc5c0",
+              "surface-variant": "#e6e1e0",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-primary-fixed": "#1e1b18",
+              "inverse-surface": "#313030",
+              background: "#fdf8f7",
+              "surface-container-highest": "#e6e1e0",
+              "inverse-primary": "#cdc5c0",
+              error: "#ba1a1a",
+              "tertiary-fixed": "#e3e2e4",
+              "on-error-container": "#93000a",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#fdf8f7",
+              "surface-container": "#f1edec",
+              outline: "#7e756f",
+              "on-error": "#ffffff",
+              "primary-fixed": "#e9e1dc",
+              "on-primary-fixed-variant": "#4b4642",
+              "on-secondary-container": "#69615a",
+              "tertiary-container": "#27282a",
+              "on-secondary-fixed-variant": "#4c463f",
+              "on-secondary-fixed": "#201b15",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-desktop": "64px",
+              xs: "4px",
+              sm: "8px",
+              xl: "32px",
+              "margin-mobile": "20px",
+              base: "8px",
+              lg: "24px",
+              gutter: "16px",
+              xxl: "48px",
+              md: "16px",
+            },
+            fontFamily: {
+              "title-lg": ["Inter"],
+              "headline-lg-mobile": ["Spectral"],
+              "headline-md": ["Spectral"],
+              "headline-lg": ["Spectral"],
+              "display-lg": ["Spectral"],
+              "body-lg": ["Inter"],
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              caption: ["Inter"],
+            },
+            fontSize: {
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
     </script>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background min-h-screen font-body-md">
-<!-- TopAppBar -->
-<header class="bg-surface dark:bg-background text-primary dark:text-on-primary-fixed border-b border-outline-variant dark:border-outline shadow-sm transition-colors duration-200 fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16">
-<div class="flex items-center gap-sm">
-<button aria-label="Go back" class="text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded-full transition-colors duration-200">
-<span class="material-symbols-outlined">arrow_back</span>
-</button>
-<h1 class="font-headline-md text-headline-md text-primary dark:text-on-primary-fixed">MedExplain AI</h1>
-</div>
-<div class="flex items-center gap-4">
-<button aria-label="Notifications" class="text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded-full transition-colors duration-200">
-<span class="material-symbols-outlined">notifications</span>
-</button>
-<button aria-label="Account" class="text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded-full transition-colors duration-200">
-<span class="material-symbols-outlined">account_circle</span>
-</button>
-</div>
-</header>
-<!-- Main Content Canvas -->
-<main class="pt-[calc(64px+48px)] pb-xxl px-margin-mobile md:px-margin-desktop max-w-[1120px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-lg lg:gap-xxl">
-<!-- Left Column: Payment Details -->
-<section class="lg:col-span-7 flex flex-col gap-lg">
-<div class="mb-md">
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-xs">Secure Checkout</h2>
-<p class="font-body-md text-body-md text-secondary flex items-center gap-xs">
-<span class="material-symbols-outlined text-[16px] text-[#FF6E5C]">lock</span>
-                    HIPAA Compliant &amp; End-to-End Encrypted
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body class="bg-background text-on-background min-h-screen font-body-md">
+    <!-- TopAppBar -->
+    <header
+      class="bg-surface dark:bg-background text-primary dark:text-on-primary-fixed border-b border-outline-variant dark:border-outline shadow-sm transition-colors duration-200 fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16"
+    >
+      <div class="flex items-center gap-sm">
+        <button
+          aria-label="Go back"
+          class="text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded-full transition-colors duration-200"
+        >
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <h1
+          class="font-headline-md text-headline-md text-primary dark:text-on-primary-fixed"
+        >
+          MedExplain AI
+        </h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          aria-label="Notifications"
+          class="text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded-full transition-colors duration-200"
+        >
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <button
+          aria-label="Account"
+          class="text-primary hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded-full transition-colors duration-200"
+        >
+          <span class="material-symbols-outlined">account_circle</span>
+        </button>
+      </div>
+    </header>
+    <!-- Main Content Canvas -->
+    <main
+      class="pt-[calc(64px+48px)] pb-xxl px-margin-mobile md:px-margin-desktop max-w-[1120px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-lg lg:gap-xxl"
+    >
+      <!-- Left Column: Payment Details -->
+      <section class="lg:col-span-7 flex flex-col gap-lg">
+        <div class="mb-md">
+          <h2
+            class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-xs"
+          >
+            Secure Checkout
+          </h2>
+          <p
+            class="font-body-md text-body-md text-secondary flex items-center gap-xs"
+          >
+            <span class="material-symbols-outlined text-[16px] text-[#FF6E5C]"
+              >lock</span
+            >
+            HIPAA Compliant &amp; End-to-End Encrypted
+          </p>
+        </div>
+        <!-- Payment Method Selection -->
+        <div
+          class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-lg hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-shadow duration-300"
+        >
+          <h3 class="font-title-lg text-title-lg text-primary mb-md">
+            Payment Method
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-md mb-lg">
+            <!-- Credit Card Option (Selected) -->
+            <label
+              class="relative flex cursor-pointer rounded-lg border border-primary bg-surface-container-low p-md shadow-sm focus:outline-none"
+            >
+              <input
+                checked=""
+                class="sr-only"
+                name="payment-method"
+                type="radio"
+                value="card"
+              />
+              <span class="flex flex-1">
+                <span class="flex flex-col">
+                  <span
+                    class="block font-label-md text-label-md text-primary flex items-center gap-sm"
+                  >
+                    <span class="material-symbols-outlined text-primary"
+                      >credit_card</span
+                    >
+                    Credit / Debit Card
+                  </span>
+                </span>
+              </span>
+              <span
+                aria-hidden="true"
+                class="material-symbols-outlined text-primary fill"
+                >check_circle</span
+              >
+            </label>
+            <!-- Digital Wallet Option -->
+            <label
+              class="relative flex cursor-pointer rounded-lg border border-outline-variant bg-surface-container-lowest p-md shadow-sm hover:border-outline focus:outline-none"
+            >
+              <input
+                class="sr-only"
+                name="payment-method"
+                type="radio"
+                value="wallet"
+              />
+              <span class="flex flex-1">
+                <span class="flex flex-col">
+                  <span
+                    class="block font-label-md text-label-md text-on-surface-variant flex items-center gap-sm"
+                  >
+                    <span
+                      class="material-symbols-outlined text-on-surface-variant"
+                      >account_balance_wallet</span
+                    >
+                    Digital Wallet
+                  </span>
+                </span>
+              </span>
+            </label>
+          </div>
+          <!-- Card Form -->
+          <form class="space-y-md">
+            <div>
+              <label
+                class="block font-label-md text-label-md text-on-surface-variant mb-xs"
+                for="card-name"
+                >Name on Card</label
+              >
+              <input
+                class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all"
+                id="card-name"
+                placeholder="Jane Doe"
+                type="text"
+              />
+            </div>
+            <div>
+              <label
+                class="block font-label-md text-label-md text-on-surface-variant mb-xs"
+                for="card-number"
+                >Card Number</label
+              >
+              <div class="relative">
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-md"
+                >
+                  <span class="material-symbols-outlined text-outline"
+                    >credit_card</span
+                  >
+                </div>
+                <input
+                  class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest pl-[48px] pr-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all"
+                  id="card-number"
+                  placeholder="0000 0000 0000 0000"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-md">
+              <div>
+                <label
+                  class="block font-label-md text-label-md text-on-surface-variant mb-xs"
+                  for="expiry"
+                  >Expiry Date</label
+                >
+                <input
+                  class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all"
+                  id="expiry"
+                  placeholder="MM/YY"
+                  type="text"
+                />
+              </div>
+              <div>
+                <label
+                  class="block font-label-md text-label-md text-on-surface-variant mb-xs flex items-center gap-xs"
+                  for="cvc"
+                >
+                  CVC
+                  <button
+                    aria-label="CVC Info"
+                    class="text-outline hover:text-primary transition-colors"
+                    type="button"
+                  >
+                    <span class="material-symbols-outlined text-[16px]"
+                      >info</span
+                    >
+                  </button>
+                </label>
+                <input
+                  class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all"
+                  id="cvc"
+                  placeholder="123"
+                  type="text"
+                />
+              </div>
+            </div>
+            <div class="flex items-center pt-sm">
+              <input
+                class="h-[24px] w-[24px] rounded border-outline-variant text-[#FF6E5C] focus:ring-[#FF6E5C]"
+                id="save-card"
+                name="save-card"
+                type="checkbox"
+              />
+              <label
+                class="ml-sm block font-body-md text-body-md text-secondary"
+                for="save-card"
+                >Save card for future appointments</label
+              >
+            </div>
+          </form>
+        </div>
+      </section>
+      <!-- Right Column: Order Summary -->
+      <aside class="lg:col-span-5">
+        <div
+          class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-lg sticky top-[calc(64px+48px)]"
+        >
+          <h3 class="font-title-lg text-title-lg text-primary mb-lg">
+            Consultation Summary
+          </h3>
+          <!-- Doctor Info -->
+          <div
+            class="flex items-center gap-md mb-lg pb-md border-b border-surface-variant"
+          >
+            <img
+              alt="Doctor Profile"
+              class="h-16 w-16 rounded-full object-cover border border-outline-variant"
+              data-alt="A professional headshot of a female doctor in her 40s wearing a white lab coat over a light blue shirt. She has a warm, reassuring smile and is set against a clean, softly lit, light-mode background with warm undertones. The lighting is soft and flattering, creating a modern healthcare aesthetic."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXyWF1povuzbIE5HJp3iMGIaDfG9wWUt2NoWHHVqhssT2Ewa8KZ6a_WRhBfWFM-Lqz1NkfZJ8jKWpLnsdTusIOlA-3bqCObnbgdsU_ZVMyU1-zQ3OTwj_zJ6-9PxyUBUo1nahrI_w6AisDSgV78msJA3sF4QU3MYlvnf1xfmv_pq4PBIt30RgFrl8gqtLJwiIZ16u-5RnhyLx6ablMy4SuL-AD4Ak6dWAlrF91g-C8UtfgTyUzqtupLeOTgvrgsjqPwsLGajXiBmbe"
+            />
+            <div>
+              <h4
+                class="font-label-md text-label-md font-semibold text-primary"
+              >
+                Dr. Sarah Jenkins
+              </h4>
+              <p class="font-caption text-caption text-secondary">
+                Cardiology Specialist
+              </p>
+            </div>
+          </div>
+          <!-- Appointment Details -->
+          <div class="space-y-sm mb-lg pb-md border-b border-surface-variant">
+            <div class="flex items-start gap-sm">
+              <span
+                class="material-symbols-outlined text-outline mt-xs text-[20px]"
+                >calendar_today</span
+              >
+              <div>
+                <p class="font-label-md text-label-md text-on-surface-variant">
+                  Date &amp; Time
                 </p>
-</div>
-<!-- Payment Method Selection -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-lg hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] transition-shadow duration-300">
-<h3 class="font-title-lg text-title-lg text-primary mb-md">Payment Method</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-md mb-lg">
-<!-- Credit Card Option (Selected) -->
-<label class="relative flex cursor-pointer rounded-lg border border-primary bg-surface-container-low p-md shadow-sm focus:outline-none">
-<input checked="" class="sr-only" name="payment-method" type="radio" value="card">
-<span class="flex flex-1">
-<span class="flex flex-col">
-<span class="block font-label-md text-label-md text-primary flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary">credit_card</span>
-                                    Credit / Debit Card
-                                </span>
-</span>
-</span>
-<span aria-hidden="true" class="material-symbols-outlined text-primary fill">check_circle</span>
-</label>
-<!-- Digital Wallet Option -->
-<label class="relative flex cursor-pointer rounded-lg border border-outline-variant bg-surface-container-lowest p-md shadow-sm hover:border-outline focus:outline-none">
-<input class="sr-only" name="payment-method" type="radio" value="wallet">
-<span class="flex flex-1">
-<span class="flex flex-col">
-<span class="block font-label-md text-label-md text-on-surface-variant flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant">account_balance_wallet</span>
-                                    Digital Wallet
-                                </span>
-</span>
-</span>
-</label>
-</div>
-<!-- Card Form -->
-<form class="space-y-md">
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="card-name">Name on Card</label>
-<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="card-name" placeholder="Jane Doe" type="text">
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="card-number">Card Number</label>
-<div class="relative">
-<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-md">
-<span class="material-symbols-outlined text-outline">credit_card</span>
-</div>
-<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest pl-[48px] pr-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="card-number" placeholder="0000 0000 0000 0000" type="text">
-</div>
-</div>
-<div class="grid grid-cols-2 gap-md">
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="expiry">Expiry Date</label>
-<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="expiry" placeholder="MM/YY" type="text">
-</div>
-<div>
-<label class="block font-label-md text-label-md text-on-surface-variant mb-xs flex items-center gap-xs" for="cvc">
-                                CVC
-                                <button aria-label="CVC Info" class="text-outline hover:text-primary transition-colors" type="button">
-<span class="material-symbols-outlined text-[16px]">info</span>
-</button>
-</label>
-<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="cvc" placeholder="123" type="text">
-</div>
-</div>
-<div class="flex items-center pt-sm">
-<input class="h-[24px] w-[24px] rounded border-outline-variant text-[#FF6E5C] focus:ring-[#FF6E5C]" id="save-card" name="save-card" type="checkbox">
-<label class="ml-sm block font-body-md text-body-md text-secondary" for="save-card">Save card for future appointments</label>
-</div>
-</form>
-</div>
-</section>
-<!-- Right Column: Order Summary -->
-<aside class="lg:col-span-5">
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-lg sticky top-[calc(64px+48px)]">
-<h3 class="font-title-lg text-title-lg text-primary mb-lg">Consultation Summary</h3>
-<!-- Doctor Info -->
-<div class="flex items-center gap-md mb-lg pb-md border-b border-surface-variant">
-<img alt="Doctor Profile" class="h-16 w-16 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a female doctor in her 40s wearing a white lab coat over a light blue shirt. She has a warm, reassuring smile and is set against a clean, softly lit, light-mode background with warm undertones. The lighting is soft and flattering, creating a modern healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXyWF1povuzbIE5HJp3iMGIaDfG9wWUt2NoWHHVqhssT2Ewa8KZ6a_WRhBfWFM-Lqz1NkfZJ8jKWpLnsdTusIOlA-3bqCObnbgdsU_ZVMyU1-zQ3OTwj_zJ6-9PxyUBUo1nahrI_w6AisDSgV78msJA3sF4QU3MYlvnf1xfmv_pq4PBIt30RgFrl8gqtLJwiIZ16u-5RnhyLx6ablMy4SuL-AD4Ak6dWAlrF91g-C8UtfgTyUzqtupLeOTgvrgsjqPwsLGajXiBmbe">
-<div>
-<h4 class="font-label-md text-label-md font-semibold text-primary">Dr. Sarah Jenkins</h4>
-<p class="font-caption text-caption text-secondary">Cardiology Specialist</p>
-</div>
-</div>
-<!-- Appointment Details -->
-<div class="space-y-sm mb-lg pb-md border-b border-surface-variant">
-<div class="flex items-start gap-sm">
-<span class="material-symbols-outlined text-outline mt-xs text-[20px]">calendar_today</span>
-<div>
-<p class="font-label-md text-label-md text-on-surface-variant">Date &amp; Time</p>
-<p class="font-body-md text-body-md text-primary font-medium">Oct 24, 2023 • 10:00 AM EST</p>
-</div>
-</div>
-<div class="flex items-start gap-sm">
-<span class="material-symbols-outlined text-outline mt-xs text-[20px]">videocam</span>
-<div>
-<p class="font-label-md text-label-md text-on-surface-variant">Format</p>
-<p class="font-body-md text-body-md text-primary font-medium">Video Consultation (45 min)</p>
-</div>
-</div>
-</div>
-<!-- Cost Breakdown -->
-<div class="space-y-sm mb-lg">
-<div class="flex justify-between font-body-md text-body-md text-secondary">
-<span>Consultation Fee</span>
-<span>$150.00</span>
-</div>
-<div class="flex justify-between font-body-md text-body-md text-secondary">
-<span>Platform Fee</span>
-<span>$5.00</span>
-</div>
-<div class="flex justify-between font-body-md text-body-md text-[#FF6E5C] border-t-2 border-[#FF6E5C]/20 pt-sm mt-sm border-dashed">
-<span>Insurance Applied (Aetna)</span>
-<span>-$85.00</span>
-</div>
-</div>
-<!-- Total -->
-<div class="flex justify-between items-end mb-lg pt-md border-t border-surface-variant">
-<div>
-<p class="font-label-md text-label-md text-secondary mb-xs">Total Due Today</p>
-<p class="font-headline-md text-headline-md text-primary font-bold">$70.00</p>
-</div>
-</div>
-<!-- Action -->
-<button class="w-full bg-[#FF6E5C] hover:bg-[#ff5844] text-white font-label-md text-label-md py-[12px] px-lg rounded-lg min-h-[48px] transition-colors duration-200 shadow-sm flex items-center justify-center gap-sm">
-<span class="material-symbols-outlined text-[20px]">lock</span>
-                    Pay &amp; Confirm Appointment
-                </button>
-<p class="font-caption text-caption text-secondary text-center mt-md">By confirming, you agree to our Terms of Service and Cancellation Policy.</p>
-</div>
-</aside>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+                <p class="font-body-md text-body-md text-primary font-medium">
+                  Oct 24, 2023 • 10:00 AM EST
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-sm">
+              <span
+                class="material-symbols-outlined text-outline mt-xs text-[20px]"
+                >videocam</span
+              >
+              <div>
+                <p class="font-label-md text-label-md text-on-surface-variant">
+                  Format
+                </p>
+                <p class="font-body-md text-body-md text-primary font-medium">
+                  Video Consultation (45 min)
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Cost Breakdown -->
+          <div class="space-y-sm mb-lg">
+            <div
+              class="flex justify-between font-body-md text-body-md text-secondary"
+            >
+              <span>Consultation Fee</span>
+              <span>$150.00</span>
+            </div>
+            <div
+              class="flex justify-between font-body-md text-body-md text-secondary"
+            >
+              <span>Platform Fee</span>
+              <span>$5.00</span>
+            </div>
+            <div
+              class="flex justify-between font-body-md text-body-md text-[#FF6E5C] border-t-2 border-[#FF6E5C]/20 pt-sm mt-sm border-dashed"
+            >
+              <span>Insurance Applied (Aetna)</span>
+              <span>-$85.00</span>
+            </div>
+          </div>
+          <!-- Total -->
+          <div
+            class="flex justify-between items-end mb-lg pt-md border-t border-surface-variant"
+          >
+            <div>
+              <p class="font-label-md text-label-md text-secondary mb-xs">
+                Total Due Today
+              </p>
+              <p
+                class="font-headline-md text-headline-md text-primary font-bold"
+              >
+                $70.00
+              </p>
+            </div>
+          </div>
+          <!-- Action -->
+          <button
+            class="w-full bg-[#FF6E5C] hover:bg-[#ff5844] text-white font-label-md text-label-md py-[12px] px-lg rounded-lg min-h-[48px] transition-colors duration-200 shadow-sm flex items-center justify-center gap-sm"
+          >
+            <span class="material-symbols-outlined text-[20px]">lock</span>
+            Pay &amp; Confirm Appointment
+          </button>
+          <p class="font-caption text-caption text-secondary text-center mt-md">
+            By confirming, you agree to our Terms of Service and Cancellation
+            Policy.
+          </p>
+        </div>
+      </aside>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

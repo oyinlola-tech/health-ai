@@ -1,388 +1,578 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Emergency Contacts - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Emergency Contacts - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
+    <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
         theme: {
           extend: {
-            "colors": {
-                    "tertiary-fixed-dim": "#c7c6c8",
-                    "outline-variant": "#cfc4bd",
-                    "surface-container-high": "#ece7e6",
-                    "tertiary-container": "#27282a",
-                    "on-surface": "#1c1b1b",
-                    "on-error": "#ffffff",
-                    "background": "#fdf8f7",
-                    "primary-container": "#2b2724",
-                    "surface-variant": "#e6e1e0",
-                    "error-container": "#ffdad6",
-                    "surface-container": "#f1edec",
-                    "on-primary-container": "#948e89",
-                    "secondary-fixed": "#ebe1d8",
-                    "on-tertiary-container": "#8f8f91",
-                    "on-background": "#1c1b1b",
-                    "surface-container-lowest": "#ffffff",
-                    "on-tertiary-fixed": "#1a1c1e",
-                    "primary": "#161310",
-                    "surface-tint": "#635d5a",
-                    "surface-bright": "#fdf8f7",
-                    "inverse-on-surface": "#f4f0ee",
-                    "tertiary-fixed": "#e3e2e4",
-                    "secondary": "#645d56",
-                    "surface-container-low": "#f7f3f1",
-                    "outline": "#7e756f",
-                    "on-secondary-container": "#69615a",
-                    "inverse-surface": "#313030",
-                    "on-secondary-fixed": "#201b15",
-                    "on-primary-fixed": "#1e1b18",
-                    "error": "#ba1a1a",
-                    "on-secondary": "#ffffff",
-                    "primary-fixed-dim": "#cdc5c0",
-                    "tertiary": "#121415",
-                    "on-tertiary": "#ffffff",
-                    "surface": "#fdf8f7",
-                    "secondary-fixed-dim": "#cfc5bc",
-                    "primary-fixed": "#e9e1dc",
-                    "on-tertiary-fixed-variant": "#464749",
-                    "on-primary": "#ffffff",
-                    "surface-container-highest": "#e6e1e0",
-                    "secondary-container": "#e9ded5",
-                    "on-surface-variant": "#4d4540",
-                    "inverse-primary": "#cdc5c0",
-                    "on-secondary-fixed-variant": "#4c463f",
-                    "on-primary-fixed-variant": "#4b4642",
-                    "surface-dim": "#ddd9d8",
-                    "on-error-container": "#93000a",
-                    "wellness-coral": "#FF6E5C",
-                    "muted-stone": "#E8E4E1",
-                    "deep-charcoal": "#2A2A2A"
+            colors: {
+              "tertiary-fixed-dim": "#c7c6c8",
+              "outline-variant": "#cfc4bd",
+              "surface-container-high": "#ece7e6",
+              "tertiary-container": "#27282a",
+              "on-surface": "#1c1b1b",
+              "on-error": "#ffffff",
+              background: "#fdf8f7",
+              "primary-container": "#2b2724",
+              "surface-variant": "#e6e1e0",
+              "error-container": "#ffdad6",
+              "surface-container": "#f1edec",
+              "on-primary-container": "#948e89",
+              "secondary-fixed": "#ebe1d8",
+              "on-tertiary-container": "#8f8f91",
+              "on-background": "#1c1b1b",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed": "#1a1c1e",
+              primary: "#161310",
+              "surface-tint": "#635d5a",
+              "surface-bright": "#fdf8f7",
+              "inverse-on-surface": "#f4f0ee",
+              "tertiary-fixed": "#e3e2e4",
+              secondary: "#645d56",
+              "surface-container-low": "#f7f3f1",
+              outline: "#7e756f",
+              "on-secondary-container": "#69615a",
+              "inverse-surface": "#313030",
+              "on-secondary-fixed": "#201b15",
+              "on-primary-fixed": "#1e1b18",
+              error: "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "primary-fixed-dim": "#cdc5c0",
+              tertiary: "#121415",
+              "on-tertiary": "#ffffff",
+              surface: "#fdf8f7",
+              "secondary-fixed-dim": "#cfc5bc",
+              "primary-fixed": "#e9e1dc",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-primary": "#ffffff",
+              "surface-container-highest": "#e6e1e0",
+              "secondary-container": "#e9ded5",
+              "on-surface-variant": "#4d4540",
+              "inverse-primary": "#cdc5c0",
+              "on-secondary-fixed-variant": "#4c463f",
+              "on-primary-fixed-variant": "#4b4642",
+              "surface-dim": "#ddd9d8",
+              "on-error-container": "#93000a",
+              "wellness-coral": "#FF6E5C",
+              "muted-stone": "#E8E4E1",
+              "deep-charcoal": "#2A2A2A",
             },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
             },
-            "spacing": {
-                    "xs": "4px",
-                    "gutter": "16px",
-                    "base": "8px",
-                    "sm": "8px",
-                    "margin-desktop": "64px",
-                    "lg": "24px",
-                    "xl": "32px",
-                    "margin-mobile": "20px",
-                    "xxl": "48px",
-                    "md": "16px"
+            spacing: {
+              xs: "4px",
+              gutter: "16px",
+              base: "8px",
+              sm: "8px",
+              "margin-desktop": "64px",
+              lg: "24px",
+              xl: "32px",
+              "margin-mobile": "20px",
+              xxl: "48px",
+              md: "16px",
             },
-            "fontFamily": {
-                    "display-lg": [
-                            "Spectral"
-                    ],
-                    "headline-md": [
-                            "Spectral"
-                    ],
-                    "body-lg": [
-                            "Inter"
-                    ],
-                    "body-md": [
-                            "Inter"
-                    ],
-                    "title-lg": [
-                            "Inter"
-                    ],
-                    "headline-lg": [
-                            "Spectral"
-                    ],
-                    "caption": [
-                            "Inter"
-                    ],
-                    "headline-lg-mobile": [
-                            "Spectral"
-                    ],
-                    "label-md": [
-                            "Inter"
-                    ]
+            fontFamily: {
+              "display-lg": ["Spectral"],
+              "headline-md": ["Spectral"],
+              "body-lg": ["Inter"],
+              "body-md": ["Inter"],
+              "title-lg": ["Inter"],
+              "headline-lg": ["Spectral"],
+              caption: ["Inter"],
+              "headline-lg-mobile": ["Spectral"],
+              "label-md": ["Inter"],
             },
-            "fontSize": {
-                    "display-lg": [
-                            "48px",
-                            {
-                                    "lineHeight": "56px",
-                                    "letterSpacing": "-0.02em",
-                                    "fontWeight": "600"
-                            }
-                    ],
-                    "headline-md": [
-                            "24px",
-                            {
-                                    "lineHeight": "32px",
-                                    "fontWeight": "500"
-                            }
-                    ],
-                    "body-lg": [
-                            "18px",
-                            {
-                                    "lineHeight": "28px",
-                                    "fontWeight": "400"
-                            }
-                    ],
-                    "body-md": [
-                            "16px",
-                            {
-                                    "lineHeight": "24px",
-                                    "fontWeight": "400"
-                            }
-                    ],
-                    "title-lg": [
-                            "20px",
-                            {
-                                    "lineHeight": "28px",
-                                    "fontWeight": "600"
-                            }
-                    ],
-                    "headline-lg": [
-                            "32px",
-                            {
-                                    "lineHeight": "40px",
-                                    "fontWeight": "600"
-                            }
-                    ],
-                    "caption": [
-                            "12px",
-                            {
-                                    "lineHeight": "16px",
-                                    "fontWeight": "400"
-                            }
-                    ],
-                    "headline-lg-mobile": [
-                            "28px",
-                            {
-                                    "lineHeight": "34px",
-                                    "fontWeight": "600"
-                            }
-                    ],
-                    "label-md": [
-                            "14px",
-                            {
-                                    "lineHeight": "20px",
-                                    "letterSpacing": "0.01em",
-                                    "fontWeight": "500"
-                            }
-                    ]
-            }
+            fontSize: {
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                {
+                  lineHeight: "32px",
+                  fontWeight: "500",
+                },
+              ],
+              "body-lg": [
+                "18px",
+                {
+                  lineHeight: "28px",
+                  fontWeight: "400",
+                },
+              ],
+              "body-md": [
+                "16px",
+                {
+                  lineHeight: "24px",
+                  fontWeight: "400",
+                },
+              ],
+              "title-lg": [
+                "20px",
+                {
+                  lineHeight: "28px",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-lg": [
+                "32px",
+                {
+                  lineHeight: "40px",
+                  fontWeight: "600",
+                },
+              ],
+              caption: [
+                "12px",
+                {
+                  lineHeight: "16px",
+                  fontWeight: "400",
+                },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                {
+                  lineHeight: "34px",
+                  fontWeight: "600",
+                },
+              ],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+            },
           },
         },
-      }
+      };
     </script>
-<style>
-        .tonal-elevation-1 {
-            border: 1px solid theme('colors.muted-stone');
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            background-color: theme('colors.surface-container-lowest');
-        }
-        .tonal-elevation-2:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
-        }
-        .ai-highlight {
-            border-top: 2px solid theme('colors.wellness-coral');
-        }
+    <style>
+      .tonal-elevation-1 {
+        border: 1px solid theme("colors.muted-stone");
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        background-color: theme("colors.surface-container-lowest");
+      }
+      .tonal-elevation-2:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+      }
+      .ai-highlight {
+        border-top: 2px solid theme("colors.wellness-coral");
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col md:flex-row">
-<!-- TopAppBar (Mobile) -->
-<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b border-outline-variant shadow-sm md:hidden">
-<div class="font-headline-md text-headline-md text-primary font-bold">MedExplain AI</div>
-<div class="flex gap-4">
-<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
-<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
-</div>
-</header>
-<!-- SideNavBar (Desktop) -->
-<nav class="hidden lg:flex flex-col fixed left-0 top-0 h-full w-64 bg-surface-container-low shadow-md z-40 border-r border-outline-variant">
-<div class="p-lg border-b border-outline-variant">
-<div class="font-headline-md text-headline-md text-primary font-bold mb-1">MedExplain AI</div>
-<div class="font-title-lg text-title-lg text-primary mt-4">Patient Portal</div>
-<div class="font-caption text-caption text-secondary">Manage your health data</div>
-</div>
-<div class="flex-1 overflow-y-auto py-md">
-<ul class="space-y-2">
-<li>
-<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary" href="/consultation/find-doctor.html">
-<span class="material-symbols-outlined" data-icon="search">search</span>
-<span class="font-label-md text-label-md">Find Doctor</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary" href="/app/dashboard.html">
-<span class="material-symbols-outlined" data-icon="medical_information">medical_information</span>
-<span class="font-label-md text-label-md">Health Records</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary" href="/consultation/appointments.html">
-<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
-<span class="font-label-md text-label-md">My Appointments</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary" href="/app/dashboard.html">
-<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
-<span class="font-label-md text-label-md">Consultation History</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-r-4 border-primary bg-secondary-container/30 hover:bg-surface-container-high transition-all" href="/settings/home.html">
-<span class="material-symbols-outlined" data-icon="settings">settings</span>
-<span class="font-label-md text-label-md">Settings</span>
-</a>
-</li>
-</ul>
-</div>
-<div class="p-md border-t border-outline-variant space-y-2">
-<button class="w-full bg-wellness-coral text-white font-label-md text-label-md py-3 rounded-lg hover:opacity-90 transition-opacity flex justify-center items-center gap-2 min-h-[48px]">
-<span class="material-symbols-outlined text-sm" data-icon="add">add</span> New Consultation
-            </button>
-<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary" href="/app/dashboard.html">
-<span class="material-symbols-outlined" data-icon="help">help</span>
-<span class="font-label-md text-label-md">Support</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary" href="/auth/login.html">
-<span class="material-symbols-outlined" data-icon="logout">logout</span>
-<span class="font-label-md text-label-md">Logout</span>
-</a>
-</div>
-</nav>
-<!-- Main Content Canvas -->
-<main class="flex-1 w-full pt-20 md:pt-margin-desktop px-margin-mobile md:px-margin-desktop lg:ml-64 pb-xxl max-w-[1120px] mx-auto">
-<!-- Header Section -->
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-lg mb-xxl">
-<div>
-<a class="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-4 group" href="/settings/home.html">
-<span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform" data-icon="arrow_back">arrow_back</span>
-<span class="font-label-md text-label-md">Back to Settings</span>
-</a>
-<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Emergency Contacts</h1>
-<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Manage the individuals we should contact in case of a medical emergency. Keeping this up-to-date is crucial for your care team.</p>
-</div>
-<div class="flex flex-wrap gap-4 shrink-0 mt-4 md:mt-0">
-<button class="flex items-center justify-center gap-2 px-6 py-3 border border-outline-variant text-primary rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors min-h-[48px]">
-<span class="material-symbols-outlined" data-icon="print">print</span> Print Card
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col md:flex-row"
+  >
+    <!-- TopAppBar (Mobile) -->
+    <header
+      class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface border-b border-outline-variant shadow-sm md:hidden"
+    >
+      <div class="font-headline-md text-headline-md text-primary font-bold">
+        MedExplain AI
+      </div>
+      <div class="flex gap-4">
+        <span
+          class="material-symbols-outlined text-primary"
+          data-icon="notifications"
+          >notifications</span
+        >
+        <span
+          class="material-symbols-outlined text-primary"
+          data-icon="account_circle"
+          >account_circle</span
+        >
+      </div>
+    </header>
+    <!-- SideNavBar (Desktop) -->
+    <nav
+      class="hidden lg:flex flex-col fixed left-0 top-0 h-full w-64 bg-surface-container-low shadow-md z-40 border-r border-outline-variant"
+    >
+      <div class="p-lg border-b border-outline-variant">
+        <div
+          class="font-headline-md text-headline-md text-primary font-bold mb-1"
+        >
+          MedExplain AI
+        </div>
+        <div class="font-title-lg text-title-lg text-primary mt-4">
+          Patient Portal
+        </div>
+        <div class="font-caption text-caption text-secondary">
+          Manage your health data
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto py-md">
+        <ul class="space-y-2">
+          <li>
+            <a
+              class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary"
+              href="/consultation/find-doctor.html"
+            >
+              <span class="material-symbols-outlined" data-icon="search"
+                >search</span
+              >
+              <span class="font-label-md text-label-md">Find Doctor</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary"
+              href="/app/dashboard.html"
+            >
+              <span
+                class="material-symbols-outlined"
+                data-icon="medical_information"
+                >medical_information</span
+              >
+              <span class="font-label-md text-label-md">Health Records</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary"
+              href="/consultation/appointments.html"
+            >
+              <span
+                class="material-symbols-outlined"
+                data-icon="event_available"
+                >event_available</span
+              >
+              <span class="font-label-md text-label-md">My Appointments</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary"
+              href="/app/dashboard.html"
+            >
+              <span class="material-symbols-outlined" data-icon="history_edu"
+                >history_edu</span
+              >
+              <span class="font-label-md text-label-md"
+                >Consultation History</span
+              >
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-r-4 border-primary bg-secondary-container/30 hover:bg-surface-container-high transition-all"
+              href="/settings/home.html"
+            >
+              <span class="material-symbols-outlined" data-icon="settings"
+                >settings</span
+              >
+              <span class="font-label-md text-label-md">Settings</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="p-md border-t border-outline-variant space-y-2">
+        <button
+          class="w-full bg-wellness-coral text-white font-label-md text-label-md py-3 rounded-lg hover:opacity-90 transition-opacity flex justify-center items-center gap-2 min-h-[48px]"
+        >
+          <span class="material-symbols-outlined text-sm" data-icon="add"
+            >add</span
+          >
+          New Consultation
+        </button>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary"
+          href="/app/dashboard.html"
+        >
+          <span class="material-symbols-outlined" data-icon="help">help</span>
+          <span class="font-label-md text-label-md">Support</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-all hover:text-primary"
+          href="/auth/login.html"
+        >
+          <span class="material-symbols-outlined" data-icon="logout"
+            >logout</span
+          >
+          <span class="font-label-md text-label-md">Logout</span>
+        </a>
+      </div>
+    </nav>
+    <!-- Main Content Canvas -->
+    <main
+      class="flex-1 w-full pt-20 md:pt-margin-desktop px-margin-mobile md:px-margin-desktop lg:ml-64 pb-xxl max-w-[1120px] mx-auto"
+    >
+      <!-- Header Section -->
+      <div
+        class="flex flex-col md:flex-row md:items-end justify-between gap-lg mb-xxl"
+      >
+        <div>
+          <a
+            class="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-4 group"
+            href="/settings/home.html"
+          >
+            <span
+              class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform"
+              data-icon="arrow_back"
+              >arrow_back</span
+            >
+            <span class="font-label-md text-label-md">Back to Settings</span>
+          </a>
+          <h1
+            class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2"
+          >
+            Emergency Contacts
+          </h1>
+          <p
+            class="font-body-md text-body-md text-on-surface-variant max-w-2xl"
+          >
+            Manage the individuals we should contact in case of a medical
+            emergency. Keeping this up-to-date is crucial for your care team.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-4 shrink-0 mt-4 md:mt-0">
+          <button
+            class="flex items-center justify-center gap-2 px-6 py-3 border border-outline-variant text-primary rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors min-h-[48px]"
+          >
+            <span class="material-symbols-outlined" data-icon="print"
+              >print</span
+            >
+            Print Card
+          </button>
+          <button
+            class="flex items-center justify-center gap-2 px-6 py-3 bg-surface-container-high text-primary rounded-lg font-label-md text-label-md hover:bg-surface-container-highest transition-colors min-h-[48px]"
+          >
+            <span class="material-symbols-outlined" data-icon="phonelink_lock"
+              >phonelink_lock</span
+            >
+            Export to Lock Screen
+          </button>
+        </div>
+      </div>
+      <!-- Content Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+        <!-- Primary Contact (Full width on mobile, spans 2 on desktop) -->
+        <div class="lg:col-span-2 flex flex-col gap-lg">
+          <!-- Contact Card 1 -->
+          <div
+            class="tonal-elevation-1 rounded-xl p-lg md:p-xl tonal-elevation-2 relative overflow-hidden group"
+          >
+            <div
+              class="absolute top-0 left-0 w-1 h-full bg-wellness-coral"
+            ></div>
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6"
+            >
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span
+                    class="bg-error-container text-on-error-container font-caption text-caption px-2 py-1 rounded-full uppercase tracking-wider font-semibold"
+                    >Primary</span
+                  >
+                </div>
+                <h2 class="font-headline-md text-headline-md text-primary">
+                  Sarah Jenkins
+                </h2>
+                <p class="font-body-md text-body-md text-secondary">Spouse</p>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  aria-label="Edit contact"
+                  class="p-2 text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container-low"
+                >
+                  <span class="material-symbols-outlined" data-icon="edit"
+                    >edit</span
+                  >
                 </button>
-<button class="flex items-center justify-center gap-2 px-6 py-3 bg-surface-container-high text-primary rounded-lg font-label-md text-label-md hover:bg-surface-container-highest transition-colors min-h-[48px]">
-<span class="material-symbols-outlined" data-icon="phonelink_lock">phonelink_lock</span> Export to Lock Screen
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
+              <div>
+                <p class="font-caption text-caption text-secondary mb-1">
+                  Phone Number
+                </p>
+                <a
+                  class="font-body-lg text-body-lg text-primary hover:text-wellness-coral transition-colors flex items-center gap-2"
+                  href="tel:+15550198"
+                >
+                  <span
+                    class="material-symbols-outlined text-sm text-secondary"
+                    data-icon="call"
+                    >call</span
+                  >
+                  +1 (555) 019-8234
+                </a>
+              </div>
+              <div>
+                <p class="font-caption text-caption text-secondary mb-1">
+                  Alternative Phone
+                </p>
+                <a
+                  class="font-body-md text-body-md text-primary hover:text-wellness-coral transition-colors flex items-center gap-2"
+                  href="tel:+15558921"
+                >
+                  <span
+                    class="material-symbols-outlined text-sm text-secondary"
+                    data-icon="phone_iphone"
+                    >phone_iphone</span
+                  >
+                  +1 (555) 892-1100
+                </a>
+              </div>
+              <div class="sm:col-span-2 mt-2">
+                <p class="font-caption text-caption text-secondary mb-1">
+                  Notes
+                </p>
+                <p class="font-body-md text-body-md text-on-surface">
+                  Has medical proxy. Usually reachable after 5 PM on weekdays.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Contact Card 2 -->
+          <div
+            class="tonal-elevation-1 rounded-xl p-lg md:p-xl tonal-elevation-2 relative group"
+          >
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6"
+            >
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span
+                    class="bg-surface-variant text-on-surface-variant font-caption text-caption px-2 py-1 rounded-full uppercase tracking-wider font-semibold"
+                    >Secondary</span
+                  >
+                </div>
+                <h2 class="font-headline-md text-headline-md text-primary">
+                  Michael Chen
+                </h2>
+                <p class="font-body-md text-body-md text-secondary">Brother</p>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  aria-label="Edit contact"
+                  class="p-2 text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container-low"
+                >
+                  <span class="material-symbols-outlined" data-icon="edit"
+                    >edit</span
+                  >
                 </button>
-</div>
-</div>
-<!-- Content Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
-<!-- Primary Contact (Full width on mobile, spans 2 on desktop) -->
-<div class="lg:col-span-2 flex flex-col gap-lg">
-<!-- Contact Card 1 -->
-<div class="tonal-elevation-1 rounded-xl p-lg md:p-xl tonal-elevation-2 relative overflow-hidden group">
-<div class="absolute top-0 left-0 w-1 h-full bg-wellness-coral"></div>
-<div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="bg-error-container text-on-error-container font-caption text-caption px-2 py-1 rounded-full uppercase tracking-wider font-semibold">Primary</span>
-</div>
-<h2 class="font-headline-md text-headline-md text-primary">Sarah Jenkins</h2>
-<p class="font-body-md text-body-md text-secondary">Spouse</p>
-</div>
-<div class="flex gap-2">
-<button aria-label="Edit contact" class="p-2 text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container-low">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
-</button>
-</div>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
-<div>
-<p class="font-caption text-caption text-secondary mb-1">Phone Number</p>
-<a class="font-body-lg text-body-lg text-primary hover:text-wellness-coral transition-colors flex items-center gap-2" href="tel:+15550198">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="call">call</span>
-                                +1 (555) 019-8234
-                            </a>
-</div>
-<div>
-<p class="font-caption text-caption text-secondary mb-1">Alternative Phone</p>
-<a class="font-body-md text-body-md text-primary hover:text-wellness-coral transition-colors flex items-center gap-2" href="tel:+15558921">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="phone_iphone">phone_iphone</span>
-                                +1 (555) 892-1100
-                            </a>
-</div>
-<div class="sm:col-span-2 mt-2">
-<p class="font-caption text-caption text-secondary mb-1">Notes</p>
-<p class="font-body-md text-body-md text-on-surface">Has medical proxy. Usually reachable after 5 PM on weekdays.</p>
-</div>
-</div>
-</div>
-<!-- Contact Card 2 -->
-<div class="tonal-elevation-1 rounded-xl p-lg md:p-xl tonal-elevation-2 relative group">
-<div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="bg-surface-variant text-on-surface-variant font-caption text-caption px-2 py-1 rounded-full uppercase tracking-wider font-semibold">Secondary</span>
-</div>
-<h2 class="font-headline-md text-headline-md text-primary">Michael Chen</h2>
-<p class="font-body-md text-body-md text-secondary">Brother</p>
-</div>
-<div class="flex gap-2">
-<button aria-label="Edit contact" class="p-2 text-secondary hover:text-primary transition-colors rounded-full hover:bg-surface-container-low">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
-</button>
-</div>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
-<div>
-<p class="font-caption text-caption text-secondary mb-1">Phone Number</p>
-<a class="font-body-lg text-body-lg text-primary hover:text-wellness-coral transition-colors flex items-center gap-2" href="tel:+15554329">
-<span class="material-symbols-outlined text-sm text-secondary" data-icon="call">call</span>
-                                +1 (555) 432-9876
-                            </a>
-</div>
-</div>
-</div>
-<!-- Add New Action -->
-<button class="w-full border-2 border-dashed border-outline-variant rounded-xl p-lg text-center hover:bg-surface-container-low transition-colors group flex flex-col items-center justify-center gap-3 min-h-[120px]">
-<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-primary" data-icon="person_add">person_add</span>
-</div>
-<span class="font-title-lg text-title-lg text-primary group-hover:text-wellness-coral transition-colors">Add Emergency Contact</span>
-</button>
-</div>
-<!-- Contextual Information Panel -->
-<div class="flex flex-col gap-lg">
-<div class="tonal-elevation-1 rounded-xl p-lg ai-highlight bg-surface-container-lowest">
-<div class="flex items-center gap-3 mb-4">
-<span class="material-symbols-outlined text-wellness-coral" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
-<h3 class="font-title-lg text-title-lg text-primary">AI Insights</h3>
-</div>
-<p class="font-body-md text-body-md text-on-surface mb-4">Your primary contact (Sarah) is listed as having medical proxy. Ensure your advance directives are also updated in the Health Records section.</p>
-<a class="inline-flex items-center gap-2 text-wellness-coral hover:text-primary transition-colors font-label-md text-label-md" href="/app/dashboard.html">
-                        Review Directives <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
-</a>
-</div>
-<div class="tonal-elevation-1 rounded-xl p-lg bg-surface-container-low">
-<div class="flex items-center gap-3 mb-4">
-<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
-<h3 class="font-title-lg text-title-lg text-primary">Why Provide Two?</h3>
-</div>
-<p class="font-body-md text-body-md text-secondary">
-                        In emergency situations, it is crucial to have a backup contact. If your primary contact is unreachable, medical professionals will immediately try the secondary number to ensure timely decisions can be made regarding your care.
-                    </p>
-</div>
-</div>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
+              <div>
+                <p class="font-caption text-caption text-secondary mb-1">
+                  Phone Number
+                </p>
+                <a
+                  class="font-body-lg text-body-lg text-primary hover:text-wellness-coral transition-colors flex items-center gap-2"
+                  href="tel:+15554329"
+                >
+                  <span
+                    class="material-symbols-outlined text-sm text-secondary"
+                    data-icon="call"
+                    >call</span
+                  >
+                  +1 (555) 432-9876
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- Add New Action -->
+          <button
+            class="w-full border-2 border-dashed border-outline-variant rounded-xl p-lg text-center hover:bg-surface-container-low transition-colors group flex flex-col items-center justify-center gap-3 min-h-[120px]"
+          >
+            <div
+              class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-surface-variant transition-colors"
+            >
+              <span
+                class="material-symbols-outlined text-primary"
+                data-icon="person_add"
+                >person_add</span
+              >
+            </div>
+            <span
+              class="font-title-lg text-title-lg text-primary group-hover:text-wellness-coral transition-colors"
+              >Add Emergency Contact</span
+            >
+          </button>
+        </div>
+        <!-- Contextual Information Panel -->
+        <div class="flex flex-col gap-lg">
+          <div
+            class="tonal-elevation-1 rounded-xl p-lg ai-highlight bg-surface-container-lowest"
+          >
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="material-symbols-outlined text-wellness-coral"
+                data-icon="auto_awesome"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >auto_awesome</span
+              >
+              <h3 class="font-title-lg text-title-lg text-primary">
+                AI Insights
+              </h3>
+            </div>
+            <p class="font-body-md text-body-md text-on-surface mb-4">
+              Your primary contact (Sarah) is listed as having medical proxy.
+              Ensure your advance directives are also updated in the Health
+              Records section.
+            </p>
+            <a
+              class="inline-flex items-center gap-2 text-wellness-coral hover:text-primary transition-colors font-label-md text-label-md"
+              href="/app/dashboard.html"
+            >
+              Review Directives
+              <span
+                class="material-symbols-outlined text-sm"
+                data-icon="arrow_forward"
+                >arrow_forward</span
+              >
+            </a>
+          </div>
+          <div
+            class="tonal-elevation-1 rounded-xl p-lg bg-surface-container-low"
+          >
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="material-symbols-outlined text-secondary"
+                data-icon="info"
+                >info</span
+              >
+              <h3 class="font-title-lg text-title-lg text-primary">
+                Why Provide Two?
+              </h3>
+            </div>
+            <p class="font-body-md text-body-md text-secondary">
+              In emergency situations, it is crucial to have a backup contact.
+              If your primary contact is unreachable, medical professionals will
+              immediately try the secondary number to ensure timely decisions
+              can be made regarding your care.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

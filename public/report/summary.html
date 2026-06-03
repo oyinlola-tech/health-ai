@@ -1,352 +1,538 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>MedExplain AI - Report Summary</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MedExplain AI - Report Summary</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                      "on-background": "#1c1b1b",
-                      "secondary-fixed": "#ebe1d8",
-                      "surface-container-highest": "#e6e1e0",
-                      "primary-fixed-dim": "#cdc5c0",
-                      "on-primary": "#ffffff",
-                      "surface-variant": "#e6e1e0",
-                      "surface-container-low": "#f7f3f1",
-                      "inverse-primary": "#cdc5c0",
-                      "on-error-container": "#93000a",
-                      "tertiary": "#121415",
-                      "on-primary-fixed-variant": "#4b4642",
-                      "surface-container-high": "#ece7e6",
-                      "surface-bright": "#fdf8f7",
-                      "error-container": "#ffdad6",
-                      "inverse-on-surface": "#f4f0ee",
-                      "on-error": "#ffffff",
-                      "outline": "#7e756f",
-                      "on-secondary-fixed-variant": "#4c463f",
-                      "primary-container": "#2b2724",
-                      "surface": "#fdf8f7",
-                      "secondary-fixed-dim": "#cfc5bc",
-                      "error": "#ba1a1a",
-                      "on-secondary": "#ffffff",
-                      "tertiary-container": "#27282a",
-                      "on-tertiary-fixed": "#1a1c1e",
-                      "tertiary-fixed": "#e3e2e4",
-                      "secondary-container": "#e9ded5",
-                      "outline-variant": "#cfc4bd",
-                      "on-primary-fixed": "#1e1b18",
-                      "primary": "#161310",
-                      "on-secondary-container": "#69615a",
-                      "on-secondary-fixed": "#201b15",
-                      "surface-tint": "#635d5a",
-                      "on-surface": "#1c1b1b",
-                      "background": "#fdf8f7",
-                      "secondary": "#645d56",
-                      "on-tertiary-fixed-variant": "#464749",
-                      "on-primary-container": "#948e89",
-                      "on-tertiary-container": "#8f8f91",
-                      "primary-fixed": "#e9e1dc",
-                      "on-tertiary": "#ffffff",
-                      "inverse-surface": "#313030",
-                      "surface-container": "#f1edec",
-                      "tertiary-fixed-dim": "#c7c6c8",
-                      "surface-dim": "#ddd9d8",
-                      "on-surface-variant": "#4d4540",
-                      "surface-container-lowest": "#ffffff"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "margin-mobile": "20px",
-                      "xxl": "48px",
-                      "xl": "32px",
-                      "sm": "8px",
-                      "gutter": "16px",
-                      "xs": "4px",
-                      "md": "16px",
-                      "margin-desktop": "64px",
-                      "lg": "24px",
-                      "base": "8px"
-              },
-              "fontFamily": {
-                      "title-lg": [
-                              "Inter"
-                      ],
-                      "headline-lg": [
-                              "Spectral"
-                      ],
-                      "headline-lg-mobile": [
-                              "Spectral"
-                      ],
-                      "body-md": [
-                              "Inter"
-                      ],
-                      "label-md": [
-                              "Inter"
-                      ],
-                      "display-lg": [
-                              "Spectral"
-                      ],
-                      "headline-md": [
-                              "Spectral"
-                      ],
-                      "caption": [
-                              "Inter"
-                      ],
-                      "body-lg": [
-                              "Inter"
-                      ]
-              },
-              "fontSize": {
-                      "title-lg": [
-                              "20px",
-                              {
-                                      "lineHeight": "28px",
-                                      "fontWeight": "600"
-                              }
-                      ],
-                      "headline-lg": [
-                              "32px",
-                              {
-                                      "lineHeight": "40px",
-                                      "fontWeight": "600"
-                              }
-                      ],
-                      "headline-lg-mobile": [
-                              "28px",
-                              {
-                                      "lineHeight": "34px",
-                                      "fontWeight": "600"
-                              }
-                      ],
-                      "body-md": [
-                              "16px",
-                              {
-                                      "lineHeight": "24px",
-                                      "fontWeight": "400"
-                              }
-                      ],
-                      "label-md": [
-                              "14px",
-                              {
-                                      "lineHeight": "20px",
-                                      "letterSpacing": "0.01em",
-                                      "fontWeight": "500"
-                              }
-                      ],
-                      "display-lg": [
-                              "48px",
-                              {
-                                      "lineHeight": "56px",
-                                      "letterSpacing": "-0.02em",
-                                      "fontWeight": "600"
-                              }
-                      ],
-                      "headline-md": [
-                              "24px",
-                              {
-                                      "lineHeight": "32px",
-                                      "fontWeight": "500"
-                              }
-                      ],
-                      "caption": [
-                              "12px",
-                              {
-                                      "lineHeight": "16px",
-                                      "fontWeight": "400"
-                              }
-                      ],
-                      "body-lg": [
-                              "18px",
-                              {
-                                      "lineHeight": "28px",
-                                      "fontWeight": "400"
-                              }
-                      ]
-              }
-      },
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-background": "#1c1b1b",
+              "secondary-fixed": "#ebe1d8",
+              "surface-container-highest": "#e6e1e0",
+              "primary-fixed-dim": "#cdc5c0",
+              "on-primary": "#ffffff",
+              "surface-variant": "#e6e1e0",
+              "surface-container-low": "#f7f3f1",
+              "inverse-primary": "#cdc5c0",
+              "on-error-container": "#93000a",
+              tertiary: "#121415",
+              "on-primary-fixed-variant": "#4b4642",
+              "surface-container-high": "#ece7e6",
+              "surface-bright": "#fdf8f7",
+              "error-container": "#ffdad6",
+              "inverse-on-surface": "#f4f0ee",
+              "on-error": "#ffffff",
+              outline: "#7e756f",
+              "on-secondary-fixed-variant": "#4c463f",
+              "primary-container": "#2b2724",
+              surface: "#fdf8f7",
+              "secondary-fixed-dim": "#cfc5bc",
+              error: "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "tertiary-container": "#27282a",
+              "on-tertiary-fixed": "#1a1c1e",
+              "tertiary-fixed": "#e3e2e4",
+              "secondary-container": "#e9ded5",
+              "outline-variant": "#cfc4bd",
+              "on-primary-fixed": "#1e1b18",
+              primary: "#161310",
+              "on-secondary-container": "#69615a",
+              "on-secondary-fixed": "#201b15",
+              "surface-tint": "#635d5a",
+              "on-surface": "#1c1b1b",
+              background: "#fdf8f7",
+              secondary: "#645d56",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-primary-container": "#948e89",
+              "on-tertiary-container": "#8f8f91",
+              "primary-fixed": "#e9e1dc",
+              "on-tertiary": "#ffffff",
+              "inverse-surface": "#313030",
+              "surface-container": "#f1edec",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "surface-dim": "#ddd9d8",
+              "on-surface-variant": "#4d4540",
+              "surface-container-lowest": "#ffffff",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-mobile": "20px",
+              xxl: "48px",
+              xl: "32px",
+              sm: "8px",
+              gutter: "16px",
+              xs: "4px",
+              md: "16px",
+              "margin-desktop": "64px",
+              lg: "24px",
+              base: "8px",
+            },
+            fontFamily: {
+              "title-lg": ["Inter"],
+              "headline-lg": ["Spectral"],
+              "headline-lg-mobile": ["Spectral"],
+              "body-md": ["Inter"],
+              "label-md": ["Inter"],
+              "display-lg": ["Spectral"],
+              "headline-md": ["Spectral"],
+              caption: ["Inter"],
+              "body-lg": ["Inter"],
+            },
+            fontSize: {
+              "title-lg": [
+                "20px",
+                {
+                  lineHeight: "28px",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-lg": [
+                "32px",
+                {
+                  lineHeight: "40px",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                {
+                  lineHeight: "34px",
+                  fontWeight: "600",
+                },
+              ],
+              "body-md": [
+                "16px",
+                {
+                  lineHeight: "24px",
+                  fontWeight: "400",
+                },
+              ],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                {
+                  lineHeight: "32px",
+                  fontWeight: "500",
+                },
+              ],
+              caption: [
+                "12px",
+                {
+                  lineHeight: "16px",
+                  fontWeight: "400",
+                },
+              ],
+              "body-lg": [
+                "18px",
+                {
+                  lineHeight: "28px",
+                  fontWeight: "400",
+                },
+              ],
+            },
           },
-        }
-      </script>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background font-body-md min-h-screen">
-<!-- TopNavBar -->
-<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 shadow-sm bg-surface dark:bg-surface-dim">
-<div class="flex items-center gap-md">
-<span class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary">MedExplain AI</span>
-</div>
-<div class="flex items-center gap-lg text-primary dark:text-primary-fixed-dim">
-<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors p-sm rounded-full active:opacity-80 active:scale-95 duration-150">
-<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
-<button class="hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors p-sm rounded-full active:opacity-80 active:scale-95 duration-150">
-<span class="material-symbols-outlined" data-icon="settings">settings</span>
-</button>
-<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant">
-<img alt="Patient Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZsZJwMvd8g8M-WzReaZRcIbxreNLZXThthNxJhBEq9YJjFLw0eLAU0-lClkMh8ij9zkw4ncwfDHfHe5JtwKXApJzdmn3MPN1ETUZ7VOz9g6a2UC-Y-32RcB5ABvnmbnE74wKqnHDakjSRS23o7sISkU_SCuMMcuy9ZCojJED9JODcubDaY32HAAUKP6qeakkMjFRIaQTV978AYKhg0hqmClg5p2a3ZlQgqyrTqKsGxP1_riaLaZYMpZ9xgo3qY0x2hpJnJJ7kqUXn">
-</div>
-</div>
-</header>
-<!-- SideNavBar -->
-<nav class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex-col p-md z-40 bg-surface-container-low dark:bg-surface-container-high border-r border-outline-variant">
-<div class="mb-lg px-4">
-<h2 class="text-title-lg font-title-lg text-primary dark:text-primary-fixed-dim">Patient Portal</h2>
-<p class="text-body-md font-body-md text-on-surface-variant">Welcome back</p>
-</div>
-<button class="mb-lg w-full bg-[#FF6E5C] text-white py-3 px-4 rounded-lg text-label-md font-label-md hover:opacity-90 transition-opacity">
-            Upload New Report
+        },
+      };
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body class="bg-background text-on-background font-body-md min-h-screen">
+    <!-- TopNavBar -->
+    <header
+      class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 shadow-sm bg-surface dark:bg-surface-dim"
+    >
+      <div class="flex items-center gap-md">
+        <span
+          class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary"
+          >MedExplain AI</span
+        >
+      </div>
+      <div
+        class="flex items-center gap-lg text-primary dark:text-primary-fixed-dim"
+      >
+        <button
+          class="hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors p-sm rounded-full active:opacity-80 active:scale-95 duration-150"
+        >
+          <span class="material-symbols-outlined" data-icon="notifications"
+            >notifications</span
+          >
         </button>
-<ul class="flex-1 space-y-sm">
-<li>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="/app/dashboard.html">
-<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span class="text-label-md font-label-md">Dashboard</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-semibold rounded-lg px-4 py-3 translate-x-1 duration-200" href="/report/summary.html">
-<span class="material-symbols-outlined" data-icon="description">description</span>
-<span class="text-label-md font-label-md">Reports</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="/ai-assistant/chat-home.html">
-<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
-<span class="text-label-md font-label-md">Insights</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="/app/dashboard.html">
-<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
-<span class="text-label-md font-label-md">Health Trends</span>
-</a>
-</li>
-</ul>
-<div class="mt-auto border-t border-outline-variant pt-sm">
-<ul class="space-y-sm">
-<li>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="/app/dashboard.html">
-<span class="material-symbols-outlined" data-icon="help">help</span>
-<span class="text-label-md font-label-md">Support</span>
-</a>
-</li>
-<li>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="/auth/login.html">
-<span class="material-symbols-outlined" data-icon="logout">logout</span>
-<span class="text-label-md font-label-md">Sign Out</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<!-- Main Content -->
-<main class="pt-[80px] md:pl-64 min-h-screen px-margin-mobile md:px-margin-desktop pb-xxl">
-<div class="max-w-[1120px] mx-auto mt-lg">
-<!-- Header Section -->
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md">
-<div>
-<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg text-primary mb-xs">Comprehensive Blood Panel</h1>
-<p class="text-body-lg font-body-lg text-on-surface-variant">Analyzed on October 24, 2023</p>
-</div>
-<div class="flex gap-sm w-full md:w-auto">
-<button class="flex-1 md:flex-none flex items-center justify-center gap-sm bg-surface text-on-surface border border-outline-variant py-3 px-6 rounded-lg text-label-md font-label-md hover:bg-surface-container-low transition-colors shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)]">
-<span class="material-symbols-outlined text-[20px]" data-icon="download">download</span>
-                        Download PDF
-                    </button>
-<button class="flex-1 md:flex-none flex items-center justify-center gap-sm bg-[#FF6E5C] text-white py-3 px-6 rounded-lg text-label-md font-label-md hover:opacity-90 transition-opacity shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)]">
-<span class="material-symbols-outlined text-[20px]" data-icon="share">share</span>
-                        Share Report
-                    </button>
-</div>
-</div>
-<!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
-<!-- Status Card -->
-<div class="md:col-span-8 bg-surface border border-surface-container-highest rounded-xl p-lg shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_0px_rgba(0,0,0,0.06)] transition-shadow duration-300">
-<div class="flex items-start justify-between mb-lg">
-<h2 class="text-title-lg font-title-lg text-primary">High-Level Status</h2>
-<span class="inline-flex items-center gap-xs px-3 py-1 bg-[#FDF8F7] border border-[#FF6E5C]/30 text-[#FF6E5C] rounded-full text-label-md font-label-md">
-<span class="material-symbols-outlined text-[16px]" data-icon="check_circle" data-weight="fill">check_circle</span>
-                            Generally Healthy
-                        </span>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant mb-lg leading-relaxed">
-                        Your recent blood panel results look positive. Most of your key markers are well within the normal ranges. There are a few minor areas to monitor, but no immediate action is required. Continuing your current wellness routine is recommended.
-                    </p>
-<div class="border-t-2 border-[#FF6E5C] bg-[#FF6E5C]/5 rounded-b-lg p-md mt-sm flex gap-md items-start">
-<span class="material-symbols-outlined text-[#FF6E5C] mt-1" data-icon="smart_toy">smart_toy</span>
-<div>
-<p class="text-label-md font-label-md text-primary mb-xs">AI Assistant Note</p>
-<p class="text-body-md font-body-md text-on-surface-variant">I noticed your Vitamin D levels are slightly lower than your last test. Consider increasing sun exposure or discussing a supplement with your doctor.</p>
-</div>
-</div>
-</div>
-<!-- Health Score Card -->
-<div class="md:col-span-4 bg-surface border border-surface-container-highest rounded-xl p-lg shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_0px_rgba(0,0,0,0.06)] transition-shadow duration-300 flex flex-col items-center justify-center text-center">
-<h2 class="text-title-lg font-title-lg text-primary w-full text-left mb-lg">Health Score</h2>
-<div class="relative w-32 h-32 mb-md">
-<svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-<circle cx="50" cy="50" fill="none" r="45" stroke="#E6E1E0" stroke-width="8"></circle>
-<circle class="transition-all duration-1000 ease-out" cx="50" cy="50" fill="none" r="45" stroke="#FF6E5C" stroke-dasharray="282.7" stroke-dashoffset="42.4" stroke-width="8"></circle>
-</svg>
-<div class="absolute inset-0 flex items-center justify-center flex-col">
-<span class="text-headline-lg font-headline-lg text-primary">85</span>
-<span class="text-caption font-caption text-on-surface-variant">/100</span>
-</div>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant">Excellent overall wellness. Keep up the good work!</p>
-</div>
-<!-- Top Findings -->
-<div class="md:col-span-12 bg-surface border border-surface-container-highest rounded-xl p-lg shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_0px_rgba(0,0,0,0.06)] transition-shadow duration-300">
-<h2 class="text-title-lg font-title-lg text-primary mb-lg">Top Findings</h2>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-<!-- Finding 1 -->
-<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50">
-<div class="flex items-center gap-sm mb-sm">
-<div class="w-8 h-8 rounded-full bg-[#FF6E5C]/10 flex items-center justify-center text-[#FF6E5C]">
-<span class="material-symbols-outlined text-[18px]" data-icon="water_drop">water_drop</span>
-</div>
-<h3 class="text-label-md font-label-md text-primary font-semibold">Cholesterol Levels</h3>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant">Your LDL and HDL cholesterol are perfectly balanced, indicating excellent cardiovascular health.</p>
-</div>
-<!-- Finding 2 -->
-<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50">
-<div class="flex items-center gap-sm mb-sm">
-<div class="w-8 h-8 rounded-full bg-[#FF6E5C]/10 flex items-center justify-center text-[#FF6E5C]">
-<span class="material-symbols-outlined text-[18px]" data-icon="bolt">bolt</span>
-</div>
-<h3 class="text-label-md font-label-md text-primary font-semibold">Iron &amp; Ferritin</h3>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant">Iron stores are optimal, explaining your reported high energy levels during the consultation.</p>
-</div>
-<!-- Finding 3 -->
-<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50 relative overflow-hidden">
-<div class="absolute top-0 left-0 w-1 h-full bg-[#FF6E5C]"></div>
-<div class="flex items-center gap-sm mb-sm pl-xs">
-<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="wb_sunny">wb_sunny</span>
-</div>
-<h3 class="text-label-md font-label-md text-primary font-semibold">Vitamin D</h3>
-</div>
-<p class="text-body-md font-body-md text-on-surface-variant pl-xs">Borderline low. A slight increase in dietary intake or supplementation might be beneficial.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</main>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+        <button
+          class="hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors p-sm rounded-full active:opacity-80 active:scale-95 duration-150"
+        >
+          <span class="material-symbols-outlined" data-icon="settings"
+            >settings</span
+          >
+        </button>
+        <div
+          class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant"
+        >
+          <img
+            alt="Patient Profile Avatar"
+            class="w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZsZJwMvd8g8M-WzReaZRcIbxreNLZXThthNxJhBEq9YJjFLw0eLAU0-lClkMh8ij9zkw4ncwfDHfHe5JtwKXApJzdmn3MPN1ETUZ7VOz9g6a2UC-Y-32RcB5ABvnmbnE74wKqnHDakjSRS23o7sISkU_SCuMMcuy9ZCojJED9JODcubDaY32HAAUKP6qeakkMjFRIaQTV978AYKhg0hqmClg5p2a3ZlQgqyrTqKsGxP1_riaLaZYMpZ9xgo3qY0x2hpJnJJ7kqUXn"
+          />
+        </div>
+      </div>
+    </header>
+    <!-- SideNavBar -->
+    <nav
+      class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex-col p-md z-40 bg-surface-container-low dark:bg-surface-container-high border-r border-outline-variant"
+    >
+      <div class="mb-lg px-4">
+        <h2
+          class="text-title-lg font-title-lg text-primary dark:text-primary-fixed-dim"
+        >
+          Patient Portal
+        </h2>
+        <p class="text-body-md font-body-md text-on-surface-variant">
+          Welcome back
+        </p>
+      </div>
+      <button
+        class="mb-lg w-full bg-[#FF6E5C] text-white py-3 px-4 rounded-lg text-label-md font-label-md hover:opacity-90 transition-opacity"
+      >
+        Upload New Report
+      </button>
+      <ul class="flex-1 space-y-sm">
+        <li>
+          <a
+            class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined" data-icon="dashboard"
+              >dashboard</span
+            >
+            <span class="text-label-md font-label-md">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-semibold rounded-lg px-4 py-3 translate-x-1 duration-200"
+            href="/report/summary.html"
+          >
+            <span class="material-symbols-outlined" data-icon="description"
+              >description</span
+            >
+            <span class="text-label-md font-label-md">Reports</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg"
+            href="/ai-assistant/chat-home.html"
+          >
+            <span class="material-symbols-outlined" data-icon="psychology"
+              >psychology</span
+            >
+            <span class="text-label-md font-label-md">Insights</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg"
+            href="/app/dashboard.html"
+          >
+            <span class="material-symbols-outlined" data-icon="monitoring"
+              >monitoring</span
+            >
+            <span class="text-label-md font-label-md">Health Trends</span>
+          </a>
+        </li>
+      </ul>
+      <div class="mt-auto border-t border-outline-variant pt-sm">
+        <ul class="space-y-sm">
+          <li>
+            <a
+              class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg"
+              href="/app/dashboard.html"
+            >
+              <span class="material-symbols-outlined" data-icon="help"
+                >help</span
+              >
+              <span class="text-label-md font-label-md">Support</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center gap-md text-on-surface-variant dark:text-surface-variant px-4 py-3 hover:bg-surface-container-highest transition-all duration-200 rounded-lg"
+              href="/auth/login.html"
+            >
+              <span class="material-symbols-outlined" data-icon="logout"
+                >logout</span
+              >
+              <span class="text-label-md font-label-md">Sign Out</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- Main Content -->
+    <main
+      class="pt-[80px] md:pl-64 min-h-screen px-margin-mobile md:px-margin-desktop pb-xxl"
+    >
+      <div class="max-w-[1120px] mx-auto mt-lg">
+        <!-- Header Section -->
+        <div
+          class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md"
+        >
+          <div>
+            <h1
+              class="text-headline-lg-mobile md:text-headline-lg font-headline-lg text-primary mb-xs"
+            >
+              Comprehensive Blood Panel
+            </h1>
+            <p class="text-body-lg font-body-lg text-on-surface-variant">
+              Analyzed on October 24, 2023
+            </p>
+          </div>
+          <div class="flex gap-sm w-full md:w-auto">
+            <button
+              class="flex-1 md:flex-none flex items-center justify-center gap-sm bg-surface text-on-surface border border-outline-variant py-3 px-6 rounded-lg text-label-md font-label-md hover:bg-surface-container-low transition-colors shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)]"
+            >
+              <span
+                class="material-symbols-outlined text-[20px]"
+                data-icon="download"
+                >download</span
+              >
+              Download PDF
+            </button>
+            <button
+              class="flex-1 md:flex-none flex items-center justify-center gap-sm bg-[#FF6E5C] text-white py-3 px-6 rounded-lg text-label-md font-label-md hover:opacity-90 transition-opacity shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)]"
+            >
+              <span
+                class="material-symbols-outlined text-[20px]"
+                data-icon="share"
+                >share</span
+              >
+              Share Report
+            </button>
+          </div>
+        </div>
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+          <!-- Status Card -->
+          <div
+            class="md:col-span-8 bg-surface border border-surface-container-highest rounded-xl p-lg shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_0px_rgba(0,0,0,0.06)] transition-shadow duration-300"
+          >
+            <div class="flex items-start justify-between mb-lg">
+              <h2 class="text-title-lg font-title-lg text-primary">
+                High-Level Status
+              </h2>
+              <span
+                class="inline-flex items-center gap-xs px-3 py-1 bg-[#FDF8F7] border border-[#FF6E5C]/30 text-[#FF6E5C] rounded-full text-label-md font-label-md"
+              >
+                <span
+                  class="material-symbols-outlined text-[16px]"
+                  data-icon="check_circle"
+                  data-weight="fill"
+                  >check_circle</span
+                >
+                Generally Healthy
+              </span>
+            </div>
+            <p
+              class="text-body-md font-body-md text-on-surface-variant mb-lg leading-relaxed"
+            >
+              Your recent blood panel results look positive. Most of your key
+              markers are well within the normal ranges. There are a few minor
+              areas to monitor, but no immediate action is required. Continuing
+              your current wellness routine is recommended.
+            </p>
+            <div
+              class="border-t-2 border-[#FF6E5C] bg-[#FF6E5C]/5 rounded-b-lg p-md mt-sm flex gap-md items-start"
+            >
+              <span
+                class="material-symbols-outlined text-[#FF6E5C] mt-1"
+                data-icon="smart_toy"
+                >smart_toy</span
+              >
+              <div>
+                <p class="text-label-md font-label-md text-primary mb-xs">
+                  AI Assistant Note
+                </p>
+                <p class="text-body-md font-body-md text-on-surface-variant">
+                  I noticed your Vitamin D levels are slightly lower than your
+                  last test. Consider increasing sun exposure or discussing a
+                  supplement with your doctor.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Health Score Card -->
+          <div
+            class="md:col-span-4 bg-surface border border-surface-container-highest rounded-xl p-lg shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_0px_rgba(0,0,0,0.06)] transition-shadow duration-300 flex flex-col items-center justify-center text-center"
+          >
+            <h2
+              class="text-title-lg font-title-lg text-primary w-full text-left mb-lg"
+            >
+              Health Score
+            </h2>
+            <div class="relative w-32 h-32 mb-md">
+              <svg
+                class="w-full h-full transform -rotate-90"
+                viewBox="0 0 100 100"
+              >
+                <circle
+                  cx="50"
+                  cy="50"
+                  fill="none"
+                  r="45"
+                  stroke="#E6E1E0"
+                  stroke-width="8"
+                ></circle>
+                <circle
+                  class="transition-all duration-1000 ease-out"
+                  cx="50"
+                  cy="50"
+                  fill="none"
+                  r="45"
+                  stroke="#FF6E5C"
+                  stroke-dasharray="282.7"
+                  stroke-dashoffset="42.4"
+                  stroke-width="8"
+                ></circle>
+              </svg>
+              <div
+                class="absolute inset-0 flex items-center justify-center flex-col"
+              >
+                <span class="text-headline-lg font-headline-lg text-primary"
+                  >85</span
+                >
+                <span class="text-caption font-caption text-on-surface-variant"
+                  >/100</span
+                >
+              </div>
+            </div>
+            <p class="text-body-md font-body-md text-on-surface-variant">
+              Excellent overall wellness. Keep up the good work!
+            </p>
+          </div>
+          <!-- Top Findings -->
+          <div
+            class="md:col-span-12 bg-surface border border-surface-container-highest rounded-xl p-lg shadow-[0_4px_12px_0px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_0px_rgba(0,0,0,0.06)] transition-shadow duration-300"
+          >
+            <h2 class="text-title-lg font-title-lg text-primary mb-lg">
+              Top Findings
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+              <!-- Finding 1 -->
+              <div
+                class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50"
+              >
+                <div class="flex items-center gap-sm mb-sm">
+                  <div
+                    class="w-8 h-8 rounded-full bg-[#FF6E5C]/10 flex items-center justify-center text-[#FF6E5C]"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[18px]"
+                      data-icon="water_drop"
+                      >water_drop</span
+                    >
+                  </div>
+                  <h3
+                    class="text-label-md font-label-md text-primary font-semibold"
+                  >
+                    Cholesterol Levels
+                  </h3>
+                </div>
+                <p class="text-body-md font-body-md text-on-surface-variant">
+                  Your LDL and HDL cholesterol are perfectly balanced,
+                  indicating excellent cardiovascular health.
+                </p>
+              </div>
+              <!-- Finding 2 -->
+              <div
+                class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50"
+              >
+                <div class="flex items-center gap-sm mb-sm">
+                  <div
+                    class="w-8 h-8 rounded-full bg-[#FF6E5C]/10 flex items-center justify-center text-[#FF6E5C]"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[18px]"
+                      data-icon="bolt"
+                      >bolt</span
+                    >
+                  </div>
+                  <h3
+                    class="text-label-md font-label-md text-primary font-semibold"
+                  >
+                    Iron &amp; Ferritin
+                  </h3>
+                </div>
+                <p class="text-body-md font-body-md text-on-surface-variant">
+                  Iron stores are optimal, explaining your reported high energy
+                  levels during the consultation.
+                </p>
+              </div>
+              <!-- Finding 3 -->
+              <div
+                class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50 relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 left-0 w-1 h-full bg-[#FF6E5C]"
+                ></div>
+                <div class="flex items-center gap-sm mb-sm pl-xs">
+                  <div
+                    class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant"
+                  >
+                    <span
+                      class="material-symbols-outlined text-[18px]"
+                      data-icon="wb_sunny"
+                      >wb_sunny</span
+                    >
+                  </div>
+                  <h3
+                    class="text-label-md font-label-md text-primary font-semibold"
+                  >
+                    Vitamin D
+                  </h3>
+                </div>
+                <p
+                  class="text-body-md font-body-md text-on-surface-variant pl-xs"
+                >
+                  Borderline low. A slight increase in dietary intake or
+                  supplementation might be beneficial.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

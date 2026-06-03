@@ -1,393 +1,745 @@
-<!DOCTYPE html><html class="light" lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Reminder Settings - MedExplain AI</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reminder Settings - MedExplain AI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        /* Custom toggle switch styles to match the wellness coral theme */
-        .toggle-checkbox:checked {
-            right: 0;
-            border-color: #6875F5;
-        }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #6875F5;
-        }
-        
-        .toggle-coral:checked + .toggle-label-coral {
-            background-color: #FF6E5C; /* Wellness Coral */
-            border-color: #FF6E5C;
-        }
-        .toggle-coral:checked {
-            transform: translateX(100%);
-            border-color: white;
-        }
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      /* Custom toggle switch styles to match the wellness coral theme */
+      .toggle-checkbox:checked {
+        right: 0;
+        border-color: #6875f5;
+      }
+      .toggle-checkbox:checked + .toggle-label {
+        background-color: #6875f5;
+      }
+
+      .toggle-coral:checked + .toggle-label-coral {
+        background-color: #ff6e5c; /* Wellness Coral */
+        border-color: #ff6e5c;
+      }
+      .toggle-coral:checked {
+        transform: translateX(100%);
+        border-color: white;
+      }
     </style>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-dim": "#ddd9d8",
-                        "secondary-fixed-dim": "#cfc5bc",
-                        "on-tertiary-fixed-variant": "#464749",
-                        "on-error-container": "#93000a",
-                        "primary": "#161310",
-                        "on-background": "#1c1b1b",
-                        "surface-bright": "#fdf8f7",
-                        "error": "#ba1a1a",
-                        "surface-container-lowest": "#ffffff",
-                        "tertiary-fixed": "#e3e2e4",
-                        "secondary-fixed": "#ebe1d8",
-                        "on-error": "#ffffff",
-                        "inverse-primary": "#cdc5c0",
-                        "inverse-on-surface": "#f4f0ee",
-                        "on-tertiary": "#ffffff",
-                        "on-primary": "#ffffff",
-                        "on-tertiary-fixed": "#1a1c1e",
-                        "surface-container": "#f1edec",
-                        "primary-fixed": "#e9e1dc",
-                        "tertiary": "#121415",
-                        "surface-container-high": "#ece7e6",
-                        "on-secondary-container": "#69615a",
-                        "on-secondary-fixed": "#201b15",
-                        "on-secondary": "#ffffff",
-                        "outline-variant": "#cfc4bd",
-                        "on-primary-container": "#948e89",
-                        "tertiary-fixed-dim": "#c7c6c8",
-                        "primary-fixed-dim": "#cdc5c0",
-                        "outline": "#7e756f",
-                        "error-container": "#ffdad6",
-                        "background": "#fdf8f7",
-                        "on-surface-variant": "#4d4540",
-                        "tertiary-container": "#27282a",
-                        "primary-container": "#2b2724",
-                        "secondary": "#645d56",
-                        "on-surface": "#1c1b1b",
-                        "surface-container-low": "#f7f3f1",
-                        "surface-container-highest": "#e6e1e0",
-                        "on-secondary-fixed-variant": "#4c463f",
-                        "surface-variant": "#e6e1e0",
-                        "surface-tint": "#635d5a",
-                        "inverse-surface": "#313030",
-                        "secondary-container": "#e9ded5",
-                        "on-primary-fixed": "#1e1b18",
-                        "surface": "#fdf8f7",
-                        "on-tertiary-container": "#8f8f91",
-                        "on-primary-fixed-variant": "#4b4642",
-                        "wellness-coral": "#FF6E5C",
-                        "wellness-coral-light": "rgba(255, 110, 92, 0.05)",
-                        "muted-stone": "#E8E4E1"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "xxl": "48px",
-                        "md": "16px",
-                        "margin-mobile": "20px",
-                        "lg": "24px",
-                        "base": "8px",
-                        "margin-desktop": "64px",
-                        "gutter": "16px",
-                        "xl": "32px",
-                        "sm": "8px",
-                        "xs": "4px"
-                    },
-                    "fontFamily": {
-                        "headline-lg": ["Spectral", "serif"],
-                        "body-md": ["Inter", "sans-serif"],
-                        "title-lg": ["Inter", "sans-serif"],
-                        "display-lg": ["Spectral", "serif"],
-                        "body-lg": ["Inter", "sans-serif"],
-                        "headline-md": ["Spectral", "serif"],
-                        "headline-lg-mobile": ["Spectral", "serif"],
-                        "label-md": ["Inter", "sans-serif"],
-                        "caption": ["Inter", "sans-serif"]
-                    },
-                    "fontSize": {
-                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
-                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
-                        "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}],
-                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
-                    },
-                    "boxShadow": {
-                        "card": "0 4px 12px rgba(0, 0, 0, 0.04)",
-                        "card-hover": "0 8px 20px rgba(0, 0, 0, 0.06)"
-                    }
-                }
-            }
-        }
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#ddd9d8",
+              "secondary-fixed-dim": "#cfc5bc",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-error-container": "#93000a",
+              primary: "#161310",
+              "on-background": "#1c1b1b",
+              "surface-bright": "#fdf8f7",
+              error: "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed": "#e3e2e4",
+              "secondary-fixed": "#ebe1d8",
+              "on-error": "#ffffff",
+              "inverse-primary": "#cdc5c0",
+              "inverse-on-surface": "#f4f0ee",
+              "on-tertiary": "#ffffff",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed": "#1a1c1e",
+              "surface-container": "#f1edec",
+              "primary-fixed": "#e9e1dc",
+              tertiary: "#121415",
+              "surface-container-high": "#ece7e6",
+              "on-secondary-container": "#69615a",
+              "on-secondary-fixed": "#201b15",
+              "on-secondary": "#ffffff",
+              "outline-variant": "#cfc4bd",
+              "on-primary-container": "#948e89",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "primary-fixed-dim": "#cdc5c0",
+              outline: "#7e756f",
+              "error-container": "#ffdad6",
+              background: "#fdf8f7",
+              "on-surface-variant": "#4d4540",
+              "tertiary-container": "#27282a",
+              "primary-container": "#2b2724",
+              secondary: "#645d56",
+              "on-surface": "#1c1b1b",
+              "surface-container-low": "#f7f3f1",
+              "surface-container-highest": "#e6e1e0",
+              "on-secondary-fixed-variant": "#4c463f",
+              "surface-variant": "#e6e1e0",
+              "surface-tint": "#635d5a",
+              "inverse-surface": "#313030",
+              "secondary-container": "#e9ded5",
+              "on-primary-fixed": "#1e1b18",
+              surface: "#fdf8f7",
+              "on-tertiary-container": "#8f8f91",
+              "on-primary-fixed-variant": "#4b4642",
+              "wellness-coral": "#FF6E5C",
+              "wellness-coral-light": "rgba(255, 110, 92, 0.05)",
+              "muted-stone": "#E8E4E1",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              xxl: "48px",
+              md: "16px",
+              "margin-mobile": "20px",
+              lg: "24px",
+              base: "8px",
+              "margin-desktop": "64px",
+              gutter: "16px",
+              xl: "32px",
+              sm: "8px",
+              xs: "4px",
+            },
+            fontFamily: {
+              "headline-lg": ["Spectral", "serif"],
+              "body-md": ["Inter", "sans-serif"],
+              "title-lg": ["Inter", "sans-serif"],
+              "display-lg": ["Spectral", "serif"],
+              "body-lg": ["Inter", "sans-serif"],
+              "headline-md": ["Spectral", "serif"],
+              "headline-lg-mobile": ["Spectral", "serif"],
+              "label-md": ["Inter", "sans-serif"],
+              caption: ["Inter", "sans-serif"],
+            },
+            fontSize: {
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            },
+            boxShadow: {
+              card: "0 4px 12px rgba(0, 0, 0, 0.04)",
+              "card-hover": "0 8px 20px rgba(0, 0, 0, 0.06)",
+            },
+          },
+        },
+      };
     </script>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row antialiased selection:bg-wellness-coral selection:text-white">
-<!-- TopNavBar for Mobile -->
-<nav class="md:hidden bg-surface dark:bg-surface-container-lowest border-b border-outline-variant dark:border-outline-variant shadow-sm docked full-width top-0 sticky z-50">
-<div class="flex justify-between items-center w-full px-margin-mobile py-base h-[64px]">
-<div class="flex items-center gap-2">
-<span aria-label="Menu" class="material-symbols-outlined text-primary dark:text-primary-fixed cursor-pointer" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">menu</span>
-<span class="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed">MedExplain AI</span>
-</div>
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" data-icon="search">search</span>
-<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" data-icon="settings">settings</span>
-<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer" data-icon="account_circle">account_circle</span>
-</div>
-</div>
-<!-- Mobile Menu Overlay (Hidden by default) -->
-<div class="hidden absolute top-[64px] left-0 w-full bg-surface border-b border-outline-variant shadow-lg py-4 px-margin-mobile flex flex-col gap-4" id="mobile-menu">
-<a class="text-on-surface-variant font-medium py-2 px-4 rounded hover:bg-surface-container-highest transition-colors flex items-center gap-3" href="/app/dashboard.html">
-<span class="material-symbols-outlined">dashboard</span> Dashboard
-             </a>
-<a class="text-on-surface-variant font-medium py-2 px-4 rounded hover:bg-surface-container-highest transition-colors flex items-center gap-3" href="/report/summary.html">
-<span class="material-symbols-outlined">description</span> Reports
-             </a>
-<a class="text-on-surface-variant font-medium py-2 px-4 rounded hover:bg-surface-container-highest transition-colors flex items-center gap-3" href="/app/dashboard.html">
-<span class="material-symbols-outlined">lightbulb</span> Insights
-             </a>
-<a class="text-on-surface-variant font-medium py-2 px-4 rounded hover:bg-surface-container-highest transition-colors flex items-center gap-3" href="/app/dashboard.html">
-<span class="material-symbols-outlined">trending_up</span> Health Trends
-             </a>
-<a class="text-primary font-bold bg-secondary-container dark:bg-secondary-container rounded-lg py-2 px-4 flex items-center gap-3" href="/notifications/list.html">
-<span class="material-symbols-outlined">notifications</span> Notifications
-             </a>
-</div>
-</nav>
-<!-- SideNavBar for Desktop -->
-<aside class="hidden md:flex flex-col h-screen w-64 left-0 top-0 fixed bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant p-md gap-base z-40 overflow-y-auto">
-<div class="flex items-center gap-3 mb-xl px-2 pt-4">
-<div class="w-10 h-10 rounded-full bg-wellness-coral flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0">
-<!-- Fallback initals or user image -->
-<img alt="User profile" class="w-full h-full object-cover" data-alt="A small circular avatar placeholder image showing a softly lit, modern portrait of a person. The image serves as a user profile picture in a clean, healthcare AI application. The lighting is warm and approachable, fitting a wellness aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA30Amz3gUnIGvZLgg8W53KfqqLht-yLMzKfoHVFkxhbhOrChXm89BBzQoOPPVRJIiVzXBHwZtWGjERVcihpylzFIqGJw1riTJgvO9yUaPQM3Lo3VaQC96bd17uhyYaQwRlSSwRveTCr89Lc6cN58KCA1-_ZdCkiU4lz3vLXldYjdhCDpQQraY-meowKmYSNPApaE14CuG5KtMqiAM78vQB0T0B_hDWURAZyi2NyOiB0sp5WOUK1shQgq675vcV67L1OdMjD8uWbyJ5">
-</div>
-<div>
-<h1 class="font-headline-md text-[20px] leading-tight font-semibold text-primary">MedExplain AI</h1>
-<p class="font-caption text-caption text-on-surface-variant">Empathetic Insights</p>
-</div>
-</div>
-<nav class="flex-1 flex flex-col gap-2">
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest dark:hover:bg-surface-container-high transition-colors group" href="/app/dashboard.html">
-<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="dashboard">dashboard</span>
-<span class="font-label-md text-label-md group-hover:text-primary transition-colors">Dashboard</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest dark:hover:bg-surface-container-high transition-colors group" href="/report/summary.html">
-<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="description">description</span>
-<span class="font-label-md text-label-md group-hover:text-primary transition-colors">Reports</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest dark:hover:bg-surface-container-high transition-colors group" href="/app/dashboard.html">
-<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="lightbulb">lightbulb</span>
-<span class="font-label-md text-label-md group-hover:text-primary transition-colors">Insights</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest dark:hover:bg-surface-container-high transition-colors group" href="/app/dashboard.html">
-<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors" data-icon="trending_up">trending_up</span>
-<span class="font-label-md text-label-md group-hover:text-primary transition-colors">Health Trends</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold bg-secondary-container dark:bg-secondary-container scale-[0.98] transition-transform duration-150" href="/notifications/list.html">
-<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
-<span class="font-label-md text-label-md">Notifications</span>
-</a>
-</nav>
-<div class="mt-auto pt-4 border-t border-outline-variant px-2 pb-4">
-<a class="flex items-center gap-3 px-2 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors" href="/settings/home.html">
-<span class="material-symbols-outlined text-[20px]">settings</span>
-<span class="font-label-md text-label-md">Settings</span>
-</a>
-<a class="flex items-center gap-3 px-2 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors mt-1" href="/auth/login.html">
-<span class="material-symbols-outlined text-[20px]">logout</span>
-<span class="font-label-md text-label-md">Log out</span>
-</a>
-</div>
-</aside>
-<!-- Main Content Canvas -->
-<main class="flex-1 md:ml-64 p-margin-mobile md:p-margin-desktop bg-background min-h-screen relative">
-<div class="max-w-[800px] mx-auto w-full">
-<!-- Page Header -->
-<header class="mb-xl flex items-baseline gap-4 border-b border-outline-variant pb-md">
-<h1 class="font-display-lg text-display-lg text-primary">Notification Settings</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant hidden sm:block">Manage your reminders and alerts</p>
-</header>
-<form class="space-y-xl pb-xxl">
-<!-- Bento Grid Style Settings Sections -->
-<!-- Section 1: Health Updates -->
-<section class="bg-surface-container-lowest rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow duration-300 border border-muted-stone relative overflow-hidden group">
-<!-- Subtle AI highlight origin -->
-<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-wellness-coral/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="flex items-start justify-between gap-6 mb-md">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="material-symbols-outlined text-wellness-coral text-[24px]">vital_signs</span>
-<h2 class="font-headline-md text-[20px] text-primary">Health Updates</h2>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant">Stay informed about your latest medical data.</p>
-</div>
-</div>
-<div class="space-y-4 pt-4 border-t border-surface-container">
-<!-- Toggle Item -->
-<div class="flex items-center justify-between">
-<label class="flex flex-col cursor-pointer" for="toggle-new-reports">
-<span class="font-title-lg text-[16px] text-primary">New Reports Available</span>
-<span class="font-caption text-caption text-on-surface-variant">Get notified when new lab results are uploaded.</span>
-</label>
-<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked="" class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" id="toggle-new-reports" name="toggle" type="checkbox">
-<label class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200" for="toggle-new-reports"></label>
-</div>
-</div>
-<!-- Toggle Item -->
-<div class="flex items-center justify-between">
-<label class="flex flex-col cursor-pointer" for="toggle-analysis">
-<span class="font-title-lg text-[16px] text-primary">AI Analysis Complete</span>
-<span class="font-caption text-caption text-on-surface-variant">Alert me when MedExplain has finished interpreting my document.</span>
-</label>
-<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked="" class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" id="toggle-analysis" name="toggle" type="checkbox">
-<label class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200" for="toggle-analysis"></label>
-</div>
-</div>
-</div>
-</section>
-<!-- Section 2: Appointments -->
-<section class="bg-surface-container-lowest rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow duration-300 border border-muted-stone relative overflow-hidden group">
-<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-wellness-coral/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="flex items-start justify-between gap-6 mb-md">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="material-symbols-outlined text-wellness-coral text-[24px]">calendar_month</span>
-<h2 class="font-headline-md text-[20px] text-primary">Appointments</h2>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant">Manage scheduling alerts and upcoming visits.</p>
-</div>
-</div>
-<div class="space-y-4 pt-4 border-t border-surface-container">
-<!-- Toggle Item -->
-<div class="flex items-center justify-between">
-<label class="flex flex-col cursor-pointer" for="toggle-reminders">
-<span class="font-title-lg text-[16px] text-primary">Upcoming Reminders</span>
-<span class="font-caption text-caption text-on-surface-variant">24-hour and 1-hour notice before appointments.</span>
-</label>
-<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked="" class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" id="toggle-reminders" name="toggle" type="checkbox">
-<label class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200" for="toggle-reminders"></label>
-</div>
-</div>
-<!-- Toggle Item -->
-<div class="flex items-center justify-between">
-<label class="flex flex-col cursor-pointer" for="toggle-schedule">
-<span class="font-title-lg text-[16px] text-primary">Schedule Changes</span>
-<span class="font-caption text-caption text-on-surface-variant">Notifications for cancellations or time changes.</span>
-</label>
-<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked="" class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" id="toggle-schedule" name="toggle" type="checkbox">
-<label class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200" for="toggle-schedule"></label>
-</div>
-</div>
-</div>
-</section>
-<!-- Section 3: AI Insights -->
-<section class="bg-wellness-coral-light rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow duration-300 border-t-2 border-wellness-coral relative overflow-hidden">
-<div class="flex items-start justify-between gap-6 mb-md">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="material-symbols-outlined text-wellness-coral text-[24px]">auto_awesome</span>
-<h2 class="font-headline-md text-[20px] text-primary">AI Insights</h2>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant">Proactive guidance from your empathetic assistant.</p>
-</div>
-</div>
-<div class="space-y-4 pt-4 border-t border-muted-stone/50">
-<!-- Toggle Item -->
-<div class="flex items-center justify-between">
-<label class="flex flex-col cursor-pointer" for="toggle-weekly">
-<span class="font-title-lg text-[16px] text-primary">Weekly Summaries</span>
-<span class="font-caption text-caption text-on-surface-variant">A gentle overview of your week's health data.</span>
-</label>
-<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-<input class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" id="toggle-weekly" name="toggle" type="checkbox">
-<label class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200" for="toggle-weekly"></label>
-</div>
-</div>
-<!-- Toggle Item -->
-<div class="flex items-center justify-between">
-<label class="flex flex-col cursor-pointer" for="toggle-tips">
-<span class="font-title-lg text-[16px] text-primary">Personalized Health Tips</span>
-<span class="font-caption text-caption text-on-surface-variant">Occasional gentle suggestions based on your profile.</span>
-</label>
-<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked="" class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" id="toggle-tips" name="toggle" type="checkbox">
-<label class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200" for="toggle-tips"></label>
-</div>
-</div>
-</div>
-</section>
-<!-- Section 4: Account -->
-<section class="bg-surface-container-lowest rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow duration-300 border border-muted-stone relative overflow-hidden group">
-<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-wellness-coral/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="flex items-start justify-between gap-6 mb-md">
-<div>
-<div class="flex items-center gap-2 mb-1">
-<span class="material-symbols-outlined text-wellness-coral text-[24px]">shield_person</span>
-<h2 class="font-headline-md text-[20px] text-primary">Account</h2>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant">System notifications and privacy alerts.</p>
-</div>
-</div>
-<div class="space-y-4 pt-4 border-t border-surface-container">
-<!-- Toggle Item -->
-<div class="flex items-center justify-between">
-<label class="flex flex-col cursor-pointer" for="toggle-security">
-<span class="font-title-lg text-[16px] text-primary">Security Alerts</span>
-<span class="font-caption text-caption text-on-surface-variant">Important notices regarding your account safety.</span>
-</label>
-<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked="" class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" disabled="" id="toggle-security" name="toggle" type="checkbox">
-<label class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-not-allowed border border-muted-stone transition-colors duration-200 opacity-60" for="toggle-security"></label>
-</div>
-</div>
-<!-- Toggle Item -->
-<div class="flex items-center justify-between">
-<label class="flex flex-col cursor-pointer" for="toggle-newsletter">
-<span class="font-title-lg text-[16px] text-primary">Platform Newsletter</span>
-<span class="font-caption text-caption text-on-surface-variant">Updates about new MedExplain features.</span>
-</label>
-<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-<input class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out" id="toggle-newsletter" name="toggle" type="checkbox">
-<label class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200" for="toggle-newsletter"></label>
-</div>
-</div>
-</div>
-</section>
-<!-- Sticky Action Bar for Mobile / Normal on Desktop -->
-<div class="fixed bottom-0 left-0 w-full md:static md:w-auto p-margin-mobile md:p-0 bg-background/90 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none border-t border-outline-variant md:border-t-0 z-30 mt-xxl flex justify-end">
-<button class="w-full md:w-auto bg-[#FF6E5C] hover:bg-[#ff8a7a] text-white font-title-lg text-[16px] py-3 px-8 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px]" type="button">
-                        Save Preferences
-                    </button>
-</div>
-</form>
-</div>
-</main>
-<script>
-        // Simple script to handle custom toggle visual states if needed beyond CSS
-        document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
-            toggle.addEventListener('change', function() {
-                // Future interaction logic (e.g. toast notification) could go here
-            });
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row antialiased selection:bg-wellness-coral selection:text-white"
+  >
+    <!-- TopNavBar for Mobile -->
+    <nav
+      class="md:hidden bg-surface dark:bg-surface-container-lowest border-b border-outline-variant dark:border-outline-variant shadow-sm docked full-width top-0 sticky z-50"
+    >
+      <div
+        class="flex justify-between items-center w-full px-margin-mobile py-base h-[64px]"
+      >
+        <div class="flex items-center gap-2">
+          <span
+            aria-label="Menu"
+            class="material-symbols-outlined text-primary dark:text-primary-fixed cursor-pointer"
+            onclick="
+              document.getElementById('mobile-menu').classList.toggle('hidden')
+            "
+            >menu</span
+          >
+          <span
+            class="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed"
+            >MedExplain AI</span
+          >
+        </div>
+        <div class="flex items-center gap-4">
+          <span
+            class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer"
+            data-icon="search"
+            >search</span
+          >
+          <span
+            class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer"
+            data-icon="settings"
+            >settings</span
+          >
+          <span
+            class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer"
+            data-icon="account_circle"
+            >account_circle</span
+          >
+        </div>
+      </div>
+      <!-- Mobile Menu Overlay (Hidden by default) -->
+      <div
+        class="hidden absolute top-[64px] left-0 w-full bg-surface border-b border-outline-variant shadow-lg py-4 px-margin-mobile flex flex-col gap-4"
+        id="mobile-menu"
+      >
+        <a
+          class="text-on-surface-variant font-medium py-2 px-4 rounded hover:bg-surface-container-highest transition-colors flex items-center gap-3"
+          href="/app/dashboard.html"
+        >
+          <span class="material-symbols-outlined">dashboard</span> Dashboard
+        </a>
+        <a
+          class="text-on-surface-variant font-medium py-2 px-4 rounded hover:bg-surface-container-highest transition-colors flex items-center gap-3"
+          href="/report/summary.html"
+        >
+          <span class="material-symbols-outlined">description</span> Reports
+        </a>
+        <a
+          class="text-on-surface-variant font-medium py-2 px-4 rounded hover:bg-surface-container-highest transition-colors flex items-center gap-3"
+          href="/app/dashboard.html"
+        >
+          <span class="material-symbols-outlined">lightbulb</span> Insights
+        </a>
+        <a
+          class="text-on-surface-variant font-medium py-2 px-4 rounded hover:bg-surface-container-highest transition-colors flex items-center gap-3"
+          href="/app/dashboard.html"
+        >
+          <span class="material-symbols-outlined">trending_up</span> Health
+          Trends
+        </a>
+        <a
+          class="text-primary font-bold bg-secondary-container dark:bg-secondary-container rounded-lg py-2 px-4 flex items-center gap-3"
+          href="/notifications/list.html"
+        >
+          <span class="material-symbols-outlined">notifications</span>
+          Notifications
+        </a>
+      </div>
+    </nav>
+    <!-- SideNavBar for Desktop -->
+    <aside
+      class="hidden md:flex flex-col h-screen w-64 left-0 top-0 fixed bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant p-md gap-base z-40 overflow-y-auto"
+    >
+      <div class="flex items-center gap-3 mb-xl px-2 pt-4">
+        <div
+          class="w-10 h-10 rounded-full bg-wellness-coral flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0"
+        >
+          <!-- Fallback initals or user image -->
+          <img
+            alt="User profile"
+            class="w-full h-full object-cover"
+            data-alt="A small circular avatar placeholder image showing a softly lit, modern portrait of a person. The image serves as a user profile picture in a clean, healthcare AI application. The lighting is warm and approachable, fitting a wellness aesthetic."
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA30Amz3gUnIGvZLgg8W53KfqqLht-yLMzKfoHVFkxhbhOrChXm89BBzQoOPPVRJIiVzXBHwZtWGjERVcihpylzFIqGJw1riTJgvO9yUaPQM3Lo3VaQC96bd17uhyYaQwRlSSwRveTCr89Lc6cN58KCA1-_ZdCkiU4lz3vLXldYjdhCDpQQraY-meowKmYSNPApaE14CuG5KtMqiAM78vQB0T0B_hDWURAZyi2NyOiB0sp5WOUK1shQgq675vcV67L1OdMjD8uWbyJ5"
+          />
+        </div>
+        <div>
+          <h1
+            class="font-headline-md text-[20px] leading-tight font-semibold text-primary"
+          >
+            MedExplain AI
+          </h1>
+          <p class="font-caption text-caption text-on-surface-variant">
+            Empathetic Insights
+          </p>
+        </div>
+      </div>
+      <nav class="flex-1 flex flex-col gap-2">
+        <a
+          class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest dark:hover:bg-surface-container-high transition-colors group"
+          href="/app/dashboard.html"
+        >
+          <span
+            class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors"
+            data-icon="dashboard"
+            >dashboard</span
+          >
+          <span
+            class="font-label-md text-label-md group-hover:text-primary transition-colors"
+            >Dashboard</span
+          >
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest dark:hover:bg-surface-container-high transition-colors group"
+          href="/report/summary.html"
+        >
+          <span
+            class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors"
+            data-icon="description"
+            >description</span
+          >
+          <span
+            class="font-label-md text-label-md group-hover:text-primary transition-colors"
+            >Reports</span
+          >
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest dark:hover:bg-surface-container-high transition-colors group"
+          href="/app/dashboard.html"
+        >
+          <span
+            class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors"
+            data-icon="lightbulb"
+            >lightbulb</span
+          >
+          <span
+            class="font-label-md text-label-md group-hover:text-primary transition-colors"
+            >Insights</span
+          >
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest dark:hover:bg-surface-container-high transition-colors group"
+          href="/app/dashboard.html"
+        >
+          <span
+            class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors"
+            data-icon="trending_up"
+            >trending_up</span
+          >
+          <span
+            class="font-label-md text-label-md group-hover:text-primary transition-colors"
+            >Health Trends</span
+          >
+        </a>
+        <a
+          class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold bg-secondary-container dark:bg-secondary-container scale-[0.98] transition-transform duration-150"
+          href="/notifications/list.html"
+        >
+          <span
+            class="material-symbols-outlined text-[20px]"
+            data-icon="notifications"
+            >notifications</span
+          >
+          <span class="font-label-md text-label-md">Notifications</span>
+        </a>
+      </nav>
+      <div class="mt-auto pt-4 border-t border-outline-variant px-2 pb-4">
+        <a
+          class="flex items-center gap-3 px-2 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors"
+          href="/settings/home.html"
+        >
+          <span class="material-symbols-outlined text-[20px]">settings</span>
+          <span class="font-label-md text-label-md">Settings</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-2 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors mt-1"
+          href="/auth/login.html"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          <span class="font-label-md text-label-md">Log out</span>
+        </a>
+      </div>
+    </aside>
+    <!-- Main Content Canvas -->
+    <main
+      class="flex-1 md:ml-64 p-margin-mobile md:p-margin-desktop bg-background min-h-screen relative"
+    >
+      <div class="max-w-[800px] mx-auto w-full">
+        <!-- Page Header -->
+        <header
+          class="mb-xl flex items-baseline gap-4 border-b border-outline-variant pb-md"
+        >
+          <h1 class="font-display-lg text-display-lg text-primary">
+            Notification Settings
+          </h1>
+          <p
+            class="font-body-lg text-body-lg text-on-surface-variant hidden sm:block"
+          >
+            Manage your reminders and alerts
+          </p>
+        </header>
+        <form class="space-y-xl pb-xxl">
+          <!-- Bento Grid Style Settings Sections -->
+          <!-- Section 1: Health Updates -->
+          <section
+            class="bg-surface-container-lowest rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow duration-300 border border-muted-stone relative overflow-hidden group"
+          >
+            <!-- Subtle AI highlight origin -->
+            <div
+              class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-wellness-coral/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+            ></div>
+            <div class="flex items-start justify-between gap-6 mb-md">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span
+                    class="material-symbols-outlined text-wellness-coral text-[24px]"
+                    >vital_signs</span
+                  >
+                  <h2 class="font-headline-md text-[20px] text-primary">
+                    Health Updates
+                  </h2>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                  Stay informed about your latest medical data.
+                </p>
+              </div>
+            </div>
+            <div class="space-y-4 pt-4 border-t border-surface-container">
+              <!-- Toggle Item -->
+              <div class="flex items-center justify-between">
+                <label
+                  class="flex flex-col cursor-pointer"
+                  for="toggle-new-reports"
+                >
+                  <span class="font-title-lg text-[16px] text-primary"
+                    >New Reports Available</span
+                  >
+                  <span
+                    class="font-caption text-caption text-on-surface-variant"
+                    >Get notified when new lab results are uploaded.</span
+                  >
+                </label>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    checked=""
+                    class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"
+                    id="toggle-new-reports"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200"
+                    for="toggle-new-reports"
+                  ></label>
+                </div>
+              </div>
+              <!-- Toggle Item -->
+              <div class="flex items-center justify-between">
+                <label
+                  class="flex flex-col cursor-pointer"
+                  for="toggle-analysis"
+                >
+                  <span class="font-title-lg text-[16px] text-primary"
+                    >AI Analysis Complete</span
+                  >
+                  <span
+                    class="font-caption text-caption text-on-surface-variant"
+                    >Alert me when MedExplain has finished interpreting my
+                    document.</span
+                  >
+                </label>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    checked=""
+                    class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"
+                    id="toggle-analysis"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200"
+                    for="toggle-analysis"
+                  ></label>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- Section 2: Appointments -->
+          <section
+            class="bg-surface-container-lowest rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow duration-300 border border-muted-stone relative overflow-hidden group"
+          >
+            <div
+              class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-wellness-coral/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+            ></div>
+            <div class="flex items-start justify-between gap-6 mb-md">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span
+                    class="material-symbols-outlined text-wellness-coral text-[24px]"
+                    >calendar_month</span
+                  >
+                  <h2 class="font-headline-md text-[20px] text-primary">
+                    Appointments
+                  </h2>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                  Manage scheduling alerts and upcoming visits.
+                </p>
+              </div>
+            </div>
+            <div class="space-y-4 pt-4 border-t border-surface-container">
+              <!-- Toggle Item -->
+              <div class="flex items-center justify-between">
+                <label
+                  class="flex flex-col cursor-pointer"
+                  for="toggle-reminders"
+                >
+                  <span class="font-title-lg text-[16px] text-primary"
+                    >Upcoming Reminders</span
+                  >
+                  <span
+                    class="font-caption text-caption text-on-surface-variant"
+                    >24-hour and 1-hour notice before appointments.</span
+                  >
+                </label>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    checked=""
+                    class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"
+                    id="toggle-reminders"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200"
+                    for="toggle-reminders"
+                  ></label>
+                </div>
+              </div>
+              <!-- Toggle Item -->
+              <div class="flex items-center justify-between">
+                <label
+                  class="flex flex-col cursor-pointer"
+                  for="toggle-schedule"
+                >
+                  <span class="font-title-lg text-[16px] text-primary"
+                    >Schedule Changes</span
+                  >
+                  <span
+                    class="font-caption text-caption text-on-surface-variant"
+                    >Notifications for cancellations or time changes.</span
+                  >
+                </label>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    checked=""
+                    class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"
+                    id="toggle-schedule"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200"
+                    for="toggle-schedule"
+                  ></label>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- Section 3: AI Insights -->
+          <section
+            class="bg-wellness-coral-light rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow duration-300 border-t-2 border-wellness-coral relative overflow-hidden"
+          >
+            <div class="flex items-start justify-between gap-6 mb-md">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span
+                    class="material-symbols-outlined text-wellness-coral text-[24px]"
+                    >auto_awesome</span
+                  >
+                  <h2 class="font-headline-md text-[20px] text-primary">
+                    AI Insights
+                  </h2>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                  Proactive guidance from your empathetic assistant.
+                </p>
+              </div>
+            </div>
+            <div class="space-y-4 pt-4 border-t border-muted-stone/50">
+              <!-- Toggle Item -->
+              <div class="flex items-center justify-between">
+                <label class="flex flex-col cursor-pointer" for="toggle-weekly">
+                  <span class="font-title-lg text-[16px] text-primary"
+                    >Weekly Summaries</span
+                  >
+                  <span
+                    class="font-caption text-caption text-on-surface-variant"
+                    >A gentle overview of your week's health data.</span
+                  >
+                </label>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"
+                    id="toggle-weekly"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200"
+                    for="toggle-weekly"
+                  ></label>
+                </div>
+              </div>
+              <!-- Toggle Item -->
+              <div class="flex items-center justify-between">
+                <label class="flex flex-col cursor-pointer" for="toggle-tips">
+                  <span class="font-title-lg text-[16px] text-primary"
+                    >Personalized Health Tips</span
+                  >
+                  <span
+                    class="font-caption text-caption text-on-surface-variant"
+                    >Occasional gentle suggestions based on your profile.</span
+                  >
+                </label>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    checked=""
+                    class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"
+                    id="toggle-tips"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200"
+                    for="toggle-tips"
+                  ></label>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- Section 4: Account -->
+          <section
+            class="bg-surface-container-lowest rounded-xl p-lg shadow-card hover:shadow-card-hover transition-shadow duration-300 border border-muted-stone relative overflow-hidden group"
+          >
+            <div
+              class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-wellness-coral/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+            ></div>
+            <div class="flex items-start justify-between gap-6 mb-md">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span
+                    class="material-symbols-outlined text-wellness-coral text-[24px]"
+                    >shield_person</span
+                  >
+                  <h2 class="font-headline-md text-[20px] text-primary">
+                    Account
+                  </h2>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                  System notifications and privacy alerts.
+                </p>
+              </div>
+            </div>
+            <div class="space-y-4 pt-4 border-t border-surface-container">
+              <!-- Toggle Item -->
+              <div class="flex items-center justify-between">
+                <label
+                  class="flex flex-col cursor-pointer"
+                  for="toggle-security"
+                >
+                  <span class="font-title-lg text-[16px] text-primary"
+                    >Security Alerts</span
+                  >
+                  <span
+                    class="font-caption text-caption text-on-surface-variant"
+                    >Important notices regarding your account safety.</span
+                  >
+                </label>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    checked=""
+                    class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"
+                    disabled=""
+                    id="toggle-security"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-not-allowed border border-muted-stone transition-colors duration-200 opacity-60"
+                    for="toggle-security"
+                  ></label>
+                </div>
+              </div>
+              <!-- Toggle Item -->
+              <div class="flex items-center justify-between">
+                <label
+                  class="flex flex-col cursor-pointer"
+                  for="toggle-newsletter"
+                >
+                  <span class="font-title-lg text-[16px] text-primary"
+                    >Platform Newsletter</span
+                  >
+                  <span
+                    class="font-caption text-caption text-on-surface-variant"
+                    >Updates about new MedExplain features.</span
+                  >
+                </label>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    class="toggle-coral toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-muted-stone appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"
+                    id="toggle-newsletter"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label-coral block overflow-hidden h-6 rounded-full bg-muted-stone cursor-pointer border border-muted-stone transition-colors duration-200"
+                    for="toggle-newsletter"
+                  ></label>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- Sticky Action Bar for Mobile / Normal on Desktop -->
+          <div
+            class="fixed bottom-0 left-0 w-full md:static md:w-auto p-margin-mobile md:p-0 bg-background/90 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none border-t border-outline-variant md:border-t-0 z-30 mt-xxl flex justify-end"
+          >
+            <button
+              class="w-full md:w-auto bg-[#FF6E5C] hover:bg-[#ff8a7a] text-white font-title-lg text-[16px] py-3 px-8 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 min-h-[48px]"
+              type="button"
+            >
+              Save Preferences
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+    <script>
+      // Simple script to handle custom toggle visual states if needed beyond CSS
+      document.querySelectorAll(".toggle-checkbox").forEach((toggle) => {
+        toggle.addEventListener("change", function () {
+          // Future interaction logic (e.g. toast notification) could go here
         });
+      });
     </script>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>

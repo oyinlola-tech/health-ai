@@ -1,387 +1,676 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>MedExplain AI - Home Dashboard</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MedExplain AI - Home Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
 
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                            "tertiary-container": "#27282a",
-                            "on-primary-fixed-variant": "#4b4642",
-                            "primary-fixed": "#e9e1dc",
-                            "on-secondary-fixed-variant": "#4c463f",
-                            "surface-container-highest": "#e6e1e0",
-                            "surface-container-lowest": "#ffffff",
-                            "tertiary-fixed": "#e3e2e4",
-                            "secondary": "#645d56",
-                            "outline-variant": "#cfc4bd",
-                            "on-background": "#1c1b1b",
-                            "tertiary-fixed-dim": "#c7c6c8",
-                            "on-tertiary": "#ffffff",
-                            "surface-dim": "#ddd9d8",
-                            "surface-container-low": "#f7f3f1",
-                            "surface-variant": "#e6e1e0",
-                            "on-secondary-fixed": "#201b15",
-                            "primary-container": "#2b2724",
-                            "on-tertiary-fixed-variant": "#464749",
-                            "on-error-container": "#93000a",
-                            "surface-bright": "#fdf8f7",
-                            "surface-container-high": "#ece7e6",
-                            "on-secondary": "#ffffff",
-                            "inverse-on-surface": "#f4f0ee",
-                            "error-container": "#ffdad6",
-                            "surface": "#fdf8f7",
-                            "secondary-fixed": "#ebe1d8",
-                            "on-primary-container": "#948e89",
-                            "primary-fixed-dim": "#cdc5c0",
-                            "primary": "#161310",
-                            "background": "#fdf8f7",
-                            "tertiary": "#121415",
-                            "on-primary": "#ffffff",
-                            "on-tertiary-fixed": "#1a1c1e",
-                            "inverse-primary": "#cdc5c0",
-                            "on-surface": "#1c1b1b",
-                            "on-secondary-container": "#69615a",
-                            "on-primary-fixed": "#1e1b18",
-                            "surface-container": "#f1edec",
-                            "on-tertiary-container": "#8f8f91",
-                            "on-surface-variant": "#4d4540",
-                            "on-error": "#ffffff",
-                            "surface-tint": "#635d5a",
-                            "inverse-surface": "#313030",
-                            "error": "#ba1a1a",
-                            "outline": "#7e756f",
-                            "secondary-fixed-dim": "#cfc5bc",
-                            "secondary-container": "#e9ded5"
-                    },
-                    "borderRadius": {
-                            "DEFAULT": "0.25rem",
-                            "lg": "0.5rem",
-                            "xl": "0.75rem",
-                            "full": "9999px"
-                    },
-                    "spacing": {
-                            "margin-desktop": "64px",
-                            "sm": "8px",
-                            "md": "16px",
-                            "xl": "32px",
-                            "xs": "4px",
-                            "gutter": "16px",
-                            "lg": "24px",
-                            "base": "8px",
-                            "xxl": "48px",
-                            "margin-mobile": "20px"
-                    },
-                    "fontFamily": {
-                            "headline-lg": ["Spectral"],
-                            "body-md": ["Inter"],
-                            "body-lg": ["Inter"],
-                            "title-lg": ["Inter"],
-                            "label-md": ["Inter"],
-                            "headline-md": ["Spectral"],
-                            "caption": ["Inter"],
-                            "display-lg": ["Spectral"],
-                            "headline-lg-mobile": ["Spectral"]
-                    },
-                    "fontSize": {
-                            "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
-                            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                            "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                            "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
-                            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
-                            "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
-                            "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
-                            "headline-lg-mobile": ["28px", {"lineHeight": "34px", "fontWeight": "600"}]
-                    }
-                },
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#27282a",
+              "on-primary-fixed-variant": "#4b4642",
+              "primary-fixed": "#e9e1dc",
+              "on-secondary-fixed-variant": "#4c463f",
+              "surface-container-highest": "#e6e1e0",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed": "#e3e2e4",
+              secondary: "#645d56",
+              "outline-variant": "#cfc4bd",
+              "on-background": "#1c1b1b",
+              "tertiary-fixed-dim": "#c7c6c8",
+              "on-tertiary": "#ffffff",
+              "surface-dim": "#ddd9d8",
+              "surface-container-low": "#f7f3f1",
+              "surface-variant": "#e6e1e0",
+              "on-secondary-fixed": "#201b15",
+              "primary-container": "#2b2724",
+              "on-tertiary-fixed-variant": "#464749",
+              "on-error-container": "#93000a",
+              "surface-bright": "#fdf8f7",
+              "surface-container-high": "#ece7e6",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#f4f0ee",
+              "error-container": "#ffdad6",
+              surface: "#fdf8f7",
+              "secondary-fixed": "#ebe1d8",
+              "on-primary-container": "#948e89",
+              "primary-fixed-dim": "#cdc5c0",
+              primary: "#161310",
+              background: "#fdf8f7",
+              tertiary: "#121415",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed": "#1a1c1e",
+              "inverse-primary": "#cdc5c0",
+              "on-surface": "#1c1b1b",
+              "on-secondary-container": "#69615a",
+              "on-primary-fixed": "#1e1b18",
+              "surface-container": "#f1edec",
+              "on-tertiary-container": "#8f8f91",
+              "on-surface-variant": "#4d4540",
+              "on-error": "#ffffff",
+              "surface-tint": "#635d5a",
+              "inverse-surface": "#313030",
+              error: "#ba1a1a",
+              outline: "#7e756f",
+              "secondary-fixed-dim": "#cfc5bc",
+              "secondary-container": "#e9ded5",
             },
-        }
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-desktop": "64px",
+              sm: "8px",
+              md: "16px",
+              xl: "32px",
+              xs: "4px",
+              gutter: "16px",
+              lg: "24px",
+              base: "8px",
+              xxl: "48px",
+              "margin-mobile": "20px",
+            },
+            fontFamily: {
+              "headline-lg": ["Spectral"],
+              "body-md": ["Inter"],
+              "body-lg": ["Inter"],
+              "title-lg": ["Inter"],
+              "label-md": ["Inter"],
+              "headline-md": ["Spectral"],
+              caption: ["Inter"],
+              "display-lg": ["Spectral"],
+              "headline-lg-mobile": ["Spectral"],
+            },
+            fontSize: {
+              "headline-lg": [
+                "32px",
+                { lineHeight: "40px", fontWeight: "600" },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "title-lg": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+              "label-md": [
+                "14px",
+                {
+                  lineHeight: "20px",
+                  letterSpacing: "0.01em",
+                  fontWeight: "500",
+                },
+              ],
+              "headline-md": [
+                "24px",
+                { lineHeight: "32px", fontWeight: "500" },
+              ],
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "display-lg": [
+                "48px",
+                {
+                  lineHeight: "56px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "600",
+                },
+              ],
+              "headline-lg-mobile": [
+                "28px",
+                { lineHeight: "34px", fontWeight: "600" },
+              ],
+            },
+          },
+        },
+      };
     </script>
-<style>
-        body {
-            background-color: #FDF6F3; /* Level 0 Background as per Style Guidance */
-        }
-        .wellness-coral-bg {
-            background-color: #FF6E5C;
-        }
-        .wellness-coral-text {
-            color: #FF6E5C;
-        }
-        .wellness-coral-border {
-            border-color: #FF6E5C;
-        }
-        
-        .card-surface {
-            background-color: #FFFFFF;
-            border: 1px solid #E8E4E1;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.04);
-        }
-        .card-surface:hover {
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
-        }
-        .ai-highlight-top {
-            border-top: 2px solid #FF6E5C;
-        }
+    <style>
+      body {
+        background-color: #fdf6f3; /* Level 0 Background as per Style Guidance */
+      }
+      .wellness-coral-bg {
+        background-color: #ff6e5c;
+      }
+      .wellness-coral-text {
+        color: #ff6e5c;
+      }
+      .wellness-coral-border {
+        border-color: #ff6e5c;
+      }
+
+      .card-surface {
+        background-color: #ffffff;
+        border: 1px solid #e8e4e1;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.04);
+      }
+      .card-surface:hover {
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+      }
+      .ai-highlight-top {
+        border-top: 2px solid #ff6e5c;
+      }
     </style>
-<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
-<link rel="manifest" href="/assets/brand/site.webmanifest">
-<link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body class="text-on-background font-body-md antialiased flex flex-col md:flex-row min-h-screen"><a href="/sitemap" class="sr-only focus:not-sr-only">Page directory</a>
-<!-- Mobile Top App Bar -->
-<header class="md:hidden bg-surface dark:bg-background shadow-sm w-full top-0 sticky z-50">
-<div class="flex justify-between items-center px-margin-mobile py-md w-full">
-<div class="font-headline-md text-headline-md font-bold text-primary dark:text-on-background">
-                MedExplain AI
-            </div>
-<div class="flex items-center gap-md text-primary dark:text-on-background">
-<span class="material-symbols-outlined cursor-pointer hover:bg-surface-container-low dark:hover:bg-tertiary-container transition-colors p-sm rounded-full active:opacity-80">notifications</span>
-<span class="material-symbols-outlined cursor-pointer hover:bg-surface-container-low dark:hover:bg-tertiary-container transition-colors p-sm rounded-full active:opacity-80">account_circle</span>
-</div>
-</div>
-<!-- Mobile Bottom Nav Bar (Simulated via flex row below content for true mobile app feel, but placed here for structure) -->
-</header>
-<!-- Desktop Side Nav Bar -->
-<nav class="hidden md:flex flex-col h-screen w-64 left-0 sticky bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline py-xl px-md shadow-md z-40">
-<div class="flex items-center gap-md mb-xxl">
-<img alt="Medical Portal Logo" class="w-12 h-12 rounded-full object-cover" data-alt="A clean, abstract logo symbol for a modern healthcare application, featuring soft curved shapes in a coral and warm gray color palette, set against a pristine white background. The lighting is soft and inviting, emphasizing a sense of calm and empathetic medical care." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCTJR60eh7FMscw4m0hf7-z7EoBVcHqhn735j740tiXa2mVbd_U_ZysKLvz0soDzAYFNDEkF4IAeUFTe2u8MD8dJ_yqzhc4wGVNUqB6aVB64ye84HvClXh3Aowrxh0laQJxIL7d5o93xGIeWSXPQ_iLxW8OaN2JN9NG_7FYsYbY7dizyrZI96g0TB2BOoY05UOa98CNnyDvOwm_Evm2wADRyKLjSIj7peV2viHn4GdP9aaKnxMeuJKCljpurBsluREpdpWYfGAtJRO">
-<div>
-<h1 class="font-headline-md text-headline-md font-bold text-primary">Medical Portal</h1>
-<p class="font-caption text-caption text-on-surface-variant">Empathetic Clarity</p>
-</div>
-</div>
-<button class="w-full wellness-coral-bg text-on-primary font-label-md text-label-md py-md rounded-lg mb-xxl flex justify-center items-center gap-sm hover:opacity-90 transition-opacity min-h-[48px] shadow-sm">
-<span class="material-symbols-outlined">upload</span>
-            Upload New Report
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+    <link rel="manifest" href="/assets/brand/site.webmanifest" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body
+    class="text-on-background font-body-md antialiased flex flex-col md:flex-row min-h-screen"
+  >
+    <a href="/sitemap" class="sr-only focus:not-sr-only">Page directory</a>
+    <!-- Mobile Top App Bar -->
+    <header
+      class="md:hidden bg-surface dark:bg-background shadow-sm w-full top-0 sticky z-50"
+    >
+      <div
+        class="flex justify-between items-center px-margin-mobile py-md w-full"
+      >
+        <div
+          class="font-headline-md text-headline-md font-bold text-primary dark:text-on-background"
+        >
+          MedExplain AI
+        </div>
+        <div
+          class="flex items-center gap-md text-primary dark:text-on-background"
+        >
+          <span
+            class="material-symbols-outlined cursor-pointer hover:bg-surface-container-low dark:hover:bg-tertiary-container transition-colors p-sm rounded-full active:opacity-80"
+            >notifications</span
+          >
+          <span
+            class="material-symbols-outlined cursor-pointer hover:bg-surface-container-low dark:hover:bg-tertiary-container transition-colors p-sm rounded-full active:opacity-80"
+            >account_circle</span
+          >
+        </div>
+      </div>
+      <!-- Mobile Bottom Nav Bar (Simulated via flex row below content for true mobile app feel, but placed here for structure) -->
+    </header>
+    <!-- Desktop Side Nav Bar -->
+    <nav
+      class="hidden md:flex flex-col h-screen w-64 left-0 sticky bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline py-xl px-md shadow-md z-40"
+    >
+      <div class="flex items-center gap-md mb-xxl">
+        <img
+          alt="Medical Portal Logo"
+          class="w-12 h-12 rounded-full object-cover"
+          data-alt="A clean, abstract logo symbol for a modern healthcare application, featuring soft curved shapes in a coral and warm gray color palette, set against a pristine white background. The lighting is soft and inviting, emphasizing a sense of calm and empathetic medical care."
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCTJR60eh7FMscw4m0hf7-z7EoBVcHqhn735j740tiXa2mVbd_U_ZysKLvz0soDzAYFNDEkF4IAeUFTe2u8MD8dJ_yqzhc4wGVNUqB6aVB64ye84HvClXh3Aowrxh0laQJxIL7d5o93xGIeWSXPQ_iLxW8OaN2JN9NG_7FYsYbY7dizyrZI96g0TB2BOoY05UOa98CNnyDvOwm_Evm2wADRyKLjSIj7peV2viHn4GdP9aaKnxMeuJKCljpurBsluREpdpWYfGAtJRO"
+        />
+        <div>
+          <h1 class="font-headline-md text-headline-md font-bold text-primary">
+            Medical Portal
+          </h1>
+          <p class="font-caption text-caption text-on-surface-variant">
+            Empathetic Clarity
+          </p>
+        </div>
+      </div>
+      <button
+        class="w-full wellness-coral-bg text-on-primary font-label-md text-label-md py-md rounded-lg mb-xxl flex justify-center items-center gap-sm hover:opacity-90 transition-opacity min-h-[48px] shadow-sm"
+      >
+        <span class="material-symbols-outlined">upload</span>
+        Upload New Report
+      </button>
+      <div class="flex flex-col gap-sm flex-grow">
+        <!-- Active Navigation Item -->
+        <a
+          class="flex items-center gap-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg px-md py-sm font-bold scale-98 active:scale-95 duration-200"
+          href="/dashboard"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >assignment</span
+          >
+          <span class="font-label-md text-label-md">Assessment</span>
+        </a>
+        <a
+          class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200"
+          href="/reports"
+        >
+          <span class="material-symbols-outlined">description</span>
+          <span class="font-label-md text-label-md">Reports</span>
+        </a>
+        <a
+          class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200"
+          href="/chat"
+        >
+          <span class="material-symbols-outlined">psychology</span>
+          <span class="font-label-md text-label-md">Insights</span>
+        </a>
+        <a
+          class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200"
+          href="/dashboard"
+        >
+          <span class="material-symbols-outlined">trending_up</span>
+          <span class="font-label-md text-label-md">Health Trends</span>
+        </a>
+      </div>
+      <div
+        class="flex flex-col gap-sm mt-auto pt-lg border-t border-outline-variant"
+      >
+        <a
+          class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200"
+          href="/settings/home.html"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          <span class="font-label-md text-label-md">Settings</span>
+        </a>
+        <a
+          class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200"
+          href="/dashboard"
+        >
+          <span class="material-symbols-outlined">help</span>
+          <span class="font-label-md text-label-md">Support</span>
+        </a>
+      </div>
+    </nav>
+    <!-- Main Content Canvas -->
+    <main
+      class="flex-1 px-margin-mobile py-lg md:px-margin-desktop md:py-xxl max-w-[1120px] mx-auto w-full pb-32 md:pb-xxl"
+    >
+      <!-- Mobile Welcome & CTA (Hidden on Desktop) -->
+      <div class="md:hidden flex flex-col gap-lg mb-xl">
+        <div>
+          <h2
+            class="font-headline-lg-mobile text-headline-lg-mobile text-primary"
+          >
+            Good morning, Sarah
+          </h2>
+          <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
+            Here is your health overview for today.
+          </p>
+        </div>
+        <button
+          class="w-full wellness-coral-bg text-on-primary font-label-md text-label-md py-md rounded-lg flex justify-center items-center gap-sm hover:opacity-90 transition-opacity min-h-[48px] shadow-sm"
+        >
+          <span class="material-symbols-outlined">upload</span>
+          Upload New Report
         </button>
-<div class="flex flex-col gap-sm flex-grow">
-<!-- Active Navigation Item -->
-<a class="flex items-center gap-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg px-md py-sm font-bold scale-98 active:scale-95 duration-200" href="/dashboard">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
-<span class="font-label-md text-label-md">Assessment</span>
-</a>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200" href="/reports">
-<span class="material-symbols-outlined">description</span>
-<span class="font-label-md text-label-md">Reports</span>
-</a>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200" href="/chat">
-<span class="material-symbols-outlined">psychology</span>
-<span class="font-label-md text-label-md">Insights</span>
-</a>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200" href="/dashboard">
-<span class="material-symbols-outlined">trending_up</span>
-<span class="font-label-md text-label-md">Health Trends</span>
-</a>
-</div>
-<div class="flex flex-col gap-sm mt-auto pt-lg border-t border-outline-variant">
-<a class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200" href="/settings/home.html">
-<span class="material-symbols-outlined">settings</span>
-<span class="font-label-md text-label-md">Settings</span>
-</a>
-<a class="flex items-center gap-md text-on-surface-variant dark:text-on-secondary-container px-md py-sm hover:bg-surface-container-high dark:hover:bg-tertiary-container transition-all rounded-lg scale-98 active:scale-95 duration-200" href="/dashboard">
-<span class="material-symbols-outlined">help</span>
-<span class="font-label-md text-label-md">Support</span>
-</a>
-</div>
-</nav>
-<!-- Main Content Canvas -->
-<main class="flex-1 px-margin-mobile py-lg md:px-margin-desktop md:py-xxl max-w-[1120px] mx-auto w-full pb-32 md:pb-xxl">
-<!-- Mobile Welcome & CTA (Hidden on Desktop) -->
-<div class="md:hidden flex flex-col gap-lg mb-xl">
-<div>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Good morning, Sarah</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-sm">Here is your health overview for today.</p>
-</div>
-<button class="w-full wellness-coral-bg text-on-primary font-label-md text-label-md py-md rounded-lg flex justify-center items-center gap-sm hover:opacity-90 transition-opacity min-h-[48px] shadow-sm">
-<span class="material-symbols-outlined">upload</span>
-                Upload New Report
+      </div>
+      <!-- Desktop Welcome -->
+      <div class="hidden md:block mb-xxl">
+        <h2 class="font-headline-lg text-headline-lg text-primary">
+          Good morning, Sarah
+        </h2>
+        <p class="font-body-lg text-body-lg text-on-surface-variant mt-sm">
+          Here is your comprehensive health overview and latest AI insights.
+        </p>
+      </div>
+      <!-- Bento Grid Layout -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-lg md:gap-xl">
+        <!-- Health Score (Spans full on mobile, 4 cols on desktop) -->
+        <div
+          class="col-span-1 md:col-span-4 card-surface rounded-xl p-lg flex flex-col items-center justify-center text-center relative overflow-hidden"
+        >
+          <div class="absolute top-0 right-0 p-sm">
+            <span
+              class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors"
+              >info</span
+            >
+          </div>
+          <h3
+            class="font-title-lg text-title-lg text-primary mb-md w-full text-left"
+          >
+            Overall Health Score
+          </h3>
+          <div
+            class="relative w-48 h-48 flex items-center justify-center my-md"
+          >
+            <!-- Circular Progress SVG -->
+            <svg
+              class="w-full h-full transform -rotate-90"
+              viewBox="0 0 100 100"
+            >
+              <circle
+                cx="50"
+                cy="50"
+                fill="none"
+                r="45"
+                stroke="#E8E4E1"
+                stroke-width="8"
+              ></circle>
+              <circle
+                class="transition-all duration-1000 ease-out"
+                cx="50"
+                cy="50"
+                fill="none"
+                r="45"
+                stroke="#FF6E5C"
+                stroke-dasharray="282.7"
+                stroke-dashoffset="42.4"
+                stroke-width="8"
+              ></circle>
+            </svg>
+            <div class="absolute flex flex-col items-center">
+              <span class="font-display-lg text-display-lg text-primary"
+                >85</span
+              >
+              <span class="font-label-md text-label-md text-on-surface-variant"
+                >/ 100</span
+              >
+            </div>
+          </div>
+          <p class="font-body-md text-body-md text-on-surface-variant mt-sm">
+            Your health score is slightly up from last month. Keep up the good
+            work!
+          </p>
+        </div>
+        <!-- Latest Vital Trends (Spans full on mobile, 8 cols on desktop) -->
+        <div
+          class="col-span-1 md:col-span-8 card-surface rounded-xl p-lg flex flex-col ai-highlight-top"
+        >
+          <div class="flex justify-between items-start mb-lg">
+            <h3
+              class="font-title-lg text-title-lg text-primary font-headline-md"
+            >
+              Latest Vital Trends
+            </h3>
+            <div class="flex gap-sm">
+              <span
+                class="bg-surface-container-low text-on-surface-variant font-caption text-caption px-sm py-xs rounded-full border border-outline-variant cursor-pointer hover:bg-surface-variant transition-colors"
+                >Week</span
+              >
+              <span
+                class="bg-primary text-on-primary font-caption text-caption px-sm py-xs rounded-full cursor-pointer hover:opacity-90 transition-opacity"
+                >Month</span
+              >
+            </div>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-md mt-auto">
+            <!-- Vital 1 -->
+            <div
+              class="bg-surface-container-low rounded-lg p-md border border-outline-variant flex flex-col hover:border-outline transition-colors cursor-default"
+            >
+              <div
+                class="flex items-center gap-xs mb-sm text-on-surface-variant"
+              >
+                <span class="material-symbols-outlined text-sm">favorite</span>
+                <span class="font-label-md text-label-md">Heart Rate</span>
+              </div>
+              <div class="font-headline-md text-headline-md text-primary mb-xs">
+                72
+                <span
+                  class="font-caption text-caption text-on-surface-variant font-normal"
+                  >bpm</span
+                >
+              </div>
+              <div
+                class="flex items-center gap-xs text-[#2E7D32] font-caption text-caption"
+              >
+                <span class="material-symbols-outlined text-[16px]"
+                  >arrow_downward</span
+                >
+                <span>2% vs last mo</span>
+              </div>
+            </div>
+            <!-- Vital 2 -->
+            <div
+              class="bg-surface-container-low rounded-lg p-md border border-outline-variant flex flex-col hover:border-outline transition-colors cursor-default"
+            >
+              <div
+                class="flex items-center gap-xs mb-sm text-on-surface-variant"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >blood_pressure</span
+                >
+                <span class="font-label-md text-label-md">Blood Pressure</span>
+              </div>
+              <div class="font-headline-md text-headline-md text-primary mb-xs">
+                118/75
+                <span
+                  class="font-caption text-caption text-on-surface-variant font-normal"
+                  >mmHg</span
+                >
+              </div>
+              <div
+                class="flex items-center gap-xs text-on-surface-variant font-caption text-caption"
+              >
+                <span class="material-symbols-outlined text-[16px]"
+                  >horizontal_rule</span
+                >
+                <span>Stable</span>
+              </div>
+            </div>
+            <!-- Vital 3 -->
+            <div
+              class="bg-surface-container-low rounded-lg p-md border border-outline-variant flex flex-col hover:border-outline transition-colors cursor-default"
+            >
+              <div
+                class="flex items-center gap-xs mb-sm text-on-surface-variant"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >monitor_weight</span
+                >
+                <span class="font-label-md text-label-md">Weight</span>
+              </div>
+              <div class="font-headline-md text-headline-md text-primary mb-xs">
+                152
+                <span
+                  class="font-caption text-caption text-on-surface-variant font-normal"
+                  >lbs</span
+                >
+              </div>
+              <div
+                class="flex items-center gap-xs wellness-coral-text font-caption text-caption"
+              >
+                <span class="material-symbols-outlined text-[16px]"
+                  >arrow_upward</span
+                >
+                <span>1.5 lbs vs last mo</span>
+              </div>
+            </div>
+            <!-- Vital 4 -->
+            <div
+              class="bg-surface-container-low rounded-lg p-md border border-outline-variant flex flex-col hover:border-outline transition-colors cursor-default"
+            >
+              <div
+                class="flex items-center gap-xs mb-sm text-on-surface-variant"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >directions_walk</span
+                >
+                <span class="font-label-md text-label-md">Activity</span>
+              </div>
+              <div class="font-headline-md text-headline-md text-primary mb-xs">
+                6,420
+                <span
+                  class="font-caption text-caption text-on-surface-variant font-normal"
+                  >steps/day</span
+                >
+              </div>
+              <div
+                class="flex items-center gap-xs text-[#2E7D32] font-caption text-caption"
+              >
+                <span class="material-symbols-outlined text-[16px]"
+                  >arrow_upward</span
+                >
+                <span>12% vs last mo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Recent Reports (Spans full on mobile, 7 cols on desktop) -->
+        <div
+          class="col-span-1 md:col-span-7 card-surface rounded-xl p-lg flex flex-col"
+        >
+          <div class="flex justify-between items-center mb-lg">
+            <h3
+              class="font-title-lg text-title-lg text-primary font-headline-md"
+            >
+              Recent Reports
+            </h3>
+            <a
+              class="font-label-md text-label-md wellness-coral-text hover:underline"
+              href="/reports"
+              >View All</a
+            >
+          </div>
+          <div class="flex flex-col gap-md">
+            <!-- Report Item 1 -->
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group"
+            >
+              <div class="flex items-start gap-md mb-sm sm:mb-0">
+                <div
+                  class="bg-secondary-container text-on-secondary-container p-sm rounded-lg group-hover:bg-primary-container group-hover:text-on-primary transition-colors"
+                >
+                  <span class="material-symbols-outlined">science</span>
+                </div>
+                <div>
+                  <h4 class="font-label-md text-label-md text-primary">
+                    Comprehensive Blood Panel
+                  </h4>
+                  <p class="font-caption text-caption text-on-surface-variant">
+                    Uploaded on Oct 12, 2023
+                  </p>
+                </div>
+              </div>
+              <div
+                class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-md"
+              >
+                <span
+                  class="bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9] font-caption text-caption px-sm py-xs rounded-full flex items-center gap-xs"
+                >
+                  <span class="w-1.5 h-1.5 bg-[#2E7D32] rounded-full"></span>
+                  Analyzed
+                </span>
+                <span
+                  class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors"
+                  >chevron_right</span
+                >
+              </div>
+            </div>
+            <!-- Report Item 2 -->
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group"
+            >
+              <div class="flex items-start gap-md mb-sm sm:mb-0">
+                <div
+                  class="bg-secondary-container text-on-secondary-container p-sm rounded-lg group-hover:bg-primary-container group-hover:text-on-primary transition-colors"
+                >
+                  <span class="material-symbols-outlined">radiology</span>
+                </div>
+                <div>
+                  <h4 class="font-label-md text-label-md text-primary">
+                    Chest X-Ray Results
+                  </h4>
+                  <p class="font-caption text-caption text-on-surface-variant">
+                    Uploaded on Oct 10, 2023
+                  </p>
+                </div>
+              </div>
+              <div
+                class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-md"
+              >
+                <span
+                  class="bg-surface-variant text-on-surface-variant border border-outline-variant font-caption text-caption px-sm py-xs rounded-full flex items-center gap-xs"
+                >
+                  <span
+                    class="w-1.5 h-1.5 bg-on-surface-variant rounded-full"
+                  ></span>
+                  Pending AI Review
+                </span>
+                <span
+                  class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors"
+                  >chevron_right</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- AI Insight Mini (Spans full on mobile, 5 cols on desktop) -->
+        <div
+          class="col-span-1 md:col-span-5 bg-[rgba(255,110,92,0.05)] border border-[#FF6E5C]/20 rounded-[1rem] rounded-bl-sm p-lg flex flex-col relative overflow-hidden"
+        >
+          <div class="absolute -right-4 -top-4 opacity-5">
+            <span class="material-symbols-outlined text-[120px]"
+              >psychology</span
+            >
+          </div>
+          <div class="flex items-center gap-sm mb-md relative z-10">
+            <span class="material-symbols-outlined wellness-coral-text"
+              >auto_awesome</span
+            >
+            <h3
+              class="font-title-lg text-title-lg text-primary font-headline-md"
+            >
+              AI Health Insight
+            </h3>
+          </div>
+          <p
+            class="font-body-md text-body-md text-on-surface-variant mb-lg relative z-10"
+          >
+            Based on your recent blood panel, your Vitamin D levels are slightly
+            below optimal range. Considering the changing season, supplementing
+            may be beneficial. Would you like to review this finding in detail?
+          </p>
+          <div class="mt-auto relative z-10">
+            <button
+              class="w-full bg-surface text-primary border border-outline-variant font-label-md text-label-md py-sm rounded-lg hover:bg-surface-variant transition-colors shadow-sm"
+            >
+              Review Full Analysis
             </button>
-</div>
-<!-- Desktop Welcome -->
-<div class="hidden md:block mb-xxl">
-<h2 class="font-headline-lg text-headline-lg text-primary">Good morning, Sarah</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mt-sm">Here is your comprehensive health overview and latest AI insights.</p>
-</div>
-<!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-lg md:gap-xl">
-<!-- Health Score (Spans full on mobile, 4 cols on desktop) -->
-<div class="col-span-1 md:col-span-4 card-surface rounded-xl p-lg flex flex-col items-center justify-center text-center relative overflow-hidden">
-<div class="absolute top-0 right-0 p-sm">
-<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">info</span>
-</div>
-<h3 class="font-title-lg text-title-lg text-primary mb-md w-full text-left">Overall Health Score</h3>
-<div class="relative w-48 h-48 flex items-center justify-center my-md">
-<!-- Circular Progress SVG -->
-<svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-<circle cx="50" cy="50" fill="none" r="45" stroke="#E8E4E1" stroke-width="8"></circle>
-<circle class="transition-all duration-1000 ease-out" cx="50" cy="50" fill="none" r="45" stroke="#FF6E5C" stroke-dasharray="282.7" stroke-dashoffset="42.4" stroke-width="8"></circle>
-</svg>
-<div class="absolute flex flex-col items-center">
-<span class="font-display-lg text-display-lg text-primary">85</span>
-<span class="font-label-md text-label-md text-on-surface-variant">/ 100</span>
-</div>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant mt-sm">Your health score is slightly up from last month. Keep up the good work!</p>
-</div>
-<!-- Latest Vital Trends (Spans full on mobile, 8 cols on desktop) -->
-<div class="col-span-1 md:col-span-8 card-surface rounded-xl p-lg flex flex-col ai-highlight-top">
-<div class="flex justify-between items-start mb-lg">
-<h3 class="font-title-lg text-title-lg text-primary font-headline-md">Latest Vital Trends</h3>
-<div class="flex gap-sm">
-<span class="bg-surface-container-low text-on-surface-variant font-caption text-caption px-sm py-xs rounded-full border border-outline-variant cursor-pointer hover:bg-surface-variant transition-colors">Week</span>
-<span class="bg-primary text-on-primary font-caption text-caption px-sm py-xs rounded-full cursor-pointer hover:opacity-90 transition-opacity">Month</span>
-</div>
-</div>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-md mt-auto">
-<!-- Vital 1 -->
-<div class="bg-surface-container-low rounded-lg p-md border border-outline-variant flex flex-col hover:border-outline transition-colors cursor-default">
-<div class="flex items-center gap-xs mb-sm text-on-surface-variant">
-<span class="material-symbols-outlined text-sm">favorite</span>
-<span class="font-label-md text-label-md">Heart Rate</span>
-</div>
-<div class="font-headline-md text-headline-md text-primary mb-xs">72 <span class="font-caption text-caption text-on-surface-variant font-normal">bpm</span></div>
-<div class="flex items-center gap-xs text-[#2E7D32] font-caption text-caption">
-<span class="material-symbols-outlined text-[16px]">arrow_downward</span>
-<span>2% vs last mo</span>
-</div>
-</div>
-<!-- Vital 2 -->
-<div class="bg-surface-container-low rounded-lg p-md border border-outline-variant flex flex-col hover:border-outline transition-colors cursor-default">
-<div class="flex items-center gap-xs mb-sm text-on-surface-variant">
-<span class="material-symbols-outlined text-sm">blood_pressure</span>
-<span class="font-label-md text-label-md">Blood Pressure</span>
-</div>
-<div class="font-headline-md text-headline-md text-primary mb-xs">118/75 <span class="font-caption text-caption text-on-surface-variant font-normal">mmHg</span></div>
-<div class="flex items-center gap-xs text-on-surface-variant font-caption text-caption">
-<span class="material-symbols-outlined text-[16px]">horizontal_rule</span>
-<span>Stable</span>
-</div>
-</div>
-<!-- Vital 3 -->
-<div class="bg-surface-container-low rounded-lg p-md border border-outline-variant flex flex-col hover:border-outline transition-colors cursor-default">
-<div class="flex items-center gap-xs mb-sm text-on-surface-variant">
-<span class="material-symbols-outlined text-sm">monitor_weight</span>
-<span class="font-label-md text-label-md">Weight</span>
-</div>
-<div class="font-headline-md text-headline-md text-primary mb-xs">152 <span class="font-caption text-caption text-on-surface-variant font-normal">lbs</span></div>
-<div class="flex items-center gap-xs wellness-coral-text font-caption text-caption">
-<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
-<span>1.5 lbs vs last mo</span>
-</div>
-</div>
-<!-- Vital 4 -->
-<div class="bg-surface-container-low rounded-lg p-md border border-outline-variant flex flex-col hover:border-outline transition-colors cursor-default">
-<div class="flex items-center gap-xs mb-sm text-on-surface-variant">
-<span class="material-symbols-outlined text-sm">directions_walk</span>
-<span class="font-label-md text-label-md">Activity</span>
-</div>
-<div class="font-headline-md text-headline-md text-primary mb-xs">6,420 <span class="font-caption text-caption text-on-surface-variant font-normal">steps/day</span></div>
-<div class="flex items-center gap-xs text-[#2E7D32] font-caption text-caption">
-<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
-<span>12% vs last mo</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Recent Reports (Spans full on mobile, 7 cols on desktop) -->
-<div class="col-span-1 md:col-span-7 card-surface rounded-xl p-lg flex flex-col">
-<div class="flex justify-between items-center mb-lg">
-<h3 class="font-title-lg text-title-lg text-primary font-headline-md">Recent Reports</h3>
-<a class="font-label-md text-label-md wellness-coral-text hover:underline" href="/reports">View All</a>
-</div>
-<div class="flex flex-col gap-md">
-<!-- Report Item 1 -->
-<div class="flex flex-col sm:flex-row sm:items-center justify-between p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
-<div class="flex items-start gap-md mb-sm sm:mb-0">
-<div class="bg-secondary-container text-on-secondary-container p-sm rounded-lg group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
-<span class="material-symbols-outlined">science</span>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-primary">Comprehensive Blood Panel</h4>
-<p class="font-caption text-caption text-on-surface-variant">Uploaded on Oct 12, 2023</p>
-</div>
-</div>
-<div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-md">
-<span class="bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9] font-caption text-caption px-sm py-xs rounded-full flex items-center gap-xs">
-<span class="w-1.5 h-1.5 bg-[#2E7D32] rounded-full"></span> Analyzed
-                            </span>
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
-</div>
-</div>
-<!-- Report Item 2 -->
-<div class="flex flex-col sm:flex-row sm:items-center justify-between p-md border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
-<div class="flex items-start gap-md mb-sm sm:mb-0">
-<div class="bg-secondary-container text-on-secondary-container p-sm rounded-lg group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
-<span class="material-symbols-outlined">radiology</span>
-</div>
-<div>
-<h4 class="font-label-md text-label-md text-primary">Chest X-Ray Results</h4>
-<p class="font-caption text-caption text-on-surface-variant">Uploaded on Oct 10, 2023</p>
-</div>
-</div>
-<div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-md">
-<span class="bg-surface-variant text-on-surface-variant border border-outline-variant font-caption text-caption px-sm py-xs rounded-full flex items-center gap-xs">
-<span class="w-1.5 h-1.5 bg-on-surface-variant rounded-full"></span> Pending AI Review
-                            </span>
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
-</div>
-</div>
-</div>
-</div>
-<!-- AI Insight Mini (Spans full on mobile, 5 cols on desktop) -->
-<div class="col-span-1 md:col-span-5 bg-[rgba(255,110,92,0.05)] border border-[#FF6E5C]/20 rounded-[1rem] rounded-bl-sm p-lg flex flex-col relative overflow-hidden">
-<div class="absolute -right-4 -top-4 opacity-5">
-<span class="material-symbols-outlined text-[120px]">psychology</span>
-</div>
-<div class="flex items-center gap-sm mb-md relative z-10">
-<span class="material-symbols-outlined wellness-coral-text">auto_awesome</span>
-<h3 class="font-title-lg text-title-lg text-primary font-headline-md">AI Health Insight</h3>
-</div>
-<p class="font-body-md text-body-md text-on-surface-variant mb-lg relative z-10">
-                    Based on your recent blood panel, your Vitamin D levels are slightly below optimal range. Considering the changing season, supplementing may be beneficial. Would you like to review this finding in detail?
-                </p>
-<div class="mt-auto relative z-10">
-<button class="w-full bg-surface text-primary border border-outline-variant font-label-md text-label-md py-sm rounded-lg hover:bg-surface-variant transition-colors shadow-sm">
-                        Review Full Analysis
-                    </button>
-</div>
-</div>
-</div>
-</main>
-<!-- Mobile Bottom Navigation (Visible only on md:hidden) -->
-<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface dark:bg-background border-t border-outline-variant dark:border-outline shadow-[0_-2px_10px_rgba(0,0,0,0.05)] z-50 px-sm pb-sm pt-xs flex justify-around">
-<a class="flex flex-col items-center justify-center p-sm text-primary dark:text-primary-fixed" href="/dashboard">
-<div class="bg-secondary-container dark:bg-secondary px-lg py-xs rounded-full mb-xs">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
-</div>
-<span class="font-caption text-caption font-medium">Home</span>
-</a>
-<a class="flex flex-col items-center justify-center p-sm text-on-surface-variant dark:text-on-secondary-container hover:text-primary transition-colors" href="/reports">
-<div class="px-lg py-xs mb-xs">
-<span class="material-symbols-outlined">description</span>
-</div>
-<span class="font-caption text-caption">Reports</span>
-</a>
-<a class="flex flex-col items-center justify-center p-sm text-on-surface-variant dark:text-on-secondary-container hover:text-primary transition-colors" href="/chat">
-<div class="px-lg py-xs mb-xs">
-<span class="material-symbols-outlined">psychology</span>
-</div>
-<span class="font-caption text-caption">Insights</span>
-</a>
-<a class="flex flex-col items-center justify-center p-sm text-on-surface-variant dark:text-on-secondary-container hover:text-primary transition-colors" href="/profile">
-<div class="px-lg py-xs mb-xs">
-<span class="material-symbols-outlined">person</span>
-</div>
-<span class="font-caption text-caption">Profile</span>
-</a>
-</nav>
-<script type="module" src="/assets/js/page.js"></script>
-</body></html>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Mobile Bottom Navigation (Visible only on md:hidden) -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 w-full bg-surface dark:bg-background border-t border-outline-variant dark:border-outline shadow-[0_-2px_10px_rgba(0,0,0,0.05)] z-50 px-sm pb-sm pt-xs flex justify-around"
+    >
+      <a
+        class="flex flex-col items-center justify-center p-sm text-primary dark:text-primary-fixed"
+        href="/dashboard"
+      >
+        <div
+          class="bg-secondary-container dark:bg-secondary px-lg py-xs rounded-full mb-xs"
+        >
+          <span
+            class="material-symbols-outlined"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >assignment</span
+          >
+        </div>
+        <span class="font-caption text-caption font-medium">Home</span>
+      </a>
+      <a
+        class="flex flex-col items-center justify-center p-sm text-on-surface-variant dark:text-on-secondary-container hover:text-primary transition-colors"
+        href="/reports"
+      >
+        <div class="px-lg py-xs mb-xs">
+          <span class="material-symbols-outlined">description</span>
+        </div>
+        <span class="font-caption text-caption">Reports</span>
+      </a>
+      <a
+        class="flex flex-col items-center justify-center p-sm text-on-surface-variant dark:text-on-secondary-container hover:text-primary transition-colors"
+        href="/chat"
+      >
+        <div class="px-lg py-xs mb-xs">
+          <span class="material-symbols-outlined">psychology</span>
+        </div>
+        <span class="font-caption text-caption">Insights</span>
+      </a>
+      <a
+        class="flex flex-col items-center justify-center p-sm text-on-surface-variant dark:text-on-secondary-container hover:text-primary transition-colors"
+        href="/profile"
+      >
+        <div class="px-lg py-xs mb-xs">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+        <span class="font-caption text-caption">Profile</span>
+      </a>
+    </nav>
+    <script type="module" src="/assets/js/page.js"></script>
+  </body>
+</html>
