@@ -165,7 +165,7 @@ function medicalReportPromptContract() {
     '  "medical_disclaimer": "' + medicalDisclaimer + '",',
     '  "citations": [{"source":"MedlinePlus|NIH|PubMed|Internal report","title":"source title","url":"https://example.org"}],',
     '  "needsClinicianReview": true',
-    "}",,
+    "}",
     "",
     "GOOD: The glucose level is higher than the typical reference range, which means the body is processing sugar less efficiently than expected.",
     "BAD: You have diabetes.",
