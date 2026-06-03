@@ -4,11 +4,11 @@
  * migration to shared layouts.
  */
 const navItems = [
-  { href: "/app/dashboard.html", icon: "dashboard", label: "Home" },
-  { href: "/report/summary.html", icon: "description", label: "Reports" },
-  { href: "/ai-assistant/chat-home.html", icon: "psychology", label: "Ask AI" },
-  { href: "/notifications/list.html", icon: "notifications", label: "Alerts" },
-  { href: "/settings/home.html", icon: "settings", label: "Settings" }
+  { href: "/dashboard", icon: "dashboard", label: "Home" },
+  { href: "/reports", icon: "description", label: "Reports" },
+  { href: "/chat", icon: "psychology", label: "Ask AI" },
+  { href: "/notifications", icon: "notifications", label: "Alerts" },
+  { href: "/settings", icon: "settings", label: "Settings" }
 ];
 
 export function ensureMobileBottomNav() {

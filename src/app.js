@@ -53,7 +53,38 @@ export function createApp() {
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
   app.use(express.static(publicDir));
 
-  app.get("/", (_req, res) => res.redirect("/auth/welcome.html"));
+  app.get("/", (_req, res) => res.redirect("/splash"));
+  app.get("/splash", (_req, res) => res.sendFile(path.join(publicDir, "auth", "splash.html")));
+  app.get("/onboarding", (_req, res) => res.sendFile(path.join(publicDir, "auth", "onboard1.html")));
+  app.get("/login", (_req, res) => res.sendFile(path.join(publicDir, "auth", "login.html")));
+  app.get("/register", (_req, res) => res.sendFile(path.join(publicDir, "auth", "signup.html")));
+  app.get("/dashboard", (_req, res) => res.sendFile(path.join(publicDir, "app", "dashboard.html")));
+  app.get("/reports", (_req, res) => res.sendFile(path.join(publicDir, "report", "summary.html")));
+  app.get("/reports/:id", (_req, res) => res.sendFile(path.join(publicDir, "report", "detailed-report.html")));
+  app.get("/upload", (_req, res) => res.sendFile(path.join(publicDir, "app", "upload.html")));
+  app.get("/analysis/:id", (_req, res) => res.sendFile(path.join(publicDir, "app", "report-analysis.html")));
+  app.get("/chat", (_req, res) => res.sendFile(path.join(publicDir, "ai-assistant", "chat-home.html")));
+  app.get("/history", (_req, res) => res.sendFile(path.join(publicDir, "ai-assistant", "saved-conv.html")));
+  app.get("/profile", (_req, res) => res.sendFile(path.join(publicDir, "profile", "overview.html")));
+  app.get("/settings", (_req, res) => res.sendFile(path.join(publicDir, "settings", "home.html")));
+  app.get("/notifications", (_req, res) => res.sendFile(path.join(publicDir, "notifications", "list.html")));
+  app.get("/subscription", (_req, res) => res.sendFile(path.join(publicDir, "premium", "plans.html")));
+  app.get("/doctor", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/doctor/patients", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/doctor/patients/:id", (_req, res) => res.sendFile(path.join(publicDir, "admin", "user.html")));
+  app.get("/doctor/reports", (_req, res) => res.sendFile(path.join(publicDir, "admin", "report.html")));
+  app.get("/doctor/appointments", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/doctor/messages", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/doctor/analytics", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/doctor/settings", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/admin", (_req, res) => res.sendFile(path.join(publicDir, "admin", "login.html")));
+  app.get("/admin/users", (_req, res) => res.sendFile(path.join(publicDir, "admin", "user.html")));
+  app.get("/admin/doctors", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/admin/jobs", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/admin/payments", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/admin/analytics", (_req, res) => res.sendFile(path.join(publicDir, "admin", "index.html")));
+  app.get("/admin/system", (_req, res) => res.sendFile(path.join(publicDir, "admin", "system-health.html")));
+
   app.get("/api-docs.json", (_req, res) => res.json(openApiSpec));
   app.use(
     "/api-docs",

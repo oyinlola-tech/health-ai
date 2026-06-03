@@ -215,13 +215,45 @@ export const openApiSpec = {
         tags: ["AI"],
         summary: "Send a message to the AI assistant",
         security: bearerAuth,
-        requestBody: jsonRequest("#/components/schemas/AiChatRequest")
+        requestBody: jsonRequest("#/components/schemas/AiChatRequest"),
+        responses: {
+          200: {
+            description: "Structured AI chat response",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/AiChatResponse" }
+              }
+            }
+          }
+        }
       })
     },
     "/ai/chat-history": {
       get: operation({
         tags: ["AI"],
         summary: "List the current user's AI chat history",
+        security: bearerAuth
+      })
+    },
+    "/ai/usage/summary": {
+      get: operation({
+        tags: ["AI"],
+        summary: "Admin AI usage summary",
+        security: bearerAuth
+      })
+    },
+    "/ai/usage/user/{id}": {
+      get: operation({
+        tags: ["AI"],
+        summary: "Admin AI usage for a user",
+        security: bearerAuth,
+        parameters: [{ $ref: "#/components/parameters/Id" }]
+      })
+    },
+    "/ai/usage/costs": {
+      get: operation({
+        tags: ["AI"],
+        summary: "Admin AI cost breakdown",
         security: bearerAuth
       })
     },
@@ -534,6 +566,76 @@ export const openApiSpec = {
         properties: {
           message: { type: "string", minLength: 1, maxLength: 4000 },
           reportId: { type: "string", format: "uuid" }
+        }
+      },
+      AiFinding: {
+        type: "object",
+        required: ["test_name", "value", "unit", "normal_range", "status", "explanation"],
+        properties: {
+          test_name: { type: "string", maxLength: 200 },
+          value: { type: "string", maxLength: 100 },
+          unit: { type: "string", maxLength: 50 },
+          normal_range: { type: "string", maxLength: 120 },
+          status: { type: "string", enum: ["normal", "low", "high", "unknown"] },
+          explanation: { type: "string", maxLength: 1200 }
+        }
+      },
+      AiStructuredResponse: {
+        type: "object",
+        required: [
+          "report_overview",
+          "findings",
+          "risk_assessment",
+          "key_insights",
+          "recommendations",
+          "questions_for_doctor",
+          "follow_up_suggestions",
+          "medical_disclaimer"
+        ],
+        properties: {
+          report_overview: {
+            type: "object",
+            required: ["type", "summary"],
+            properties: {
+              type: { type: "string", maxLength: 160 },
+              summary: { type: "string", maxLength: 3000 }
+            }
+          },
+          findings: { type: "array", maxItems: 50, items: { $ref: "#/components/schemas/AiFinding" } },
+          risk_assessment: {
+            type: "object",
+            required: ["level", "reason"],
+            properties: {
+              level: { type: "string", enum: ["low", "medium", "high", "unknown"] },
+              reason: { type: "string", maxLength: 1200 }
+            }
+          },
+          key_insights: { type: "array", maxItems: 15, items: { type: "string", maxLength: 1000 } },
+          recommendations: { type: "array", maxItems: 10, items: { type: "string", maxLength: 1000 } },
+          questions_for_doctor: { type: "array", maxItems: 10, items: { type: "string", maxLength: 1000 } },
+          follow_up_suggestions: { type: "array", maxItems: 10, items: { type: "string", maxLength: 1000 } },
+          medical_disclaimer: {
+            type: "string",
+            enum: [
+              "This information is for educational purposes only and is not medical advice. Please consult a qualified healthcare professional for interpretation and diagnosis."
+            ]
+          }
+        }
+      },
+      AiChatResponse: {
+        type: "object",
+        required: ["success", "data"],
+        properties: {
+          success: { type: "boolean", example: true },
+          data: {
+            type: "object",
+            required: ["message", "response"],
+            properties: {
+              interaction: { type: "object", additionalProperties: true },
+              message: { type: "string", description: "Plain answer retained for frontend compatibility." },
+              response: { $ref: "#/components/schemas/AiStructuredResponse" }
+            }
+          }
         }
       },
       AiFeedbackRequest: {

@@ -8,7 +8,6 @@ node_modules/
 npm-debug.log*
 coverage/
 .nyc_output/
-tests
 
 # Build/cache output
 .cache/
@@ -41,3 +40,4 @@ scripts
 Thumbs.db
 .vscode/
 *.swp
+.kilo

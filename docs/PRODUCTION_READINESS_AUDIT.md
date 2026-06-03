@@ -42,7 +42,7 @@ Gaps to reach 10/10:
 High:
 
 - Payment verification is missing. No server-side OPay verification or webhook signature verification is present, so the app cannot safely grant premium or consultation access from payment events.
-- Gemini output is currently stored from free-form text. The service should request structured JSON and validate it before storage/display.
+- Gemini chat/report analysis now requests JSON output and validates the response shape before storage/display. Grounding, citations, and usage/cost tracking still need provider-backed implementation before production launch.
 - Several static pages still include inline event handlers (`onclick`) and inline scripts, which weakens CSP hardening.
 
 Medium:
