@@ -5,8 +5,8 @@
 @layer base {
   :root {
     --mx-primary: #2b2724;
-    --mx-muted: #a19890;
-    --mx-coral: #ff6e5c;
+    --mx-secondary: #a19890;
+    --mx-accent: #ff6e5c;
     --mx-background: #fdf6f3;
     --mx-surface: #ffffff;
   }
@@ -34,7 +34,7 @@
 @layer components {
   .mx-focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
-    --tw-ring-color: var(--mx-coral);
+    --tw-ring-color: var(--mx-accent);
   }
 
   .mx-bottom-nav {
@@ -44,11 +44,24 @@
 
   .mx-bottom-nav a {
     @apply flex min-w-[64px] flex-col items-center justify-center gap-1 rounded-lg px-2 py-1 text-xs font-medium;
-    color: var(--mx-muted);
+    color: var(--mx-secondary);
   }
 
   .mx-bottom-nav a[aria-current="page"] {
     color: var(--mx-primary);
     background: rgba(255, 110, 92, 0.12);
+  }
+
+  .mx-card {
+    @apply rounded-xl bg-white border border-outline-variant shadow-sm;
+    border-color: #e8e4e1;
+  }
+
+  .mx-btn-primary {
+    @apply font-medium text-white rounded-lg bg-[var(--mx-accent)] hover:bg-[#e56353] transition-colors min-h-[48px] shadow-sm;
+  }
+
+  .mx-btn-secondary {
+    @apply font-medium text-[var(--mx-primary)] rounded-lg bg-[var(--mx-surface)] border border-outline-variant hover:bg-surface-container-low transition-colors;
   }
 }
