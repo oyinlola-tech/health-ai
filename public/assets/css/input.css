@@ -9,6 +9,7 @@
     --mx-accent: #ff6e5c;
     --mx-background: #fdf6f3;
     --mx-surface: #ffffff;
+    --mx-border: #e8e4e1;
   }
 
   html {
@@ -32,19 +33,20 @@
 }
 
 @layer components {
-  .mx-focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
-    --tw-ring-color: var(--mx-accent);
+  .mx-focus-ring:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 110, 92, 0.4);
   }
 
   .mx-bottom-nav {
-    @apply md:hidden fixed bottom-0 left-0 z-50 flex w-full items-center justify-around border-t bg-white px-3 pb-3 pt-2 shadow-sm;
+    @apply fixed bottom-0 left-0 z-50 flex w-full items-center justify-around border-t bg-white px-3 pb-3 pt-2 shadow-sm md:hidden;
     border-color: rgba(161, 152, 144, 0.35);
   }
 
   .mx-bottom-nav a {
-    @apply flex min-w-[64px] flex-col items-center justify-center gap-1 rounded-lg px-2 py-1 text-xs font-medium;
+    @apply flex min-w-[64px] flex-col items-center justify-center gap-1 px-2 py-1 text-xs font-medium;
     color: var(--mx-secondary);
+    border-radius: 10px;
   }
 
   .mx-bottom-nav a[aria-current="page"] {
@@ -53,15 +55,37 @@
   }
 
   .mx-card {
-    @apply rounded-xl bg-white border border-outline-variant shadow-sm;
-    border-color: #e8e4e1;
+    @apply bg-white border shadow-sm;
+    border-color: var(--mx-border);
+    border-radius: 18px;
+  }
+
+  .mx-card--accent-top {
+    @apply bg-white border shadow-sm;
+    border-top: 2px solid var(--mx-accent);
+    border-color: var(--mx-border);
+    border-radius: 18px 18px 10px 10px;
   }
 
   .mx-btn-primary {
-    @apply font-medium text-white rounded-lg bg-[var(--mx-accent)] hover:bg-[#e56353] transition-colors min-h-[48px] shadow-sm;
+    @apply font-medium text-white transition-colors min-h-[48px] shadow-sm;
+    background: var(--mx-accent);
+    border-radius: 18px;
+  }
+
+  .mx-btn-primary:hover {
+    background: #e56353;
   }
 
   .mx-btn-secondary {
-    @apply font-medium text-[var(--mx-primary)] rounded-lg bg-[var(--mx-surface)] border border-outline-variant hover:bg-surface-container-low transition-colors;
+    @apply font-medium transition-colors min-h-[48px];
+    color: var(--mx-primary);
+    background: var(--mx-surface);
+    border: 1px solid var(--mx-border);
+    border-radius: 18px;
+  }
+
+  .mx-btn-secondary:hover {
+    background: #f7f3f1;
   }
 }
