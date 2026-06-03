@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Consultation Payment - MedExplain AI</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@500;600&amp;display=swap" rel="stylesheet">
 
 <style>
         .material-symbols-outlined {
@@ -152,7 +150,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-md mb-lg">
 <!-- Credit Card Option (Selected) -->
 <label class="relative flex cursor-pointer rounded-lg border border-primary bg-surface-container-low p-md shadow-sm focus:outline-none">
-<input checked="" class="sr-only" name="payment-method" type="radio" value="card"/>
+<input checked="" class="sr-only" name="payment-method" type="radio" value="card">
 <span class="flex flex-1">
 <span class="flex flex-col">
 <span class="block font-label-md text-label-md text-primary flex items-center gap-sm">
@@ -165,7 +163,7 @@
 </label>
 <!-- Digital Wallet Option -->
 <label class="relative flex cursor-pointer rounded-lg border border-outline-variant bg-surface-container-lowest p-md shadow-sm hover:border-outline focus:outline-none">
-<input class="sr-only" name="payment-method" type="radio" value="wallet"/>
+<input class="sr-only" name="payment-method" type="radio" value="wallet">
 <span class="flex flex-1">
 <span class="flex flex-col">
 <span class="block font-label-md text-label-md text-on-surface-variant flex items-center gap-sm">
@@ -180,7 +178,7 @@
 <form class="space-y-md">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="card-name">Name on Card</label>
-<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="card-name" placeholder="Jane Doe" type="text"/>
+<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="card-name" placeholder="Jane Doe" type="text">
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="card-number">Card Number</label>
@@ -188,13 +186,13 @@
 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-md">
 <span class="material-symbols-outlined text-outline">credit_card</span>
 </div>
-<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest pl-[48px] pr-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="card-number" placeholder="0000 0000 0000 0000" type="text"/>
+<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest pl-[48px] pr-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="card-number" placeholder="0000 0000 0000 0000" type="text">
 </div>
 </div>
 <div class="grid grid-cols-2 gap-md">
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs" for="expiry">Expiry Date</label>
-<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="expiry" placeholder="MM/YY" type="text"/>
+<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="expiry" placeholder="MM/YY" type="text">
 </div>
 <div>
 <label class="block font-label-md text-label-md text-on-surface-variant mb-xs flex items-center gap-xs" for="cvc">
@@ -203,11 +201,11 @@
 <span class="material-symbols-outlined text-[16px]">info</span>
 </button>
 </label>
-<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="cvc" placeholder="123" type="text"/>
+<input class="mt-1 block w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-md py-[12px] text-primary focus:border-primary focus:ring-2 focus:ring-[#FF6E5C]/20 focus:outline-none transition-all" id="cvc" placeholder="123" type="text">
 </div>
 </div>
 <div class="flex items-center pt-sm">
-<input class="h-[24px] w-[24px] rounded border-outline-variant text-[#FF6E5C] focus:ring-[#FF6E5C]" id="save-card" name="save-card" type="checkbox"/>
+<input class="h-[24px] w-[24px] rounded border-outline-variant text-[#FF6E5C] focus:ring-[#FF6E5C]" id="save-card" name="save-card" type="checkbox">
 <label class="ml-sm block font-body-md text-body-md text-secondary" for="save-card">Save card for future appointments</label>
 </div>
 </form>
@@ -219,7 +217,7 @@
 <h3 class="font-title-lg text-title-lg text-primary mb-lg">Consultation Summary</h3>
 <!-- Doctor Info -->
 <div class="flex items-center gap-md mb-lg pb-md border-b border-surface-variant">
-<img alt="Doctor Profile" class="h-16 w-16 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a female doctor in her 40s wearing a white lab coat over a light blue shirt. She has a warm, reassuring smile and is set against a clean, softly lit, light-mode background with warm undertones. The lighting is soft and flattering, creating a modern healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXyWF1povuzbIE5HJp3iMGIaDfG9wWUt2NoWHHVqhssT2Ewa8KZ6a_WRhBfWFM-Lqz1NkfZJ8jKWpLnsdTusIOlA-3bqCObnbgdsU_ZVMyU1-zQ3OTwj_zJ6-9PxyUBUo1nahrI_w6AisDSgV78msJA3sF4QU3MYlvnf1xfmv_pq4PBIt30RgFrl8gqtLJwiIZ16u-5RnhyLx6ablMy4SuL-AD4Ak6dWAlrF91g-C8UtfgTyUzqtupLeOTgvrgsjqPwsLGajXiBmbe"/>
+<img alt="Doctor Profile" class="h-16 w-16 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a female doctor in her 40s wearing a white lab coat over a light blue shirt. She has a warm, reassuring smile and is set against a clean, softly lit, light-mode background with warm undertones. The lighting is soft and flattering, creating a modern healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXyWF1povuzbIE5HJp3iMGIaDfG9wWUt2NoWHHVqhssT2Ewa8KZ6a_WRhBfWFM-Lqz1NkfZJ8jKWpLnsdTusIOlA-3bqCObnbgdsU_ZVMyU1-zQ3OTwj_zJ6-9PxyUBUo1nahrI_w6AisDSgV78msJA3sF4QU3MYlvnf1xfmv_pq4PBIt30RgFrl8gqtLJwiIZ16u-5RnhyLx6ablMy4SuL-AD4Ak6dWAlrF91g-C8UtfgTyUzqtupLeOTgvrgsjqPwsLGajXiBmbe">
 <div>
 <h4 class="font-label-md text-label-md font-semibold text-primary">Dr. Sarah Jenkins</h4>
 <p class="font-caption text-caption text-secondary">Cardiology Specialist</p>

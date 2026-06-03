@@ -1,5 +1,14 @@
 import { bindPasswordToggles } from "./ui.js";
 import { ensureMobileBottomNav } from "./navigation.js";
+import { clearAccessToken } from "./auth.js";
+
+function bindPageActions() {
+  document.querySelectorAll('[data-action="logout"]').forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      clearAccessToken();
+    });
+  });
+}
 
 /**
  * Shared page bootstrap for the static-to-dynamic migration.
@@ -7,6 +16,7 @@ import { ensureMobileBottomNav } from "./navigation.js";
  */
 export function bootPage() {
   bindPasswordToggles();
+  bindPageActions();
   ensureMobileBottomNav();
 }
 

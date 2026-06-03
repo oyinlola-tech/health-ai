@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Camera Scan Report - MedExplain AI</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Spectral:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 
 <script id="tailwind-config">
       tailwind.config = {
@@ -135,31 +133,31 @@
         </button>
 <!-- Main Navigation -->
 <nav class="flex-1 space-y-sm">
-<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="/app/dashboard.html">
 <span class="material-symbols-outlined">assignment</span>
 <span class="font-label-md text-label-md">Assessment</span>
 </a>
 <!-- Active State -->
-<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-lg px-md py-sm font-bold shadow-sm scale-98 active:scale-95 duration-200 cursor-pointer transition-all" href="#">
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-lg px-md py-sm font-bold shadow-sm scale-98 active:scale-95 duration-200 cursor-pointer transition-all" href="/report/summary.html">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
 <span class="font-label-md text-label-md">Reports</span>
 </a>
-<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="/ai-assistant/chat-home.html">
 <span class="material-symbols-outlined">psychology</span>
 <span class="font-label-md text-label-md">Insights</span>
 </a>
-<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="/app/dashboard.html">
 <span class="material-symbols-outlined">trending_up</span>
 <span class="font-label-md text-label-md">Health Trends</span>
 </a>
 </nav>
 <!-- Footer Navigation -->
 <div class="mt-auto space-y-sm pt-xl border-t border-outline-variant">
-<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="/settings/home.html">
 <span class="material-symbols-outlined">settings</span>
 <span class="font-label-md text-label-md">Settings</span>
 </a>
-<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="#">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-all rounded-lg scale-98 active:scale-95 duration-200 cursor-pointer" href="/app/dashboard.html">
 <span class="material-symbols-outlined">help</span>
 <span class="font-label-md text-label-md">Support</span>
 </a>
@@ -186,7 +184,7 @@
 <!-- Search (on right) -->
 <div class="hidden md:flex items-center bg-surface-container-low rounded-full px-md py-sm border border-outline-variant focus-within:border-primary transition-colors">
 <span class="material-symbols-outlined text-on-surface-variant mr-sm text-[20px]">search</span>
-<input class="bg-transparent border-none outline-none text-body-md font-body-md text-on-surface w-48 placeholder:text-on-surface-variant/70" placeholder="Search reports..." type="text"/>
+<input class="bg-transparent border-none outline-none text-body-md font-body-md text-on-surface w-48 placeholder:text-on-surface-variant/70" placeholder="Search reports..." type="text">
 </div>
 <button class="cursor-pointer hover:bg-surface-container-low p-sm rounded-full transition-colors active:opacity-80">
 <span class="material-symbols-outlined">notifications</span>
@@ -217,7 +215,6 @@
 </div>
 <!-- Main Camera Container -->
 <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-md overflow-hidden relative group">
-<!-- The Video Feed Placeholder -->
 <div class="w-full aspect-[4/3] bg-cover bg-center relative" data-alt="A first-person point-of-view shot looking through a digital camera viewfinder at a crisp, white medical lab report resting on a clean, light wood desk. The lighting is bright, soft, and diffused, creating a modern, high-key, light-mode aesthetic. The focus is sharp on the center of the document, which features subtle typographic elements and clinical charts. The overall mood is professional, calm, and clinically precise, reflecting a high-end healthcare environment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDfAm6BZiyGEMvyge0A6KyV67eQkyINxoGfCcNZXd7BtBavVRXNCmJBJXmimzTto0SeOLlHb1fN9U6neyqi7fndxihqBlj3XGW1sHaHSUOcrz29Fg7D9iPX_5Es9YVwHnjU5JUcN2KQ4I1l1a2OukhdWJh3zRUrsT8YP6WmTLiUz5KI9vb6bw5z-wlpO7K83xW4heir6_ten8z_nMJJCHUtPOxjXwvsMjy1eL0biUT6tS3X94Xfarr9p8ejiVr8yP818JH1_0Hw4tTI');">
 <!-- Dark Gradient Overlay for better UI contrast -->
 <div class="absolute inset-0 camera-overlay"></div>

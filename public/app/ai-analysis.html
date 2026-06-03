@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>AI Analysis Loading - MedExplain AI</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
 
 <script id="tailwind-config">
         tailwind.config = {
@@ -248,7 +246,7 @@
 <div class="flex flex-col md:flex-row gap-xl items-center md:items-start">
 <!-- Circular Progress -->
 <div class="relative w-32 h-32 flex-shrink-0 flex items-center justify-center">
-<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
 <!-- Background Circle -->
 <circle class="opacity-50" cx="50" cy="50" fill="none" r="45" stroke="#E8E4E1" stroke-width="4"></circle>
 <!-- Animated Progress Circle -->
@@ -312,20 +310,20 @@
 </div>
 </main>
 <script>
-        // Lightweight interaction for visual feedback
+        // Lightweight interaction while the analysis request is running.
         document.addEventListener('DOMContentLoaded', () => {
             const percentageEl = document.getElementById('progress-percentage');
             let currentPercentage = 68;
             
-            // Simulate subtle progress updates
             const interval = setInterval(() => {
                 if (currentPercentage < 82) {
                     currentPercentage += Math.floor(Math.random() * 3);
-                    if(currentPercentage > 82) currentPercentage = 82; // Cap it for the demo state
+                    if(currentPercentage > 82) currentPercentage = 82;
                     percentageEl.innerText = `${currentPercentage}%`;
                 }
             }, 1500);
         });
     </script>
 <script type="module" src="/assets/js/page.js"></script>
+
 </body></html>
