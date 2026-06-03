@@ -4,8 +4,8 @@ export default {
     extend: {
       colors: {
         primary: "#2B2724",
-        muted: "#A19890",
-        coral: "#FF6E5C",
+        secondary: "#A19890",
+        accent: "#FF6E5C",
         background: "#FDF6F3",
         surface: "#FFFFFF"
       },
@@ -14,8 +14,15 @@ export default {
         serif: ["Spectral", "Georgia", "serif"]
       },
       borderRadius: {
-        DEFAULT: "0.25rem",
-        lg: "0.5rem"
+        sm: "0.25rem",
+        DEFAULT: "0.625rem",
+        md: "1.125rem",
+        lg: "1.75rem"
+      },
+      spacing: {
+        sm: "8px",
+        md: "16px",
+        lg: "32px"
       }
     }
   },
