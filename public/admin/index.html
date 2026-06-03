@@ -291,13 +291,13 @@
              >
              <span class="font-label-md text-label-md">Health</span>
            </a>
-          <a
-            class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all"
-            href="/settings/security.html"
-          >
-            <span class="material-symbols-outlined" data-icon="lock">lock</span>
-            <span class="font-label-md text-label-md">Security</span>
-          </a>
+<a
+             class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all"
+             href="/settings/security"
+           >
+             <span class="material-symbols-outlined" data-icon="lock">lock</span>
+             <span class="font-label-md text-label-md">Security</span>
+           </a>
         </nav>
         <div class="mt-auto space-y-md">
           <button
@@ -308,15 +308,15 @@
             >
             System Export
           </button>
-          <a
-            class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all"
-            href="/auth/login.html"
-          >
-            <span class="material-symbols-outlined" data-icon="logout"
-              >logout</span
-            >
-            <span class="font-label-md text-label-md">Log Out</span>
-          </a>
+<a
+             class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-all"
+             href="/admin"
+           >
+             <span class="material-symbols-outlined" data-icon="logout"
+               >logout</span
+             >
+             <span class="font-label-md text-label-md">Log Out</span>
+           </a>
         </div>
       </aside>
       <!-- Main Content Area -->
@@ -795,47 +795,47 @@
       </main>
     </div>
     <!-- Mobile Navigation Shell (BottomNavBar) -->
-    <footer
-      class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant flex justify-around py-sm px-md z-50 shadow-lg"
-    >
-      <a
-        class="flex flex-col items-center gap-xs text-wellness-coral"
-        href="/admin"
-      >
-        <span
-          class="material-symbols-outlined"
-          data-icon="dashboard"
-          style="font-variation-settings: &quot;FILL&quot; 1"
-          >dashboard</span
-        >
-        <span class="font-caption text-caption font-semibold">Dashboard</span>
-      </a>
-      <a
-        class="flex flex-col items-center gap-xs text-on-surface-variant"
-        href="/admin"
-      >
-        <span class="material-symbols-outlined" data-icon="group">group</span>
-        <span class="font-caption text-caption">Users</span>
-      </a>
-      <a
-        class="flex flex-col items-center gap-xs text-on-surface-variant"
-        href="/admin"
-      >
-        <span class="material-symbols-outlined" data-icon="monitoring"
-          >monitoring</span
-        >
-        <span class="font-caption text-caption">Logs</span>
-      </a>
-      <a
-        class="flex flex-col items-center gap-xs text-on-surface-variant"
-        href="/settings/home.html"
-      >
-        <span class="material-symbols-outlined" data-icon="settings"
-          >settings</span
-        >
-        <span class="font-caption text-caption">Admin</span>
-      </a>
-    </footer>
+<footer
+       class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant flex justify-around py-sm px-md z-50 shadow-lg"
+     >
+       <a
+         class="flex flex-col items-center gap-xs text-wellness-coral"
+         href="/admin"
+       >
+         <span
+           class="material-symbols-outlined"
+           data-icon="dashboard"
+           style="font-variation-settings: &quot;FILL&quot; 1"
+           >dashboard</span
+         >
+         <span class="font-caption text-caption font-semibold">Dashboard</span>
+       </a>
+       <a
+         class="flex flex-col items-center gap-xs text-on-surface-variant"
+         href="/admin/users"
+       >
+         <span class="material-symbols-outlined" data-icon="group">group</span>
+         <span class="font-caption text-caption">Users</span>
+       </a>
+       <a
+         class="flex flex-col items-center gap-xs text-on-surface-variant"
+         href="/admin/jobs"
+       >
+         <span class="material-symbols-outlined" data-icon="monitoring"
+           >monitoring</span
+         >
+         <span class="font-caption text-caption">Logs</span>
+       </a>
+       <a
+         class="flex flex-col items-center gap-xs text-on-surface-variant"
+         href="/settings/security"
+       >
+         <span class="material-symbols-outlined" data-icon="settings"
+           >settings</span
+         >
+         <span class="font-caption text-caption">Admin</span>
+       </a>
+     </footer>
     <script>
       // Micro-interaction for activity feed live feel
       const activityFeed = document.querySelector(".overflow-y-auto");
