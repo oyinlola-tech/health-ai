@@ -19,6 +19,14 @@ const findingSchema = z
   })
   .strict();
 
+const citationSchema = z
+  .object({
+    source: z.string().max(100),
+    title: z.string().max(500),
+    url: z.string().url().max(500)
+  })
+  .strict();
+
 const medicalAiResponseSchema = z
   .object({
     report_overview: z
