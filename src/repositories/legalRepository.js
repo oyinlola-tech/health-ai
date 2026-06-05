@@ -7,12 +7,13 @@ export const legalRepository = {
     const { rows } = await client.query(
       `insert into legal_policies (id, slug, title, body, version)
        values ($1, $2, $3, $4, $5)
-       on conflict (slug) do update
-       set title = excluded.title, body = excluded.body, version = excluded.version, effective_at = now()
+       on duplicate key update title = values(title), body = values(body), version = values(version), effective_at = now()
        returning *`,
       [id, slug, title, body, version]
     );
-    return rows[0];
+    if (rows[0]) return rows[0];
+    const existing = await client.query("select * from legal_policies where slug = $1 limit 1", [slug]);
+    return existing.rows[0];
   },
 
   async listPolicies(client = pool) {

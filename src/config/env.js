@@ -22,9 +22,18 @@ const envSchema = z
     APP_NAME: z.string().default("MedExplain AI"),
     APP_URL: z.string().url().default("http://localhost:3000"),
     PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
-    DATABASE_URL: z.string().default("postgres://postgres:postgres@localhost:5432/medexplain_ai"),
+    DB_HOST: z.string().default("127.0.0.1"),
+    DB_PORT: z.coerce.number().int().positive().default(3306),
+    DB_USER: z.string().default("root"),
+    DB_PASSWORD: z.string().optional().default(""),
+    DB_NAME: z.string().default("medexplain_ai"),
+    DB_CONNECTION_RETRIES: z.coerce.number().int().nonnegative().default(5),
+    DB_CONNECTION_RETRY_MS: z.coerce.number().int().nonnegative().default(1000),
+    DATABASE_URL: z.string().optional().default(""),
     DATABASE_SSL: booleanFromEnv,
     SKIP_DB_STARTUP: booleanFromEnv,
+    ADMIN_EMAIL: z.string().email().default("admin@medexplain.local"),
+    ADMIN_PASSWORD: z.string().min(8).default("ChangeThisAdminPassword123!"),
     JWT_ACCESS_SECRET: z.string().min(16).default("development-access-secret-change-before-production"),
     JWT_REFRESH_SECRET: z.string().min(16).default("development-refresh-secret-change-before-production"),
     JWT_ISSUER: z.string().default("medexplain-ai"),
@@ -102,6 +111,13 @@ const envSchema = z
           message: `${key} must be explicitly configured for production.`
         });
       }
+    }
+    if (value.ADMIN_PASSWORD === "ChangeThisAdminPassword123!") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ADMIN_PASSWORD"],
+        message: "ADMIN_PASSWORD must be explicitly configured for production."
+      });
     }
   });
 

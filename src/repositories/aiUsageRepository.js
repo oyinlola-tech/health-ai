@@ -52,19 +52,19 @@ export const aiUsageRepository = {
          average_response_time_ms
        )
        values (
-         $1, date_trunc('month', $2::timestamptz)::date,
-         (date_trunc('month', $2::timestamptz) + interval '1 month - 1 day')::date,
+         $1, date_format($2, '%Y-%m-01'),
+         last_day($2),
          $3, $4, 1, $5, $6, $7, case when $8 then 1 else 0 end,
          case when $9 is not null then 1 else 0 end, $10
        )
-       on conflict (period_start, feature_type, model_used) do update
-       set requests = ai_cost_summary.requests + 1,
-           input_tokens = ai_cost_summary.input_tokens + excluded.input_tokens,
-           output_tokens = ai_cost_summary.output_tokens + excluded.output_tokens,
-           cost_usd = ai_cost_summary.cost_usd + excluded.cost_usd,
-           cache_hits = ai_cost_summary.cache_hits + excluded.cache_hits,
-           blocked_requests = ai_cost_summary.blocked_requests + excluded.blocked_requests,
-           average_response_time_ms = round(((ai_cost_summary.average_response_time_ms * ai_cost_summary.requests) + excluded.average_response_time_ms)::numeric / (ai_cost_summary.requests + 1))::integer,
+       on duplicate key update
+           requests = requests + 1,
+           input_tokens = input_tokens + values(input_tokens),
+           output_tokens = output_tokens + values(output_tokens),
+           cost_usd = cost_usd + values(cost_usd),
+           cache_hits = cache_hits + values(cache_hits),
+           blocked_requests = blocked_requests + values(blocked_requests),
+           average_response_time_ms = round(((average_response_time_ms * requests) + values(average_response_time_ms)) / (requests + 1)),
            updated_at = now()`,
       [
         id,
@@ -83,10 +83,10 @@ export const aiUsageRepository = {
 
   async dailySpendForUser(userId, client = pool) {
     const { rows } = await client.query(
-      `select coalesce(sum(cost_estimate), 0)::float as total
+      `select coalesce(sum(cost_estimate), 0) as total
        from ai_usage_logs
        where user_id = $1
-         and created_at >= date_trunc('day', now())
+         and created_at >= current_date
          and blocked_reason is null`,
       [userId]
     );
@@ -95,9 +95,9 @@ export const aiUsageRepository = {
 
   async dailyGlobalSpend(client = pool) {
     const { rows } = await client.query(
-      `select coalesce(sum(cost_estimate), 0)::float as total
+      `select coalesce(sum(cost_estimate), 0) as total
        from ai_usage_logs
-       where created_at >= date_trunc('day', now())
+       where created_at >= current_date
          and blocked_reason is null`
     );
     return rows[0].total;
@@ -105,12 +105,12 @@ export const aiUsageRepository = {
 
   async monthlySpendForUser(userId, client = pool) {
     const { rows } = await client.query(
-      `select coalesce(sum(cost_usd), 0)::float as cost_usd,
-              coalesce(sum(tokens_used), 0)::integer as tokens_used,
-              count(*) filter (where blocked_reason is null)::integer as requests
+      `select coalesce(sum(cost_usd), 0) as cost_usd,
+              coalesce(sum(tokens_used), 0) as tokens_used,
+              sum(case when blocked_reason is null then 1 else 0 end) as requests
        from ai_usage_logs
        where user_id = $1
-         and created_at >= date_trunc('month', now())
+         and created_at >= date_format(current_date, '%Y-%m-01')
          and blocked_reason is null`,
       [userId]
     );
@@ -119,10 +119,10 @@ export const aiUsageRepository = {
 
   async monthlySpendForFeature(featureType, client = pool) {
     const { rows } = await client.query(
-      `select coalesce(sum(cost_usd), 0)::float as cost_usd
+      `select coalesce(sum(cost_usd), 0) as cost_usd
        from ai_usage_logs
        where feature_type = $1
-         and created_at >= date_trunc('month', now())
+         and created_at >= date_format(current_date, '%Y-%m-01')
          and blocked_reason is null`,
       [featureType]
     );
@@ -131,9 +131,9 @@ export const aiUsageRepository = {
 
   async monthlyGlobalSpend(client = pool) {
     const { rows } = await client.query(
-      `select coalesce(sum(cost_usd), 0)::float as cost_usd
+      `select coalesce(sum(cost_usd), 0) as cost_usd
        from ai_usage_logs
-       where created_at >= date_trunc('month', now())
+       where created_at >= date_format(current_date, '%Y-%m-01')
          and blocked_reason is null`
     );
     return rows[0].cost_usd;
@@ -141,7 +141,7 @@ export const aiUsageRepository = {
 
   async requestCountSince({ userId, since }, client = pool) {
     const { rows } = await client.query(
-      `select count(*)::integer as requests
+      `select count(*) as requests
        from ai_usage_logs
        where user_id = $1
          and created_at >= $2
@@ -153,10 +153,10 @@ export const aiUsageRepository = {
 
   async dailyRequestCount(userId, client = pool) {
     const { rows } = await client.query(
-      `select count(*)::integer as requests
+      `select count(*) as requests
        from ai_usage_logs
        where user_id = $1
-         and created_at >= date_trunc('day', now())
+         and created_at >= current_date
          and blocked_reason is null`,
       [userId]
     );
@@ -195,15 +195,15 @@ export const aiUsageRepository = {
        )
        values (
          $1, $2, $3, $4, $5, $6, $7,
-         date_trunc('month', now())::date,
-         (date_trunc('month', now()) + interval '1 month - 1 day')::date
+         date_format(current_date, '%Y-%m-01'),
+         last_day(current_date)
        )
-       on conflict (user_id, period_start) do update
-       set plan_code = excluded.plan_code,
-           monthly_cost_limit_usd = excluded.monthly_cost_limit_usd,
-           monthly_token_limit = excluded.monthly_token_limit,
-           daily_request_limit = excluded.daily_request_limit,
-           burst_per_minute = excluded.burst_per_minute,
+       on duplicate key update
+           plan_code = values(plan_code),
+           monthly_cost_limit_usd = values(monthly_cost_limit_usd),
+           monthly_token_limit = values(monthly_token_limit),
+           daily_request_limit = values(daily_request_limit),
+           burst_per_minute = values(burst_per_minute),
            updated_at = now()
        returning *`,
       [id, userId, planCode, monthlyCostLimitUsd, monthlyTokenLimit, dailyRequestLimit, burstPerMinute]
@@ -212,13 +212,13 @@ export const aiUsageRepository = {
   },
 
   async findCache(cacheKey, client = pool) {
-    const { rows } = await client.query(
+    await client.query(
       `update ai_cache_store
        set hits = hits + 1, last_hit_at = now()
-       where cache_key = $1 and expires_at > now()
-       returning *`,
+       where cache_key = $1 and expires_at > now()`,
       [cacheKey]
     );
+    const { rows } = await client.query("select * from ai_cache_store where cache_key = $1 and expires_at > now() limit 1", [cacheKey]);
     return rows[0] || null;
   },
 
@@ -226,11 +226,11 @@ export const aiUsageRepository = {
     const id = createId();
     const { rows } = await client.query(
       `insert into ai_cache_store (id, cache_key, prompt_hash, feature_type, model_used, response_text, metadata, expires_at)
-       values ($1, $2, $3, $4, $5, $6, $7::jsonb, now() + ($8::text || ' seconds')::interval)
-       on conflict (cache_key) do update
-       set response_text = excluded.response_text,
-           metadata = excluded.metadata,
-           expires_at = excluded.expires_at
+       values ($1, $2, $3, $4, $5, $6, $7, date_add(now(), interval $8 second))
+       on duplicate key update
+           response_text = values(response_text),
+           metadata = values(metadata),
+           expires_at = values(expires_at)
        returning *`,
       [id, cacheKey, promptHash, featureType, modelUsed, responseText, JSON.stringify(metadata), ttlSeconds]
     );
@@ -239,15 +239,15 @@ export const aiUsageRepository = {
 
   async summary(client = pool) {
     const { rows } = await client.query(
-      `select count(*)::integer as total_requests,
-              coalesce(sum(cost_usd), 0)::float as total_cost_usd,
-              coalesce(sum(cost_estimate), 0)::float as total_cost,
-              coalesce(sum(tokens_used), 0)::integer as total_tokens,
-              coalesce(sum(input_tokens), 0)::integer as input_tokens,
-              coalesce(sum(output_tokens), 0)::integer as output_tokens,
-              count(*) filter (where cache_hit)::integer as cache_hits,
-              count(*) filter (where blocked_reason is not null)::integer as blocked_requests,
-              coalesce(round(avg(response_time_ms))::integer, 0) as average_response_time_ms
+      `select count(*) as total_requests,
+              coalesce(sum(cost_usd), 0) as total_cost_usd,
+              coalesce(sum(cost_estimate), 0) as total_cost,
+              coalesce(sum(tokens_used), 0) as total_tokens,
+              coalesce(sum(input_tokens), 0) as input_tokens,
+              coalesce(sum(output_tokens), 0) as output_tokens,
+              sum(case when cache_hit then 1 else 0 end) as cache_hits,
+              sum(case when blocked_reason is not null then 1 else 0 end) as blocked_requests,
+              coalesce(round(avg(response_time_ms)), 0) as average_response_time_ms
        from ai_usage_logs`
     );
     return rows[0];
@@ -257,9 +257,9 @@ export const aiUsageRepository = {
     const { rows } = await client.query(
       `select endpoint,
               model_used,
-              count(*)::integer as requests,
-              coalesce(sum(cost_estimate), 0)::float as cost,
-              coalesce(sum(tokens_used), 0)::integer as tokens
+              count(*) as requests,
+              coalesce(sum(cost_estimate), 0) as cost,
+              coalesce(sum(tokens_used), 0) as tokens
        from ai_usage_logs
        where user_id = $1
        group by endpoint, model_used
@@ -273,9 +273,9 @@ export const aiUsageRepository = {
     const [modelBreakdown, expensiveQueries, featureBreakdown, topUsers, dailySpend] = await Promise.all([
       client.query(
         `select model_used,
-                count(*)::integer as requests,
-                coalesce(sum(cost_usd), 0)::float as cost_usd,
-                coalesce(sum(tokens_used), 0)::integer as tokens
+                count(*) as requests,
+                coalesce(sum(cost_usd), 0) as cost_usd,
+                coalesce(sum(tokens_used), 0) as tokens
          from ai_usage_logs
          group by model_used
          order by cost_usd desc`
@@ -289,32 +289,32 @@ export const aiUsageRepository = {
       ),
       client.query(
         `select feature_type,
-                count(*)::integer as requests,
-                coalesce(sum(cost_usd), 0)::float as cost_usd,
-                coalesce(round(avg(tokens_used))::integer, 0) as average_tokens,
-                count(*) filter (where cache_hit)::integer as cache_hits
+                count(*) as requests,
+                coalesce(sum(cost_usd), 0) as cost_usd,
+                coalesce(round(avg(tokens_used)), 0) as average_tokens,
+                sum(case when cache_hit then 1 else 0 end) as cache_hits
          from ai_usage_logs
-         where created_at >= date_trunc('month', now())
+         where created_at >= date_format(current_date, '%Y-%m-01')
          group by feature_type
          order by cost_usd desc`
       ),
       client.query(
         `select user_id,
-                count(*)::integer as requests,
-                coalesce(sum(cost_usd), 0)::float as cost_usd,
-                count(*) filter (where blocked_reason is not null)::integer as blocked_requests
+                count(*) as requests,
+                coalesce(sum(cost_usd), 0) as cost_usd,
+                sum(case when blocked_reason is not null then 1 else 0 end) as blocked_requests
          from ai_usage_logs
-         where created_at >= date_trunc('month', now())
+         where created_at >= date_format(current_date, '%Y-%m-01')
          group by user_id
          order by cost_usd desc
          limit 10`
       ),
       client.query(
-        `select date_trunc('day', created_at)::date as day,
-                coalesce(sum(cost_usd), 0)::float as cost_usd,
-                count(*)::integer as requests
+        `select date(created_at) as day,
+                coalesce(sum(cost_usd), 0) as cost_usd,
+                count(*) as requests
          from ai_usage_logs
-         where created_at >= now() - interval '30 days'
+         where created_at >= date_sub(now(), interval 30 day)
          group by day
          order by day`
       )

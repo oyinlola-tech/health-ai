@@ -26,9 +26,10 @@ export async function authenticate(req, _res, next) {
 }
 
 export function requireRoles(...roles) {
+  const allowed = roles.map((role) => role.toLowerCase());
   return (req, _res, next) => {
     if (!req.user) return next(errors.unauthorized());
-    if (!roles.includes(req.user.role)) return next(errors.forbidden());
+    if (!allowed.includes(String(req.user.role || "").toLowerCase())) return next(errors.forbidden());
     return next();
   };
 }
@@ -36,7 +37,7 @@ export function requireRoles(...roles) {
 export function requireOwnership(getOwnerId) {
   return async (req, _res, next) => {
     const ownerId = await getOwnerId(req);
-    if (req.user?.role === "Admin" || ownerId === req.user?.id) return next();
+    if (String(req.user?.role || "").toLowerCase() === "admin" || ownerId === req.user?.id) return next();
     return next(errors.forbidden("You can only access your own data."));
   };
 }

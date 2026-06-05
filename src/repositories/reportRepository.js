@@ -140,14 +140,15 @@ export const reportRepository = {
   async processingMetrics(client = pool) {
     const { rows } = await client.query(
       `select
-         count(*) filter (where extraction_status = 'completed')::int as reports_processed,
-         count(*) filter (where extraction_status = 'failed')::int as failed_extractions,
-         coalesce(round(avg(analysis_confidence) filter (where analysis_confidence is not null), 2), 0)::float as average_confidence,
-         coalesce(round(avg(extract(epoch from (extraction_completed_at - extraction_started_at))) filter (
-           where extraction_started_at is not null and extraction_completed_at is not null
-         ), 2), 0)::float as average_processing_time_seconds,
+         sum(case when extraction_status = 'completed' then 1 else 0 end) as reports_processed,
+         sum(case when extraction_status = 'failed' then 1 else 0 end) as failed_extractions,
+         coalesce(round(avg(case when analysis_confidence is not null then analysis_confidence end), 2), 0) as average_confidence,
+         coalesce(round(avg(case
+           when extraction_started_at is not null and extraction_completed_at is not null
+           then timestampdiff(second, extraction_started_at, extraction_completed_at)
+         end), 2), 0) as average_processing_time_seconds,
          case when count(*) = 0 then 0
-           else round(((count(*) filter (where extraction_status = 'failed'))::numeric / count(*)::numeric) * 100, 2)::float
+           else round((sum(case when extraction_status = 'failed' then 1 else 0 end) / count(*)) * 100, 2)
          end as ocr_failure_rate
        from reports
        where deleted_at is null`

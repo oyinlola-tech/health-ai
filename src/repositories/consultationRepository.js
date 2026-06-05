@@ -8,7 +8,7 @@ export const consultationRepository = {
     const { rows } = await client.query(
       `insert into consultation_sessions (id, appointment_id, patient_id, doctor_id, status, room_key, mode, scheduled_at)
        values ($1, $2, $3, $4, 'SCHEDULED', $5, 'CHAT', $6)
-       on conflict (appointment_id) where appointment_id is not null do nothing
+       on duplicate key update id = id
        returning *`,
       [id, appointment.id, appointment.patient_id, appointment.doctor_id, roomKey, appointment.scheduled_at]
     );
@@ -17,7 +17,7 @@ export const consultationRepository = {
       await client.query(
         `insert into chat_sessions (id, consultation_session_id, appointment_id, patient_id, doctor_id)
          values ($1, $2, $3, $4, $5)
-         on conflict (consultation_session_id) where consultation_session_id is not null do nothing`,
+         on duplicate key update id = id`,
         [createId(), session.id, appointment.id, appointment.patient_id, appointment.doctor_id]
       );
       return session;

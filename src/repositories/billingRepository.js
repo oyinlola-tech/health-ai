@@ -68,7 +68,7 @@ export const billingRepository = {
 
   async findPaymentByReference(providerReference, client = pool) {
     const { rows } = await client.query(
-      `select p.*, sp.code as plan_code, sp.interval as plan_interval
+      `select p.*, sp.code as plan_code, sp.\`interval\` as plan_interval
        from payments p
        left join subscription_plans sp on sp.id = p.plan_id
        where p.provider_reference = $1`,
@@ -83,7 +83,7 @@ export const billingRepository = {
        set status = $2,
            provider_order_no = coalesce($3, provider_order_no),
            failure_reason = coalesce($4, failure_reason),
-           metadata = case when $5::jsonb is null then metadata else metadata || jsonb_build_object('verification', $5::jsonb) end,
+           metadata = case when $5 is null then metadata else json_merge_patch(coalesce(metadata, json_object()), json_object('verification', cast($5 as json))) end,
            verified_at = case when $2 = 'verified' then coalesce(verified_at, now()) else verified_at end,
            updated_at = now()
        where provider_reference = $1
@@ -94,7 +94,7 @@ export const billingRepository = {
   },
 
   async activateSubscription({ userId, planId, interval, paymentId }, client = pool) {
-    const periodEndExpression = interval === "year" ? "now() + interval '1 year'" : "now() + interval '1 month'";
+    const periodEndExpression = interval === "year" ? "date_add(now(), interval 1 year)" : "date_add(now(), interval 1 month)";
     await client.query("update subscriptions set status = 'expired', updated_at = now() where user_id = $1 and status in ('active', 'trialing', 'past_due')", [
       userId
     ]);
@@ -137,13 +137,13 @@ export const billingRepository = {
     for (const [feature, enabled, limit] of features) {
       await client.query(
         `insert into entitlements (id, user_id, subscription_id, feature, enabled, limit_value, source, period_start, period_end)
-         values ($1, $2, $3, $4, $5, $6, 'subscription', date_trunc('month', now()), date_trunc('month', now()) + interval '1 month')
-         on conflict (user_id, feature, source) do update
-         set subscription_id = excluded.subscription_id,
-             enabled = excluded.enabled,
-             limit_value = excluded.limit_value,
-             period_start = excluded.period_start,
-             period_end = excluded.period_end,
+         values ($1, $2, $3, $4, $5, $6, 'subscription', date_format(current_date, '%Y-%m-01'), date_add(date_format(current_date, '%Y-%m-01'), interval 1 month))
+         on duplicate key update
+             subscription_id = values(subscription_id),
+             enabled = values(enabled),
+             limit_value = values(limit_value),
+             period_start = values(period_start),
+             period_end = values(period_end),
              updated_at = now()`,
         [createId(), userId, subscriptionId, feature, enabled, limit]
       );
@@ -153,7 +153,7 @@ export const billingRepository = {
   async usageForUser(userId, client = pool) {
     const { rows } = await client.query(
       `select * from usage_tracking
-       where user_id = $1 and period_start = date_trunc('month', now())::date
+       where user_id = $1 and period_start = date_format(current_date, '%Y-%m-01')
        order by feature`,
       [userId]
     );
@@ -164,10 +164,10 @@ export const billingRepository = {
     const id = createId();
     const { rows } = await client.query(
       `insert into usage_tracking (id, user_id, feature, period_start, period_end, used_count, metadata)
-       values ($1, $2, $3, date_trunc('month', now())::date, (date_trunc('month', now()) + interval '1 month - 1 day')::date, 1, $4::jsonb)
-       on conflict (user_id, feature, period_start) do update
-       set used_count = usage_tracking.used_count + 1,
-           metadata = usage_tracking.metadata || excluded.metadata,
+       values ($1, $2, $3, date_format(current_date, '%Y-%m-01'), last_day(current_date), 1, $4)
+       on duplicate key update
+           used_count = used_count + 1,
+           metadata = json_merge_patch(coalesce(metadata, json_object()), coalesce(values(metadata), json_object())),
            updated_at = now()
        returning *`,
       [id, userId, feature, JSON.stringify(metadata)]
@@ -224,18 +224,18 @@ export const billingRepository = {
   async adminMetrics(client = pool) {
     const { rows } = await client.query(
       `select
-         coalesce((select sum(amount_cents) from payments where status = 'verified' and created_at >= date_trunc('month', now())), 0)::int as monthly_revenue_cents,
-         count(distinct user_id) filter (where status in ('active', 'trialing', 'past_due'))::int as active_subscribers,
-         coalesce((select count(*) from payments where status = 'failed' and created_at >= date_trunc('month', now())), 0)::int as failed_payments,
-         coalesce((select count(*) from refunds where created_at >= date_trunc('month', now())), 0)::int as refunds,
-         coalesce((select round((count(*) filter (where status = 'cancelled'))::numeric / nullif(count(*), 0) * 100, 2) from subscriptions), 0)::float as churn_rate,
-         coalesce((select round((count(*) filter (where status in ('processing', 'succeeded')))::numeric / nullif((select count(*) from payments where status = 'verified'), 0) * 100, 2) from refunds), 0)::float as refund_rate
+         coalesce((select sum(amount_cents) from payments where status = 'verified' and created_at >= date_format(current_date, '%Y-%m-01')), 0) as monthly_revenue_cents,
+         count(distinct case when status in ('active', 'trialing', 'past_due') then user_id end) as active_subscribers,
+         coalesce((select count(*) from payments where status = 'failed' and created_at >= date_format(current_date, '%Y-%m-01')), 0) as failed_payments,
+         coalesce((select count(*) from refunds where created_at >= date_format(current_date, '%Y-%m-01')), 0) as refunds,
+         coalesce((select round(sum(case when status = 'cancelled' then 1 else 0 end) / nullif(count(*), 0) * 100, 2) from subscriptions), 0) as churn_rate,
+         coalesce((select round(sum(case when status in ('processing', 'succeeded') then 1 else 0 end) / nullif((select count(*) from payments where status = 'verified'), 0) * 100, 2) from refunds), 0) as refund_rate
        from subscriptions`
     );
     const features = await client.query(
       `select feature, sum(used_count)::int as used_count
        from usage_tracking
-       where period_start = date_trunc('month', now())::date
+       where period_start = date_format(current_date, '%Y-%m-01')
        group by feature
        order by used_count desc
        limit 10`
@@ -247,8 +247,8 @@ export const billingRepository = {
     const id = createId();
     const { rows } = await client.query(
       `insert into payment_webhooks (id, provider, event_id, event_type, signature_valid, payload, processed_at, provider_reference, signature, replay_key, status)
-       values ($1, 'opay', $2, $3, $4, $5::jsonb, now(), $6, $7, $8, $9)
-       on conflict (provider, replay_key) where replay_key is not null do nothing
+       values ($1, 'opay', $2, $3, $4, $5, now(), $6, $7, $8, $9)
+       on duplicate key update id = id
        returning *`,
       [id, eventId, eventType, signatureValid, JSON.stringify(payload), providerReference, signature, replayKey, signatureValid ? "received" : "rejected"]
     );

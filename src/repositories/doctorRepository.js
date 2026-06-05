@@ -3,14 +3,14 @@ import { createId } from "../utils/uuid.js";
 
 function searchWhere({ q, specialization, availableOnly, minRating } = {}) {
   const params = [];
-  const clauses = ["u.role = 'Doctor'", "u.deleted_at is null", "dp.verification_status = 'VERIFIED'", "dp.accepting_patients = true"];
+  const clauses = ["lower(u.role) = 'doctor'", "u.deleted_at is null", "dp.verification_status = 'VERIFIED'", "dp.accepting_patients = true"];
   if (q) {
     params.push(`%${q}%`);
-    clauses.push(`(u.first_name || ' ' || u.last_name ilike $${params.length} or dp.specialization ilike $${params.length})`);
+    clauses.push(`(concat(u.first_name, ' ', u.last_name) like $${params.length} or dp.specialization like $${params.length})`);
   }
   if (specialization) {
     params.push(`%${specialization}%`);
-    clauses.push(`dp.specialization ilike $${params.length}`);
+    clauses.push(`dp.specialization like $${params.length}`);
   }
   if (minRating !== undefined) {
     params.push(Number(minRating));
@@ -47,7 +47,7 @@ export const doctorRepository = {
               dp.rating_average, dp.rating_count, dp.bio, dp.verified_at
        from users u
        join doctor_profiles dp on dp.user_id = u.id
-       where u.id = $1 and u.role = 'Doctor' and u.deleted_at is null ${verificationClause}`,
+       where u.id = $1 and lower(u.role) = 'doctor' and u.deleted_at is null ${verificationClause}`,
       params
     );
     return rows[0] || null;
@@ -106,10 +106,16 @@ export const doctorRepository = {
     const { rows } = await client.query(
       `insert into doctors_availability (id, doctor_id, day_of_week, starts_at, ends_at, slot_minutes)
        values ($1, $2, $3, $4, $5, $6)
+       on duplicate key update slot_minutes = values(slot_minutes), is_active = true, updated_at = now()
        returning *`,
       [id, doctorId, dayOfWeek, startsAt, endsAt, slotMinutes]
     );
-    return rows[0];
+    if (rows[0]) return rows[0];
+    const existing = await client.query(
+      "select * from doctors_availability where doctor_id = $1 and day_of_week = $2 and starts_at = $3 and ends_at = $4 limit 1",
+      [doctorId, dayOfWeek, startsAt, endsAt]
+    );
+    return existing.rows[0];
   },
 
   async addUnavailableSlot({ doctorId, startsAt, endsAt, reason = null }, client = pool) {
@@ -123,6 +129,11 @@ export const doctorRepository = {
   },
 
   async isSlotAvailable({ doctorId, scheduledAt, durationMinutes = 30 }, client = pool) {
+    const scheduled = new Date(scheduledAt);
+    const end = new Date(scheduled.getTime() + durationMinutes * 60 * 1000);
+    const jsDay = scheduled.getDay();
+    const startTime = scheduled.toTimeString().slice(0, 8);
+    const endTime = end.toTimeString().slice(0, 8);
     const { rows } = await client.query(
       `select
          dp.verification_status = 'VERIFIED' and dp.accepting_patients = true and dp.vacation_mode = false as verified_and_accepting,
@@ -130,25 +141,27 @@ export const doctorRepository = {
            select 1 from doctors_availability da
            where da.doctor_id = $1
              and da.is_active = true
-             and da.day_of_week = extract(dow from $2::timestamptz)::int
-             and ($2::timestamptz)::time >= da.starts_at
-             and ($2::timestamptz + ($3::text || ' minutes')::interval)::time <= da.ends_at
+             and da.day_of_week = $4
+             and $5 >= da.starts_at
+             and $6 <= da.ends_at
          ) as within_working_hours,
          not exists (
            select 1 from doctor_unavailable_slots dus
            where dus.doctor_id = $1
-             and tstzrange(dus.starts_at, dus.ends_at, '[)') && tstzrange($2::timestamptz, $2::timestamptz + ($3::text || ' minutes')::interval, '[)')
+             and dus.starts_at < $3
+             and dus.ends_at > $2
          ) as not_unavailable,
          not exists (
            select 1 from appointments a
            where a.doctor_id = $1
              and a.deleted_at is null
              and a.status in ('PENDING', 'CONFIRMED')
-             and tstzrange(a.scheduled_at, a.scheduled_at + interval '30 minutes', '[)') && tstzrange($2::timestamptz, $2::timestamptz + ($3::text || ' minutes')::interval, '[)')
+             and a.scheduled_at < $3
+             and date_add(a.scheduled_at, interval a.duration_minutes minute) > $2
          ) as not_booked
        from doctor_profiles dp
        where dp.user_id = $1`,
-      [doctorId, scheduledAt, durationMinutes]
+      [doctorId, scheduled, end, jsDay, startTime, endTime]
     );
     const row = rows[0];
     return Boolean(row?.verified_and_accepting && row.within_working_hours && row.not_unavailable && row.not_booked);

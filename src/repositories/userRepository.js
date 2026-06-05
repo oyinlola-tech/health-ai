@@ -2,7 +2,12 @@ import { pool } from "../config/database.js";
 import { createId } from "../utils/uuid.js";
 
 function mapUser(row) {
-  return row || null;
+  if (!row) return null;
+  const normalizedRole = String(row.role || "").toLowerCase();
+  if (normalizedRole === "admin") row.role = "Admin";
+  if (normalizedRole === "doctor") row.role = "Doctor";
+  if (normalizedRole === "patient") row.role = "Patient";
+  return row;
 }
 
 export const userRepository = {
@@ -49,7 +54,7 @@ export const userRepository = {
        set first_name = coalesce($2, first_name),
            last_name = coalesce($3, last_name),
            consent_prompt_learning = coalesce($4, consent_prompt_learning),
-           metadata = metadata || $5::jsonb,
+           metadata = json_merge_patch(coalesce(metadata, json_object()), cast($5 as json)),
            updated_at = now()
        where id = $1 and deleted_at is null
        returning id, email, first_name, last_name, role, status, consent_prompt_learning, metadata, created_at`,
@@ -120,21 +125,22 @@ export const userRepository = {
   },
 
   async createDoctorProfile({ userId, specialty, licenseNumber, bio, yearsExperience = 0, verificationStatus = "PENDING" }, client = pool) {
-    const { rows } = await client.query(
+    await client.query(
       `insert into doctor_profiles (user_id, specialty, specialization, license_number, credentials_status, bio, years_experience, verification_status, accepting_patients, verified_at)
        values ($1, $2, $2, $3, lower($5), $4, $6, $5, $5 = 'VERIFIED', case when $5 = 'VERIFIED' then now() else null end)
-       on conflict (user_id) do update
-       set specialty = excluded.specialty,
-           specialization = excluded.specialization,
-           license_number = excluded.license_number,
-           bio = excluded.bio,
-           years_experience = excluded.years_experience,
-           verification_status = excluded.verification_status,
-           accepting_patients = excluded.accepting_patients,
+       on duplicate key update
+           specialty = values(specialty),
+           specialization = values(specialization),
+           license_number = values(license_number),
+           bio = values(bio),
+           years_experience = values(years_experience),
+           verification_status = values(verification_status),
+           accepting_patients = values(accepting_patients),
            updated_at = now()
-       returning *`,
+       `,
       [userId, specialty, licenseNumber, bio, verificationStatus, yearsExperience]
     );
-    return rows[0];
+    const profile = await client.query("select * from doctor_profiles where user_id = $1", [userId]);
+    return profile.rows[0];
   }
 };

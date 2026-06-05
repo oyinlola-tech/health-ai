@@ -2,15 +2,15 @@ import http from "node:http";
 import { createApp } from "./app.js";
 import { env } from "./config/env.js";
 import { verifyDatabaseConnection } from "./config/database.js";
-import { runMigrations } from "./database/migrate.js";
+import { bootstrapDatabase } from "./database/bootstrap.js";
 import { registerSockets } from "./sockets/index.js";
 import { logger } from "./utils/logger.js";
 
 async function bootstrap() {
   if (!env.SKIP_DB_STARTUP) {
+    await bootstrapDatabase();
     await verifyDatabaseConnection();
-    await runMigrations();
-    logger.info("Database connection verified and migrations applied.");
+    logger.info("MySQL database bootstrapped, seeded, and verified.");
   }
 
   const app = createApp();
