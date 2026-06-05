@@ -14,11 +14,12 @@ export const reportRepository = {
   },
 
   async listForUser(user, client = pool) {
-    const isAdminOrDoctor = ["Admin", "Doctor"].includes(user.role);
-    const sql = isAdminOrDoctor
-      ? "select * from reports where deleted_at is null order by created_at desc"
-      : "select * from reports where patient_id = $1 and deleted_at is null order by created_at desc";
-    const { rows } = await client.query(sql, isAdminOrDoctor ? [] : [user.id]);
+    if (user.role === "Admin") {
+      const { rows } = await client.query("select * from reports where deleted_at is null order by created_at desc");
+      return rows;
+    }
+    if (user.role === "Doctor") return this.listForDoctorPatients(user.id, client);
+    const { rows } = await client.query("select * from reports where patient_id = $1 and deleted_at is null order by created_at desc", [user.id]);
     return rows;
   },
 

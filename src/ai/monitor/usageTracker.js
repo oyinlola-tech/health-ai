@@ -9,6 +9,8 @@ const promptInjectionPatterns = [
   /disregard\s+(all\s+)?(system|developer|previous)\s+instructions/i,
   /reveal\s+(the\s+)?(system|developer|hidden)\s+prompt/i,
   /print\s+(the\s+)?(system|developer|hidden)\s+prompt/i,
+  /act\s+as\s+(an?\s+)?(admin|administrator|system|developer)/i,
+  /you\s+are\s+now\s+(an?\s+)?(admin|administrator|system|developer)/i,
   /api[_\s-]?key|secret[_\s-]?key|access[_\s-]?token/i,
   /jailbreak|developer\s+mode|dan\s+mode/i
 ];

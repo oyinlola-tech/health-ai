@@ -82,6 +82,7 @@ export const authService = {
       if (!stored) throw errors.unauthorized("Refresh token is no longer valid.");
       await userRepository.revokeRefreshToken(payload.jti, client);
       const user = await userRepository.findById(payload.sub, client);
+      if (!user || user.deleted_at || user.status === "disabled") throw errors.unauthorized("User session is no longer valid.");
       const session = await issueSession(user, client);
       return { user: publicUser(user), ...session };
     });

@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { recruitmentController } from "../controllers/recruitmentController.js";
 import { authenticate, requireRoles } from "../middlewares/auth.js";
-import { upload } from "../middlewares/upload.js";
+import { upload, validateUploadedFile } from "../middlewares/upload.js";
 import { validate } from "../middlewares/validate.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { csrfProtection } from "../middlewares/csrf.js";
-import { apiRateLimit } from "../middlewares/rateLimit.js";
+import { apiRateLimit, uploadRateLimit } from "../middlewares/rateLimit.js";
 import { applicationCreateSchema, applicationReviewSchema, jobCreateSchema } from "../validators/recruitmentValidators.js";
 import { auditAction } from "../middlewares/audit.js";
 
@@ -17,7 +17,9 @@ recruitmentRoutes.post(
   "/applications",
   csrfProtection,
   apiRateLimit,
+  uploadRateLimit,
   upload.single("document"),
+  validateUploadedFile,
   validate(applicationCreateSchema),
   auditAction("recruitment.application.submit"),
   asyncHandler(recruitmentController.apply)

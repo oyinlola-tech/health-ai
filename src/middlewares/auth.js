@@ -9,7 +9,12 @@ export async function authenticate(req, _res, next) {
     const token = header.startsWith("Bearer ") ? header.slice(7) : null;
     if (!token) return next(errors.unauthorized());
 
-    const payload = jwt.verify(token, env.JWT_ACCESS_SECRET);
+    const payload = jwt.verify(token, env.JWT_ACCESS_SECRET, {
+      issuer: env.JWT_ISSUER,
+      audience: env.JWT_AUDIENCE,
+      algorithms: ["HS256"]
+    });
+    if (payload.typ !== "access") return next(errors.unauthorized("Invalid access token."));
     const user = await userRepository.findById(payload.sub);
     if (!user || user.deleted_at) return next(errors.unauthorized("User session is no longer valid."));
 

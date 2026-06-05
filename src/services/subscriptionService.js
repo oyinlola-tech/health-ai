@@ -5,6 +5,7 @@ import { createId } from "../utils/uuid.js";
 import { errors } from "../utils/errors.js";
 import { opayClient } from "./opayClient.js";
 import { entitlementService } from "./entitlementService.js";
+import { safeEqual } from "../utils/crypto.js";
 
 function callbackUrls(reference) {
   const base = env.PUBLIC_APP_URL.replace(/\/$/, "");
@@ -21,6 +22,25 @@ function buildReference() {
 
 function normalizeProviderReference(payload) {
   return payload?.reference || payload?.data?.reference || payload?.orderNo || payload?.data?.orderNo || payload?.merchantOrderNo || null;
+}
+
+function providerAmount(payload) {
+  return Number(payload?.data?.amount?.total || payload?.amount?.total || payload?.data?.amount || payload?.amount || 0);
+}
+
+function providerCurrency(payload) {
+  return String(payload?.data?.amount?.currency || payload?.amount?.currency || payload?.data?.currency || payload?.currency || "").toUpperCase();
+}
+
+function assertPaymentIntegrity(payment, providerPayload) {
+  const amount = providerAmount(providerPayload);
+  const currency = providerCurrency(providerPayload);
+  if (amount && amount !== Number(payment.amount_cents)) {
+    throw errors.forbidden("Payment amount integrity check failed.");
+  }
+  if (currency && currency !== String(payment.currency).toUpperCase()) {
+    throw errors.forbidden("Payment currency integrity check failed.");
+  }
 }
 
 async function activateVerifiedPayment(payment, client) {
@@ -121,6 +141,7 @@ export const subscriptionService = {
       });
       throw errors.badRequest("Payment has not been verified by OPay.");
     }
+    assertPaymentIntegrity(payment, providerResponse);
     return withTransaction(async (client) => {
       const updated = await activateVerifiedPayment({ ...payment, status: payment.status, verified_by: actor?.id || null }, client);
       await billingRepository.createPaymentTransaction({
@@ -137,7 +158,7 @@ export const subscriptionService = {
 
   async processWebhook({ payload, rawBody, signature }) {
     const expected = opayClient.signatureForPayload(rawBody);
-    const signatureValid = Boolean(signature && expected && signature.toLowerCase() === expected.toLowerCase());
+    const signatureValid = Boolean(signature && expected && safeEqual(signature.toLowerCase(), expected.toLowerCase()));
     const reference = normalizeProviderReference(payload);
     const replayKey = payload?.eventId || payload?.transactionId || payload?.orderNo || reference;
     const eventType = payload?.event || payload?.type || "opay.payment";
@@ -155,6 +176,7 @@ export const subscriptionService = {
     if (!reference) throw errors.badRequest("Webhook did not include a payment reference.");
     const payment = await billingRepository.findPaymentByReference(reference);
     if (!payment) throw errors.notFound("Payment not found.");
+    assertPaymentIntegrity(payment, payload);
     if (opayClient.verifiedFrom(payload)) {
       const updated = await withTransaction(async (client) => {
         const verified = await activateVerifiedPayment(payment, client);

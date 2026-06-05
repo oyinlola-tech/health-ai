@@ -27,6 +27,8 @@ const envSchema = z
     SKIP_DB_STARTUP: booleanFromEnv,
     JWT_ACCESS_SECRET: z.string().min(16).default("development-access-secret-change-before-production"),
     JWT_REFRESH_SECRET: z.string().min(16).default("development-refresh-secret-change-before-production"),
+    JWT_ISSUER: z.string().default("medexplain-ai"),
+    JWT_AUDIENCE: z.string().default("medexplain-ai-users"),
     JWT_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
     JWT_REFRESH_TTL_SECONDS: z.coerce.number().int().positive().default(2592000),
     COOKIE_SECRET: z.string().min(16).default("development-cookie-secret-change-before-production"),

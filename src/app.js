@@ -87,20 +87,26 @@ export function createApp() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com", "https://cdn.jsdelivr.net"],
+          scriptSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
           fontSrc: ["'self'", "https://fonts.gstatic.com"],
           imgSrc: ["'self'", "data:", "https:"],
           connectSrc: ["'self'"],
           objectSrc: ["'none'"],
-          baseUri: ["'self'"]
+          baseUri: ["'self'"],
+          frameAncestors: ["'none'"],
+          formAction: ["'self'"]
         }
-      }
+      },
+      frameguard: { action: "deny" },
+      referrerPolicy: { policy: "no-referrer" }
     })
   );
   app.use(
     cors({
       credentials: true,
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Authorization", "Content-Type", "X-CSRF-Token"],
       origin(origin, callback) {
         if (!origin || allowedOrigins.has(origin)) return callback(null, true);
         return callback(new Error("CORS origin is not allowed."));

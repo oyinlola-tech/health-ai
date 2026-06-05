@@ -47,11 +47,15 @@ vi.mock("../src/utils/logger.js", () => ({
 }));
 
 const user = { id: "018f0000-0000-7000-8000-000000000101", role: "Patient", email: "p@example.com" };
+const sessionId = "018f0000-0000-7000-8000-000000000303";
+const doctorId = "018f0000-0000-7000-8000-000000000202";
 
 beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
   vi.stubEnv("JWT_ACCESS_SECRET", "development-access-secret-change-before-production");
+  vi.stubEnv("JWT_ISSUER", "medexplain-ai");
+  vi.stubEnv("JWT_AUDIENCE", "medexplain-ai-users");
   vi.stubEnv("MESSAGE_ENCRYPTION_SECRET", "test-message-secret-for-realtime-system");
   mocks.findUserById.mockResolvedValue(user);
   mocks.recordPresence.mockResolvedValue({});
@@ -61,7 +65,11 @@ beforeEach(() => {
 describe("authSocketMiddleware", () => {
   it("authenticates socket connections with JWT access tokens", async () => {
     const { authSocketMiddleware } = await import("../src/realtime/authSocketMiddleware.js");
-    const token = jwt.sign({ role: user.role, email: user.email }, "development-access-secret-change-before-production", { subject: user.id });
+    const token = jwt.sign(
+      { role: user.role, email: user.email, typ: "access" },
+      "development-access-secret-change-before-production",
+      { subject: user.id, issuer: "medexplain-ai", audience: "medexplain-ai-users", algorithm: "HS256" }
+    );
     const socket = { handshake: { auth: { token } }, id: "socket-id" };
     const next = vi.fn();
 
@@ -88,7 +96,7 @@ describe("roomManager", () => {
     mocks.findAppointmentAccess.mockResolvedValue(null);
     const socket = { user, join: vi.fn() };
 
-    await expect(roomManager.joinAppointment(socket, "appointment-id")).rejects.toThrow("Appointment room access denied.");
+    await expect(roomManager.joinAppointment(socket, "018f0000-0000-7000-8000-000000000404")).rejects.toThrow("Appointment room access denied.");
     expect(socket.join).not.toHaveBeenCalled();
   });
 });
@@ -108,16 +116,16 @@ describe("eventHandler chat delivery", () => {
     const io = {
       to: vi.fn(() => ({ emit }))
     };
-    mocks.findSessionForUser.mockResolvedValue({ id: "session-id", patient_id: user.id, doctor_id: "doctor-id" });
-    mocks.addMessage.mockResolvedValue({ id: "message-id", content: "Hello", created_at: "2026-06-05T12:00:00.000Z" });
+    mocks.findSessionForUser.mockResolvedValue({ id: sessionId, patient_id: user.id, doctor_id: doctorId });
+    mocks.addMessage.mockResolvedValue({ id: "018f0000-0000-7000-8000-000000000505", content: "Hello", created_at: "2026-06-05T12:00:00.000Z" });
 
     registerEventHandlers(io, socket);
     const ack = vi.fn();
-    await handlers.message_send({ sessionId: "session-id", content: "Hello" }, ack);
+    await handlers.message_send({ sessionId, content: "Hello" }, ack);
 
-    expect(mocks.addMessage).toHaveBeenCalledWith(expect.objectContaining({ senderId: user.id, recipientId: "doctor-id" }));
-    expect(io.to).toHaveBeenCalledWith("chat:session-id");
-    expect(emit).toHaveBeenCalledWith("message_receive", expect.objectContaining({ receiverId: "doctor-id" }));
+    expect(mocks.addMessage).toHaveBeenCalledWith(expect.objectContaining({ senderId: user.id, recipientId: doctorId }));
+    expect(io.to).toHaveBeenCalledWith(`chat:${sessionId}`);
+    expect(emit).toHaveBeenCalledWith("message_receive", expect.objectContaining({ receiverId: doctorId }));
     expect(ack).toHaveBeenCalledWith(expect.objectContaining({ ok: true }));
   });
 });
