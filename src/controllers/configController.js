@@ -1,4 +1,5 @@
 import { publicConfig } from "../config/env.js";
+import { getHealthStatus } from "../services/healthCheckService.js";
 import { sendSuccess } from "../utils/response.js";
 
 export const configController = {
@@ -6,11 +7,8 @@ export const configController = {
     return sendSuccess(res, publicConfig);
   },
 
-  health(_req, res) {
-    return sendSuccess(res, {
-      status: "ok",
-      service: "MedExplain AI",
-      timestamp: new Date().toISOString()
-    });
+  async health(_req, res) {
+    const health = await getHealthStatus();
+    return res.status(health.status === "healthy" ? 200 : 503).json(health);
   }
 };

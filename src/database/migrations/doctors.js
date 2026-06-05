@@ -1,4 +1,4 @@
-import { executeStatements, id, text, timestamps } from "./helpers.js";
+import { executeStatements, id, json, text, timestamps } from "./helpers.js";
 
 export async function up(connection) {
   await executeStatements(connection, [
@@ -18,6 +18,7 @@ export async function up(connection) {
       rating_count int not null default 0,
       verified_at datetime null,
       verified_by ${id} null,
+      metadata ${json} null,
       ${timestamps()},
       index idx_doctor_profiles_specialization (specialization),
       index idx_doctor_profiles_verification (verification_status),

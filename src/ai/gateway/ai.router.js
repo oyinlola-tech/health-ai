@@ -23,6 +23,24 @@ function modelFor(taskType) {
   return genAI.getGenerativeModel({ model: selectModel(taskType), generationConfig: jsonGenerationConfig });
 }
 
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function generateContentWithRetry(taskType, prompt) {
+  let lastError;
+  for (let attempt = 0; attempt <= env.AI_CALL_RETRIES; attempt += 1) {
+    try {
+      return await modelFor(taskType).generateContent(prompt);
+    } catch (error) {
+      lastError = error;
+      if (attempt === env.AI_CALL_RETRIES) break;
+      await wait(env.AI_CALL_RETRY_MS * (attempt + 1));
+    }
+  }
+  throw lastError;
+}
+
 function featureTypeForTask(taskType, endpoint) {
   if (taskType === "medical_report" || endpoint === "reports.analyze") return "report_analysis";
   if (taskType === "doctor_assist") return "doctor_assist_request";
@@ -94,7 +112,7 @@ export const aiGateway = {
     });
 
     try {
-      const result = await modelFor(taskType).generateContent(optimizedPrompt);
+      const result = await generateContentWithRetry(taskType, optimizedPrompt);
       const text = result.response.text();
       aiResponseCache.set(cacheKey, text);
       await aiUsageRepository.storeCache({

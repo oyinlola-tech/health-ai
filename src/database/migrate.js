@@ -2,8 +2,12 @@ import { fileURLToPath } from "node:url";
 import { bootstrapDatabase } from "./bootstrap.js";
 import { pool } from "./connection.js";
 import { logger } from "../utils/logger.js";
+import { validateStartupEnvironment } from "../config/startupValidation.js";
 
 export async function runMigrations() {
+  for (const warning of validateStartupEnvironment()) {
+    logger.warn(warning, { module: "startup" });
+  }
   await bootstrapDatabase();
 }
 

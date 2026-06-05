@@ -12,6 +12,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "start:full": "npm run setup && npm run dev",
     "build:css": "tailwindcss -i ./public/assets/css/input.css -o ./public/assets/css/styles.css --minify",
     "setup": "npm run migrate",
     "migrate": "node src/database/migrate.js",

@@ -10,9 +10,11 @@ import { env, getAllowedOrigins } from "./config/env.js";
 import { openApiSpec } from "./docs/openapi.js";
 import { apiRateLimit } from "./middlewares/rateLimit.js";
 import { csrfProtection } from "./middlewares/csrf.js";
+import { requestIdMiddleware } from "./middlewares/requestId.js";
 import { sanitizeRequest } from "./middlewares/sanitize.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorMiddleware.js";
 import { apiRoutes } from "./routes/index.js";
+import { configController } from "./controllers/configController.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.resolve(__dirname, "../public");
@@ -113,6 +115,7 @@ export function createApp() {
       }
     })
   );
+  app.use(requestIdMiddleware);
   app.use(compression());
   app.use(cookieParser(env.COOKIE_SECRET));
   app.use(
@@ -126,6 +129,13 @@ export function createApp() {
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
   app.use(express.static(publicDir));
 
+  app.get("/health", async (req, res, next) => {
+    try {
+      await configController.health(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
   app.get(frontendRoutes, (_req, res) => res.sendFile(appEntry));
 
   app.get("/api-docs.json", (_req, res) => res.json(openApiSpec));

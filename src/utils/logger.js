@@ -1,10 +1,15 @@
+import { getRequestContext } from "./requestContext.js";
+
 const levels = new Set(["info", "warn", "error"]);
 
 function write(level, message, context = {}) {
   const normalized = levels.has(level) ? level : "info";
+  const requestContext = getRequestContext();
   const payload = {
-    level: normalized,
+    level: normalized.toUpperCase(),
     message,
+    module: context.module || "app",
+    requestId: context.requestId || requestContext.requestId || null,
     context,
     timestamp: new Date().toISOString()
   };

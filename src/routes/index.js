@@ -16,7 +16,13 @@ import { doctorMarketplaceRoutes } from "./doctorMarketplaceRoutes.js";
 
 export const apiRoutes = Router();
 
-apiRoutes.get("/health", configController.health);
+apiRoutes.get("/health", async (req, res, next) => {
+  try {
+    await configController.health(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
 apiRoutes.get("/config/public", configController.public);
 apiRoutes.use("/auth", authRoutes);
 apiRoutes.use("/me", meRoutes);

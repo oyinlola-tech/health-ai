@@ -4,6 +4,10 @@ export function setSocketServer(server) {
   io = server;
 }
 
+export function isSocketServerReady() {
+  return Boolean(io);
+}
+
 export const socketHub = {
   toUser(userId, event, payload) {
     io?.to(`user:${userId}`).emit(event, payload);
