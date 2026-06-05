@@ -17,5 +17,9 @@ export const adminController = {
 
   async auditLogs(req, res) {
     return sendSuccess(res, { auditLogs: await adminService.auditLogs(req.query) });
+  },
+
+  async reportProcessingMetrics(_req, res) {
+    return sendSuccess(res, { metrics: await adminService.reportProcessingMetrics() });
   }
 };

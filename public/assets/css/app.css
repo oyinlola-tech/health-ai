@@ -406,6 +406,30 @@ p {
   border-top: 2px solid var(--color-accent);
 }
 
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metric-tile {
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-small);
+  background: var(--color-background);
+}
+
+.metric-tile strong {
+  display: block;
+  color: var(--color-primary);
+  font-size: 18px;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -599,6 +623,33 @@ thead th:last-child {
   color: #92400e;
 }
 
+.badge-error {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #991b1b;
+}
+
+.clean-list {
+  margin: 0;
+  padding-left: 24px;
+  display: grid;
+  gap: 8px;
+}
+
+.source-link {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-small);
+  background: var(--color-background);
+}
+
+.source-link span {
+  color: var(--color-secondary);
+  font-size: 14px;
+}
+
 .empty-state,
 .error-state,
 .loading-state {
@@ -725,6 +776,10 @@ thead th:last-child {
   .grid-4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -773,7 +828,8 @@ thead th:last-child {
 
   .grid-2,
   .grid-3,
-  .grid-4 {
+  .grid-4,
+  .metric-grid {
     grid-template-columns: 1fr;
   }
 

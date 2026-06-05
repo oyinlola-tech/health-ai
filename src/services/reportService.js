@@ -2,6 +2,19 @@ import { reportRepository } from "../repositories/reportRepository.js";
 import { reportAnalysisPipeline } from "../modules/report-processing/reportAnalysisPipeline.js";
 import { errors } from "../utils/errors.js";
 
+function parseLatestAnalysis(interaction) {
+  if (!interaction?.response) return null;
+  try {
+    return {
+      response: JSON.parse(interaction.response),
+      model: interaction.model,
+      createdAt: interaction.created_at
+    };
+  } catch {
+    return null;
+  }
+}
+
 export const reportService = {
   async createReport({ user, file, title }) {
     if (!file) throw errors.badRequest("A report file is required.");
@@ -29,7 +42,11 @@ export const reportService = {
     if (user.role !== "Admin" && user.role !== "Doctor" && report.patient_id !== user.id) {
       throw errors.forbidden("You can only access your own reports.");
     }
-    return report;
+    const latestAnalysis = await reportRepository.latestAnalysis(report.id);
+    return {
+      ...report,
+      analysis: parseLatestAnalysis(latestAnalysis)
+    };
   },
 
   async deleteReport(id, user) {

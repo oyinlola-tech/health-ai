@@ -27,6 +27,18 @@ export const reportRepository = {
     return rows[0] || null;
   },
 
+  async latestAnalysis(reportId, client = pool) {
+    const { rows } = await client.query(
+      `select response, model, created_at
+       from ai_interactions
+       where report_id = $1 and type = 'report_analysis'
+       order by created_at desc
+       limit 1`,
+      [reportId]
+    );
+    return rows[0] || null;
+  },
+
   async updateAnalysis(id, { status, summary, extractedText }, client = pool) {
     const { rows } = await client.query(
       `update reports

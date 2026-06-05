@@ -9,7 +9,8 @@ const mocks = vi.hoisted(() => ({
   updateFeedback: vi.fn(),
   listChatMessages: vi.fn(),
   findReportById: vi.fn(),
-  updateAnalysis: vi.fn()
+  updateAnalysis: vi.fn(),
+  createNotification: vi.fn()
 }));
 
 vi.mock("../src/ai/gateway/ai.router.js", () => ({
@@ -39,6 +40,12 @@ vi.mock("../src/repositories/reportRepository.js", () => ({
   }
 }));
 
+vi.mock("../src/repositories/notificationRepository.js", () => ({
+  notificationRepository: {
+    create: mocks.createNotification
+  }
+}));
+
 const user = {
   id: "7ee9e7e4-36fc-4ad7-b6ad-f95711e4782d",
   role: "Patient",
@@ -47,30 +54,24 @@ const user = {
 
 function structuredAiResponse(overrides = {}) {
   return {
-    report_overview: {
-      type: "Blood test",
-      summary: "Your result needs review, but there is no emergency signal in the provided text."
-    },
-    findings: [
+    summary: "Your result needs review, but there is no emergency signal in the provided text.",
+    keyFindings: ["Hemoglobin is within the listed reference range."],
+    abnormalResults: [
       {
-        test_name: "Hemoglobin",
-        value: "14",
+        testName: "Hemoglobin",
+        value: 14,
         unit: "g/dL",
-        normal_range: "13.5-17.5 g/dL",
-        status: "normal",
+        referenceMin: 13.5,
+        referenceMax: 17.5,
+        flag: "NORMAL",
         explanation: "Hemoglobin is within the listed reference range."
       }
     ],
-    risk_assessment: {
-      level: "unknown",
-      reason: "Only limited report information was provided."
-    },
-    key_insights: ["Hemoglobin is within the listed reference range."],
-    recommendations: ["Discuss the report with a licensed clinician."],
-    questions_for_doctor: ["Are these values expected for me?"],
-    follow_up_suggestions: ["Keep this result with your medical records."],
-    medical_disclaimer:
-      "This information is for educational purposes only and is not medical advice. Please consult a qualified healthcare professional for interpretation and diagnosis.",
+    possibleExplanations: ["This can be consistent with a typical result when viewed with the listed reference range."],
+    recommendedQuestions: ["Are these values expected for me?"],
+    urgencyLevel: "LOW",
+    seekMedicalAttention: false,
+    sourcesUsed: [],
     ...overrides
   };
 }
@@ -101,7 +102,7 @@ describe("aiService structured response handling", () => {
 
     const result = await aiService.chat({ user, message: "What does this report mean?" });
 
-    expect(result.message).toBe(payload.report_overview.summary);
+    expect(result.message).toBe(payload.summary);
     expect(result.response).toEqual(payload);
     expect(mocks.createInteraction).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -113,7 +114,7 @@ describe("aiService structured response handling", () => {
     expect(mocks.storeMessage).toHaveBeenLastCalledWith({
       userId: user.id,
       role: "assistant",
-      content: payload.report_overview.summary,
+      content: payload.summary,
       aiInteractionId: "interaction-id"
     });
   });
@@ -135,11 +136,15 @@ describe("aiService structured response handling", () => {
       id: "dcacdd76-97ee-495f-8f8f-79d2056408c1",
       patient_id: user.id,
       title: "Blood Test",
-      extracted_text: "Hemoglobin 14 g/dL"
+      extracted_text: "Hemoglobin 14 g/dL",
+      extraction_status: "completed",
+      analysis_confidence: 82,
+      medical_entities_json: { testNames: ["Hemoglobin"] },
+      lab_results_json: [{ testName: "Hemoglobin", value: 14, unit: "g/dL", referenceMin: 13, referenceMax: 17, flag: "NORMAL" }]
     };
     mocks.findReportById.mockResolvedValue(report);
     mocks.generateJson.mockResolvedValue({
-      text: JSON.stringify({ report_overview: { type: "Blood test", summary: "Missing required sections." } }),
+      text: JSON.stringify({ summary: "Missing required sections." }),
       model: "gemini-test-pro",
       cacheHit: false
     });
@@ -149,5 +154,22 @@ describe("aiService structured response handling", () => {
     });
     expect(mocks.updateAnalysis).toHaveBeenCalledWith(report.id, { status: "processing" });
     expect(mocks.updateAnalysis).toHaveBeenCalledWith(report.id, { status: "failed" });
+  });
+
+  it("does not call Gemini when extracted report content is unavailable", async () => {
+    const aiService = await loadService();
+    const report = {
+      id: "dcacdd76-97ee-495f-8f8f-79d2056408c1",
+      patient_id: user.id,
+      title: "Blood Test",
+      extracted_text: "",
+      extraction_status: "failed"
+    };
+    mocks.findReportById.mockResolvedValue(report);
+
+    await expect(aiService.analyzeReport({ reportId: report.id, user })).rejects.toMatchObject({
+      message: "Report content could not be extracted reliably."
+    });
+    expect(mocks.generateJson).not.toHaveBeenCalled();
   });
 });

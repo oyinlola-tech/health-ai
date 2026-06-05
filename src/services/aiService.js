@@ -131,6 +131,17 @@ function responseSummary(response) {
   return response.summary;
 }
 
+function sourcesFromContextChunks(contextChunks) {
+  return contextChunks
+    .filter((chunk) => chunk?.url)
+    .slice(0, 10)
+    .map((chunk) => ({
+      source: String(chunk.source || "Trusted medical source").slice(0, 100),
+      title: String(chunk.title || chunk.source || "Retrieved medical context").slice(0, 500),
+      url: chunk.url
+    }));
+}
+
 function medicalReportPromptContract() {
   return [
     "You are a medical report interpretation assistant.",
@@ -291,6 +302,7 @@ export const aiService = {
       });
       const response = parseStructuredMedicalResponse(result.text);
       if (confidenceWarning) response.confidenceWarning = confidenceWarning;
+      if (!response.sourcesUsed?.length) response.sourcesUsed = sourcesFromContextChunks(contextChunks);
       await notifyCriticalReport({ report, user, response });
       await aiRepository.createInteraction({
         userId: user.id,
@@ -301,7 +313,15 @@ export const aiService = {
         model: result.model,
         usedForLearning: consentAllowsLearning(user)
       });
-      return reportRepository.updateAnalysis(report.id, { status: "analyzed", summary: responseSummary(response) });
+      const updatedReport = await reportRepository.updateAnalysis(report.id, { status: "analyzed", summary: responseSummary(response) });
+      return {
+        ...updatedReport,
+        analysis: {
+          response,
+          model: result.model,
+          createdAt: new Date().toISOString()
+        }
+      };
     } catch (error) {
       await reportRepository.updateAnalysis(report.id, { status: "failed" });
       throw error;

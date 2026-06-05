@@ -12,4 +12,5 @@ adminRoutes.use(authenticate, requireRoles("Admin"));
 adminRoutes.get("/users", asyncHandler(adminController.users));
 adminRoutes.post("/doctors", validate(createDoctorSchema), auditAction("admin.doctor.create"), asyncHandler(adminController.createDoctor));
 adminRoutes.get("/analytics", asyncHandler(adminController.analytics));
+adminRoutes.get("/reports/processing-metrics", asyncHandler(adminController.reportProcessingMetrics));
 adminRoutes.get("/audit-logs", asyncHandler(adminController.auditLogs));

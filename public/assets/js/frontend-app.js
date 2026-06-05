@@ -464,10 +464,48 @@ function summaryCard(title, iconName, value, href) {
   return `<article class="card stack"><div class="card-header"><div><p class="caption">${title}</p><h3>${escapeHtml(value)}</h3></div><div class="icon-tile">${icon(iconName)}</div></div><a class="btn btn-quiet" href="${href}">Open</a></article>`;
 }
 
+function metricTile(title, iconName, value) {
+  return `<div class="metric-tile"><div><p class="caption">${escapeHtml(title)}</p><strong>${escapeHtml(value)}</strong></div><div class="icon-tile">${icon(iconName)}</div></div>`;
+}
+
+function displayStatus(value) {
+  return String(value || "pending").replaceAll("_", " ");
+}
+
+function badgeClassForStatus(value) {
+  const status = String(value || "").toLowerCase();
+  if (["completed", "analyzed", "normal", "low"].includes(status)) return "badge-success";
+  if (["failed", "critical", "critical_low", "critical_high", "high"].includes(status)) return "badge-error";
+  if (["processing", "uploaded", "pending", "medium", "low"].includes(status)) return "badge-warning";
+  return "";
+}
+
+function badgeClassForLabFlag(value) {
+  const flag = String(value || "").toUpperCase();
+  if (flag === "NORMAL") return "badge-success";
+  if (flag === "LOW" || flag === "HIGH") return "badge-warning";
+  if (flag === "CRITICAL_LOW" || flag === "CRITICAL_HIGH") return "badge-error";
+  return "";
+}
+
+function confidenceText(value) {
+  return Number.isFinite(Number(value)) ? `${Number(value)}%` : "Not available";
+}
+
+function reportTitle(report) {
+  return report.title || report.original_name || report.originalName || "Untitled report";
+}
+
 function renderReportItem(report) {
-  const title = report.title || report.originalName || "Untitled report";
-  const status = report.status || "Uploaded";
-  return `<article class="card stack"><div class="card-header"><div><h3>${escapeHtml(title)}</h3><p class="muted">${escapeHtml(status)}</p></div><span class="badge">${escapeHtml(status)}</span></div><a class="btn btn-quiet" href="/report/${report.id || ""}">Review report</a></article>`;
+  const extractionStatus = report.extraction_status || "pending";
+  const confidence = confidenceText(report.analysis_confidence);
+  return `<article class="card stack">
+    <div class="card-header">
+      <div><h3>${escapeHtml(reportTitle(report))}</h3><p class="muted">Extraction confidence: ${escapeHtml(confidence)}</p></div>
+      <span class="badge ${badgeClassForStatus(extractionStatus)}">${escapeHtml(displayStatus(extractionStatus))}</span>
+    </div>
+    <div class="actions"><span class="badge">${escapeHtml(displayStatus(report.status || "uploaded"))}</span><a class="btn btn-quiet" href="/report/${report.id || ""}">Review report</a></div>
+  </article>`;
 }
 
 function renderHealthItem(entry) {
@@ -486,7 +524,7 @@ async function renderReports() {
         <form class="form" data-upload-form novalidate>
           <div class="form-message" data-form-message hidden></div>
           ${field("Report title", "title", "text", false)}
-          <div class="field"><label for="report">Medical report file <span class="required">*</span></label><input id="report" name="report" type="file" required /><span class="field-error" data-error-for="report"></span></div>
+          <div class="field"><label for="report">Medical report file <span class="required">*</span></label><input id="report" name="report" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp" required /><span class="field-error" data-error-for="report"></span></div>
           <button class="btn btn-primary" type="submit">${icon("upload_file")}Upload securely</button>
         </form>
       </section>
@@ -518,6 +556,93 @@ function bindUploadForm() {
   });
 }
 
+function renderExtractionProgress(report) {
+  const status = report.extraction_status || "pending";
+  const started = report.extraction_started_at ? new Date(report.extraction_started_at).toLocaleString() : "Not started";
+  const completed = report.extraction_completed_at ? new Date(report.extraction_completed_at).toLocaleString() : "Not completed";
+  return `<section class="card stack">
+    <div class="card-header">
+      <div><h2>Processing Status</h2><p class="muted">OCR and medical extraction state for this report.</p></div>
+      <span class="badge ${badgeClassForStatus(status)}">${escapeHtml(displayStatus(status))}</span>
+    </div>
+    <section class="metric-grid">
+      ${metricTile("Confidence", "verified", confidenceText(report.analysis_confidence))}
+      ${metricTile("Started", "hourglass_top", started)}
+      ${metricTile("Completed", "task_alt", completed)}
+      ${metricTile("Version", "settings_suggest", report.processing_version || "Not set")}
+    </section>
+    ${report.extraction_error ? `<p class="form-message" data-state="error" role="alert">${escapeHtml(report.extraction_error)}</p>` : ""}
+  </section>`;
+}
+
+function renderEntityChips(report) {
+  const entities = report.medical_entities_json || {};
+  const groups = [
+    ["Diseases", entities.diseases],
+    ["Conditions", entities.conditions],
+    ["Medications", entities.medications],
+    ["Symptoms", entities.symptoms],
+    ["Biomarkers", entities.biomarkers],
+    ["Test Names", entities.testNames || entities.test_names],
+    ["Units", entities.units]
+  ];
+  const content = groups
+    .filter(([, values]) => values?.length)
+    .map(([, values]) => values.map((value) => `<span class="badge">${escapeHtml(value)}</span>`).join(""))
+    .join("");
+  return `<section class="card stack"><h2>Medical Findings</h2>${content ? `<div class="actions">${content}</div>` : `<p class="muted">No structured medical entities were detected yet.</p>`}</section>`;
+}
+
+function renderLabValuesTable(labResults = []) {
+  if (!labResults.length) {
+    return `<section class="card stack"><h2>Lab Values</h2>${emptyState({ iconName: "science", title: "No lab values detected", description: "Values appear here after OCR detects structured test results.", actionLabel: "", actionHref: "" })}</section>`;
+  }
+
+  const rows = labResults
+    .map(
+      (result) => `<tr>
+        <td>${escapeHtml(result.testName || "Test")}</td>
+        <td>${escapeHtml(result.value ?? "")}</td>
+        <td>${escapeHtml(result.unit || "")}</td>
+        <td>${escapeHtml([result.referenceMin, result.referenceMax].filter((value) => value !== null && value !== undefined).join(" - ") || "Not detected")}</td>
+        <td><span class="badge ${badgeClassForLabFlag(result.flag)}">${escapeHtml(result.flag || "UNKNOWN")}</span></td>
+      </tr>`
+    )
+    .join("");
+  return `<section class="table-card stack"><h2>Lab Values</h2><div class="table-wrap"><table><thead><tr><th>Test</th><th>Value</th><th>Unit</th><th>Reference Range</th><th>Flag</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
+
+function renderListSection(title, values = [], iconName = "fact_check") {
+  if (!values.length) return "";
+  return `<section class="card stack"><div class="icon-tile">${icon(iconName)}</div><h2>${escapeHtml(title)}</h2><ul class="clean-list">${values.map((value) => `<li>${escapeHtml(value)}</li>`).join("")}</ul></section>`;
+}
+
+function renderSources(sources = []) {
+  if (!sources.length) return `<section class="card stack"><h2>Sources Used</h2><p class="muted">No trusted retrieval sources were attached to this analysis.</p></section>`;
+  return `<section class="card stack"><h2>Sources Used</h2><div class="stack">${sources
+    .map((source) => `<a class="source-link" href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer"><strong>${escapeHtml(source.title || source.source || "Trusted source")}</strong><span>${escapeHtml(source.source || source.url)}</span></a>`)
+    .join("")}</div></section>`;
+}
+
+function renderAnalysisResponse(report) {
+  const analysis = report.analysis?.response || null;
+  if (!analysis) {
+    return `<section data-analysis-target>${emptyState({ iconName: "psychology", title: "No AI summary yet", description: report.extraction_status === "completed" ? "Start analysis to generate a clear explanation from extracted content." : "Analysis unlocks after report content is extracted reliably.", actionLabel: "", actionHref: "" })}</section>`;
+  }
+  return `<section data-analysis-target class="stack-lg">
+    <article class="card card-accent stack">
+      <div class="card-header"><div><h2>AI Summary</h2><p class="muted">${escapeHtml(analysis.confidenceWarning || "Generated from extracted report content and trusted retrieval context.")}</p></div><span class="badge ${badgeClassForStatus(analysis.urgencyLevel)}">${escapeHtml(analysis.urgencyLevel || "LOW")}</span></div>
+      <p>${escapeHtml(analysis.summary)}</p>
+      ${analysis.seekMedicalAttention ? `<p class="form-message" data-state="error" role="alert">This analysis recommends timely review with a qualified medical professional.</p>` : ""}
+    </article>
+    ${renderListSection("Key Findings", analysis.keyFindings, "fact_check")}
+    ${renderLabValuesTable(analysis.abnormalResults || [])}
+    ${renderListSection("Possible Explanations", analysis.possibleExplanations, "psychology")}
+    ${renderListSection("Recommended Questions", analysis.recommendedQuestions, "forum")}
+    ${renderSources(analysis.sourcesUsed)}
+  </section>`;
+}
+
 async function renderReportDetail() {
   const id = location.pathname.split("/").pop();
   const meta = routeTitle("/report/:id");
@@ -529,14 +654,25 @@ async function renderReportDetail() {
   try {
     const response = await apiRequest(`/reports/${id}`);
     const report = response.data?.report || response.data;
-    setMain(`${pageHeader(meta)}<article class="card card-accent stack"><h2>${escapeHtml(report.title || report.originalName || "Report")}</h2><p class="muted">${escapeHtml(report.status || "Uploaded")}</p><div class="actions"><button class="btn btn-primary" data-action="analyze-report">${icon("auto_awesome")}Analyze report</button><a class="btn btn-secondary" href="/reports">Back to reports</a></div><div data-analysis-target>${report.analysis ? `<p>${escapeHtml(report.analysis.summary || "Analysis is available.")}</p>` : emptyState({ iconName: "psychology", title: "No analysis yet", description: "Start analysis to generate a clear explanation.", actionLabel: "", actionHref: "" })}</div></article>`);
+    const canAnalyze = report.extraction_status === "completed";
+    setMain(`${pageHeader(meta)}
+      <article class="card card-accent stack">
+        <div class="card-header"><div><h2>${escapeHtml(reportTitle(report))}</h2><p class="muted">${escapeHtml(report.original_name || report.mime_type || "Uploaded report")}</p></div><span class="badge ${badgeClassForStatus(report.status)}">${escapeHtml(displayStatus(report.status || "uploaded"))}</span></div>
+        <div class="actions"><button class="btn btn-primary" data-action="analyze-report" ${canAnalyze ? "" : "disabled"}>${icon("auto_awesome")}Analyze report</button><a class="btn btn-secondary" href="/reports">Back to reports</a></div>
+      </article>
+      ${renderExtractionProgress(report)}
+      ${renderEntityChips(report)}
+      ${renderLabValuesTable(report.lab_results_json || [])}
+      ${renderAnalysisResponse(report)}`);
     document.querySelector('[data-action="analyze-report"]')?.addEventListener("click", async (event) => {
       event.currentTarget.disabled = true;
       try {
-        await apiRequest(`/reports/${id}/analyze`, { method: "POST" });
-        document.querySelector("[data-analysis-target]").innerHTML = emptyState({ iconName: "done", title: "Analysis started", description: "Refresh this report shortly to review the explanation.", actionLabel: "", actionHref: "" });
-      } catch {
-        document.querySelector("[data-analysis-target]").innerHTML = errorState("We could not start analysis", false);
+        const analyzed = await apiRequest(`/reports/${id}/analyze`, { method: "POST" });
+        const updatedReport = analyzed.data?.report || {};
+        document.querySelector("[data-analysis-target]").outerHTML = renderAnalysisResponse({ ...report, ...updatedReport });
+      } catch (error) {
+        const message = error?.message === "Report content could not be extracted reliably." ? error.message : "We could not start analysis";
+        document.querySelector("[data-analysis-target]").innerHTML = errorState(message, false);
       }
     });
   } catch {
@@ -700,9 +836,15 @@ async function renderAdminDashboard() {
   const meta = routeTitle("/admin");
   const tabs = ["Overview", "Users", "Doctors", "Doctor Applications", "Reports", "AI Usage", "Payments", "Subscriptions", "Security Logs", "Audit Logs", "System Settings"];
   setMain(`${pageHeader(meta)}${loadingState("Loading admin workspace")}`);
-  const [analytics, users, logs] = await Promise.allSettled([apiRequest("/admin/analytics"), apiRequest("/admin/users"), apiRequest("/admin/audit-logs")]);
+  const [analytics, users, logs, reportMetrics] = await Promise.allSettled([
+    apiRequest("/admin/analytics"),
+    apiRequest("/admin/users"),
+    apiRequest("/admin/audit-logs"),
+    apiRequest("/admin/reports/processing-metrics")
+  ]);
   const userItems = users.value?.data?.users || [];
   const logItems = logs.value?.data?.auditLogs || [];
+  const metrics = reportMetrics.value?.data?.metrics || {};
   setMain(`
     <section class="dashboard-shell">
       <aside class="side-nav" aria-label="Admin dashboard sections">${tabs.map((tab, index) => `<a class="nav-link" href="/admin${index ? `/${tab.toLowerCase().replaceAll(" ", "-")}` : ""}"${index === 0 ? ' aria-current="page"' : ""}>${icon(index === 0 ? "admin_panel_settings" : "chevron_right")}<span>${tab}</span></a>`).join("")}</aside>
@@ -711,10 +853,17 @@ async function renderAdminDashboard() {
         <section class="grid grid-4">
           ${summaryCard("Users", "groups", userItems.length ? `${userItems.length} users` : "No users returned", "/admin/users")}
           ${summaryCard("AI Usage", "auto_awesome", analytics.status === "fulfilled" ? "Analytics available" : "Analytics unavailable", "/admin/ai-usage")}
-          ${summaryCard("Payments", "payments", "No payment data", "/admin/payments")}
+          ${summaryCard("Reports Processed", "description", String(metrics.reports_processed ?? 0), "/admin/reports")}
+          ${summaryCard("Failed Extractions", "report_problem", String(metrics.failed_extractions ?? 0), "/admin/reports")}
+        </section>
+        <section class="grid grid-4">
+          ${summaryCard("Average Confidence", "verified", `${metrics.average_confidence ?? 0}%`, "/admin/reports")}
+          ${summaryCard("Average Processing Time", "timer", `${metrics.average_processing_time_seconds ?? 0}s`, "/admin/reports")}
+          ${summaryCard("OCR Failure Rate", "troubleshoot", `${metrics.ocr_failure_rate ?? 0}%`, "/admin/reports")}
           ${summaryCard("Security Logs", "shield", logItems.length ? `${logItems.length} logs` : "No logs returned", "/admin/security-logs")}
         </section>
         <section class="grid grid-2">
+          <article class="card stack"><h2>Report Processing</h2><p class="muted">Operational view of extraction quality and pipeline health.</p><div class="actions"><span class="badge ${Number(metrics.ocr_failure_rate || 0) > 10 ? "badge-error" : "badge-success"}">OCR failure rate ${metrics.ocr_failure_rate ?? 0}%</span><span class="badge">Average confidence ${metrics.average_confidence ?? 0}%</span></div></article>
           <article class="card stack"><h2>Users</h2>${listCard(userItems, { iconName: "groups", title: "No users returned", description: "User records will appear here when available to this role.", actionLabel: "", actionHref: "" }, renderUserItem)}</article>
           <article class="card stack"><h2>Audit Logs</h2>${listCard(logItems, { iconName: "fact_check", title: "No audit logs returned", description: "Audit activity will appear here when available.", actionLabel: "", actionHref: "" }, renderAuditItem)}</article>
           <article class="card stack"><h2>Doctor Applications</h2>${emptyState({ iconName: "badge", title: "No applications returned", description: "Doctor applications will appear here once submitted.", actionLabel: "", actionHref: "" })}</article>

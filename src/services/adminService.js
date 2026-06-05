@@ -1,5 +1,6 @@
 import { adminRepository } from "../repositories/adminRepository.js";
 import { auditRepository } from "../repositories/auditRepository.js";
+import { reportRepository } from "../repositories/reportRepository.js";
 import { userRepository } from "../repositories/userRepository.js";
 
 export const adminService = {
@@ -13,5 +14,9 @@ export const adminService = {
 
   auditLogs(query) {
     return auditRepository.list(query);
+  },
+
+  reportProcessingMetrics() {
+    return reportRepository.processingMetrics();
   }
 };
