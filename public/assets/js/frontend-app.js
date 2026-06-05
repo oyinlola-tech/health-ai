@@ -47,6 +47,7 @@ async function refreshAccessToken() {
   const payload = await response.json();
   const token = payload?.data?.accessToken;
   setAccessToken(token);
+  if (token) loadRealtimeClient();
   return token;
 }
 
@@ -89,6 +90,12 @@ async function apiRequest(path, options = {}) {
 }
 
 const routeAliases = new Map([
+  ["/splash", "/"],
+  ["/onboarding", "/"],
+  ["/upload", "/reports"],
+  ["/history", "/reports"],
+  ["/notifications", "/dashboard"],
+  ["/admin/login", "/login"],
   ["/auth/login.html", "/login"],
   ["/auth/signup.html", "/register"],
   ["/auth/welcome.html", "/"],
@@ -190,7 +197,7 @@ const state = {
 function normalizePath(pathname) {
   const cleanPath = pathname.replace(/\/$/, "") || "/";
   if (routeAliases.has(cleanPath)) return routeAliases.get(cleanPath);
-  if (cleanPath.startsWith("/report/")) return "/report/:id";
+  if (cleanPath.startsWith("/report/") || cleanPath.startsWith("/reports/") || cleanPath.startsWith("/analysis/")) return "/report/:id";
   if (cleanPath === "/doctor-dashboard") return "/doctor";
   if (doctorWorkspacePaths.has(cleanPath)) return cleanPath;
   if (cleanPath.startsWith("/doctor/") && uuidLike.test(cleanPath.split("/").pop())) return "/doctor/:id";
@@ -204,7 +211,7 @@ function routeTitle(path) {
   if (path.startsWith("/doctor") && path !== "/doctors" && path !== "/doctor/:id") return pageMeta["/doctor"];
   if (path === "/report/:id") return { title: "Report details", description: "A secure report view with AI analysis and next actions." };
   if (path === "/doctor/:id") return { title: "Doctor profile", description: "Review doctor details and request a consultation." };
-  return pageMeta[path] || { title: "Page not found", description: "This route is not available yet." };
+  return pageMeta[path] || { title: "Page unavailable", description: "Use the navigation to continue in your healthcare workspace." };
 }
 
 function escapeHtml(value = "") {
@@ -325,11 +332,28 @@ function setMain(content) {
   main.focus({ preventScroll: true });
 }
 
+function invalidateCache(...keys) {
+  keys.forEach((key) => state.dataCache.delete(key));
+}
+
+function rerenderCurrentRoute() {
+  state.dataCache.clear();
+  return route();
+}
+
 async function cachedRequest(key, path) {
   if (!state.dataCache.has(key)) {
     state.dataCache.set(key, apiRequest(path));
   }
   return state.dataCache.get(key);
+}
+
+function debounce(callback, delay = 350) {
+  let timer = null;
+  return (...args) => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => callback(...args), delay);
+  };
 }
 
 function listCard(items, emptyConfig, renderItem) {
@@ -471,8 +495,8 @@ async function renderPatientDashboard() {
       <section class="grid grid-2">
         <article class="card card-accent stack"><div class="card-header"><h2>Recent Reports</h2><a class="btn btn-quiet" href="/reports">View reports</a></div>${listCard(reportItems.slice(0, 3), { iconName: "description", title: "No reports yet", description: "Upload a report to receive an AI-assisted explanation.", actionLabel: "Upload report", actionHref: "/reports" }, renderReportItem)}</article>
         <article class="card stack"><div class="card-header"><h2>AI Insights</h2><a class="btn btn-quiet" href="/chat">Open chat</a></div>${emptyState({ iconName: "psychology", title: "No AI insights yet", description: "Insights appear after reports are analyzed or questions are asked.", actionLabel: "Ask AI", actionHref: "/chat" })}</article>
-        <article class="card stack"><div class="card-header"><h2>Health Trends</h2><a class="btn btn-quiet" href="/profile">Add entry</a></div>${listCard(healthItems.slice(0, 3), { iconName: "monitor_heart", title: "No health trend data", description: "Health history will appear here once entries are saved.", actionLabel: "Open profile", actionHref: "/profile" }, renderHealthItem)}</article>
-        <article class="card stack"><div class="card-header"><h2>Messages</h2><a class="btn btn-quiet" href="/chat">Start message</a></div>${emptyState({ iconName: "mark_chat_unread", title: "No messages", description: "Doctor and AI conversations will appear here when available.", actionLabel: "Open chat", actionHref: "/chat" })}</article>
+        <article class="card stack"><div class="card-header"><h2>Health Trends</h2><a class="btn btn-quiet" href="/profile">Add entry</a></div>${listCard(healthItems.slice(0, 3), { iconName: "monitor_heart", title: "No health trend data", description: "Save health history entries to review them from this dashboard.", actionLabel: "Open profile", actionHref: "/profile" }, renderHealthItem)}</article>
+        <article class="card stack"><div class="card-header"><h2>Messages</h2><a class="btn btn-quiet" href="/chat">Open chat</a></div>${emptyState({ iconName: "mark_chat_unread", title: "No active conversations", description: "Confirmed consultations and AI conversations are listed in the chat workspace.", actionLabel: "Open chat", actionHref: "/chat" })}</article>
       </section>
       <section class="card stack"><h2>Quick Actions</h2><div class="actions"><a class="btn btn-primary" href="/reports">${icon("upload_file")}Upload report</a><a class="btn btn-secondary" href="/chat">Ask AI</a><a class="btn btn-secondary" href="/doctors">Book consultation</a></div></section>
     `);
@@ -581,7 +605,7 @@ async function renderReports() {
     `);
     bindUploadForm();
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("Reports are temporarily unavailable")}`);
+    setMain(`${pageHeader(meta)}${errorState("We could not load reports")}`);
   }
 }
 
@@ -743,7 +767,7 @@ async function renderChat() {
     setMain(`${pageHeader(meta)}<section class="grid grid-2"><article class="card stack"><h2>Consultation Rooms</h2>${listCard(consultations, { iconName: "forum", title: "No consultation rooms", description: "Rooms open after a doctor confirms an appointment.", actionLabel: "Find doctors", actionHref: "/doctors" }, renderConsultationItem)}</article><article class="card stack"><h2>Messages</h2><div data-consultation-output>${emptyState({ iconName: "forum", title: "Select a room", description: "Choose a consultation room to view message history.", actionLabel: "", actionHref: "" })}</div></article></section>`);
     bindConsultationRooms();
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("Consultation rooms are temporarily unavailable")}`);
+    setMain(`${pageHeader(meta)}${errorState("We could not load consultation rooms")}`);
   }
 }
 
@@ -785,14 +809,24 @@ async function renderDoctors() {
     const response = await apiRequest("/doctors");
     const doctors = response.data?.doctors || [];
     setMain(`${pageHeader(meta)}<section class="form-card"><form class="form" data-doctor-search><div class="grid grid-3">${field("Search doctors", "q", "text", false)}${field("Specialization", "specialization", "text", false)}<div class="field"><label for="availableOnly">Availability</label><select id="availableOnly" name="availableOnly"><option value="">Any</option><option value="true">Has availability</option></select></div></div><button class="btn btn-primary" type="submit">${icon("search")}Search</button></form></section><section class="grid grid-3" data-doctor-results>${doctors.length ? doctors.map(renderDoctorCard).join("") : emptyState({ iconName: "stethoscope", title: "No verified doctors available", description: "Verified doctors appear here after admin approval and availability setup.", actionLabel: "", actionHref: "" })}</section>`);
-    document.querySelector("[data-doctor-search]")?.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const params = new URLSearchParams(new FormData(event.currentTarget));
+    const searchForm = document.querySelector("[data-doctor-search]");
+    const runSearch = async (form) => {
+      const params = new URLSearchParams(new FormData(form));
       const filtered = await apiRequest(`/doctors?${params.toString()}`);
       document.querySelector("[data-doctor-results]").innerHTML = (filtered.data?.doctors || []).map(renderDoctorCard).join("") || emptyState({ iconName: "stethoscope", title: "No doctors matched", description: "Try another search or filter.", actionLabel: "", actionHref: "" });
+    };
+    const debouncedSearch = debounce((form) => runSearch(form).catch(() => {
+      document.querySelector("[data-doctor-results]").innerHTML = errorState("We could not update doctor results", false);
+    }));
+    searchForm?.addEventListener("input", (event) => {
+      debouncedSearch(event.currentTarget);
+    });
+    searchForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await runSearch(event.currentTarget);
     });
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("Doctor directory is temporarily unavailable")}`);
+    setMain(`${pageHeader(meta)}${errorState("We could not load verified doctors")}`);
   }
 }
 
@@ -819,7 +853,7 @@ async function renderDoctorProfile() {
         </form>
       </section>
       <section class="card stack"><h2>Availability Calendar</h2>${availability.length ? `<div class="actions">${availability.map((slot) => `<span class="badge">Day ${slot.day_of_week}: ${slot.starts_at} - ${slot.ends_at}</span>`).join("")}</div>` : `<p class="muted">No active availability slots are listed.</p>`}</section>
-      <section class="card stack"><h2>Reviews</h2><p class="muted">Reviews are ready for future patient ratings after completed consultations.</p></section>
+      <section class="card stack"><h2>Reviews</h2>${emptyState({ iconName: "rate_review", title: "No reviews yet", description: "Patient reviews are shown after completed consultations.", actionLabel: "", actionHref: "" })}</section>
     `);
     bindAppointmentForm();
   } catch {
@@ -835,7 +869,7 @@ async function renderAppointments() {
     const appointments = response.data?.appointments || [];
     setMain(`${pageHeader(meta)}<section class="stack">${listCard(appointments, { iconName: "calendar_month", title: "No appointments", description: "Book a verified doctor to start a consultation workflow.", actionLabel: "Find doctors", actionHref: "/doctors" }, renderAppointmentItem)}</section>`);
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("Appointments are temporarily unavailable")}`);
+    setMain(`${pageHeader(meta)}${errorState("We could not load appointments")}`);
   }
 }
 
@@ -891,21 +925,21 @@ async function renderProfile() {
       }
     });
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("Profile is temporarily unavailable")}`);
+    setMain(`${pageHeader(meta)}${errorState("We could not load your profile")}`);
   }
 }
 
 function renderStaticPage(path) {
   const meta = routeTitle(path);
   const contentMap = {
-    "/settings": ["Settings", "Privacy, security, notifications, and accessibility preferences will appear as backend-backed controls are added."],
+    "/settings": ["Settings", "Review account, privacy, and notification controls from the profile and subscription workspaces."],
     "/help": ["Help center", "Browse medical report guidance, AI explanation tips, and support paths without leaving the product."],
     "/contact": ["Contact support", "Use the support action below for help with reports, billing, privacy, or account access."],
     "/privacy": ["Privacy", "MedExplain AI keeps health information private, uses backend-mediated AI calls, and avoids exposing secrets in frontend code."],
     "/terms": ["Terms", "Use MedExplain AI as an informational support tool. It does not replace professional medical advice."]
   };
   const [title, description] = contentMap[path] || [meta.title, meta.description];
-  setMain(`${pageHeader(meta)}<section class="card stack"><div class="icon-tile">${icon("info")}</div><h2>${title}</h2><p class="muted">${description}</p><div class="actions"><a class="btn btn-primary" href="${path === "/contact" ? "mailto:support@medexplain.ai" : "/dashboard"}">${path === "/contact" ? "Email support" : "Return to dashboard"}</a><a class="btn btn-secondary" href="/help">Open help</a></div></section>`);
+  setMain(`${pageHeader(meta)}<section class="card stack"><div class="icon-tile">${icon("info")}</div><h2>${title}</h2><p class="muted">${description}</p><div class="actions"><a class="btn btn-primary" href="/dashboard">Return to dashboard</a><a class="btn btn-secondary" href="/help">Open help</a></div></section>`);
 }
 
 function renderPlanCard(plan, currentPlan) {
@@ -939,7 +973,7 @@ async function renderSubscription() {
     `);
     bindPlanButtons();
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("Subscription details are temporarily unavailable")}`);
+    setMain(`${pageHeader(meta)}${errorState("We could not load subscription details")}`);
   }
 }
 
@@ -947,12 +981,22 @@ function bindPlanButtons() {
   document.querySelectorAll("[data-plan-code]").forEach((button) => {
     button.addEventListener("click", async () => {
       button.disabled = true;
+      const card = button.closest(".card");
+      let message = card?.querySelector("[data-plan-message]");
+      if (!message && card) {
+        card.insertAdjacentHTML("afterbegin", `<div class="form-message" data-plan-message hidden></div>`);
+        message = card.querySelector("[data-plan-message]");
+      }
       try {
         const response = await apiRequest("/subscriptions/checkout", { method: "POST", body: { planCode: button.dataset.planCode } });
         window.location.assign(response.data?.checkoutUrl || response.checkoutUrl);
       } catch {
         button.disabled = false;
-        window.alert("We could not start OPay checkout. Please retry.");
+        if (message) {
+          message.hidden = false;
+          message.dataset.state = "error";
+          message.textContent = "We could not start OPay checkout. Please retry.";
+        }
       }
     });
   });
@@ -967,7 +1011,7 @@ async function renderBillingHistory() {
     const rows = payments.map((payment) => `<tr><td>${escapeHtml(payment.provider_reference)}</td><td>${money(payment.amount_cents, payment.currency)}</td><td><span class="badge ${badgeClassForStatus(payment.status)}">${escapeHtml(payment.status)}</span></td><td>${new Date(payment.created_at).toLocaleDateString()}</td></tr>`).join("");
     setMain(`${pageHeader(meta)}<section class="table-card stack"><h2>Transaction History</h2><div class="table-wrap"><table><thead><tr><th>Reference</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>${rows || `<tr><td colspan="4">No billing transactions yet.</td></tr>`}</tbody></table></div></section>`);
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("Billing history is temporarily unavailable")}`);
+    setMain(`${pageHeader(meta)}${errorState("We could not load billing history")}`);
   }
 }
 
@@ -1016,16 +1060,16 @@ async function renderDoctorDashboard() {
       <div class="stack-lg">
         ${pageHeader(meta)}
         <section class="grid grid-4">
-          ${summaryCard("Patient Queue", "groups", "No active queue", "/doctor/patient-queue")}
+          ${summaryCard("Patient Queue", "groups", appointmentItems.length ? `${appointmentItems.length} active` : "Queue clear", "/doctor/patient-queue")}
           ${summaryCard("Appointments", "calendar_month", appointmentItems.length ? `${appointmentItems.length} appointments` : "No appointments", "/doctor/appointments")}
           ${summaryCard("Medical Reports", "description", reportItems.length ? `${reportItems.length} reports` : "No assigned reports", "/doctor/medical-reports")}
           ${summaryCard("Verification Status", "verified_user", "Check profile", "/doctor/verification-status")}
         </section>
         <section class="grid grid-2">
-          <article class="card stack"><h2>Appointments</h2>${listCard(appointmentItems, { iconName: "calendar_month", title: "No appointments assigned", description: "Patient appointments will appear here once scheduled.", actionLabel: "Refresh dashboard", actionHref: "/doctor" }, renderAppointmentItem)}</article>
-          <article class="card stack"><h2>Availability Scheduler</h2><form class="form" data-availability-form>${field("Day of week", "dayOfWeek", "number", true)}${field("Starts", "startsAt", "time", true)}${field("Ends", "endsAt", "time", true)}<button class="btn btn-primary" type="submit">${icon("schedule")}Save availability</button></form></article>
+          <article class="card stack"><h2>Appointments</h2>${listCard(appointmentItems, { iconName: "calendar_month", title: "No appointments assigned", description: "Confirmed and pending patient appointments are shown here.", actionLabel: "Refresh dashboard", actionHref: "/doctor" }, renderAppointmentItem)}</article>
+          <article class="card stack"><h2>Availability Scheduler</h2><form class="form" data-availability-form><div class="form-message" data-form-message hidden></div>${field("Day of week", "dayOfWeek", "number", true)}${field("Starts", "startsAt", "time", true)}${field("Ends", "endsAt", "time", true)}<button class="btn btn-primary" type="submit">${icon("schedule")}Save availability</button></form></article>
           <article class="card stack"><h2>Consultation Rooms</h2><a class="btn btn-quiet" href="/chat">Open messages</a><p class="muted">Chat rooms are created after appointments are confirmed.</p></article>
-          <article class="card stack"><h2>Earnings</h2><p class="muted">Consultation earnings will appear when paid doctor fees are enabled.</p><span class="badge">Premium consultation ready</span></article>
+          <article class="card stack"><h2>Earnings</h2><p class="muted">Premium consultations are tracked through the billing system.</p><span class="badge">Premium consultation ready</span></article>
         </section>
       </div>
     </section>
@@ -1034,7 +1078,11 @@ async function renderDoctorDashboard() {
     event.preventDefault();
     const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
     await apiRequest("/doctor/availability", { method: "POST", body: payload });
-    window.location.reload();
+    showFormMessage(event.currentTarget, "success", "Availability saved.");
+    window.setTimeout(() => {
+      invalidateCache("doctor-appointments", "doctor-reports");
+      rerenderCurrentRoute();
+    }, 500);
   });
 }
 
@@ -1048,12 +1096,13 @@ async function renderAdminDashboard() {
   const meta = routeTitle("/admin");
   const tabs = ["Overview", "Users", "Doctors", "Doctor Applications", "Reports", "AI Usage", "Payments", "Subscriptions", "Security Logs", "Audit Logs", "System Settings"];
   setMain(`${pageHeader(meta)}${loadingState("Loading admin workspace")}`);
-  const [users, logs, reportMetrics, monetization, aiCosts] = await Promise.allSettled([
+  const [users, logs, reportMetrics, monetization, aiCosts, applications] = await Promise.allSettled([
     apiRequest("/admin/users"),
     apiRequest("/admin/audit-logs"),
     apiRequest("/admin/reports/processing-metrics"),
     apiRequest("/admin/monetization"),
-    apiRequest("/admin/ai-costs")
+    apiRequest("/admin/ai-costs"),
+    apiRequest("/recruitment/applications")
   ]);
   const userItems = users.value?.data?.users || [];
   const logItems = logs.value?.data?.auditLogs || [];
@@ -1061,6 +1110,7 @@ async function renderAdminDashboard() {
   const revenue = monetization.value?.data?.metrics || {};
   const aiDashboard = aiCosts.value?.data?.dashboard || {};
   const aiSummary = aiDashboard.summary || {};
+  const applicationItems = applications.value?.data?.applications || [];
   setMain(`
     <section class="dashboard-shell">
       <aside class="side-nav" aria-label="Admin dashboard sections">${tabs.map((tab, index) => `<a class="nav-link" href="/admin${index ? `/${tab.toLowerCase().replaceAll(" ", "-")}` : ""}"${index === 0 ? ' aria-current="page"' : ""}>${icon(index === 0 ? "admin_panel_settings" : "chevron_right")}<span>${tab}</span></a>`).join("")}</aside>
@@ -1082,9 +1132,9 @@ async function renderAdminDashboard() {
           <article class="card stack"><h2>Report Processing</h2><p class="muted">Operational view of extraction quality and pipeline health.</p><div class="actions"><span class="badge ${Number(metrics.ocr_failure_rate || 0) > 10 ? "badge-error" : "badge-success"}">OCR failure rate ${metrics.ocr_failure_rate ?? 0}%</span><span class="badge">Average confidence ${metrics.average_confidence ?? 0}%</span></div></article>
           ${renderAdminAiCostPanel(aiDashboard)}
           <article class="card stack"><h2>Revenue Dashboard</h2><p class="muted">OPay-backed subscription health and monetization activity.</p><div class="actions"><span class="badge">Refund rate ${revenue.refund_rate ?? 0}%</span><span class="badge">Refunds ${revenue.refunds ?? 0}</span></div>${renderListCard(revenue.top_features_used || [])}</article>
-          <article class="card stack"><h2>Users</h2>${listCard(userItems, { iconName: "groups", title: "No users returned", description: "User records will appear here when available to this role.", actionLabel: "", actionHref: "" }, renderUserItem)}</article>
-          <article class="card stack"><h2>Audit Logs</h2>${listCard(logItems, { iconName: "fact_check", title: "No audit logs returned", description: "Audit activity will appear here when available.", actionLabel: "", actionHref: "" }, renderAuditItem)}</article>
-          <article class="card stack"><h2>Doctor Applications</h2>${emptyState({ iconName: "badge", title: "No applications returned", description: "Doctor applications will appear here once submitted.", actionLabel: "", actionHref: "" })}</article>
+          <article class="card stack"><h2>Users</h2>${listCard(userItems, { iconName: "groups", title: "No users returned", description: "User records from the admin API are shown here.", actionLabel: "", actionHref: "" }, renderUserItem)}</article>
+          <article class="card stack"><h2>Audit Logs</h2>${listCard(logItems, { iconName: "fact_check", title: "No audit logs returned", description: "Security and admin actions from the audit log are shown here.", actionLabel: "", actionHref: "" }, renderAuditItem)}</article>
+          <article class="card stack"><h2>Doctor Applications</h2>${listCard(applicationItems, { iconName: "badge", title: "No applications returned", description: "Submitted doctor applications from the recruitment workflow are shown here.", actionLabel: "", actionHref: "" }, renderApplicationItem)}</article>
           <article class="card stack"><h2>System Settings</h2><p class="muted">Administrative settings are grouped here to keep operational controls consistent.</p><a class="btn btn-quiet" href="/admin/system-settings">Open settings</a></article>
         </section>
       </div>
@@ -1128,14 +1178,19 @@ function renderAuditItem(log) {
   return `<article class="card stack"><h3>${escapeHtml(log.action || "Audit event")}</h3><p class="muted">${escapeHtml(log.createdAt || "Timestamp unavailable")}</p></article>`;
 }
 
+function renderApplicationItem(application) {
+  const name = [application.first_name, application.last_name].filter(Boolean).join(" ") || application.email || "Doctor applicant";
+  return `<article class="card stack"><div class="card-header"><div><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></div></article>`;
+}
+
 function renderNotFound() {
-  setMain(`${pageHeader(routeTitle(state.path))}${emptyState({ iconName: "map", title: "Route not found", description: "This page is not available. Use the navigation to continue.", actionLabel: "Go to dashboard", actionHref: "/dashboard" })}`);
+  setMain(`${pageHeader(routeTitle(state.path))}${emptyState({ iconName: "map", title: "Page unavailable", description: "Use the navigation to continue in your healthcare workspace.", actionLabel: "Go to dashboard", actionHref: "/dashboard" })}`);
 }
 
 function bindGlobalActions() {
   document.addEventListener("click", (event) => {
     const action = event.target.closest("[data-action]")?.dataset.action;
-    if (action === "retry") window.location.reload();
+    if (action === "retry") rerenderCurrentRoute();
     if (action === "logout") {
       clearAccessToken();
       window.location.assign("/login");
@@ -1201,7 +1256,7 @@ function route() {
 }
 
 renderShell();
-loadRealtimeClient();
+if (getAccessToken()) loadRealtimeClient();
 bindGlobalActions();
 bindRealtimeUpdates();
 route();

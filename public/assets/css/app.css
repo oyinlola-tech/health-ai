@@ -40,6 +40,16 @@ body {
   background: var(--color-background);
 }
 
+body,
+.card,
+.form-card,
+.table-card,
+.empty-state,
+.error-state,
+.loading-state {
+  min-width: 0;
+}
+
 body.menu-open {
   overflow: hidden;
 }
@@ -291,6 +301,7 @@ h4 {
   color: var(--color-primary);
   font-family: Spectral, Georgia, serif;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 h1 {
@@ -573,7 +584,7 @@ table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 640px;
+  min-width: 560px;
 }
 
 th {
@@ -609,6 +620,8 @@ thead th:last-child {
   color: var(--color-primary);
   font-size: 12px;
   font-weight: 600;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .badge-success {
@@ -749,6 +762,17 @@ thead th:last-child {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .site-footer {
   border-top: 1px solid rgba(161, 152, 144, 0.25);
   background: var(--color-surface);
@@ -865,6 +889,11 @@ thead th:last-child {
 
   .hero-visual {
     min-height: 240px;
+  }
+
+  .card-header {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .grid-2,

@@ -79,7 +79,7 @@ describe("production error redaction", () => {
 
     expect(json).toHaveBeenCalledWith(
       expect.objectContaining({
-        error: { code: "INTERNAL_SERVER_ERROR", message: "An unexpected error occurred.", details: null }
+        error: { code: "INTERNAL_SERVER_ERROR", message: "An unexpected error occurred." }
       })
     );
   });

@@ -1,0 +1,12 @@
+create index if not exists idx_reports_patient_created_active on reports(patient_id, created_at desc) where deleted_at is null;
+create index if not exists idx_reports_uploaded_by_created_active on reports(uploaded_by, created_at desc) where deleted_at is null;
+create index if not exists idx_appointments_patient_scheduled_active on appointments(patient_id, scheduled_at desc) where deleted_at is null;
+create index if not exists idx_appointments_doctor_scheduled_desc_active on appointments(doctor_id, scheduled_at desc) where deleted_at is null;
+create index if not exists idx_appointments_patient_doctor_status on appointments(patient_id, doctor_id, status) where deleted_at is null;
+create index if not exists idx_notifications_user_created on notifications(user_id, created_at desc);
+create index if not exists idx_consultation_sessions_patient_created on consultation_sessions(patient_id, created_at desc);
+create index if not exists idx_consultation_sessions_doctor_created on consultation_sessions(doctor_id, created_at desc);
+create index if not exists idx_doctors_availability_doctor_active on doctors_availability(doctor_id, day_of_week) where is_active = true;
+create index if not exists idx_doctor_applications_status_created on doctor_applications(status, created_at desc);
+create index if not exists idx_ai_usage_user_feature_created on ai_usage_logs(user_id, feature_type, created_at desc);
+create index if not exists idx_payments_user_created on payments(user_id, created_at desc);
