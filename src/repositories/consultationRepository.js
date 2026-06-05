@@ -12,7 +12,16 @@ export const consultationRepository = {
        returning *`,
       [id, appointment.id, appointment.patient_id, appointment.doctor_id, roomKey, appointment.scheduled_at]
     );
-    if (rows[0]) return rows[0];
+    const session = rows[0] || null;
+    if (session) {
+      await client.query(
+        `insert into chat_sessions (id, consultation_session_id, appointment_id, patient_id, doctor_id)
+         values ($1, $2, $3, $4, $5)
+         on conflict (consultation_session_id) where consultation_session_id is not null do nothing`,
+        [createId(), session.id, appointment.id, appointment.patient_id, appointment.doctor_id]
+      );
+      return session;
+    }
     const existing = await client.query("select * from consultation_sessions where appointment_id = $1", [appointment.id]);
     return existing.rows[0] || null;
   },
@@ -53,8 +62,8 @@ export const consultationRepository = {
   async addMessage({ sessionId, senderId, recipientId, content, encryptedContent }, client = pool) {
     const id = createId();
     const { rows } = await client.query(
-      `insert into chat_messages (id, user_id, role, content, consultation_session_id, sender_id, recipient_id, encrypted_content)
-       values ($1, $2, 'user', $3, $4, $5, $6, $7::jsonb)
+      `insert into chat_messages (id, user_id, role, content, consultation_session_id, chat_session_id, sender_id, recipient_id, encrypted_content)
+       values ($1, $2, 'user', $3, $4, (select id from chat_sessions where consultation_session_id = $4 limit 1), $5, $6, $7::jsonb)
        returning id, consultation_session_id, sender_id, recipient_id, created_at`,
       [id, senderId, "[encrypted consultation message]", sessionId, senderId, recipientId, JSON.stringify(encryptedContent)]
     );

@@ -85,7 +85,10 @@ export const doctorMarketplaceService = {
       body: `Your request with Dr. ${doctorDisplayName(doctor)} has been saved.`
     });
     await entitlementService.recordUsage(user, features.DOCTOR_CONSULTATION, { appointmentId: appointment.id });
-    socketHub.toUser(input.doctorId, "appointment.booked", { appointment });
+    socketHub.toUser(input.doctorId, "appointment_created", { appointment });
+    socketHub.toUser(user.id, "appointment_created", { appointment });
+    socketHub.toAppointment(appointment.id, "appointment_created", { appointment });
+    socketHub.toAdmins("appointment_created", { appointment });
     return appointment;
   },
 
@@ -115,8 +118,15 @@ export const doctorMarketplaceService = {
         },
         client
       );
-      socketHub.toUser(appointment.patient_id, "appointment.status.updated", { appointment: updated, session });
-      socketHub.toUser(appointment.doctor_id, "appointment.status.updated", { appointment: updated, session });
+      const eventName = {
+        CONFIRMED: "appointment_confirmed",
+        CANCELLED: "appointment_cancelled",
+        COMPLETED: "appointment_completed"
+      }[status] || "appointment_created";
+      socketHub.toUser(appointment.patient_id, eventName, { appointment: updated, session });
+      socketHub.toUser(appointment.doctor_id, eventName, { appointment: updated, session });
+      socketHub.toAppointment(appointment.id, eventName, { appointment: updated, session });
+      socketHub.toAdmins(eventName, { appointment: updated, session });
       return { appointment: updated, session };
     });
   },
@@ -149,8 +159,8 @@ export const doctorMarketplaceService = {
       title: "New consultation message",
       body: "You have a new message in a consultation room."
     });
-    socketHub.toConsultation(sessionId, "consultation.message.created", { message });
-    socketHub.toUser(recipientId, "notification.created", { type: "consultation_message" });
+    socketHub.toConsultation(sessionId, "message_receive", { message });
+    socketHub.toUser(recipientId, "notification_push", { type: "consultation_message", sessionId });
     return message;
   }
 };

@@ -677,6 +677,20 @@ thead th:last-child {
   border: 1px solid var(--color-border-warm);
 }
 
+.realtime-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 96px;
+  z-index: 80;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-dropdown);
+}
+
 .empty-state,
 .error-state,
 .loading-state {

@@ -7,6 +7,7 @@ import { formatMedicalContext, searchMedicalContext } from "../rag/retriever/sea
 import { env } from "../config/env.js";
 import { errors } from "../utils/errors.js";
 import { entitlementService, features } from "./entitlementService.js";
+import { socketHub } from "../sockets/hub.js";
 
 const medicalDisclaimer =
   "This information is for educational purposes only and is not medical advice. Please consult a qualified healthcare professional for interpretation and diagnosis.";
@@ -273,8 +274,10 @@ export const aiService = {
     if (user.role === "Patient" && report.patient_id !== user.id) throw errors.forbidden("You can only analyze your own reports.");
     ensureReportCanBeAnalyzed(report);
     await entitlementService.assertCanUse(user, features.REPORT_ANALYSIS);
+    socketHub.toUser(user.id, "ai_processing_started", { reportId: report.id, progress: 0 });
 
     await reportRepository.updateAnalysis(report.id, { status: "processing" });
+    socketHub.toUser(user.id, "ai_processing_progress", { reportId: report.id, progress: 15, status: "Preparing extracted report context" });
     const confidenceWarning = extractionWarning(report);
     const taskInput = [
       `Report title: ${report.title}`,
@@ -292,6 +295,7 @@ export const aiService = {
       ].join("\n"),
       taskInput
     });
+    socketHub.toUser(user.id, "ai_processing_progress", { reportId: report.id, progress: 45, status: "Retrieved trusted medical context" });
 
     try {
       const result = await aiGateway.generateJson({
@@ -302,6 +306,7 @@ export const aiService = {
         cacheContext: { reportId: report.id, updatedAt: report.updated_at, contextUrls: contextChunks.map((chunk) => chunk.url) },
         metadata: { reportId: report.id, contextCount: contextChunks.length }
       });
+      socketHub.toUser(user.id, "ai_processing_progress", { reportId: report.id, progress: 75, status: "Validating structured analysis" });
       const response = parseStructuredMedicalResponse(result.text);
       if (confidenceWarning) response.confidenceWarning = confidenceWarning;
       if (!response.sourcesUsed?.length) response.sourcesUsed = sourcesFromContextChunks(contextChunks);
@@ -317,6 +322,8 @@ export const aiService = {
       });
       await entitlementService.recordUsage(user, features.REPORT_ANALYSIS, { reportId: report.id });
       const updatedReport = await reportRepository.updateAnalysis(report.id, { status: "analyzed", summary: responseSummary(response) });
+      socketHub.toUser(user.id, "ai_processing_completed", { reportId: report.id, progress: 100 });
+      socketHub.toUser(user.id, "ai_analysis_ready", { reportId: report.id, report: updatedReport, analysis: response });
       return {
         ...updatedReport,
         analysis: {
@@ -327,6 +334,7 @@ export const aiService = {
       };
     } catch (error) {
       await reportRepository.updateAnalysis(report.id, { status: "failed" });
+      socketHub.toUser(user.id, "ai_processing_completed", { reportId: report.id, progress: 100, status: "failed" });
       throw error;
     }
   },

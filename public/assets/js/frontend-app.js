@@ -4,6 +4,14 @@ const appConfig = {
   accessTokenKey: "medexplain_access_token"
 };
 
+function loadRealtimeClient() {
+  if (window.medRealtime || document.querySelector('script[src="/assets/js/socket-client.js"]')) return;
+  const script = document.createElement("script");
+  script.src = "/assets/js/socket-client.js";
+  script.defer = true;
+  document.head.appendChild(script);
+}
+
 let csrfToken = null;
 
 function getAccessToken() {
@@ -249,6 +257,7 @@ function renderShell() {
         <nav class="mobile-drawer" id="mobile-drawer" aria-label="Mobile menu">${navLinks()}<a class="nav-link" href="/subscription">${icon("workspace_premium")}<span>Subscription</span></a><a class="nav-link" href="/settings">${icon("settings")}<span>Settings</span></a></nav>
       </header>
       <main class="page-main" id="main-content" tabindex="-1"></main>
+      <div class="realtime-toast" data-realtime-toast hidden></div>
       ${renderFooter()}
       <nav class="bottom-nav" aria-label="Mobile primary navigation">${primaryNav
         .map((item) => `<a href="${item.href}"${isActive(item.href) ? ' aria-current="page"' : ""}>${icon(item.icon)}<span>${item.label}</span></a>`)
@@ -669,6 +678,10 @@ function renderAnalysisResponse(report) {
   </section>`;
 }
 
+function renderAiProgress() {
+  return `<section class="card stack" data-ai-progress-card hidden><div class="card-header"><div><h2>AI Processing</h2><p class="muted" data-ai-progress-text>Waiting for analysis to start.</p></div><span class="badge" data-ai-progress-value>0%</span></div><div class="meter-track"><span data-ai-progress-bar style="width:0%"></span></div></section>`;
+}
+
 async function renderReportDetail() {
   const id = location.pathname.split("/").pop();
   const meta = routeTitle("/report/:id");
@@ -686,6 +699,7 @@ async function renderReportDetail() {
         <div class="card-header"><div><h2>${escapeHtml(reportTitle(report))}</h2><p class="muted">${escapeHtml(report.original_name || report.mime_type || "Uploaded report")}</p></div><span class="badge ${badgeClassForStatus(report.status)}">${escapeHtml(displayStatus(report.status || "uploaded"))}</span></div>
         <div class="actions"><button class="btn btn-primary" data-action="analyze-report" ${canAnalyze ? "" : "disabled"}>${icon("auto_awesome")}Analyze report</button><a class="btn btn-secondary" href="/reports">Back to reports</a></div>
       </article>
+      ${renderAiProgress()}
       ${renderExtractionProgress(report)}
       ${renderEntityChips(report)}
       ${renderLabValuesTable(report.lab_results_json || [])}
@@ -727,13 +741,15 @@ function bindConsultationRooms() {
   document.querySelectorAll("[data-session-id]").forEach((button) => {
     button.addEventListener("click", async () => {
       const sessionId = button.dataset.sessionId;
+      await window.medRealtime?.joinConsultation(sessionId).catch(() => {});
       const response = await apiRequest(`/consultations/${sessionId}/messages`);
       const messages = response.data?.messages || [];
       document.querySelector("[data-consultation-output]").innerHTML = `<div class="stack">${messages.map((message) => `<p class="message-bubble">${escapeHtml(message.content)}</p>`).join("") || `<p class="muted">No messages yet.</p>`}</div><form class="form" data-message-form><div class="field"><label for="content">Message</label><textarea id="content" name="content" required></textarea></div><button class="btn btn-primary" type="submit">${icon("send")}Send</button></form>`;
       document.querySelector("[data-message-form]")?.addEventListener("submit", async (event) => {
         event.preventDefault();
         const content = new FormData(event.currentTarget).get("content");
-        await apiRequest(`/consultations/${sessionId}/messages`, { method: "POST", body: { content } });
+        if (!window.medRealtime) throw new Error("Realtime connection is not available.");
+        await window.medRealtime.sendMessage({ sessionId, content });
         button.click();
       });
     });
@@ -1086,6 +1102,39 @@ function bindGlobalActions() {
   });
 }
 
+function bindRealtimeUpdates() {
+  window.addEventListener("medexplain:realtime", (event) => {
+    const { type, payload } = event.detail || {};
+    const toast = document.querySelector("[data-realtime-toast]");
+    if (toast && ["notification_push", "appointment_created", "appointment_confirmed", "message_receive", "ai_analysis_ready"].includes(type)) {
+      toast.hidden = false;
+      toast.textContent = payload?.notification?.title || payload?.type || type.replaceAll("_", " ");
+      window.setTimeout(() => {
+        toast.hidden = true;
+      }, 3200);
+    }
+
+    if (type?.startsWith("ai_processing")) {
+      const card = document.querySelector("[data-ai-progress-card]");
+      const bar = document.querySelector("[data-ai-progress-bar]");
+      const value = document.querySelector("[data-ai-progress-value]");
+      const text = document.querySelector("[data-ai-progress-text]");
+      if (card && bar && value && text) {
+        const progress = Math.max(0, Math.min(100, Number(payload?.progress || 0)));
+        card.hidden = false;
+        bar.style.width = `${progress}%`;
+        value.textContent = `${progress}%`;
+        text.textContent = payload?.status || type.replaceAll("_", " ");
+      }
+    }
+
+    if (type === "message_receive" && document.querySelector("[data-consultation-output]")) {
+      const stack = document.querySelector("[data-consultation-output] .stack");
+      if (stack && payload?.message?.content) stack.insertAdjacentHTML("beforeend", `<p class="message-bubble">${escapeHtml(payload.message.content)}</p>`);
+    }
+  });
+}
+
 function route() {
   document.title = `${routeTitle(state.path).title} | MedExplain AI`;
   if (state.path === "/") return renderLanding();
@@ -1111,5 +1160,7 @@ function route() {
 }
 
 renderShell();
+loadRealtimeClient();
 bindGlobalActions();
+bindRealtimeUpdates();
 route();

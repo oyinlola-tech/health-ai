@@ -19,7 +19,9 @@ const mocks = vi.hoisted(() => ({
   tx: vi.fn((callback) => callback({ query: vi.fn() })),
   socketToUser: vi.fn(),
   socketToConsultation: vi.fn(),
-  socketToDoctors: vi.fn()
+  socketToDoctors: vi.fn(),
+  socketToAppointment: vi.fn(),
+  socketToAdmins: vi.fn()
 }));
 
 vi.mock("../src/config/database.js", () => ({
@@ -64,7 +66,9 @@ vi.mock("../src/sockets/hub.js", () => ({
   socketHub: {
     toUser: mocks.socketToUser,
     toConsultation: mocks.socketToConsultation,
-    toDoctors: mocks.socketToDoctors
+    toDoctors: mocks.socketToDoctors,
+    toAppointment: mocks.socketToAppointment,
+    toAdmins: mocks.socketToAdmins
   }
 }));
 
@@ -129,6 +133,6 @@ describe("doctorMarketplaceService consultation messages", () => {
 
     expect(message.content).toBe("Hello doctor");
     expect(mocks.addMessage).toHaveBeenCalledWith(expect.objectContaining({ encryptedContent: expect.objectContaining({ ciphertext: expect.any(String) }) }));
-    expect(mocks.socketToConsultation).toHaveBeenCalledWith("session-id", "consultation.message.created", expect.any(Object));
+    expect(mocks.socketToConsultation).toHaveBeenCalledWith("session-id", "message_receive", expect.any(Object));
   });
 });
