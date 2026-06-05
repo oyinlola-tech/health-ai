@@ -7,6 +7,6 @@ export const doctorService = {
   },
 
   reports(user) {
-    return reportRepository.listForUser(user);
+    return reportRepository.listForDoctorPatients(user.id);
   }
 };

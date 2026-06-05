@@ -22,9 +22,39 @@ export const reportRepository = {
     return rows;
   },
 
+  async listForDoctorPatients(doctorId, client = pool) {
+    const { rows } = await client.query(
+      `select distinct r.*
+       from reports r
+       join appointments a on a.patient_id = r.patient_id
+       where a.doctor_id = $1
+         and a.deleted_at is null
+         and a.status in ('PENDING', 'CONFIRMED', 'COMPLETED')
+         and r.deleted_at is null
+       order by r.created_at desc`,
+      [doctorId]
+    );
+    return rows;
+  },
+
   async findById(id, client = pool) {
     const { rows } = await client.query("select * from reports where id = $1 and deleted_at is null", [id]);
     return rows[0] || null;
+  },
+
+  async doctorCanAccessReport({ doctorId, reportId }, client = pool) {
+    const { rows } = await client.query(
+      `select 1
+       from reports r
+       join appointments a on a.patient_id = r.patient_id
+       where r.id = $2
+         and a.doctor_id = $1
+         and a.deleted_at is null
+         and r.deleted_at is null
+       limit 1`,
+      [doctorId, reportId]
+    );
+    return Boolean(rows[0]);
   },
 
   async latestAnalysis(reportId, client = pool) {

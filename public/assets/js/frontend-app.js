@@ -96,7 +96,7 @@ const routeAliases = new Map([
   ["/ai-assistant/saved-conv.html", "/chat"],
   ["/consultation/find-doctor.html", "/doctors"],
   ["/consultation/profile.html", "/doctor/:id"],
-  ["/consultation/appointments.html", "/doctors"],
+  ["/consultation/appointments.html", "/appointments"],
   ["/profile/overview.html", "/profile"],
   ["/profile/edit.html", "/profile"],
   ["/settings/home.html", "/settings"],
@@ -143,6 +143,7 @@ const pageMeta = {
   "/reports": { title: "Reports", description: "Upload, review, and analyze medical documents securely." },
   "/chat": { title: "AI health chat", description: "Ask questions about your reports and health context." },
   "/doctors": { title: "Doctors", description: "Connect with verified doctors and manage consultations." },
+  "/appointments": { title: "Appointments", description: "Review doctor bookings and consultation status." },
   "/profile": { title: "Profile", description: "Review and update your account information." },
   "/settings": { title: "Settings", description: "Manage privacy, security, notifications, and accessibility preferences." },
   "/subscription": { title: "Subscription", description: "Manage your plan and billing status." },
@@ -182,6 +183,7 @@ function normalizePath(pathname) {
   const cleanPath = pathname.replace(/\/$/, "") || "/";
   if (routeAliases.has(cleanPath)) return routeAliases.get(cleanPath);
   if (cleanPath.startsWith("/report/")) return "/report/:id";
+  if (cleanPath === "/doctor-dashboard") return "/doctor";
   if (doctorWorkspacePaths.has(cleanPath)) return cleanPath;
   if (cleanPath.startsWith("/doctor/") && uuidLike.test(cleanPath.split("/").pop())) return "/doctor/:id";
   if (cleanPath.startsWith("/admin/")) return cleanPath;
@@ -706,51 +708,105 @@ async function renderReportDetail() {
 
 async function renderChat() {
   const meta = routeTitle("/chat");
-  setMain(`
-    ${pageHeader(meta)}
-    <section class="grid grid-2">
-      <form class="form-card form" data-chat-form novalidate>
-        <div class="form-message" data-form-message hidden></div>
-        ${textarea("Question", "message", true)}
-        <button class="btn btn-primary" type="submit">${icon("send")}Send to AI</button>
-      </form>
-      <article class="card stack"><h2>Conversation</h2><div data-chat-output>${emptyState({ iconName: "psychology", title: "No conversation selected", description: "Ask a question to begin a secure AI conversation.", actionLabel: "", actionHref: "" })}</div></article>
-    </section>
-  `);
-  document.querySelector("[data-chat-form]")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    if (!validateForm(form)) return;
-    setSubmitLoading(form, true);
-    try {
-      const response = await apiRequest("/ai/chat", { method: "POST", body: { message: new FormData(form).get("message") } });
-      document.querySelector("[data-chat-output]").innerHTML = `<div class="card stack"><p>${escapeHtml(response.data?.message || response.data?.answer || "The AI response is ready.")}</p></div>`;
-      showFormMessage(form, "success", "Response received.");
-    } catch {
-      showFormMessage(form, "error", "The AI assistant could not respond right now. Please retry.");
-    } finally {
-      setSubmitLoading(form, false);
-    }
+  setMain(`${pageHeader(meta)}${loadingState("Loading consultation rooms")}`);
+  try {
+    const response = await apiRequest("/consultations");
+    const consultations = response.data?.consultations || [];
+    setMain(`${pageHeader(meta)}<section class="grid grid-2"><article class="card stack"><h2>Consultation Rooms</h2>${listCard(consultations, { iconName: "forum", title: "No consultation rooms", description: "Rooms open after a doctor confirms an appointment.", actionLabel: "Find doctors", actionHref: "/doctors" }, renderConsultationItem)}</article><article class="card stack"><h2>Messages</h2><div data-consultation-output>${emptyState({ iconName: "forum", title: "Select a room", description: "Choose a consultation room to view message history.", actionLabel: "", actionHref: "" })}</div></article></section>`);
+    bindConsultationRooms();
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("Consultation rooms are temporarily unavailable")}`);
+  }
+}
+
+function renderConsultationItem(item) {
+  return `<article class="card stack"><h3>${escapeHtml(item.reason || "Consultation")}</h3><p class="muted">${escapeHtml(item.appointment_status || item.status)}</p><button class="btn btn-quiet" data-session-id="${escapeHtml(item.id)}">Open room</button></article>`;
+}
+
+function bindConsultationRooms() {
+  document.querySelectorAll("[data-session-id]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const sessionId = button.dataset.sessionId;
+      const response = await apiRequest(`/consultations/${sessionId}/messages`);
+      const messages = response.data?.messages || [];
+      document.querySelector("[data-consultation-output]").innerHTML = `<div class="stack">${messages.map((message) => `<p class="message-bubble">${escapeHtml(message.content)}</p>`).join("") || `<p class="muted">No messages yet.</p>`}</div><form class="form" data-message-form><div class="field"><label for="content">Message</label><textarea id="content" name="content" required></textarea></div><button class="btn btn-primary" type="submit">${icon("send")}Send</button></form>`;
+      document.querySelector("[data-message-form]")?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const content = new FormData(event.currentTarget).get("content");
+        await apiRequest(`/consultations/${sessionId}/messages`, { method: "POST", body: { content } });
+        button.click();
+      });
+    });
   });
+}
+
+function doctorName(doctor) {
+  return [doctor.first_name, doctor.last_name].filter(Boolean).join(" ") || "Doctor";
+}
+
+function renderDoctorCard(doctor) {
+  return `<article class="card stack"><div class="card-header"><div><h3>Dr. ${escapeHtml(doctorName(doctor))}</h3><p class="muted">${escapeHtml(doctor.specialization || doctor.specialty || "General Medicine")}</p></div><span class="badge badge-success">Verified</span></div><div class="actions"><span class="badge">${doctor.has_availability ? "Available slots" : "No slots listed"}</span><span class="badge">${doctor.consultation_fee_cents ? money(doctor.consultation_fee_cents) : "Premium included"}</span></div><a class="btn btn-quiet" href="/doctor/${doctor.id}">View profile</a></article>`;
 }
 
 async function renderDoctors() {
   const meta = routeTitle("/doctors");
-  setMain(`
-    ${pageHeader(meta)}
-    <section class="grid grid-2">
-      ${emptyState({ iconName: "stethoscope", title: "Doctor directory is being prepared", description: "Verified doctor listings will appear here when the backend exposes directory data.", actionLabel: "Request a consultation", actionHref: "/doctors" })}
-      <form class="form-card form" data-appointment-form novalidate>
-        <h2>Request consultation</h2>
-        <div class="form-message" data-form-message hidden></div>
-        <div class="field"><label for="scheduledAt">Preferred time <span class="required">*</span></label><input id="scheduledAt" name="scheduledAt" type="datetime-local" required /><span class="field-error" data-error-for="scheduledAt"></span></div>
-        ${textarea("Reason for visit", "reason", true)}
-        ${textarea("Notes", "notes", false)}
-        <button class="btn btn-primary" type="submit">${icon("calendar_add_on")}Request appointment</button>
-      </form>
-    </section>
-  `);
-  bindAppointmentForm();
+  setMain(`${pageHeader(meta)}${loadingState("Loading verified doctors")}`);
+  try {
+    const response = await apiRequest("/doctors");
+    const doctors = response.data?.doctors || [];
+    setMain(`${pageHeader(meta)}<section class="form-card"><form class="form" data-doctor-search><div class="grid grid-3">${field("Search doctors", "q", "text", false)}${field("Specialization", "specialization", "text", false)}<div class="field"><label for="availableOnly">Availability</label><select id="availableOnly" name="availableOnly"><option value="">Any</option><option value="true">Has availability</option></select></div></div><button class="btn btn-primary" type="submit">${icon("search")}Search</button></form></section><section class="grid grid-3" data-doctor-results>${doctors.length ? doctors.map(renderDoctorCard).join("") : emptyState({ iconName: "stethoscope", title: "No verified doctors available", description: "Verified doctors appear here after admin approval and availability setup.", actionLabel: "", actionHref: "" })}</section>`);
+    document.querySelector("[data-doctor-search]")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const params = new URLSearchParams(new FormData(event.currentTarget));
+      const filtered = await apiRequest(`/doctors?${params.toString()}`);
+      document.querySelector("[data-doctor-results]").innerHTML = (filtered.data?.doctors || []).map(renderDoctorCard).join("") || emptyState({ iconName: "stethoscope", title: "No doctors matched", description: "Try another search or filter.", actionLabel: "", actionHref: "" });
+    });
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("Doctor directory is temporarily unavailable")}`);
+  }
+}
+
+async function renderDoctorProfile() {
+  const id = location.pathname.split("/").pop();
+  const meta = routeTitle("/doctor/:id");
+  setMain(`${pageHeader(meta)}${loadingState("Loading doctor profile")}`);
+  try {
+    const response = await apiRequest(`/doctors/${id}`);
+    const doctor = response.data?.doctor || {};
+    const availability = doctor.availability || [];
+    setMain(`
+      ${pageHeader(meta)}
+      <section class="grid grid-2">
+        <article class="card card-accent stack"><div class="card-header"><div><h2>Dr. ${escapeHtml(doctorName(doctor))}</h2><p class="muted">${escapeHtml(doctor.specialization || doctor.specialty || "General Medicine")}</p></div><span class="badge badge-success">${escapeHtml(doctor.verification_status || "VERIFIED")}</span></div><p>${escapeHtml(doctor.bio || "This doctor has not added a public bio yet.")}</p><div class="actions"><span class="badge">${doctor.years_experience || 0} years experience</span><span class="badge">${doctor.consultation_fee_cents ? money(doctor.consultation_fee_cents) : "Premium included"}</span></div></article>
+        <form class="form-card form" data-appointment-form novalidate>
+          <h2>Book consultation</h2>
+          <div class="form-message" data-form-message hidden></div>
+          <input type="hidden" name="doctorId" value="${escapeHtml(doctor.id)}" />
+          <div class="field"><label for="scheduledAt">Time slot <span class="required">*</span></label><input id="scheduledAt" name="scheduledAt" type="datetime-local" required /><span class="field-error" data-error-for="scheduledAt"></span></div>
+          ${textarea("Reason for visit", "reason", true)}
+          ${textarea("Notes", "notes", false)}
+          <button class="btn btn-primary" type="submit">${icon("calendar_add_on")}Request appointment</button>
+        </form>
+      </section>
+      <section class="card stack"><h2>Availability Calendar</h2>${availability.length ? `<div class="actions">${availability.map((slot) => `<span class="badge">Day ${slot.day_of_week}: ${slot.starts_at} - ${slot.ends_at}</span>`).join("")}</div>` : `<p class="muted">No active availability slots are listed.</p>`}</section>
+      <section class="card stack"><h2>Reviews</h2><p class="muted">Reviews are ready for future patient ratings after completed consultations.</p></section>
+    `);
+    bindAppointmentForm();
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("We could not load this doctor")}`);
+  }
+}
+
+async function renderAppointments() {
+  const meta = routeTitle("/appointments");
+  setMain(`${pageHeader(meta)}${loadingState("Loading appointments")}`);
+  try {
+    const response = await apiRequest("/appointments");
+    const appointments = response.data?.appointments || [];
+    setMain(`${pageHeader(meta)}<section class="stack">${listCard(appointments, { iconName: "calendar_month", title: "No appointments", description: "Book a verified doctor to start a consultation workflow.", actionLabel: "Find doctors", actionHref: "/doctors" }, renderAppointmentItem)}</section>`);
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("Appointments are temporarily unavailable")}`);
+  }
 }
 
 function bindAppointmentForm() {
@@ -762,7 +818,7 @@ function bindAppointmentForm() {
     const scheduledAt = new Date(formData.get("scheduledAt")).toISOString();
     setSubmitLoading(form, true);
     try {
-      await apiRequest("/appointments", { method: "POST", body: { scheduledAt, reason: formData.get("reason"), notes: formData.get("notes") } });
+      await apiRequest("/appointments", { method: "POST", body: { doctorId: formData.get("doctorId"), scheduledAt, reason: formData.get("reason"), notes: formData.get("notes") } });
       showFormMessage(form, "success", "Consultation requested. You can review appointments from the dashboard.");
     } catch {
       showFormMessage(form, "error", "We could not request that appointment. Please retry.");
@@ -936,17 +992,25 @@ async function renderDoctorDashboard() {
         </section>
         <section class="grid grid-2">
           <article class="card stack"><h2>Appointments</h2>${listCard(appointmentItems, { iconName: "calendar_month", title: "No appointments assigned", description: "Patient appointments will appear here once scheduled.", actionLabel: "Refresh dashboard", actionHref: "/doctor" }, renderAppointmentItem)}</article>
-          <article class="card stack"><h2>Messages</h2>${emptyState({ iconName: "mark_chat_unread", title: "No messages", description: "Patient messages will appear here when available.", actionLabel: "", actionHref: "" })}</article>
-          <article class="card stack"><h2>Analytics</h2>${emptyState({ iconName: "analytics", title: "No analytics yet", description: "Analytics require completed consultations and report activity.", actionLabel: "", actionHref: "" })}</article>
-          <article class="card stack"><h2>Settings</h2><p class="muted">Manage availability, profile details, notification preferences, and consultation settings.</p><a class="btn btn-quiet" href="/doctor/settings">Open settings</a></article>
+          <article class="card stack"><h2>Availability Scheduler</h2><form class="form" data-availability-form>${field("Day of week", "dayOfWeek", "number", true)}${field("Starts", "startsAt", "time", true)}${field("Ends", "endsAt", "time", true)}<button class="btn btn-primary" type="submit">${icon("schedule")}Save availability</button></form></article>
+          <article class="card stack"><h2>Consultation Rooms</h2><a class="btn btn-quiet" href="/chat">Open messages</a><p class="muted">Chat rooms are created after appointments are confirmed.</p></article>
+          <article class="card stack"><h2>Earnings</h2><p class="muted">Consultation earnings will appear when paid doctor fees are enabled.</p><span class="badge">Premium consultation ready</span></article>
         </section>
       </div>
     </section>
   `);
+  document.querySelector("[data-availability-form]")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
+    await apiRequest("/doctor/availability", { method: "POST", body: payload });
+    window.location.reload();
+  });
 }
 
 function renderAppointmentItem(item) {
-  return `<article class="card stack"><h3>${escapeHtml(item.reason || "Consultation request")}</h3><p class="muted">${escapeHtml(item.scheduledAt || "Time pending")}</p><span class="badge">${escapeHtml(item.status || "requested")}</span></article>`;
+  const doctor = [item.doctor_first_name, item.doctor_last_name].filter(Boolean).join(" ");
+  const patient = [item.patient_first_name, item.patient_last_name].filter(Boolean).join(" ");
+  return `<article class="card stack"><h3>${escapeHtml(item.reason || "Consultation request")}</h3><p class="muted">${escapeHtml(doctor || patient || "Assigned participant")}</p><p class="muted">${escapeHtml(item.scheduled_at || item.scheduledAt || "Time pending")}</p><span class="badge">${escapeHtml(item.status || "PENDING")}</span></article>`;
 }
 
 async function renderAdminDashboard() {
@@ -1031,7 +1095,9 @@ function route() {
   if (state.path === "/reports") return renderReports();
   if (state.path === "/report/:id") return renderReportDetail();
   if (state.path === "/chat") return renderChat();
-  if (state.path === "/doctors" || state.path === "/doctor/:id") return renderDoctors();
+  if (state.path === "/doctors") return renderDoctors();
+  if (state.path === "/doctor/:id") return renderDoctorProfile();
+  if (state.path === "/appointments") return renderAppointments();
   if (state.path === "/profile") return renderProfile();
   if (state.path === "/subscription" || state.path === "/update-plan") return renderSubscription();
   if (state.path === "/billing-history") return renderBillingHistory();

@@ -30,13 +30,16 @@ export const recruitmentRepository = {
     return rows;
   },
 
-  async createApplication({ jobId, email, firstName, lastName, phone, cvPath }, client = pool) {
+  async createApplication({ jobId = null, email, firstName, lastName, phone, cvPath, medicalLicenseNumber, specialization, yearsExperience }, client = pool) {
     const id = createId();
     const { rows } = await client.query(
-      `insert into doctor_applications (id, job_id, email, first_name, last_name, phone, cv_path)
-       values ($1, $2, lower($3), $4, $5, $6, $7)
+      `insert into doctor_applications (
+         id, job_id, email, first_name, last_name, phone, cv_path,
+         medical_license_number, specialization, years_experience, documents_path, status
+       )
+       values ($1, $2, lower($3), $4, $5, $6, $7, $8, $9, $10, $7, 'PENDING')
        returning *`,
-      [id, jobId, email, firstName, lastName, phone, cvPath]
+      [id, jobId, email, firstName, lastName, phone, cvPath, medicalLicenseNumber, specialization, yearsExperience]
     );
     return rows[0];
   },
@@ -56,7 +59,7 @@ export const recruitmentRepository = {
     const { rows } = await client.query(
       `select da.*, dj.title as job_title
        from doctor_applications da
-       join doctor_jobs dj on dj.id = da.job_id
+       left join doctor_jobs dj on dj.id = da.job_id
        order by da.created_at desc`
     );
     return rows;
@@ -67,13 +70,13 @@ export const recruitmentRepository = {
     return rows[0] || null;
   },
 
-  async reviewApplication({ id, status, reviewedBy, createdDoctorId = null }, client = pool) {
+  async reviewApplication({ id, status, reviewedBy, createdDoctorId = null, rejectionReason = null }, client = pool) {
     const { rows } = await client.query(
       `update doctor_applications
-       set status = $2, reviewed_by = $3, reviewed_at = now(), created_doctor_id = coalesce($4, created_doctor_id), updated_at = now()
+       set status = $2, reviewed_by = $3, reviewed_at = now(), created_doctor_id = coalesce($4, created_doctor_id), rejection_reason = coalesce($5, rejection_reason), updated_at = now()
        where id = $1
        returning *`,
-      [id, status, reviewedBy, createdDoctorId]
+      [id, status, reviewedBy, createdDoctorId, rejectionReason]
     );
     return rows[0] || null;
   }

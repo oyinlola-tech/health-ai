@@ -152,7 +152,9 @@ export const authService = {
           userId: user.id,
           specialty: input.specialty,
           licenseNumber: input.licenseNumber,
-          bio: input.bio
+          bio: input.bio,
+          yearsExperience: input.yearsExperience,
+          verificationStatus: input.verificationStatus
         },
         client
       );

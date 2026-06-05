@@ -40,7 +40,7 @@ export const recruitmentService = {
   async reviewApplication({ id, status, actor }) {
     const application = await recruitmentRepository.findApplication(id);
     if (!application) throw errors.notFound("Application not found.");
-    if (status === "rejected") {
+    if (status === "REJECTED") {
       return recruitmentRepository.reviewApplication({ id, status, reviewedBy: actor.id });
     }
 
@@ -50,13 +50,16 @@ export const recruitmentService = {
           email: application.email,
           firstName: application.first_name,
           lastName: application.last_name,
-          specialty: "General Medicine"
+          specialty: application.specialization,
+          licenseNumber: application.medical_license_number,
+          yearsExperience: application.years_experience,
+          verificationStatus: "VERIFIED"
         },
         actor
       );
       await recruitmentRepository.reviewApplication({
         id,
-        status: "accepted",
+        status: "APPROVED",
         reviewedBy: actor.id,
         createdDoctorId: doctor.user.id
       });

@@ -73,7 +73,8 @@ const envSchema = z
     PREMIUM_MONTHLY_PRICE_CENTS: z.coerce.number().int().positive().default(500000),
     PREMIUM_ANNUAL_PRICE_CENTS: z.coerce.number().int().positive().default(5000000),
     FREE_REPORT_ANALYSIS_LIMIT: z.coerce.number().int().nonnegative().default(3),
-    FREE_AI_CHAT_LIMIT: z.coerce.number().int().nonnegative().default(10)
+    FREE_AI_CHAT_LIMIT: z.coerce.number().int().nonnegative().default(10),
+    MESSAGE_ENCRYPTION_SECRET: z.string().min(16).default("development-message-secret-change-before-production")
   })
   .superRefine((value, ctx) => {
     if (value.NODE_ENV !== "production") return;

@@ -8,13 +8,17 @@ export const jobCreateSchema = z.object({
 });
 
 export const applicationCreateSchema = z.object({
-  jobId: z.string().uuid(),
+  jobId: z.string().uuid().optional(),
   email: z.string().email(),
   firstName: z.string().min(1).max(80),
   lastName: z.string().min(1).max(80),
-  phone: z.string().max(50).optional()
+  phone: z.string().max(50).optional(),
+  medicalLicenseNumber: z.string().min(1).max(120),
+  specialization: z.string().min(1).max(120),
+  yearsExperience: z.coerce.number().int().min(0).max(80)
 });
 
 export const applicationReviewSchema = z.object({
-  status: z.enum(["accepted", "rejected"])
+  status: z.enum(["APPROVED", "REJECTED"]),
+  rejectionReason: z.string().max(1000).optional()
 });

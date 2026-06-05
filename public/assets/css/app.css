@@ -669,6 +669,14 @@ thead th:last-child {
   background: var(--color-accent);
 }
 
+.message-bubble {
+  max-width: 72ch;
+  padding: 12px 16px;
+  border-radius: var(--radius-small);
+  background: var(--color-background);
+  border: 1px solid var(--color-border-warm);
+}
+
 .empty-state,
 .error-state,
 .loading-state {

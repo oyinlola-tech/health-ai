@@ -34,6 +34,8 @@ export const createDoctorSchema = z.object({
   lastName: z.string().min(1).max(80),
   specialty: z.string().min(1).max(120),
   licenseNumber: z.string().min(1).max(120).optional(),
+  yearsExperience: z.coerce.number().int().min(0).max(80).optional(),
+  verificationStatus: z.enum(["UNVERIFIED", "PENDING", "VERIFIED", "SUSPENDED"]).optional(),
   bio: z.string().max(1000).optional()
 });
 

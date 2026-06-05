@@ -35,6 +35,8 @@ const frontendRoutes = [
   "/doctors",
   "/doctor",
   "/doctor/:id",
+  "/doctor-dashboard",
+  "/appointments",
   "/doctor/patient-queue",
   "/doctor/appointments",
   "/doctor/consultations",

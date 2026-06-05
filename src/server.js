@@ -1,7 +1,9 @@
+import http from "node:http";
 import { createApp } from "./app.js";
 import { env } from "./config/env.js";
 import { verifyDatabaseConnection } from "./config/database.js";
 import { runMigrations } from "./database/migrate.js";
+import { registerSockets } from "./sockets/index.js";
 import { logger } from "./utils/logger.js";
 
 async function bootstrap() {
@@ -12,7 +14,9 @@ async function bootstrap() {
   }
 
   const app = createApp();
-  app.listen(env.PORT, () => {
+  const server = http.createServer(app);
+  registerSockets(server);
+  server.listen(env.PORT, () => {
     logger.info(`${env.APP_NAME} listening.`, { port: env.PORT, environment: env.NODE_ENV });
   });
 }

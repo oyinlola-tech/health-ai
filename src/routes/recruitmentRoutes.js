@@ -13,22 +13,18 @@ export const recruitmentRoutes = Router();
 
 // Public endpoints (no authentication required)
 recruitmentRoutes.get("/jobs", asyncHandler(recruitmentController.jobs));
-
-// Authenticated endpoints (authentication required for all subsequent routes)
-recruitmentRoutes.use(authenticate);
-
-// File upload with CSRF protection and rate limiting
 recruitmentRoutes.post(
   "/applications",
   csrfProtection,
   apiRateLimit,
-  upload.single("cv"),
+  upload.single("document"),
   validate(applicationCreateSchema),
   auditAction("recruitment.application.submit"),
   asyncHandler(recruitmentController.apply)
 );
 
 // Admin-only endpoints
+recruitmentRoutes.use(authenticate);
 recruitmentRoutes.use(requireRoles("Admin"));
 recruitmentRoutes.post("/jobs", validate(jobCreateSchema), auditAction("recruitment.job.create"), asyncHandler(recruitmentController.createJob));
 recruitmentRoutes.patch("/jobs/:id/publish", auditAction("recruitment.job.publish"), asyncHandler(recruitmentController.publishJob));

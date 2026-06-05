@@ -119,17 +119,21 @@ export const userRepository = {
     await client.query("update refresh_tokens set revoked_at = now() where user_id = $1 and revoked_at is null", [userId]);
   },
 
-  async createDoctorProfile({ userId, specialty, licenseNumber, bio }, client = pool) {
+  async createDoctorProfile({ userId, specialty, licenseNumber, bio, yearsExperience = 0, verificationStatus = "PENDING" }, client = pool) {
     const { rows } = await client.query(
-      `insert into doctor_profiles (user_id, specialty, license_number, credentials_status, bio)
-       values ($1, $2, $3, 'verified', $4)
+      `insert into doctor_profiles (user_id, specialty, specialization, license_number, credentials_status, bio, years_experience, verification_status, accepting_patients, verified_at)
+       values ($1, $2, $2, $3, lower($5), $4, $6, $5, $5 = 'VERIFIED', case when $5 = 'VERIFIED' then now() else null end)
        on conflict (user_id) do update
        set specialty = excluded.specialty,
+           specialization = excluded.specialization,
            license_number = excluded.license_number,
            bio = excluded.bio,
+           years_experience = excluded.years_experience,
+           verification_status = excluded.verification_status,
+           accepting_patients = excluded.accepting_patients,
            updated_at = now()
        returning *`,
-      [userId, specialty, licenseNumber, bio]
+      [userId, specialty, licenseNumber, bio, verificationStatus, yearsExperience]
     );
     return rows[0];
   }

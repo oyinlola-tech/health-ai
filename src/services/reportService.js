@@ -39,6 +39,9 @@ export const reportService = {
   async getReportForUser(id, user) {
     const report = await reportRepository.findById(id);
     if (!report) throw errors.notFound("Report not found.");
+    if (user.role === "Doctor" && !(await reportRepository.doctorCanAccessReport({ doctorId: user.id, reportId: report.id }))) {
+      throw errors.forbidden("You can only access reports for assigned patients.");
+    }
     if (user.role !== "Admin" && user.role !== "Doctor" && report.patient_id !== user.id) {
       throw errors.forbidden("You can only access your own reports.");
     }
