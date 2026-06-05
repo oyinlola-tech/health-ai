@@ -7,7 +7,7 @@
     "name": "Oluwayemi Oyinlola Michael",
     "url": "https://oyinlola.site"
   },
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "SEE LICENSE IN docs/decisions/LICENSE.md",
   "type": "module",
   "scripts": {
     "start": "node src/server.js",

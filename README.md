@@ -168,7 +168,10 @@ Health check:
 curl http://localhost:3000/health
 ```
 
+## Documentation
+
+Project reports, audits, architecture notes, implementation summaries, API specs, security documents, and decisions live in [`docs/`](docs/README.md).
+
 ## Disclaimer
 
 MedExplain AI is for informational support only. It does not replace medical professionals, diagnose conditions, prescribe treatment, or provide emergency instructions. Users should consult qualified clinicians for medical decisions and seek emergency care through appropriate local emergency services when needed.
-

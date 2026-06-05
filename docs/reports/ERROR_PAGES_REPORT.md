@@ -1,6 +1,6 @@
 # Error Pages Report
 
-MedExplain AI now exposes a complete route-based recovery page system through the shared application shell. Every page uses the existing header, footer, mobile navigation, typography, spacing, button classes, and design tokens from `DESIGN.md`.
+MedExplain AI now exposes a complete route-based recovery page system through the shared application shell. Every page uses the existing header, footer, mobile navigation, typography, spacing, button classes, and design tokens from [`DESIGN.md`](../../DESIGN.md).
 
 ## Implemented Routes
 
