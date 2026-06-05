@@ -57,6 +57,9 @@ const envSchema = z
     UPLOAD_ROOT: z.string().default("uploads"),
     MAX_UPLOAD_BYTES: z.coerce.number().int().positive().default(10485760),
     ALLOWED_UPLOAD_MIME_TYPES: z.string().default("application/pdf,image/png,image/jpeg,image/webp"),
+    REPORT_EXTRACTION_CONFIDENCE_THRESHOLD: z.coerce.number().int().min(0).max(100).default(65),
+    REPORT_PROCESSING_VERSION: z.string().default("report-pipeline-v1"),
+    OCR_LANGUAGE: z.string().default("eng"),
     PAYMENT_PROVIDER: z.string().default("manual"),
     PAYMENT_PUBLIC_KEY: z.string().optional().default(""),
     PAYMENT_SECRET_KEY: z.string().optional().default("")

@@ -1,11 +1,12 @@
 import { reportRepository } from "../repositories/reportRepository.js";
+import { reportAnalysisPipeline } from "../modules/report-processing/reportAnalysisPipeline.js";
 import { errors } from "../utils/errors.js";
 
 export const reportService = {
   async createReport({ user, file, title }) {
     if (!file) throw errors.badRequest("A report file is required.");
     const reportTitle = title || file.originalname.replace(/\.[^.]+$/, "");
-    return reportRepository.create({
+    const report = await reportRepository.create({
       patientId: user.role === "Patient" ? user.id : user.id,
       uploadedBy: user.id,
       title: reportTitle,
@@ -14,6 +15,8 @@ export const reportService = {
       mimeType: file.mimetype,
       sizeBytes: file.size
     });
+
+    return reportAnalysisPipeline.extractAndPersist({ report, reportRepository });
   },
 
   async listReports(user) {
