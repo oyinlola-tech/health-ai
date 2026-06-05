@@ -47,6 +47,11 @@ const frontendRoutes = [
   "/profile",
   "/settings",
   "/subscription",
+  "/payment-success",
+  "/payment-failed",
+  "/billing-history",
+  "/update-plan",
+  "/cancel-subscription",
   "/help",
   "/contact",
   "/privacy",
@@ -102,7 +107,14 @@ export function createApp() {
   );
   app.use(compression());
   app.use(cookieParser(env.COOKIE_SECRET));
-  app.use(express.json({ limit: "1mb" }));
+  app.use(
+    express.json({
+      limit: "1mb",
+      verify: (req, _res, buffer) => {
+        req.rawBody = buffer.toString("utf8");
+      }
+    })
+  );
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
   app.use(express.static(publicDir));
 

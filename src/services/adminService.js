@@ -2,6 +2,7 @@ import { adminRepository } from "../repositories/adminRepository.js";
 import { auditRepository } from "../repositories/auditRepository.js";
 import { reportRepository } from "../repositories/reportRepository.js";
 import { userRepository } from "../repositories/userRepository.js";
+import { subscriptionService } from "./subscriptionService.js";
 
 export const adminService = {
   users(query) {
@@ -18,5 +19,9 @@ export const adminService = {
 
   reportProcessingMetrics() {
     return reportRepository.processingMetrics();
+  },
+
+  monetization() {
+    return subscriptionService.adminMetrics();
   }
 };

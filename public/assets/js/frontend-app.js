@@ -101,6 +101,8 @@ const routeAliases = new Map([
   ["/profile/edit.html", "/profile"],
   ["/settings/home.html", "/settings"],
   ["/premium/plans.html", "/subscription"],
+  ["/premium/payment.html", "/update-plan"],
+  ["/premium/activated.html", "/payment-success"],
   ["/learning-center/home.html", "/help"],
   ["/learning-center/articles.html", "/help"],
   ["/notifications/list.html", "/dashboard"],
@@ -144,6 +146,11 @@ const pageMeta = {
   "/profile": { title: "Profile", description: "Review and update your account information." },
   "/settings": { title: "Settings", description: "Manage privacy, security, notifications, and accessibility preferences." },
   "/subscription": { title: "Subscription", description: "Manage your plan and billing status." },
+  "/payment-success": { title: "Payment success", description: "Verify your OPay payment and activate premium access." },
+  "/payment-failed": { title: "Payment failed", description: "Review payment status and retry securely." },
+  "/billing-history": { title: "Billing history", description: "Review OPay transactions, refunds, and invoices." },
+  "/update-plan": { title: "Update plan", description: "Choose a premium plan and continue to OPay checkout." },
+  "/cancel-subscription": { title: "Cancel subscription", description: "Manage cancellation for your active premium plan." },
   "/help": { title: "Help center", description: "Find guidance, support, and trusted medical knowledge." },
   "/contact": { title: "Contact", description: "Reach the MedExplain AI support team." },
   "/privacy": { title: "Privacy", description: "How MedExplain AI protects and handles personal health information." },
@@ -434,7 +441,7 @@ async function renderPatientDashboard() {
       cachedRequest("reports", "/reports"),
       cachedRequest("appointments", "/appointments"),
       cachedRequest("health", "/health-history"),
-      cachedRequest("config", "/config/public")
+      cachedRequest("subscription", "/subscriptions/me")
     ]);
     const reportItems = reports.value?.data?.reports || [];
     const appointmentItems = appointments.value?.data?.appointments || [];
@@ -445,8 +452,9 @@ async function renderPatientDashboard() {
         ${summaryCard("Health Overview", "monitor_heart", healthItems.length ? `${healthItems.length} health entries` : "No health entries yet", "/profile")}
         ${summaryCard("Recent Reports", "description", reportItems.length ? `${reportItems.length} reports available` : "No reports uploaded", "/reports")}
         ${summaryCard("Upcoming Consultations", "calendar_month", appointmentItems.length ? `${appointmentItems.length} appointments` : "No appointments booked", "/doctors")}
-        ${summaryCard("Subscription Status", "workspace_premium", subscription.status === "fulfilled" ? "Plan information available" : "Plan information unavailable", "/subscription")}
+        ${summaryCard("Subscription Status", "workspace_premium", subscription.value?.data?.plan || "Plan unavailable", "/subscription")}
       </section>
+      ${renderUsageOverview(subscription.value?.data || {})}
       <section class="grid grid-2">
         <article class="card card-accent stack"><div class="card-header"><h2>Recent Reports</h2><a class="btn btn-quiet" href="/reports">View reports</a></div>${listCard(reportItems.slice(0, 3), { iconName: "description", title: "No reports yet", description: "Upload a report to receive an AI-assisted explanation.", actionLabel: "Upload report", actionHref: "/reports" }, renderReportItem)}</article>
         <article class="card stack"><div class="card-header"><h2>AI Insights</h2><a class="btn btn-quiet" href="/chat">Open chat</a></div>${emptyState({ iconName: "psychology", title: "No AI insights yet", description: "Insights appear after reports are analyzed or questions are asked.", actionLabel: "Ask AI", actionHref: "/chat" })}</article>
@@ -458,6 +466,22 @@ async function renderPatientDashboard() {
   } catch {
     setMain(`${pageHeader(meta)}${errorState("We could not load your dashboard")}`);
   }
+}
+
+function money(cents, currency = "NGN") {
+  return new Intl.NumberFormat("en-NG", { style: "currency", currency }).format((Number(cents) || 0) / 100);
+}
+
+function usageMeter(label, usage = {}) {
+  const used = Number(usage.used || 0);
+  const limit = usage.limit === null || usage.limit === undefined ? null : Number(usage.limit);
+  const percent = limit ? Math.min(100, Math.round((used / limit) * 100)) : 100;
+  return `<div class="usage-meter"><div class="card-header"><div><p class="caption">${escapeHtml(label)}</p><strong>${limit === null ? `${used} used` : `${Math.max(limit - used, 0)} remaining`}</strong></div><span class="badge">${limit === null ? "Unlimited" : `${used}/${limit}`}</span></div><div class="meter-track"><span style="width:${percent}%"></span></div></div>`;
+}
+
+function renderUsageOverview(subscription = {}) {
+  const usage = subscription.usage || {};
+  return `<section class="card stack"><div class="card-header"><div><h2>Usage Analytics</h2><p class="muted">Monthly counters reset with your billing cycle.</p></div><a class="btn btn-quiet" href="/subscription">Manage plan</a></div><div class="grid grid-3">${usageMeter("Report Analyses", usage.reportAnalysis)}${usageMeter("AI Chat", usage.aiChat)}${usageMeter("Doctor Bookings", usage.doctorBookings)}</div></section>`;
 }
 
 function summaryCard(title, iconName, value, href) {
@@ -789,7 +813,6 @@ function renderStaticPage(path) {
   const meta = routeTitle(path);
   const contentMap = {
     "/settings": ["Settings", "Privacy, security, notifications, and accessibility preferences will appear as backend-backed controls are added."],
-    "/subscription": ["Subscription", "Plan and payment details will appear here when billing data is available."],
     "/help": ["Help center", "Browse medical report guidance, AI explanation tips, and support paths without leaving the product."],
     "/contact": ["Contact support", "Use the support action below for help with reports, billing, privacy, or account access."],
     "/privacy": ["Privacy", "MedExplain AI keeps health information private, uses backend-mediated AI calls, and avoids exposing secrets in frontend code."],
@@ -797,6 +820,100 @@ function renderStaticPage(path) {
   };
   const [title, description] = contentMap[path] || [meta.title, meta.description];
   setMain(`${pageHeader(meta)}<section class="card stack"><div class="icon-tile">${icon("info")}</div><h2>${title}</h2><p class="muted">${description}</p><div class="actions"><a class="btn btn-primary" href="${path === "/contact" ? "mailto:support@medexplain.ai" : "/dashboard"}">${path === "/contact" ? "Email support" : "Return to dashboard"}</a><a class="btn btn-secondary" href="/help">Open help</a></div></section>`);
+}
+
+function renderPlanCard(plan, currentPlan) {
+  const isCurrent = currentPlan === plan.code || (currentPlan === "FREE" && plan.code === "FREE");
+  const features = Array.isArray(plan.features) ? plan.features : [];
+  return `<article class="card stack">
+    <div class="card-header"><div><h2>${escapeHtml(plan.name)}</h2><p class="muted">${plan.interval === "free" ? "Included by default" : `${money(plan.price_cents, plan.currency)} / ${plan.interval}`}</p></div><span class="badge ${isCurrent ? "badge-success" : ""}">${isCurrent ? "Current" : "Available"}</span></div>
+    <ul class="clean-list">${features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul>
+    ${plan.code === "FREE" ? `<a class="btn btn-secondary" href="/reports">Use free plan</a>` : `<button class="btn btn-primary" data-plan-code="${escapeHtml(plan.code)}">${icon("payments")}Upgrade with OPay</button>`}
+  </article>`;
+}
+
+async function renderSubscription() {
+  const meta = routeTitle("/subscription");
+  setMain(`${pageHeader(meta)}${loadingState("Loading subscription")}`);
+  try {
+    const response = await apiRequest("/subscriptions/me");
+    const data = response.data || {};
+    const subscription = data.subscription || {};
+    setMain(`
+      ${pageHeader(meta)}
+      <section class="grid grid-3">
+        ${summaryCard("Current Plan", "workspace_premium", data.plan || "FREE", "/update-plan")}
+        ${summaryCard("Renewal Date", "event_repeat", subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : "No renewal", "/billing-history")}
+        ${summaryCard("Status", "verified", subscription.status || "free", "/subscription")}
+      </section>
+      ${renderUsageOverview(data)}
+      <section class="grid grid-3">${(data.plans || []).map((plan) => renderPlanCard(plan, subscription.plan_code || data.plan)).join("")}</section>
+      <section class="card stack"><h2>Billing Actions</h2><div class="actions"><a class="btn btn-secondary" href="/billing-history">Billing history</a><a class="btn btn-secondary" href="/update-plan">Update plan</a><a class="btn btn-secondary" href="/cancel-subscription">Cancel subscription</a></div></section>
+    `);
+    bindPlanButtons();
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("Subscription details are temporarily unavailable")}`);
+  }
+}
+
+function bindPlanButtons() {
+  document.querySelectorAll("[data-plan-code]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        const response = await apiRequest("/subscriptions/checkout", { method: "POST", body: { planCode: button.dataset.planCode } });
+        window.location.assign(response.data?.checkoutUrl || response.checkoutUrl);
+      } catch {
+        button.disabled = false;
+        window.alert("We could not start OPay checkout. Please retry.");
+      }
+    });
+  });
+}
+
+async function renderBillingHistory() {
+  const meta = routeTitle("/billing-history");
+  setMain(`${pageHeader(meta)}${loadingState("Loading billing history")}`);
+  try {
+    const response = await apiRequest("/subscriptions/billing-history");
+    const payments = response.data?.payments || [];
+    const rows = payments.map((payment) => `<tr><td>${escapeHtml(payment.provider_reference)}</td><td>${money(payment.amount_cents, payment.currency)}</td><td><span class="badge ${badgeClassForStatus(payment.status)}">${escapeHtml(payment.status)}</span></td><td>${new Date(payment.created_at).toLocaleDateString()}</td></tr>`).join("");
+    setMain(`${pageHeader(meta)}<section class="table-card stack"><h2>Transaction History</h2><div class="table-wrap"><table><thead><tr><th>Reference</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>${rows || `<tr><td colspan="4">No billing transactions yet.</td></tr>`}</tbody></table></div></section>`);
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("Billing history is temporarily unavailable")}`);
+  }
+}
+
+async function renderPaymentStatus(success) {
+  const meta = routeTitle(success ? "/payment-success" : "/payment-failed");
+  const reference = new URLSearchParams(location.search).get("reference");
+  if (!success || !reference) {
+    setMain(`${pageHeader(meta)}${emptyState({ iconName: "payments", title: "Payment not completed", description: "No verified payment reference was provided.", actionLabel: "Back to subscription", actionHref: "/subscription" })}`);
+    return;
+  }
+  setMain(`${pageHeader(meta)}${loadingState("Verifying payment")}`);
+  try {
+    await apiRequest("/subscriptions/verify", { method: "POST", body: { reference } });
+    state.dataCache.delete("subscription");
+    setMain(`${pageHeader(meta)}${emptyState({ iconName: "verified", title: "Premium activated", description: "OPay confirmed your payment and premium access is active.", actionLabel: "Open dashboard", actionHref: "/dashboard" })}`);
+  } catch {
+    setMain(`${pageHeader(routeTitle("/payment-failed"))}${errorState("OPay has not verified this payment", false)}<section class="actions"><a class="btn btn-primary" href="/subscription">Retry upgrade</a><a class="btn btn-secondary" href="/billing-history">Billing history</a></section>`);
+  }
+}
+
+async function renderCancelSubscription() {
+  const meta = routeTitle("/cancel-subscription");
+  setMain(`${pageHeader(meta)}<section class="card stack"><h2>Cancel Premium</h2><p class="muted">Cancellation is processed on the server and records a billing audit event.</p><div class="actions"><button class="btn btn-primary" data-action="cancel-subscription">${icon("cancel")}Cancel subscription</button><a class="btn btn-secondary" href="/subscription">Keep plan</a></div></section>`);
+  document.querySelector('[data-action="cancel-subscription"]')?.addEventListener("click", async (event) => {
+    event.currentTarget.disabled = true;
+    try {
+      await apiRequest("/subscriptions/cancel", { method: "POST" });
+      state.dataCache.delete("subscription");
+      setMain(`${pageHeader(meta)}${emptyState({ iconName: "done", title: "Subscription cancelled", description: "Premium access has been cancelled for this account.", actionLabel: "Return to subscription", actionHref: "/subscription" })}`);
+    } catch {
+      setMain(`${pageHeader(meta)}${errorState("We could not cancel this subscription", false)}`);
+    }
+  });
 }
 
 async function renderDoctorDashboard() {
@@ -836,15 +953,17 @@ async function renderAdminDashboard() {
   const meta = routeTitle("/admin");
   const tabs = ["Overview", "Users", "Doctors", "Doctor Applications", "Reports", "AI Usage", "Payments", "Subscriptions", "Security Logs", "Audit Logs", "System Settings"];
   setMain(`${pageHeader(meta)}${loadingState("Loading admin workspace")}`);
-  const [analytics, users, logs, reportMetrics] = await Promise.allSettled([
+  const [analytics, users, logs, reportMetrics, monetization] = await Promise.allSettled([
     apiRequest("/admin/analytics"),
     apiRequest("/admin/users"),
     apiRequest("/admin/audit-logs"),
-    apiRequest("/admin/reports/processing-metrics")
+    apiRequest("/admin/reports/processing-metrics"),
+    apiRequest("/admin/monetization")
   ]);
   const userItems = users.value?.data?.users || [];
   const logItems = logs.value?.data?.auditLogs || [];
   const metrics = reportMetrics.value?.data?.metrics || {};
+  const revenue = monetization.value?.data?.metrics || {};
   setMain(`
     <section class="dashboard-shell">
       <aside class="side-nav" aria-label="Admin dashboard sections">${tabs.map((tab, index) => `<a class="nav-link" href="/admin${index ? `/${tab.toLowerCase().replaceAll(" ", "-")}` : ""}"${index === 0 ? ' aria-current="page"' : ""}>${icon(index === 0 ? "admin_panel_settings" : "chevron_right")}<span>${tab}</span></a>`).join("")}</aside>
@@ -857,13 +976,14 @@ async function renderAdminDashboard() {
           ${summaryCard("Failed Extractions", "report_problem", String(metrics.failed_extractions ?? 0), "/admin/reports")}
         </section>
         <section class="grid grid-4">
-          ${summaryCard("Average Confidence", "verified", `${metrics.average_confidence ?? 0}%`, "/admin/reports")}
-          ${summaryCard("Average Processing Time", "timer", `${metrics.average_processing_time_seconds ?? 0}s`, "/admin/reports")}
-          ${summaryCard("OCR Failure Rate", "troubleshoot", `${metrics.ocr_failure_rate ?? 0}%`, "/admin/reports")}
-          ${summaryCard("Security Logs", "shield", logItems.length ? `${logItems.length} logs` : "No logs returned", "/admin/security-logs")}
+          ${summaryCard("Monthly Revenue", "payments", money(revenue.monthly_revenue_cents || 0), "/admin/payments")}
+          ${summaryCard("Active Subscribers", "workspace_premium", String(revenue.active_subscribers ?? 0), "/admin/subscriptions")}
+          ${summaryCard("Failed Payments", "credit_card_off", String(revenue.failed_payments ?? 0), "/admin/payments")}
+          ${summaryCard("Churn Rate", "trending_down", `${revenue.churn_rate ?? 0}%`, "/admin/subscriptions")}
         </section>
         <section class="grid grid-2">
           <article class="card stack"><h2>Report Processing</h2><p class="muted">Operational view of extraction quality and pipeline health.</p><div class="actions"><span class="badge ${Number(metrics.ocr_failure_rate || 0) > 10 ? "badge-error" : "badge-success"}">OCR failure rate ${metrics.ocr_failure_rate ?? 0}%</span><span class="badge">Average confidence ${metrics.average_confidence ?? 0}%</span></div></article>
+          <article class="card stack"><h2>Revenue Dashboard</h2><p class="muted">OPay-backed subscription health and monetization activity.</p><div class="actions"><span class="badge">Refund rate ${revenue.refund_rate ?? 0}%</span><span class="badge">Refunds ${revenue.refunds ?? 0}</span></div>${renderListCard(revenue.top_features_used || [])}</article>
           <article class="card stack"><h2>Users</h2>${listCard(userItems, { iconName: "groups", title: "No users returned", description: "User records will appear here when available to this role.", actionLabel: "", actionHref: "" }, renderUserItem)}</article>
           <article class="card stack"><h2>Audit Logs</h2>${listCard(logItems, { iconName: "fact_check", title: "No audit logs returned", description: "Audit activity will appear here when available.", actionLabel: "", actionHref: "" }, renderAuditItem)}</article>
           <article class="card stack"><h2>Doctor Applications</h2>${emptyState({ iconName: "badge", title: "No applications returned", description: "Doctor applications will appear here once submitted.", actionLabel: "", actionHref: "" })}</article>
@@ -872,6 +992,11 @@ async function renderAdminDashboard() {
       </div>
     </section>
   `);
+}
+
+function renderListCard(items) {
+  if (!items.length) return `<p class="muted">No feature usage recorded this month.</p>`;
+  return `<ul class="clean-list">${items.map((item) => `<li>${escapeHtml(item.feature)}: ${escapeHtml(item.used_count)}</li>`).join("")}</ul>`;
 }
 
 function renderUserItem(user) {
@@ -908,7 +1033,12 @@ function route() {
   if (state.path === "/chat") return renderChat();
   if (state.path === "/doctors" || state.path === "/doctor/:id") return renderDoctors();
   if (state.path === "/profile") return renderProfile();
-  if (["/settings", "/subscription", "/help", "/contact", "/privacy", "/terms"].includes(state.path)) return renderStaticPage(state.path);
+  if (state.path === "/subscription" || state.path === "/update-plan") return renderSubscription();
+  if (state.path === "/billing-history") return renderBillingHistory();
+  if (state.path === "/payment-success") return renderPaymentStatus(true);
+  if (state.path === "/payment-failed") return renderPaymentStatus(false);
+  if (state.path === "/cancel-subscription") return renderCancelSubscription();
+  if (["/settings", "/help", "/contact", "/privacy", "/terms"].includes(state.path)) return renderStaticPage(state.path);
   if (state.path === "/doctor" || state.path.startsWith("/doctor/")) return renderDoctorDashboard();
   if (state.path === "/admin" || state.path.startsWith("/admin/")) return renderAdminDashboard();
   return renderNotFound();

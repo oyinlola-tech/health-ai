@@ -21,5 +21,9 @@ export const adminController = {
 
   async reportProcessingMetrics(_req, res) {
     return sendSuccess(res, { metrics: await adminService.reportProcessingMetrics() });
+  },
+
+  async monetization(_req, res) {
+    return sendSuccess(res, { metrics: await adminService.monetization() });
   }
 };

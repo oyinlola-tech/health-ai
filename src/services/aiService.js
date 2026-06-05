@@ -6,6 +6,7 @@ import { reportRepository } from "../repositories/reportRepository.js";
 import { formatMedicalContext, searchMedicalContext } from "../rag/retriever/search.js";
 import { env } from "../config/env.js";
 import { errors } from "../utils/errors.js";
+import { entitlementService, features } from "./entitlementService.js";
 
 const medicalDisclaimer =
   "This information is for educational purposes only and is not medical advice. Please consult a qualified healthcare professional for interpretation and diagnosis.";
@@ -271,6 +272,7 @@ export const aiService = {
     if (!report) throw errors.notFound("Report not found.");
     if (user.role === "Patient" && report.patient_id !== user.id) throw errors.forbidden("You can only analyze your own reports.");
     ensureReportCanBeAnalyzed(report);
+    await entitlementService.assertCanUse(user, features.REPORT_ANALYSIS);
 
     await reportRepository.updateAnalysis(report.id, { status: "processing" });
     const confidenceWarning = extractionWarning(report);
@@ -313,6 +315,7 @@ export const aiService = {
         model: result.model,
         usedForLearning: consentAllowsLearning(user)
       });
+      await entitlementService.recordUsage(user, features.REPORT_ANALYSIS, { reportId: report.id });
       const updatedReport = await reportRepository.updateAnalysis(report.id, { status: "analyzed", summary: responseSummary(response) });
       return {
         ...updatedReport,
@@ -329,6 +332,7 @@ export const aiService = {
   },
 
   async chat({ user, message, reportId }) {
+    await entitlementService.assertCanUse(user, features.AI_CHAT);
     if (reportId) {
       const report = await reportRepository.findById(reportId);
       if (!report) throw errors.notFound("Report not found.");
@@ -359,6 +363,7 @@ export const aiService = {
     });
     await aiRepository.storeMessage({ userId: user.id, role: "user", content: message });
     await aiRepository.storeMessage({ userId: user.id, role: "assistant", content: responseSummary(response), aiInteractionId: interaction.id });
+    await entitlementService.recordUsage(user, features.AI_CHAT, { reportId: reportId || null });
     return { interaction, message: responseSummary(response), response };
   },
 

@@ -650,6 +650,25 @@ thead th:last-child {
   font-size: 14px;
 }
 
+.usage-meter {
+  display: grid;
+  gap: 10px;
+}
+
+.meter-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-border-warm);
+}
+
+.meter-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent);
+}
+
 .empty-state,
 .error-state,
 .loading-state {

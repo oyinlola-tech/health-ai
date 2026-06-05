@@ -11,6 +11,7 @@ import { adminRoutes } from "./adminRoutes.js";
 import { doctorRoutes } from "./doctorRoutes.js";
 import { legalRoutes } from "./legalRoutes.js";
 import { healthHistoryRoutes } from "./healthHistoryRoutes.js";
+import { subscriptionRoutes } from "./subscriptionRoutes.js";
 
 export const apiRoutes = Router();
 
@@ -27,3 +28,4 @@ apiRoutes.use("/admin", adminRoutes);
 apiRoutes.use("/doctor", doctorRoutes);
 apiRoutes.use("/legal", legalRoutes);
 apiRoutes.use("/health-history", healthHistoryRoutes);
+apiRoutes.use("/", subscriptionRoutes);

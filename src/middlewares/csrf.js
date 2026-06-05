@@ -27,6 +27,7 @@ export function issueCsrfToken(_req, res) {
 }
 
 export function csrfProtection(req, _res, next) {
+  if (req.originalUrl === "/api/payments/opay/webhook") return next();
   if (!unsafeMethods.has(req.method)) return next();
   const cookieToken = req.cookies?.[cookieName];
   const headerToken = req.get("X-CSRF-Token");

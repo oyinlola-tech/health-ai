@@ -60,9 +60,20 @@ const envSchema = z
     REPORT_EXTRACTION_CONFIDENCE_THRESHOLD: z.coerce.number().int().min(0).max(100).default(65),
     REPORT_PROCESSING_VERSION: z.string().default("report-pipeline-v1"),
     OCR_LANGUAGE: z.string().default("eng"),
-    PAYMENT_PROVIDER: z.string().default("manual"),
+    PAYMENT_PROVIDER: z.string().default("opay"),
     PAYMENT_PUBLIC_KEY: z.string().optional().default(""),
-    PAYMENT_SECRET_KEY: z.string().optional().default("")
+    PAYMENT_SECRET_KEY: z.string().optional().default(""),
+    OPAY_BASE_URL: z.string().url().default("https://testapi.opaycheckout.com"),
+    OPAY_MERCHANT_ID: z.string().optional().default(""),
+    OPAY_PUBLIC_KEY: z.string().optional().default(""),
+    OPAY_SECRET_KEY: z.string().optional().default(""),
+    OPAY_WEBHOOK_SECRET: z.string().optional().default(""),
+    OPAY_COUNTRY: z.string().default("NG"),
+    OPAY_CURRENCY: z.string().default("NGN"),
+    PREMIUM_MONTHLY_PRICE_CENTS: z.coerce.number().int().positive().default(500000),
+    PREMIUM_ANNUAL_PRICE_CENTS: z.coerce.number().int().positive().default(5000000),
+    FREE_REPORT_ANALYSIS_LIMIT: z.coerce.number().int().nonnegative().default(3),
+    FREE_AI_CHAT_LIMIT: z.coerce.number().int().nonnegative().default(10)
   })
   .superRefine((value, ctx) => {
     if (value.NODE_ENV !== "production") return;

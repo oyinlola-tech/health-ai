@@ -10,7 +10,9 @@ const mocks = vi.hoisted(() => ({
   listChatMessages: vi.fn(),
   findReportById: vi.fn(),
   updateAnalysis: vi.fn(),
-  createNotification: vi.fn()
+  createNotification: vi.fn(),
+  assertCanUse: vi.fn(),
+  recordUsage: vi.fn()
 }));
 
 vi.mock("../src/ai/gateway/ai.router.js", () => ({
@@ -43,6 +45,17 @@ vi.mock("../src/repositories/reportRepository.js", () => ({
 vi.mock("../src/repositories/notificationRepository.js", () => ({
   notificationRepository: {
     create: mocks.createNotification
+  }
+}));
+
+vi.mock("../src/services/entitlementService.js", () => ({
+  features: {
+    REPORT_ANALYSIS: "REPORT_ANALYSIS",
+    AI_CHAT: "AI_CHAT"
+  },
+  entitlementService: {
+    assertCanUse: mocks.assertCanUse,
+    recordUsage: mocks.recordUsage
   }
 }));
 
@@ -92,6 +105,8 @@ beforeEach(() => {
   mocks.createInteraction.mockResolvedValue({ id: "interaction-id" });
   mocks.storeMessage.mockResolvedValue({});
   mocks.updateAnalysis.mockImplementation((_id, update) => Promise.resolve({ id: _id, ...update }));
+  mocks.assertCanUse.mockResolvedValue({ allowed: true });
+  mocks.recordUsage.mockResolvedValue({});
 });
 
 describe("aiService structured response handling", () => {
