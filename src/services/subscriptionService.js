@@ -6,6 +6,7 @@ import { errors } from "../utils/errors.js";
 import { opayClient } from "./opayClient.js";
 import { entitlementService } from "./entitlementService.js";
 import { safeEqual } from "../utils/crypto.js";
+import { consentTypes, legalService } from "./legalService.js";
 
 function callbackUrls(reference) {
   const base = env.PUBLIC_APP_URL.replace(/\/$/, "");
@@ -106,6 +107,7 @@ export const subscriptionService = {
 
   async initializeCheckout({ user, planCode }) {
     if (user.role !== "Patient") throw errors.forbidden("Only patients can purchase subscriptions.");
+    await legalService.requireConsent(user.id, consentTypes.PAYMENT_PROCESSING, "Payment processing consent is required before starting checkout.");
     const plan = await billingRepository.findPlanByCode(planCode);
     if (!plan || plan.code === "FREE") throw errors.badRequest("Select a paid subscription plan.");
 

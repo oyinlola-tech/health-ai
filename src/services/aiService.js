@@ -7,6 +7,7 @@ import { formatMedicalContext, searchMedicalContext } from "../rag/retriever/sea
 import { env } from "../config/env.js";
 import { errors } from "../utils/errors.js";
 import { entitlementService, features } from "./entitlementService.js";
+import { consentTypes, legalService } from "./legalService.js";
 import { socketHub } from "../sockets/hub.js";
 
 const medicalDisclaimer =
@@ -289,6 +290,7 @@ async function notifyCriticalReport({ report, user, response }) {
 
 export const aiService = {
   async analyzeReport({ reportId, user }) {
+    await legalService.requireConsent(user.id, consentTypes.AI_ANALYSIS, "AI analysis consent is required before using report analysis.");
     const report = await reportRepository.findById(reportId);
     if (!report) throw errors.notFound("Report not found.");
     if (user.role === "Patient" && report.patient_id !== user.id) throw errors.forbidden("You can only analyze your own reports.");
@@ -371,6 +373,7 @@ export const aiService = {
   },
 
   async chat({ user, message, reportId }) {
+    await legalService.requireConsent(user.id, consentTypes.AI_ANALYSIS, "AI analysis consent is required before using AI chat.");
     await entitlementService.assertCanUse(user, features.AI_CHAT);
     if (reportId) {
       const report = await reportRepository.findById(reportId);

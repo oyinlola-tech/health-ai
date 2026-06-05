@@ -8,6 +8,7 @@ import { up as payments } from "./payments.js";
 import { up as notifications } from "./notifications.js";
 import { up as chat } from "./chat.js";
 import { up as auditLogs } from "./audit_logs.js";
+import { up as legalPrivacy } from "./legal_privacy.js";
 
 export const migrations = [
   ["users", users],
@@ -19,5 +20,6 @@ export const migrations = [
   ["payments", payments],
   ["notifications", notifications],
   ["chat", chat],
-  ["audit_logs", auditLogs]
+  ["audit_logs", auditLogs],
+  ["legal_privacy", legalPrivacy]
 ];

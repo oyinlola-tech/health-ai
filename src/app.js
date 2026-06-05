@@ -61,6 +61,8 @@ const frontendRoutes = [
   "/contact",
   "/privacy",
   "/terms",
+  "/consent",
+  "/data-policy",
   "/notifications",
   "/admin",
   "/admin/login",

@@ -1,6 +1,7 @@
 import { reportRepository } from "../repositories/reportRepository.js";
 import { reportAnalysisPipeline } from "../modules/report-processing/reportAnalysisPipeline.js";
 import { errors } from "../utils/errors.js";
+import { consentTypes, legalService } from "./legalService.js";
 
 function parseLatestAnalysis(interaction) {
   if (!interaction?.response) return null;
@@ -18,6 +19,11 @@ function parseLatestAnalysis(interaction) {
 export const reportService = {
   async createReport({ user, file, title }) {
     if (!file) throw errors.badRequest("A report file is required.");
+    await legalService.requireConsent(
+      user.id,
+      consentTypes.MEDICAL_DATA_PROCESSING,
+      "Medical data processing consent is required before uploading or processing reports."
+    );
     const reportTitle = title || file.originalname.replace(/\.[^.]+$/, "");
     const report = await reportRepository.create({
       patientId: user.role === "Patient" ? user.id : user.id,
@@ -41,6 +47,9 @@ export const reportService = {
     if (!report) throw errors.notFound("Report not found.");
     if (user.role === "Doctor" && !(await reportRepository.doctorCanAccessReport({ doctorId: user.id, reportId: report.id }))) {
       throw errors.forbidden("You can only access reports for assigned patients.");
+    }
+    if (user.role === "Doctor") {
+      await legalService.requireConsent(report.patient_id, consentTypes.DOCTOR_SHARING, "This patient has not granted doctor sharing consent.");
     }
     if (user.role !== "Admin" && user.role !== "Doctor" && report.patient_id !== user.id) {
       throw errors.forbidden("You can only access your own reports.");

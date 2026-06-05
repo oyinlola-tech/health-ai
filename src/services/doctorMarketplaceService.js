@@ -6,6 +6,7 @@ import { notificationRepository } from "../repositories/notificationRepository.j
 import { errors } from "../utils/errors.js";
 import { decryptMessage, encryptMessage } from "../utils/messageCrypto.js";
 import { socketHub } from "../sockets/hub.js";
+import { consentTypes, legalService } from "./legalService.js";
 
 function doctorDisplayName(row) {
   return [row.first_name, row.last_name].filter(Boolean).join(" ");
@@ -59,6 +60,7 @@ export const doctorMarketplaceService = {
 
   async bookAppointment({ user, input, entitlementService, features }) {
     if (user.role !== "Patient") throw errors.forbidden("Only patients can book appointments.");
+    await legalService.requireConsent(user.id, consentTypes.DOCTOR_SHARING, "Doctor sharing consent is required before booking consultations.");
     await entitlementService.assertCanUse(user, features.DOCTOR_CONSULTATION);
     const doctor = await doctorRepository.profile(input.doctorId);
     if (!doctor) throw errors.badRequest("This doctor is not available for consultations.");
@@ -99,6 +101,7 @@ export const doctorMarketplaceService = {
     if (user.role === "Patient" && appointment.patient_id !== user.id) throw errors.forbidden("You can only update your own appointments.");
     if (status === "CONFIRMED" && user.role !== "Doctor") throw errors.forbidden("Only verified doctors can confirm appointments.");
     if (user.role === "Doctor") {
+      await legalService.requireConsent(appointment.patient_id, consentTypes.DOCTOR_SHARING, "This patient has revoked doctor sharing consent.");
       const doctor = await doctorRepository.profile(user.id);
       if (!doctor) throw errors.forbidden("Only verified doctors can accept appointments.");
     }
@@ -138,6 +141,9 @@ export const doctorMarketplaceService = {
   async messages({ user, sessionId }) {
     const session = await consultationRepository.findForUser(sessionId, user);
     if (!session) throw errors.notFound("Consultation not found.");
+    if (user.role === "Doctor") {
+      await legalService.requireConsent(session.patient_id, consentTypes.DOCTOR_SHARING, "This patient has revoked doctor sharing consent.");
+    }
     const rows = await consultationRepository.messages(sessionId);
     return rows.map((row) => ({ ...row, content: decryptMessage(row.encrypted_content) }));
   },
@@ -145,6 +151,9 @@ export const doctorMarketplaceService = {
   async sendMessage({ user, sessionId, content }) {
     const session = await consultationRepository.findForUser(sessionId, user);
     if (!session) throw errors.notFound("Consultation not found.");
+    if (user.role === "Doctor") {
+      await legalService.requireConsent(session.patient_id, consentTypes.DOCTOR_SHARING, "This patient has revoked doctor sharing consent.");
+    }
     const recipientId = user.id === session.patient_id ? session.doctor_id : session.patient_id;
     const message = await consultationRepository.addMessage({
       sessionId,

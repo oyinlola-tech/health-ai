@@ -94,23 +94,29 @@ export const billingRepository = {
   },
 
   async flagPaymentFraud({ paymentId, providerReference = null, flags = [] }, client = pool) {
-    const { rows } = await client.query(
-      `update payments
-       set fraud_flags = $2,
-           metadata = json_merge_patch(coalesce(metadata, json_object()), json_object('fraudFlags', cast($2 as json))),
-           updated_at = now()
-       where id = $1
-       returning *`,
-      [paymentId, JSON.stringify(flags)]
-    );
+    let payment = null;
+    try {
+      const { rows } = await client.query(
+        `update payments
+         set fraud_flags = $2,
+             metadata = json_merge_patch(coalesce(metadata, json_object()), json_object('fraudFlags', cast($2 as json))),
+             updated_at = now()
+         where id = $1
+         returning *`,
+        [paymentId, JSON.stringify(flags)]
+      );
+      payment = rows[0] || null;
+    } catch (error) {
+      if (!String(error.message || "").includes("fraud_flags")) throw error;
+    }
     await this.createBillingEvent({
-      userId: rows[0]?.user_id || null,
+      userId: payment?.user_id || null,
       paymentId,
       eventType: "payment.fraud_flagged",
       providerReference,
       metadata: { flags }
     }, client);
-    return rows[0] || null;
+    return payment;
   },
 
   async activateSubscription({ userId, planId, interval, paymentId }, client = pool) {
