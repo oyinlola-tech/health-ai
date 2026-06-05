@@ -25,5 +25,9 @@ export const adminController = {
 
   async monetization(_req, res) {
     return sendSuccess(res, { metrics: await adminService.monetization() });
+  },
+
+  async aiCosts(_req, res) {
+    return sendSuccess(res, { dashboard: await adminService.aiCosts() });
   }
 };

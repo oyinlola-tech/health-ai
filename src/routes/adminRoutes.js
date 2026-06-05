@@ -13,5 +13,6 @@ adminRoutes.get("/users", asyncHandler(adminController.users));
 adminRoutes.post("/doctors", validate(createDoctorSchema), auditAction("admin.doctor.create"), asyncHandler(adminController.createDoctor));
 adminRoutes.get("/analytics", asyncHandler(adminController.analytics));
 adminRoutes.get("/monetization", asyncHandler(adminController.monetization));
+adminRoutes.get("/ai-costs", asyncHandler(adminController.aiCosts));
 adminRoutes.get("/reports/processing-metrics", asyncHandler(adminController.reportProcessingMetrics));
 adminRoutes.get("/audit-logs", asyncHandler(adminController.auditLogs));

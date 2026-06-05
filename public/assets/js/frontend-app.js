@@ -448,11 +448,12 @@ async function renderPatientDashboard() {
   const meta = routeTitle("/dashboard");
   setMain(`${pageHeader(meta)}${loadingState("Loading dashboard")}`);
   try {
-    const [reports, appointments, health, subscription] = await Promise.allSettled([
+    const [reports, appointments, health, subscription, aiUsage] = await Promise.allSettled([
       cachedRequest("reports", "/reports"),
       cachedRequest("appointments", "/appointments"),
       cachedRequest("health", "/health-history"),
-      cachedRequest("subscription", "/subscriptions/me")
+      cachedRequest("subscription", "/subscriptions/me"),
+      cachedRequest("ai-usage-me", "/ai/usage/me")
     ]);
     const reportItems = reports.value?.data?.reports || [];
     const appointmentItems = appointments.value?.data?.appointments || [];
@@ -466,6 +467,7 @@ async function renderPatientDashboard() {
         ${summaryCard("Subscription Status", "workspace_premium", subscription.value?.data?.plan || "Plan unavailable", "/subscription")}
       </section>
       ${renderUsageOverview(subscription.value?.data || {})}
+      ${renderAiUsageOverview(aiUsage.value?.data?.usage || {})}
       <section class="grid grid-2">
         <article class="card card-accent stack"><div class="card-header"><h2>Recent Reports</h2><a class="btn btn-quiet" href="/reports">View reports</a></div>${listCard(reportItems.slice(0, 3), { iconName: "description", title: "No reports yet", description: "Upload a report to receive an AI-assisted explanation.", actionLabel: "Upload report", actionHref: "/reports" }, renderReportItem)}</article>
         <article class="card stack"><div class="card-header"><h2>AI Insights</h2><a class="btn btn-quiet" href="/chat">Open chat</a></div>${emptyState({ iconName: "psychology", title: "No AI insights yet", description: "Insights appear after reports are analyzed or questions are asked.", actionLabel: "Ask AI", actionHref: "/chat" })}</article>
@@ -483,6 +485,10 @@ function money(cents, currency = "NGN") {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency }).format((Number(cents) || 0) / 100);
 }
 
+function moneyUsd(value) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 4 }).format(Number(value) || 0);
+}
+
 function usageMeter(label, usage = {}) {
   const used = Number(usage.used || 0);
   const limit = usage.limit === null || usage.limit === undefined ? null : Number(usage.limit);
@@ -493,6 +499,14 @@ function usageMeter(label, usage = {}) {
 function renderUsageOverview(subscription = {}) {
   const usage = subscription.usage || {};
   return `<section class="card stack"><div class="card-header"><div><h2>Usage Analytics</h2><p class="muted">Monthly counters reset with your billing cycle.</p></div><a class="btn btn-quiet" href="/subscription">Manage plan</a></div><div class="grid grid-3">${usageMeter("Report Analyses", usage.reportAnalysis)}${usageMeter("AI Chat", usage.aiChat)}${usageMeter("Doctor Bookings", usage.doctorBookings)}</div></section>`;
+}
+
+function renderAiUsageOverview(aiUsage = {}) {
+  const usage = aiUsage.usage || {};
+  const quota = aiUsage.quota || {};
+  const percent = Number(usage.quotaPercent || 0);
+  const monthlyLimit = quota.monthlyCostLimitUsd ? moneyUsd(quota.monthlyCostLimitUsd) : "Quota initializes on first AI request";
+  return `<section class="card stack"><div class="card-header"><div><h2>AI Usage Governance</h2><p class="muted">AI analysis used ${percent}% of your monthly quota.</p></div><span class="badge ${percent > 85 ? "badge-warning" : "badge-success"}">${escapeHtml(quota.planCode || "Measured")}</span></div><div class="usage-meter"><div class="card-header"><div><p class="caption">Monthly AI quota</p><strong>${moneyUsd(usage.monthlyCostUsd || 0)} used</strong></div><span class="badge">${monthlyLimit}</span></div><div class="meter-track"><span style="width:${Math.min(100, percent)}%"></span></div></div><div class="grid grid-3">${metricTile("AI Requests", "bolt", String(usage.monthlyRequests || 0))}${metricTile("Tokens Used", "data_usage", String(usage.monthlyTokens || 0))}${metricTile("Daily Cap", "speed", quota.dailyRequestLimit ? `${quota.dailyRequestLimit} requests` : "Managed")}</div></section>`;
 }
 
 function summaryCard(title, iconName, value, href) {
@@ -908,7 +922,7 @@ async function renderSubscription() {
   const meta = routeTitle("/subscription");
   setMain(`${pageHeader(meta)}${loadingState("Loading subscription")}`);
   try {
-    const response = await apiRequest("/subscriptions/me");
+    const [response, aiUsage] = await Promise.all([apiRequest("/subscriptions/me"), apiRequest("/ai/usage/me")]);
     const data = response.data || {};
     const subscription = data.subscription || {};
     setMain(`
@@ -919,6 +933,7 @@ async function renderSubscription() {
         ${summaryCard("Status", "verified", subscription.status || "free", "/subscription")}
       </section>
       ${renderUsageOverview(data)}
+      ${renderAiUsageOverview(aiUsage.data?.usage || {})}
       <section class="grid grid-3">${(data.plans || []).map((plan) => renderPlanCard(plan, subscription.plan_code || data.plan)).join("")}</section>
       <section class="card stack"><h2>Billing Actions</h2><div class="actions"><a class="btn btn-secondary" href="/billing-history">Billing history</a><a class="btn btn-secondary" href="/update-plan">Update plan</a><a class="btn btn-secondary" href="/cancel-subscription">Cancel subscription</a></div></section>
     `);
@@ -1033,17 +1048,19 @@ async function renderAdminDashboard() {
   const meta = routeTitle("/admin");
   const tabs = ["Overview", "Users", "Doctors", "Doctor Applications", "Reports", "AI Usage", "Payments", "Subscriptions", "Security Logs", "Audit Logs", "System Settings"];
   setMain(`${pageHeader(meta)}${loadingState("Loading admin workspace")}`);
-  const [analytics, users, logs, reportMetrics, monetization] = await Promise.allSettled([
-    apiRequest("/admin/analytics"),
+  const [users, logs, reportMetrics, monetization, aiCosts] = await Promise.allSettled([
     apiRequest("/admin/users"),
     apiRequest("/admin/audit-logs"),
     apiRequest("/admin/reports/processing-metrics"),
-    apiRequest("/admin/monetization")
+    apiRequest("/admin/monetization"),
+    apiRequest("/admin/ai-costs")
   ]);
   const userItems = users.value?.data?.users || [];
   const logItems = logs.value?.data?.auditLogs || [];
   const metrics = reportMetrics.value?.data?.metrics || {};
   const revenue = monetization.value?.data?.metrics || {};
+  const aiDashboard = aiCosts.value?.data?.dashboard || {};
+  const aiSummary = aiDashboard.summary || {};
   setMain(`
     <section class="dashboard-shell">
       <aside class="side-nav" aria-label="Admin dashboard sections">${tabs.map((tab, index) => `<a class="nav-link" href="/admin${index ? `/${tab.toLowerCase().replaceAll(" ", "-")}` : ""}"${index === 0 ? ' aria-current="page"' : ""}>${icon(index === 0 ? "admin_panel_settings" : "chevron_right")}<span>${tab}</span></a>`).join("")}</aside>
@@ -1051,7 +1068,7 @@ async function renderAdminDashboard() {
         ${pageHeader(meta)}
         <section class="grid grid-4">
           ${summaryCard("Users", "groups", userItems.length ? `${userItems.length} users` : "No users returned", "/admin/users")}
-          ${summaryCard("AI Usage", "auto_awesome", analytics.status === "fulfilled" ? "Analytics available" : "Analytics unavailable", "/admin/ai-usage")}
+          ${summaryCard("AI Usage", "auto_awesome", aiSummary.total_requests ? `${aiSummary.total_requests} requests` : "No AI usage", "/admin/ai-usage")}
           ${summaryCard("Reports Processed", "description", String(metrics.reports_processed ?? 0), "/admin/reports")}
           ${summaryCard("Failed Extractions", "report_problem", String(metrics.failed_extractions ?? 0), "/admin/reports")}
         </section>
@@ -1063,6 +1080,7 @@ async function renderAdminDashboard() {
         </section>
         <section class="grid grid-2">
           <article class="card stack"><h2>Report Processing</h2><p class="muted">Operational view of extraction quality and pipeline health.</p><div class="actions"><span class="badge ${Number(metrics.ocr_failure_rate || 0) > 10 ? "badge-error" : "badge-success"}">OCR failure rate ${metrics.ocr_failure_rate ?? 0}%</span><span class="badge">Average confidence ${metrics.average_confidence ?? 0}%</span></div></article>
+          ${renderAdminAiCostPanel(aiDashboard)}
           <article class="card stack"><h2>Revenue Dashboard</h2><p class="muted">OPay-backed subscription health and monetization activity.</p><div class="actions"><span class="badge">Refund rate ${revenue.refund_rate ?? 0}%</span><span class="badge">Refunds ${revenue.refunds ?? 0}</span></div>${renderListCard(revenue.top_features_used || [])}</article>
           <article class="card stack"><h2>Users</h2>${listCard(userItems, { iconName: "groups", title: "No users returned", description: "User records will appear here when available to this role.", actionLabel: "", actionHref: "" }, renderUserItem)}</article>
           <article class="card stack"><h2>Audit Logs</h2>${listCard(logItems, { iconName: "fact_check", title: "No audit logs returned", description: "Audit activity will appear here when available.", actionLabel: "", actionHref: "" }, renderAuditItem)}</article>
@@ -1077,6 +1095,29 @@ async function renderAdminDashboard() {
 function renderListCard(items) {
   if (!items.length) return `<p class="muted">No feature usage recorded this month.</p>`;
   return `<ul class="clean-list">${items.map((item) => `<li>${escapeHtml(item.feature)}: ${escapeHtml(item.used_count)}</li>`).join("")}</ul>`;
+}
+
+function renderAdminAiCostPanel(dashboard = {}) {
+  const summary = dashboard.summary || {};
+  const costs = dashboard.costs || {};
+  const featureRows = costs.featureCostBreakdown || [];
+  const topUsers = costs.topAiUsers || [];
+  const budget = Number(dashboard.monthlyBudgetUsd || 0);
+  const spend = Number(dashboard.monthlySpendUsd || 0);
+  const budgetPercent = budget > 0 ? Math.min(100, Math.round((spend / budget) * 100)) : 0;
+  const featureList = featureRows.length
+    ? `<ul class="clean-list">${featureRows
+        .slice(0, 5)
+        .map((item) => `<li>${escapeHtml(item.feature_type || "unknown")}: ${moneyUsd(item.cost_usd)} across ${escapeHtml(item.requests)} requests</li>`)
+        .join("")}</ul>`
+    : `<p class="muted">No feature cost data yet.</p>`;
+  const userList = topUsers.length
+    ? `<ul class="clean-list">${topUsers
+        .slice(0, 5)
+        .map((item) => `<li>${escapeHtml(item.user_id || "anonymous")}: ${moneyUsd(item.cost_usd)} ${Number(item.blocked_requests || 0) ? `(${item.blocked_requests} blocked)` : ""}</li>`)
+        .join("")}</ul>`
+    : `<p class="muted">No top user data yet.</p>`;
+  return `<article class="card stack"><div class="card-header"><div><h2>AI Cost Dashboard</h2><p class="muted">Gemini spend, cache efficiency, budget enforcement, and abuse signals.</p></div><span class="badge ${dashboard.emergencyThrottle ? "badge-error" : "badge-success"}">${dashboard.emergencyThrottle ? "Throttled" : "Active"}</span></div><div class="usage-meter"><div class="card-header"><div><p class="caption">Monthly Gemini budget</p><strong>${moneyUsd(spend)} spent</strong></div><span class="badge">${budget ? `${budgetPercent}% of ${moneyUsd(budget)}` : "No budget"}</span></div><div class="meter-track"><span style="width:${budgetPercent}%"></span></div></div><div class="grid grid-3">${metricTile("Forecast Burn", "trending_up", moneyUsd(dashboard.forecastedBurnRateUsd || 0))}${metricTile("Cache Hit Rate", "cached", `${dashboard.cacheHitRate || 0}%`)}${metricTile("Blocked Requests", "block", String(summary.blocked_requests || 0))}</div><div class="grid grid-2"><div><h3>Cost Per Feature</h3>${featureList}</div><div><h3>Top AI Users</h3>${userList}</div></div></article>`;
 }
 
 function renderUserItem(user) {

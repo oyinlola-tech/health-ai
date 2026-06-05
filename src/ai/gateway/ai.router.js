@@ -1,8 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { env } from "../../config/env.js";
+import { aiUsageRepository } from "../../repositories/aiUsageRepository.js";
 import { errors } from "../../utils/errors.js";
+import { createId } from "../../utils/uuid.js";
 import { aiResponseCache, createCacheKey } from "../cache/lruCache.js";
-import { assertBudget, estimateUsage, recordUsage } from "../monitor/usageTracker.js";
+import { assertBudget, estimateUsage, inspectPromptSafety, optimizePromptForCost, recordFailedUsage, recordUsage } from "../monitor/usageTracker.js";
 
 const jsonGenerationConfig = {
   responseMimeType: "application/json"
@@ -10,6 +12,8 @@ const jsonGenerationConfig = {
 
 function selectModel(taskType) {
   if (taskType === "medical_report") return env.GEMINI_PRO_MODEL;
+  if (taskType === "doctor_assist") return env.GEMINI_PRO_MODEL;
+  if (taskType === "summary") return env.GEMINI_FLASH_MODEL;
   return env.GEMINI_FLASH_MODEL;
 }
 
@@ -19,48 +23,117 @@ function modelFor(taskType) {
   return genAI.getGenerativeModel({ model: selectModel(taskType), generationConfig: jsonGenerationConfig });
 }
 
-function optimizePrompt(prompt) {
-  return prompt.replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+function featureTypeForTask(taskType, endpoint) {
+  if (taskType === "medical_report" || endpoint === "reports.analyze") return "report_analysis";
+  if (taskType === "doctor_assist") return "doctor_assist_request";
+  if (endpoint?.includes("follow")) return "follow_up_question";
+  return "chat_message";
 }
 
 export const aiGateway = {
   selectModel,
 
   async generateJson({ user, endpoint, taskType, prompt, cacheContext = {}, metadata = {} }) {
+    const requestId = createId();
     const model = selectModel(taskType);
-    const optimizedPrompt = optimizePrompt(prompt);
-    const cacheKey = createCacheKey({ userId: user?.id, model, prompt: optimizedPrompt, cacheContext });
+    const featureType = featureTypeForTask(taskType, endpoint);
+    const optimizedPrompt = optimizePromptForCost(prompt);
+    const safety = inspectPromptSafety(optimizedPrompt);
+    const cacheKey = createCacheKey({ userId: user?.id, model, featureType, prompt: optimizedPrompt, cacheContext });
     const cached = aiResponseCache.get(cacheKey);
+    const startedAt = Date.now();
 
     if (cached) {
       await recordUsage({
         userId: user?.id,
         endpoint,
+        featureType,
         model,
         prompt: optimizedPrompt,
         response: cached,
         cacheHit: true,
-        metadata: { ...metadata, cacheKey }
+        requestId,
+        responseTimeMs: Date.now() - startedAt,
+        metadata: { ...metadata, cacheKey, cacheLayer: "memory" },
+        safetyFlags: safety.flags
       });
-      return { text: cached, model, cacheHit: true };
+      return { text: cached, model, cacheHit: true, requestId, cost: { estimatedUsd: 0 } };
+    }
+
+    const persistentCache = await aiUsageRepository.findCache(cacheKey);
+    if (persistentCache) {
+      aiResponseCache.set(cacheKey, persistentCache.response_text);
+      await recordUsage({
+        userId: user?.id,
+        endpoint,
+        featureType,
+        model,
+        prompt: optimizedPrompt,
+        response: persistentCache.response_text,
+        cacheHit: true,
+        requestId,
+        responseTimeMs: Date.now() - startedAt,
+        metadata: { ...metadata, cacheKey, cacheLayer: "database" },
+        safetyFlags: safety.flags
+      });
+      return { text: persistentCache.response_text, model, cacheHit: true, requestId, cost: { estimatedUsd: 0 } };
     }
 
     const estimated = estimateUsage({ prompt: optimizedPrompt, model });
-    await assertBudget({ userId: user?.id, estimatedCost: estimated.costEstimate, endpoint, model });
-
-    const result = await modelFor(taskType).generateContent(optimizedPrompt);
-    const text = result.response.text();
-    aiResponseCache.set(cacheKey, text);
-    await recordUsage({
+    await assertBudget({
       userId: user?.id,
+      estimatedCost: estimated.costEstimate,
+      estimatedCostUsd: estimated.costUsd,
       endpoint,
+      featureType,
       model,
       prompt: optimizedPrompt,
-      response: text,
-      cacheHit: false,
+      requestId,
+      safetyFlags: safety.flags,
       metadata: { ...metadata, cacheKey }
     });
 
-    return { text, model, cacheHit: false };
+    try {
+      const result = await modelFor(taskType).generateContent(optimizedPrompt);
+      const text = result.response.text();
+      aiResponseCache.set(cacheKey, text);
+      await aiUsageRepository.storeCache({
+        cacheKey,
+        promptHash: safety.promptHash,
+        featureType,
+        modelUsed: model,
+        responseText: text,
+        ttlSeconds: env.AI_CACHE_TTL_SECONDS,
+        metadata: { ...metadata, requestId }
+      });
+      await recordUsage({
+        userId: user?.id,
+        endpoint,
+        featureType,
+        model,
+        prompt: optimizedPrompt,
+        response: text,
+        cacheHit: false,
+        requestId,
+        responseTimeMs: Date.now() - startedAt,
+        metadata: { ...metadata, cacheKey },
+        safetyFlags: safety.flags
+      });
+
+      return { text, model, cacheHit: false, requestId, cost: estimated };
+    } catch (error) {
+      await recordFailedUsage({
+        userId: user?.id,
+        endpoint,
+        featureType,
+        model,
+        prompt: optimizedPrompt,
+        requestId,
+        responseTimeMs: Date.now() - startedAt,
+        metadata: { ...metadata, cacheKey },
+        error
+      });
+      throw error;
+    }
   }
 };
