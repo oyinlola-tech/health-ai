@@ -16,7 +16,7 @@ export function clearAccessToken() {
   sessionStorage.removeItem(appConfig.accessTokenKey);
 }
 
-export function requireSession(redirectTo = "/auth/login.html") {
+export function requireSession(redirectTo = "/login") {
   if (!getAccessToken()) {
     window.location.assign(redirectTo);
   }

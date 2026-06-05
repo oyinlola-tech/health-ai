@@ -2,7 +2,7 @@
   "name": "MedExplain AI",
   "short_name": "MedExplain",
   "description": "Secure AI-assisted medical report explanations.",
-  "start_url": "/auth/welcome.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#FDF6F3",
   "theme_color": "#FF6E5C",
