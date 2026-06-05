@@ -10,6 +10,7 @@ export async function up(connection) {
       prompt ${text} null,
       response ${json} null,
       model varchar(120) null,
+      used_for_learning boolean not null default false,
       safety_flags ${json} null,
       feedback_rating int null,
       feedback_comment ${text} null,

@@ -41,6 +41,39 @@ describe("MySQL database bootstrap", () => {
     expect(connection.commit).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps JavaScript migrations aligned with existing repository writes", async () => {
+    const [
+      { up: aiUsage },
+      { up: chat },
+      { up: doctors },
+      { up: reports }
+    ] = await Promise.all([
+      import("../src/database/migrations/ai_usage.js"),
+      import("../src/database/migrations/chat.js"),
+      import("../src/database/migrations/doctors.js"),
+      import("../src/database/migrations/reports.js")
+    ]);
+    const statements = [];
+    const connection = {
+      async execute(sql) {
+        statements.push(sql);
+        return [[]];
+      }
+    };
+
+    await aiUsage(connection);
+    await chat(connection);
+    await doctors(connection);
+    await reports(connection);
+
+    const schema = statements.join("\n");
+    expect(schema).toContain("used_for_learning");
+    expect(schema).toContain("ai_interaction_id");
+    expect(schema).toContain("sender_id varchar(36) null");
+    expect(schema).toContain("license_number varchar(120) null");
+    expect(schema).toContain("category varchar(80) not null");
+  });
+
   it("retries MySQL server connections before failing or succeeding", async () => {
     const { connectWithRetry } = await import("../src/database/bootstrap.js");
     const factory = vi

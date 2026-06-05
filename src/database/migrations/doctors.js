@@ -79,6 +79,7 @@ export async function up(connection) {
       actor_id ${id} null,
       previous_status varchar(40) null,
       new_status varchar(40) not null,
+      license_number varchar(120) null,
       notes ${text} null,
       created_at datetime not null default current_timestamp,
       index idx_doctor_verification_logs_doctor (doctor_id)

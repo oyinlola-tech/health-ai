@@ -36,11 +36,12 @@ export async function up(connection) {
     `create table if not exists chat_messages (
       id ${id} primary key,
       user_id ${id} null,
+      ai_interaction_id ${id} null,
       consultation_session_id ${id} null,
       chat_session_id ${id} null,
       role varchar(40) null,
       sender_type varchar(40) not null default 'user',
-      sender_id ${id} not null,
+      sender_id ${id} null,
       recipient_id ${id} null,
       content ${text} null,
       encrypted_content ${json} null,

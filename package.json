@@ -13,6 +13,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "build:css": "tailwindcss -i ./public/assets/css/input.css -o ./public/assets/css/styles.css --minify",
+    "setup": "npm run migrate",
     "migrate": "node src/database/migrate.js",
     "seed": "node src/seeders/dev.seed.js",
     "normalize:public": "node scripts/normalize-public.mjs",

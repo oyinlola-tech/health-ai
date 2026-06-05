@@ -29,7 +29,8 @@ export async function up(connection) {
     `create table if not exists health_history_entries (
       id ${id} primary key,
       patient_id ${id} not null,
-      entry_type varchar(80) not null,
+      category varchar(80) not null,
+      entry_type varchar(80) null,
       title varchar(255) not null,
       value ${text} null,
       recorded_at datetime not null default current_timestamp,
