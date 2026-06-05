@@ -20,6 +20,8 @@ DEMO_MODE=true
 NODE_ENV=development
 ```
 
+Demo mode creates isolated sample patient, doctor, report, appointment, chat, consent, and AI usage records. It is blocked in production startup validation.
+
 4. Start:
 
 ```bash
@@ -65,4 +67,3 @@ docker compose up
 ```
 
 The compose stack starts MySQL, backend, and a static frontend container. The backend remains the canonical API and realtime server.
-

@@ -17,16 +17,17 @@ export function validateStartupEnvironment() {
   }
 
   if (env.NODE_ENV === "production") {
+    if (env.DEMO_MODE) {
+      weak.push("DEMO_MODE");
+    }
     for (const key of ["COOKIE_SECRET", "CSRF_SECRET", "MESSAGE_ENCRYPTION_SECRET"]) {
       if (!hasValue(env[key])) missing.push(key);
     }
     for (const key of ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET", "COOKIE_SECRET", "CSRF_SECRET", "MESSAGE_ENCRYPTION_SECRET"]) {
       if (productionSecretIsWeak(env[key])) weak.push(key);
     }
-    if (!env.DEMO_MODE) {
-      for (const key of ["GEMINI_API_KEY", "OPAY_MERCHANT_ID", "OPAY_PUBLIC_KEY", "OPAY_SECRET_KEY", "OPAY_WEBHOOK_SECRET"]) {
-        if (!hasValue(env[key])) missing.push(key);
-      }
+    for (const key of ["GEMINI_API_KEY", "OPAY_MERCHANT_ID", "OPAY_PUBLIC_KEY", "OPAY_SECRET_KEY", "OPAY_WEBHOOK_SECRET"]) {
+      if (!hasValue(env[key])) missing.push(key);
     }
   }
 
