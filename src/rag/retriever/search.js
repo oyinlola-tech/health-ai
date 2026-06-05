@@ -1,14 +1,14 @@
 import { env } from "../../config/env.js";
 import { ragRepository } from "../../repositories/ragRepository.js";
 import { logger } from "../../utils/logger.js";
-import { embedText } from "../indexer/embed.js";
+import { filterTrustedMedicalSources } from "../trustedSources.js";
 
 export async function searchMedicalContext(query, { limit = env.RAG_RETRIEVAL_LIMIT } = {}) {
   if (!query?.trim()) return [];
 
   try {
-    const embedding = await embedText(query);
-    return ragRepository.searchChunksByEmbedding({ embedding, limit });
+    const chunks = await ragRepository.searchTrustedChunks({ query, limit });
+    return filterTrustedMedicalSources(chunks).slice(0, limit);
   } catch (error) {
     logger.warn("RAG retrieval failed.", { message: error.message });
     return [];

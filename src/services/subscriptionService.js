@@ -43,6 +43,32 @@ function assertPaymentIntegrity(payment, providerPayload) {
   }
 }
 
+function providerTransactionId(payload) {
+  return payload?.data?.orderNo || payload?.orderNo || payload?.transactionId || payload?.data?.transactionId || null;
+}
+
+function detectFraudFlags(payment, providerPayload) {
+  const flags = [];
+  const amount = providerAmount(providerPayload);
+  const currency = providerCurrency(providerPayload);
+  const reference = normalizeProviderReference(providerPayload);
+  if (reference && reference !== payment.provider_reference) flags.push("reference_mismatch");
+  if (amount && amount !== Number(payment.amount_cents)) flags.push("amount_mismatch");
+  if (currency && currency !== String(payment.currency).toUpperCase()) flags.push("currency_mismatch");
+  return flags;
+}
+
+async function assertUniqueProviderTransaction(providerTransactionId, paymentId, client) {
+  if (!billingRepository.findPaymentTransaction) return;
+  const existing = await billingRepository.findPaymentTransaction(providerTransactionId, client);
+  if (existing && existing.payment_id !== paymentId) throw errors.forbidden("Duplicate provider transaction detected.");
+}
+
+async function flagPaymentFraud({ paymentId, providerReference, flags }, client) {
+  if (!billingRepository.flagPaymentFraud) return null;
+  return billingRepository.flagPaymentFraud({ paymentId, providerReference, flags }, client);
+}
+
 async function activateVerifiedPayment(payment, client) {
   if (!payment || payment.status === "verified") return payment;
   const plan = await billingRepository.findPlanByCode(payment.plan_code, client);
@@ -141,15 +167,22 @@ export const subscriptionService = {
       });
       throw errors.badRequest("Payment has not been verified by OPay.");
     }
+    const fraudFlags = detectFraudFlags(payment, providerResponse);
+    if (fraudFlags.length) {
+      await flagPaymentFraud({ paymentId: payment.id, providerReference: reference, flags: fraudFlags });
+      throw errors.forbidden("Payment failed fraud integrity checks.");
+    }
     assertPaymentIntegrity(payment, providerResponse);
     return withTransaction(async (client) => {
+      const transactionId = providerTransactionId(providerResponse);
+      await assertUniqueProviderTransaction(transactionId, payment.id, client);
       const updated = await activateVerifiedPayment({ ...payment, status: payment.status, verified_by: actor?.id || null }, client);
       await billingRepository.createPaymentTransaction({
         paymentId: payment.id,
         status: "verified",
         amountCents: payment.amount_cents,
         currency: payment.currency,
-        providerTransactionId: providerResponse?.data?.orderNo || providerResponse?.orderNo || null,
+        providerTransactionId: transactionId,
         rawResponse: providerResponse
       }, client);
       return updated;
@@ -157,10 +190,12 @@ export const subscriptionService = {
   },
 
   async processWebhook({ payload, rawBody, signature }) {
+    if (!signature) throw errors.forbidden("Missing OPay webhook signature.");
     const expected = opayClient.signatureForPayload(rawBody);
     const signatureValid = Boolean(signature && expected && safeEqual(signature.toLowerCase(), expected.toLowerCase()));
     const reference = normalizeProviderReference(payload);
-    const replayKey = payload?.eventId || payload?.transactionId || payload?.orderNo || reference;
+    const replayKey = payload?.eventId || providerTransactionId(payload) || reference;
+    if (!replayKey) throw errors.badRequest("Webhook did not include a replay key.");
     const eventType = payload?.event || payload?.type || "opay.payment";
     const webhook = await billingRepository.recordWebhook({
       eventId: payload?.eventId || replayKey,
@@ -176,16 +211,23 @@ export const subscriptionService = {
     if (!reference) throw errors.badRequest("Webhook did not include a payment reference.");
     const payment = await billingRepository.findPaymentByReference(reference);
     if (!payment) throw errors.notFound("Payment not found.");
+    const fraudFlags = detectFraudFlags(payment, payload);
+    if (fraudFlags.length) {
+      await flagPaymentFraud({ paymentId: payment.id, providerReference: reference, flags: fraudFlags });
+      throw errors.forbidden("Webhook failed fraud integrity checks.");
+    }
     assertPaymentIntegrity(payment, payload);
     if (opayClient.verifiedFrom(payload)) {
       const updated = await withTransaction(async (client) => {
+        const transactionId = providerTransactionId(payload);
+        await assertUniqueProviderTransaction(transactionId, payment.id, client);
         const verified = await activateVerifiedPayment(payment, client);
         await billingRepository.createPaymentTransaction({
           paymentId: payment.id,
           status: "verified",
           amountCents: payment.amount_cents,
           currency: payment.currency,
-          providerTransactionId: payload?.data?.orderNo || payload?.orderNo || null,
+          providerTransactionId: transactionId,
           rawResponse: payload
         }, client);
         return verified;

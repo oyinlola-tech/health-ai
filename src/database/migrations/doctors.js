@@ -74,6 +74,17 @@ export async function up(connection) {
       notes ${text} null,
       created_at datetime not null default current_timestamp
     )`,
+    `create table if not exists application_reviews (
+      id ${id} primary key,
+      application_id ${id} not null,
+      reviewed_by ${id} not null,
+      status varchar(40) not null,
+      notes ${text} null,
+      created_at datetime not null default current_timestamp,
+      index idx_application_reviews_application (application_id),
+      constraint fk_application_reviews_application foreign key (application_id) references doctor_applications(id) on delete cascade,
+      constraint fk_application_reviews_reviewer foreign key (reviewed_by) references users(id)
+    )`,
     `create table if not exists doctor_verification_logs (
       id ${id} primary key,
       doctor_id ${id} not null,

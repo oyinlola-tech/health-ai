@@ -22,3 +22,8 @@ export const applicationReviewSchema = z.object({
   status: z.enum(["APPROVED", "REJECTED"]),
   rejectionReason: z.string().max(1000).optional()
 });
+
+export const applicationStatusSchema = z.object({
+  email: z.string().email(),
+  medicalLicenseNumber: z.string().min(1).max(120)
+});

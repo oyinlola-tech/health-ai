@@ -30,16 +30,16 @@ export const recruitmentRepository = {
     return rows;
   },
 
-  async createApplication({ jobId = null, email, firstName, lastName, phone, cvPath, medicalLicenseNumber, specialization, yearsExperience }, client = pool) {
+  async createApplication({ jobId = null, email, firstName, lastName, phone, cvPath, licenseDocumentPath, medicalLicenseNumber, specialization, yearsExperience }, client = pool) {
     const id = createId();
     const { rows } = await client.query(
       `insert into doctor_applications (
-         id, job_id, email, first_name, last_name, phone, cv_path,
+         id, job_id, email, first_name, last_name, phone, cv_path, license_document_path,
          medical_license_number, specialization, years_experience, documents_path, status
        )
-       values ($1, $2, lower($3), $4, $5, $6, $7, $8, $9, $10, $7, 'PENDING')
+       values ($1, $2, lower($3), $4, $5, $6, $7, $8, $9, $10, $11, $7, 'PENDING')
        returning *`,
-      [id, jobId, email, firstName, lastName, phone, cvPath, medicalLicenseNumber, specialization, yearsExperience]
+      [id, jobId, email, firstName, lastName, phone, cvPath, licenseDocumentPath, medicalLicenseNumber, specialization, yearsExperience]
     );
     return rows[0];
   },
@@ -51,6 +51,17 @@ export const recruitmentRepository = {
        values ($1, $2, $3, $4, $5, $6, $7)
        returning *`,
       [id, applicationId, doctorId, filePath, originalName, mimeType, sizeBytes]
+    );
+    return rows[0];
+  },
+
+  async addReview({ applicationId, reviewedBy, status, notes = null }, client = pool) {
+    const id = createId();
+    const { rows } = await client.query(
+      `insert into application_reviews (id, application_id, reviewed_by, status, notes)
+       values ($1, $2, $3, $4, $5)
+       returning *`,
+      [id, applicationId, reviewedBy, status, notes]
     );
     return rows[0];
   },
@@ -67,6 +78,19 @@ export const recruitmentRepository = {
 
   async findApplication(id, client = pool) {
     const { rows } = await client.query("select * from doctor_applications where id = $1", [id]);
+    return rows[0] || null;
+  },
+
+  async findApplicationStatus({ email, medicalLicenseNumber }, client = pool) {
+    const { rows } = await client.query(
+      `select da.id, da.status, da.reviewed_at, da.rejection_reason, da.created_at, dj.title as job_title
+       from doctor_applications da
+       left join doctor_jobs dj on dj.id = da.job_id
+       where da.email = lower($1) and da.medical_license_number = $2
+       order by da.created_at desc
+       limit 1`,
+      [email, medicalLicenseNumber]
+    );
     return rows[0] || null;
   },
 

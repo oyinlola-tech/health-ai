@@ -15,7 +15,11 @@ export const recruitmentController = {
   },
 
   async apply(req, res) {
-    return sendSuccess(res, { application: await recruitmentService.apply(req.body, req.file) }, {}, 201);
+    return sendSuccess(res, { application: await recruitmentService.apply(req.body, req.files) }, {}, 201);
+  },
+
+  async status(req, res) {
+    return sendSuccess(res, { application: await recruitmentService.status(req.body) });
   },
 
   async applications(_req, res) {

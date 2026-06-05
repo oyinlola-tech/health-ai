@@ -1,25 +1,29 @@
 import { Router } from "express";
 import { recruitmentController } from "../controllers/recruitmentController.js";
 import { authenticate, requireRoles } from "../middlewares/auth.js";
-import { upload, validateUploadedFile } from "../middlewares/upload.js";
+import { upload, validateUploadedFiles } from "../middlewares/upload.js";
 import { validate } from "../middlewares/validate.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { csrfProtection } from "../middlewares/csrf.js";
 import { apiRateLimit, uploadRateLimit } from "../middlewares/rateLimit.js";
-import { applicationCreateSchema, applicationReviewSchema, jobCreateSchema } from "../validators/recruitmentValidators.js";
+import { applicationCreateSchema, applicationReviewSchema, applicationStatusSchema, jobCreateSchema } from "../validators/recruitmentValidators.js";
 import { auditAction } from "../middlewares/audit.js";
 
 export const recruitmentRoutes = Router();
 
 // Public endpoints (no authentication required)
 recruitmentRoutes.get("/jobs", asyncHandler(recruitmentController.jobs));
+recruitmentRoutes.post("/applications/status", csrfProtection, apiRateLimit, validate(applicationStatusSchema), asyncHandler(recruitmentController.status));
 recruitmentRoutes.post(
   "/applications",
   csrfProtection,
   apiRateLimit,
   uploadRateLimit,
-  upload.single("document"),
-  validateUploadedFile,
+  upload.fields([
+    { name: "cv", maxCount: 1 },
+    { name: "license", maxCount: 1 }
+  ]),
+  validateUploadedFiles,
   validate(applicationCreateSchema),
   auditAction("recruitment.application.submit"),
   asyncHandler(recruitmentController.apply)

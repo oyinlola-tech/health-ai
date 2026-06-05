@@ -23,9 +23,11 @@ export async function up(connection) {
       source varchar(120) not null,
       title varchar(500) not null,
       url varchar(900) null,
-      content_hash varchar(128) not null unique,
+      content ${text} null,
+      content_hash varchar(128) null unique,
       metadata ${json} null,
-      created_at datetime not null default current_timestamp
+      created_at datetime not null default current_timestamp,
+      unique key uq_medical_documents_url (url)
     )`,
     `create table if not exists medical_chunks (
       id ${id} primary key,

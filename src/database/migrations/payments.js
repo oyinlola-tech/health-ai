@@ -15,6 +15,7 @@ export async function up(connection) {
       checkout_url varchar(900) null,
       raw_request ${json} null,
       raw_response ${json} null,
+      fraud_flags ${json} null,
       created_at datetime not null default current_timestamp,
       updated_at datetime not null default current_timestamp on update current_timestamp,
       unique key uq_payment_attempt_provider_reference (provider_reference)
@@ -34,6 +35,7 @@ export async function up(connection) {
       checkout_url varchar(900) null,
       failure_reason ${text} null,
       metadata ${json} null,
+      fraud_flags ${json} null,
       verified_at datetime null,
       created_at datetime not null default current_timestamp,
       updated_at datetime not null default current_timestamp on update current_timestamp,
@@ -49,7 +51,8 @@ export async function up(connection) {
       currency varchar(12) not null default 'NGN',
       raw_response ${json} null,
       created_at datetime not null default current_timestamp,
-      index idx_payment_transactions_payment (payment_id)
+      index idx_payment_transactions_payment (payment_id),
+      unique key uq_payment_transactions_provider_txn (provider, provider_transaction_id)
     )`,
     `create table if not exists payment_webhooks (
       id ${id} primary key,

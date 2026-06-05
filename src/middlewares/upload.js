@@ -33,6 +33,7 @@ function destinationForField(fieldname) {
     report: "reports",
     avatar: "avatars",
     certificate: "certificates",
+    license: "certificates",
     cv: "cv",
     document: "documents"
   };
@@ -107,6 +108,32 @@ export async function validateUploadedFile(req, _res, next) {
     return next();
   } catch (error) {
     await removeRejectedFile(req.file);
+    return next(error);
+  }
+}
+
+export async function validateUploadedFiles(req, _res, next) {
+  const files = Object.values(req.files || {}).flat();
+  try {
+    for (const file of files) {
+      const resolvedPath = path.resolve(file.path);
+      if (!resolvedPath.startsWith(`${uploadRoot}${path.sep}`)) {
+        await removeRejectedFile(file);
+        return next(errors.badRequest("Invalid upload path."));
+      }
+      const header = await fs.promises.open(resolvedPath, "r");
+      const buffer = Buffer.alloc(16);
+      await header.read(buffer, 0, buffer.length, 0);
+      await header.close();
+      if (!hasMagicBytes(buffer, file.mimetype)) {
+        await removeRejectedFile(file);
+        return next(errors.badRequest("Uploaded file content does not match the declared file type."));
+      }
+      await scanForMalware(resolvedPath);
+    }
+    return next();
+  } catch (error) {
+    await Promise.all(files.map(removeRejectedFile));
     return next(error);
   }
 }

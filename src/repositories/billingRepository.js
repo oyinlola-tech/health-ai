@@ -93,6 +93,26 @@ export const billingRepository = {
     return rows[0] || null;
   },
 
+  async flagPaymentFraud({ paymentId, providerReference = null, flags = [] }, client = pool) {
+    const { rows } = await client.query(
+      `update payments
+       set fraud_flags = $2,
+           metadata = json_merge_patch(coalesce(metadata, json_object()), json_object('fraudFlags', cast($2 as json))),
+           updated_at = now()
+       where id = $1
+       returning *`,
+      [paymentId, JSON.stringify(flags)]
+    );
+    await this.createBillingEvent({
+      userId: rows[0]?.user_id || null,
+      paymentId,
+      eventType: "payment.fraud_flagged",
+      providerReference,
+      metadata: { flags }
+    }, client);
+    return rows[0] || null;
+  },
+
   async activateSubscription({ userId, planId, interval, paymentId }, client = pool) {
     const periodEndExpression = interval === "year" ? "date_add(now(), interval 1 year)" : "date_add(now(), interval 1 month)";
     await client.query("update subscriptions set status = 'expired', updated_at = now() where user_id = $1 and status in ('active', 'trialing', 'past_due')", [
@@ -195,6 +215,15 @@ export const billingRepository = {
       [id, paymentId, providerTransactionId, status, amountCents, currency, JSON.stringify(rawResponse)]
     );
     return rows[0];
+  },
+
+  async findPaymentTransaction(providerTransactionId, client = pool) {
+    if (!providerTransactionId) return null;
+    const { rows } = await client.query(
+      "select * from payment_transactions where provider = 'opay' and provider_transaction_id = $1 limit 1",
+      [providerTransactionId]
+    );
+    return rows[0] || null;
   },
 
   async billingHistory(userId, client = pool) {

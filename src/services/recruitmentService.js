@@ -16,12 +16,16 @@ export const recruitmentService = {
     return recruitmentRepository.listJobs({ includeDrafts });
   },
 
-  async apply(input, file) {
+  async apply(input, files = {}) {
+    const cv = files.cv?.[0] || null;
+    const license = files.license?.[0] || null;
+    if (!cv || !license) throw errors.badRequest("CV and medical license uploads are required.");
     const application = await recruitmentRepository.createApplication({
       ...input,
-      cvPath: file?.path || null
+      cvPath: cv.path,
+      licenseDocumentPath: license.path
     });
-    if (file) {
+    for (const file of [cv, license]) {
       await recruitmentRepository.addCredential({
         applicationId: application.id,
         filePath: file.path,
@@ -37,11 +41,19 @@ export const recruitmentService = {
     return recruitmentRepository.listApplications();
   },
 
+  async status(input) {
+    const application = await recruitmentRepository.findApplicationStatus(input);
+    if (!application) throw errors.notFound("Application not found.");
+    return application;
+  },
+
   async reviewApplication({ id, status, actor }) {
     const application = await recruitmentRepository.findApplication(id);
     if (!application) throw errors.notFound("Application not found.");
     if (status === "REJECTED") {
-      return recruitmentRepository.reviewApplication({ id, status, reviewedBy: actor.id });
+      const reviewed = await recruitmentRepository.reviewApplication({ id, status, reviewedBy: actor.id });
+      await recruitmentRepository.addReview({ applicationId: id, reviewedBy: actor.id, status, notes: "Application rejected by admin." });
+      return reviewed;
     }
 
     return withTransaction(async () => {
@@ -63,6 +75,7 @@ export const recruitmentService = {
         reviewedBy: actor.id,
         createdDoctorId: doctor.user.id
       });
+      await recruitmentRepository.addReview({ applicationId: id, reviewedBy: actor.id, status: "APPROVED", notes: "Doctor account created and moved into verification pipeline." });
       return { applicationId: id, createdDoctor: doctor.user };
     });
   }

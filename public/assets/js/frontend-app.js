@@ -140,12 +140,13 @@ const primaryNav = [
   { label: "Reports", href: "/reports", icon: "description" },
   { label: "Chat", href: "/chat", icon: "psychology" },
   { label: "Doctors", href: "/doctors", icon: "stethoscope" },
+  { label: "Careers", href: "/doctor-careers", icon: "work" },
   { label: "Profile", href: "/profile", icon: "person" }
 ];
 
 const footerSections = [
   { title: "Company", links: [["About", "/"], ["Contact", "/contact"]] },
-  { title: "Product", links: [["Reports", "/reports"], ["Doctors", "/doctors"], ["Subscription", "/subscription"]] },
+  { title: "Product", links: [["Reports", "/reports"], ["Doctors", "/doctors"], ["Doctor careers", "/doctor-careers"], ["Subscription", "/subscription"]] },
   { title: "Resources", links: [["Help", "/help"], ["Medical Knowledge", "/help"]] },
   { title: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"]] }
 ];
@@ -158,6 +159,7 @@ const pageMeta = {
   "/reports": { title: "Reports", description: "Upload, review, and analyze medical documents securely." },
   "/chat": { title: "AI health chat", description: "Ask questions about your reports and health context." },
   "/doctors": { title: "Doctors", description: "Connect with verified doctors and manage consultations." },
+  "/doctor-careers": { title: "Doctor careers", description: "Apply for verified doctor roles and track application status securely." },
   "/appointments": { title: "Appointments", description: "Review doctor bookings and consultation status." },
   "/profile": { title: "Profile", description: "Review and update your account information." },
   "/settings": { title: "Settings", description: "Manage privacy, security, notifications, and accessibility preferences." },
@@ -412,6 +414,10 @@ function field(label, name, type = "text", required = false, value = "") {
 
 function textarea(label, name, required = false) {
   return `<div class="field"><label for="${name}">${label}${required ? ' <span class="required">*</span>' : ""}</label><textarea id="${name}" name="${name}" ${required ? "required" : ""}></textarea><span class="field-error" data-error-for="${name}"></span></div>`;
+}
+
+function fileField(label, name, required = false) {
+  return `<div class="field"><label for="${name}">${label}${required ? ' <span class="required">*</span>' : ""}</label><input id="${name}" name="${name}" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" ${required ? "required" : ""} /><span class="field-error" data-error-for="${name}"></span></div>`;
 }
 
 function validateForm(form) {
@@ -830,6 +836,114 @@ async function renderDoctors() {
   }
 }
 
+function renderJobCard(job) {
+  return `<article class="card stack" data-job-card data-specialty="${escapeHtml(job.specialty || "")}">
+    <div class="card-header"><div><h2>${escapeHtml(job.title)}</h2><p class="muted">${escapeHtml(job.specialty || "General practice")}</p></div><span class="badge">${escapeHtml(job.status || "published")}</span></div>
+    <p class="muted">${escapeHtml(job.description || "Role details are managed by the recruitment team.")}</p>
+    <button class="btn btn-secondary" type="button" data-apply-job="${escapeHtml(job.id)}">${icon("assignment")}Use this position</button>
+  </article>`;
+}
+
+async function renderDoctorCareers() {
+  const meta = routeTitle("/doctor-careers");
+  setMain(`${pageHeader(meta)}${loadingState("Loading doctor careers")}`);
+  try {
+    const response = await apiRequest("/recruitment/jobs");
+    const jobs = response.data?.jobs || [];
+    const specializations = [...new Set(jobs.map((job) => job.specialty).filter(Boolean))].sort();
+    setMain(`
+      ${pageHeader(meta)}
+      <section class="grid grid-3">
+        ${summaryCard("Open Positions", "work", jobs.length ? `${jobs.length} active` : "No open roles", "/doctor-careers")}
+        ${summaryCard("Application Review", "verified_user", "Admin reviewed", "/doctor-careers")}
+        ${summaryCard("Credential Flow", "mail", "Secure email delivery", "/doctor-careers")}
+      </section>
+      <section class="form-card">
+        <form class="form" data-career-filter>
+          <div class="field"><label for="careerSpecialization">Specialization</label><select id="careerSpecialization" name="specialization"><option value="">All specializations</option>${specializations.map((item) => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`).join("")}</select></div>
+        </form>
+      </section>
+      <section class="grid grid-3" data-career-jobs>${jobs.length ? jobs.map(renderJobCard).join("") : emptyState({ iconName: "work", title: "No doctor positions are open", description: "Published positions from the recruitment API appear here.", actionLabel: "", actionHref: "" })}</section>
+      <section class="grid grid-2">
+        <article class="form-card stack">
+          <h2>Apply</h2>
+          <form class="form" data-career-apply novalidate>
+            <div class="form-message" data-form-message hidden></div>
+            <input type="hidden" name="jobId" />
+            ${field("Email address", "email", "email", true)}
+            ${field("First name", "firstName", "text", true)}
+            ${field("Last name", "lastName", "text", true)}
+            ${field("Phone", "phone", "tel", false)}
+            ${field("Medical license number", "medicalLicenseNumber", "text", true)}
+            ${field("Specialization", "specialization", "text", true)}
+            ${field("Years of experience", "yearsExperience", "number", true)}
+            ${fileField("CV", "cv", true)}
+            ${fileField("Medical license", "license", true)}
+            <button class="btn btn-primary" type="submit">${icon("upload_file")}Submit application</button>
+          </form>
+        </article>
+        <article class="form-card stack">
+          <h2>Status tracking</h2>
+          <form class="form" data-career-status novalidate>
+            <div class="form-message" data-form-message hidden></div>
+            ${field("Email address", "email", "email", true)}
+            ${field("Medical license number", "medicalLicenseNumber", "text", true)}
+            <button class="btn btn-secondary" type="submit">${icon("manage_search")}Check status</button>
+          </form>
+          <div class="stack" data-career-status-output></div>
+        </article>
+      </section>
+    `);
+    document.querySelector("[data-career-filter] select")?.addEventListener("change", (event) => {
+      const selected = event.currentTarget.value.toLowerCase();
+      document.querySelectorAll("[data-job-card]").forEach((card) => {
+        card.hidden = Boolean(selected) && card.dataset.specialty.toLowerCase() !== selected;
+      });
+    });
+    document.querySelectorAll("[data-apply-job]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelector('[data-career-apply] input[name="jobId"]').value = button.dataset.applyJob;
+        document.querySelector("[data-career-apply]").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+    document.querySelector("[data-career-apply]")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!validateForm(form)) return;
+      const body = new FormData(form);
+      if (!body.get("jobId")) body.delete("jobId");
+      setSubmitLoading(form, true);
+      try {
+        await apiRequest("/recruitment/applications", { method: "POST", body });
+        showFormMessage(form, "success", "Application submitted for admin review.");
+        form.reset();
+      } catch {
+        showFormMessage(form, "error", "We could not submit this application. Please check your files and retry.");
+      } finally {
+        setSubmitLoading(form, false);
+      }
+    });
+    document.querySelector("[data-career-status]")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!validateForm(form)) return;
+      const output = document.querySelector("[data-career-status-output]");
+      setSubmitLoading(form, true);
+      try {
+        const status = await apiRequest("/recruitment/applications/status", { method: "POST", body: Object.fromEntries(new FormData(form).entries()) });
+        const application = status.data?.application || {};
+        output.innerHTML = `<article class="card stack"><h3>${escapeHtml(application.job_title || "Doctor application")}</h3><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span><p class="muted">Submitted ${escapeHtml(application.created_at || "recently")}</p></article>`;
+      } catch {
+        output.innerHTML = errorState("We could not find that application", false);
+      } finally {
+        setSubmitLoading(form, false);
+      }
+    });
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("We could not load doctor careers")}`);
+  }
+}
+
 async function renderDoctorProfile() {
   const id = location.pathname.split("/").pop();
   const meta = routeTitle("/doctor/:id");
@@ -1241,6 +1355,7 @@ function route() {
   if (state.path === "/report/:id") return renderReportDetail();
   if (state.path === "/chat") return renderChat();
   if (state.path === "/doctors") return renderDoctors();
+  if (state.path === "/doctor-careers") return renderDoctorCareers();
   if (state.path === "/doctor/:id") return renderDoctorProfile();
   if (state.path === "/appointments") return renderAppointments();
   if (state.path === "/profile") return renderProfile();
