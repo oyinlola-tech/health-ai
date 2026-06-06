@@ -19,6 +19,78 @@ import { configController } from "./controllers/configController.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.resolve(__dirname, "../public");
 const appEntry = path.join(publicDir, "index.html");
+const sitemapEntry = path.join(publicDir, "sitemap.html");
+
+const legacyFrontendRedirects = new Map([
+  ["/index.html", "/"],
+  ["/sitemap.html", "/sitemap"],
+  ["/auth/login.html", "/login"],
+  ["/auth/signup.html", "/register"],
+  ["/auth/welcome.html", "/"],
+  ["/auth/splash.html", "/"],
+  ["/app/dashboard.html", "/dashboard"],
+  ["/app/upload.html", "/reports"],
+  ["/app/uploadfile.html", "/reports"],
+  ["/app/report-analysis.html", "/reports"],
+  ["/app/upload-process.html", "/reports"],
+  ["/app/processing-result.html", "/reports"],
+  ["/app/ai-analysis.html", "/chat"],
+  ["/app/camera-scan.html", "/reports"],
+  ["/report/summary.html", "/reports"],
+  ["/report/detailed-report.html", "/reports"],
+  ["/report/test-explanation.html", "/reports"],
+  ["/ai-assistant/chat-home.html", "/chat"],
+  ["/ai-assistant/conversation.html", "/chat"],
+  ["/ai-assistant/saved-conv.html", "/chat"],
+  ["/ai-assistant/voice-input.html", "/chat"],
+  ["/consultation/find-doctor.html", "/doctors"],
+  ["/consultation/profile.html", "/doctors"],
+  ["/consultation/appointments.html", "/appointments"],
+  ["/consultation/appointment-confirmation.html", "/appointments"],
+  ["/consultation/payment.html", "/subscription"],
+  ["/premium/index.html", "/subscription"],
+  ["/premium/plans.html", "/subscription"],
+  ["/premium/payment.html", "/update-plan"],
+  ["/premium/activated.html", "/payment-success"],
+  ["/profile/overview.html", "/profile"],
+  ["/profile/edit.html", "/profile"],
+  ["/profile/information.html", "/profile"],
+  ["/profile/emergency.html", "/profile"],
+  ["/profile/preference.html", "/profile"],
+  ["/settings/home.html", "/settings"],
+  ["/settings/security.html", "/settings"],
+  ["/settings/privacy-data.html", "/privacy"],
+  ["/settings/accessibility.html", "/settings"],
+  ["/learning-center/home.html", "/help"],
+  ["/learning-center/articles.html", "/help"],
+  ["/learning-center/terms.html", "/terms"],
+  ["/learning-center/trusted-source.html", "/help"],
+  ["/notifications/list.html", "/dashboard"],
+  ["/notifications/details.html", "/dashboard"],
+  ["/notifications/settings.html", "/dashboard"],
+  ["/admin/index.html", "/admin"],
+  ["/admin/login.html", "/login"],
+  ["/admin/user.html", "/admin/users"],
+  ["/admin/report.html", "/admin/reports"],
+  ["/admin/feedback.html", "/admin"],
+  ["/admin/system-health.html", "/admin/system"],
+  ["/empty-state/report.html", "/empty/no-reports"],
+  ["/empty-state/appointment.html", "/empty/no-appointments"],
+  ["/empty-state/conversation.html", "/empty/no-chat-history"],
+  ["/empty-state/history.html", "/empty/no-health-history"],
+  ["/empty-state/notification.html", "/empty/no-notifications"],
+  ["/error-state/upload.html", "/error/report-processing"],
+  ["/error-state/payment.html", "/error/payment"],
+  ["/error-state/server.html", "/error/500"],
+  ["/error-state/network.html", "/offline"],
+  ["/error-state/analysis.html", "/error/ai"],
+  ["/success-state/appointment.html", "/success/appointment-booked"],
+  ["/success-state/upload.html", "/success/report-uploaded"],
+  ["/success-state/payment.html", "/success/payment"],
+  ["/success-state/analysis.html", "/success/analysis-complete"],
+  ["/health/dashboard.html", "/profile"],
+  ["/health/trend.html", "/profile"]
+]);
 
 const frontendRoutes = [
   "/",
@@ -170,6 +242,11 @@ export function createApp() {
     })
   );
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+  app.use((req, res, next) => {
+    const canonical = legacyFrontendRedirects.get(req.path);
+    if (canonical) return res.redirect(301, canonical);
+    return next();
+  });
   app.use(express.static(publicDir));
 
   app.get("/health", async (req, res, next) => {
@@ -179,6 +256,7 @@ export function createApp() {
       next(error);
     }
   });
+  app.get("/sitemap", (_req, res) => res.sendFile(sitemapEntry));
   app.get(frontendRoutes, (_req, res) => res.sendFile(appEntry));
 
   app.get("/api-docs.json", (_req, res) => res.json(openApiSpec));
