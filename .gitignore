@@ -15,6 +15,9 @@ coverage/
 dist/
 tmp/
 AGENTS.md
+datasets/raw/
+datasets/extracted/
+datasets/processed/
 
 # Local logs
 logs/*

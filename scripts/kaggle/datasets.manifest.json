@@ -1,0 +1,75 @@
+{
+  "maxTotalDownloadBytes": 5368709120,
+  "datasets": [
+    {
+      "category": "cbc",
+      "priority": 1,
+      "required": true,
+      "ref": "vizeno/complete-blood-count-cbc-dataset",
+      "search": "complete blood count cbc csv"
+    },
+    {
+      "category": "blood_tests",
+      "priority": 1,
+      "required": true,
+      "ref": "pinuto/laboratory-test-results-anonymized-dataset",
+      "search": "laboratory blood test csv"
+    },
+    {
+      "category": "diabetes",
+      "priority": 1,
+      "required": true,
+      "ref": "uciml/pima-indians-diabetes-database",
+      "search": "diabetes csv"
+    },
+    {
+      "category": "liver_disease",
+      "priority": 1,
+      "required": true,
+      "ref": "uciml/indian-liver-patient-records",
+      "search": "liver disease csv"
+    },
+    {
+      "category": "kidney_disease",
+      "priority": 1,
+      "required": true,
+      "ref": "mansoordaku/ckdisease",
+      "search": "kidney disease csv"
+    },
+    {
+      "category": "thyroid",
+      "priority": 1,
+      "required": true,
+      "ref": "emmanuelfwerr/thyroid-disease-data",
+      "search": "thyroid disease csv"
+    },
+    {
+      "category": "heart_disease",
+      "priority": 1,
+      "required": true,
+      "ref": "johnsmith88/heart-disease-dataset",
+      "search": "heart disease csv"
+    },
+    {
+      "category": "cholesterol",
+      "priority": 2,
+      "required": false,
+      "ref": "fedesoriano/heart-failure-prediction",
+      "search": "cholesterol csv"
+    },
+    {
+      "category": "hypertension",
+      "priority": 2,
+      "required": false,
+      "ref": "prosperchuks/health-dataset",
+      "search": "hypertension csv"
+    },
+    {
+      "category": "symptoms",
+      "priority": 2,
+      "required": false,
+      "ref": "itachi9604/disease-symptom-description-dataset",
+      "search": "medical symptom dataset csv"
+    }
+  ]
+}
