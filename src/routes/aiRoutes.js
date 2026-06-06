@@ -4,6 +4,7 @@ import { aiUsageController } from "../controllers/aiUsageController.js";
 import { authenticate, requireRoles } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 import { aiEndpointRateLimit } from "../middlewares/rateLimit.js";
+import { entitlementGuard } from "../modules/payments/entitlement.guard.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { chatSchema, feedbackSchema } from "../validators/aiValidators.js";
 
@@ -15,6 +16,6 @@ aiRoutes.get("/usage/summary", requireRoles("Admin"), asyncHandler(aiUsageContro
 aiRoutes.get("/usage/user/:id", requireRoles("Admin"), asyncHandler(aiUsageController.user));
 aiRoutes.get("/usage/costs", requireRoles("Admin"), asyncHandler(aiUsageController.costs));
 aiRoutes.get("/usage/dashboard", requireRoles("Admin"), asyncHandler(aiUsageController.dashboard));
-aiRoutes.post("/chat", aiEndpointRateLimit, validate(chatSchema), asyncHandler(aiController.chat));
+aiRoutes.post("/chat", aiEndpointRateLimit, entitlementGuard.requireAiChat, validate(chatSchema), asyncHandler(aiController.chat));
 aiRoutes.get("/chat-history", asyncHandler(aiController.history));
 aiRoutes.post("/feedback", validate(feedbackSchema), asyncHandler(aiController.feedback));

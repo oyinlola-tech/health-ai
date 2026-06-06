@@ -11,10 +11,11 @@ async function renderReports() {
   const meta = routeTitle("/reports");
   setMain(`${pageHeader(meta)}${loadingState("Loading reports")}`);
   try {
-    const response = await cachedRequest("reports", "/reports");
-    const reports = response.data?.reports || [];
+    const [response, subscription] = await Promise.allSettled([cachedRequest("reports", "/reports"), cachedRequest("subscription", "/subscriptions/me")]);
+    const reports = response.value?.data?.reports || [];
     setMain(`
       ${pageHeader(meta)}
+      ${renderEntitlementBanner(subscription.value?.data || {}, "reportAnalysis")}
       <section class="form-card">
         <form class="form" data-upload-form novalidate>
           <div class="form-message" data-form-message hidden></div>
@@ -151,10 +152,11 @@ async function renderReportDetail() {
   }
   setMain(`${pageHeader(meta)}${loadingState("Loading report")}`);
   try {
-    const response = await apiRequest(`/reports/${id}`);
+    const [response, subscription] = await Promise.all([apiRequest(`/reports/${id}`), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
     const report = response.data?.report || response.data;
     const canAnalyze = report.extraction_status === "completed";
     setMain(`${pageHeader(meta)}
+      ${renderEntitlementBanner(subscription.data || {}, "reportAnalysis")}
       <article class="card card-accent stack">
         <div class="card-header"><div><h2>${escapeHtml(reportTitle(report))}</h2><p class="muted">${escapeHtml(report.original_name || report.mime_type || "Uploaded report")}</p></div><span class="badge ${badgeClassForStatus(report.status)}">${escapeHtml(displayStatus(report.status || "uploaded"))}</span></div>
         <div class="actions"><button class="btn btn-primary" data-action="analyze-report" ${canAnalyze ? "" : "disabled"}>${icon("auto_awesome")}Analyze report</button><a class="btn btn-secondary" href="/reports">Back to reports</a></div>
@@ -179,4 +181,3 @@ async function renderReportDetail() {
     setMain(`${pageHeader(meta)}${errorState("We could not load this report")}`);
   }
 }
-

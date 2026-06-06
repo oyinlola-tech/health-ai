@@ -1,4 +1,5 @@
-import { subscriptionService } from "../services/subscriptionService.js";
+import { opayWebhook, signatureFromRequest } from "../modules/payments/opay.webhook.js";
+import { subscriptionService } from "../modules/payments/subscription.service.js";
 import { sendSuccess } from "../utils/response.js";
 
 export const subscriptionController = {
@@ -23,8 +24,14 @@ export const subscriptionController = {
   },
 
   async webhook(req, res) {
-    const signature = req.get("X-OPay-Signature") || req.get("MerchantSignature") || req.get("OPay-Signature") || "";
-    return sendSuccess(res, await subscriptionService.processWebhook({ payload: req.body, rawBody: req.rawBody || JSON.stringify(req.body), signature }));
+    return sendSuccess(
+      res,
+      await opayWebhook.process({
+        payload: req.body,
+        rawBody: req.rawBody || JSON.stringify(req.body),
+        signature: signatureFromRequest(req)
+      })
+    );
   },
 
   async cancel(req, res) {

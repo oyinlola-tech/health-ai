@@ -1,44 +1,8 @@
 import { env } from "../../config/env.js";
+import { pricingPlans } from "../../modules/payments/pricing.config.js";
 import { createId } from "../../utils/uuid.js";
 
-const plans = [
-  {
-    code: "FREE",
-    name: "Free",
-    interval: "month",
-    price: 0,
-    reports: env.FREE_REPORT_ANALYSIS_LIMIT,
-    chats: env.FREE_AI_CHAT_LIMIT,
-    doctor: false,
-    trends: false,
-    priority: false,
-    advanced: false
-  },
-  {
-    code: "BASIC_MONTHLY",
-    name: "Basic",
-    interval: "month",
-    price: env.BASIC_MONTHLY_PRICE_NAIRA,
-    reports: 25,
-    chats: 100,
-    doctor: false,
-    trends: true,
-    priority: true,
-    advanced: false
-  },
-  {
-    code: "PREMIUM_MONTHLY",
-    name: "Premium",
-    interval: "month",
-    price: env.PREMIUM_MONTHLY_PRICE_NAIRA,
-    reports: null,
-    chats: null,
-    doctor: true,
-    trends: true,
-    priority: true,
-    advanced: true
-  }
-];
+const plans = pricingPlans;
 
 const policies = [
   {
@@ -113,15 +77,55 @@ export async function seedSystemData(connection) {
         `${plan.name} MedExplain AI access`,
         plan.interval,
         plan.interval,
-        plan.price,
+        plan.priceNaira,
         env.OPAY_CURRENCY,
-        JSON.stringify({ premium: plan.code === "PREMIUM_MONTHLY", trialEligible: plan.code !== "FREE" }),
-        plan.reports,
-        plan.chats,
-        plan.doctor,
-        plan.trends,
-        plan.priority,
-        plan.advanced
+        JSON.stringify(plan.features),
+        plan.reportAnalysisLimit,
+        plan.aiChatLimit,
+        plan.doctorConsultationsEnabled,
+        plan.healthTrendsEnabled,
+        plan.priorityProcessingEnabled,
+        plan.advancedAiEnabled
+      ]
+    );
+
+    await connection.execute(
+      `insert into pricing_plans (
+         id, code, tier, name, description, price_naira, currency, interval_unit,
+         report_analysis_limit, ai_chat_limit, doctor_consultations_enabled,
+         premium_rag_enabled, priority_processing_enabled, entitlements, active
+       )
+       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)
+       on duplicate key update
+         tier = values(tier),
+         name = values(name),
+         description = values(description),
+         price_naira = values(price_naira),
+         currency = values(currency),
+         interval_unit = values(interval_unit),
+         report_analysis_limit = values(report_analysis_limit),
+         ai_chat_limit = values(ai_chat_limit),
+         doctor_consultations_enabled = values(doctor_consultations_enabled),
+         premium_rag_enabled = values(premium_rag_enabled),
+         priority_processing_enabled = values(priority_processing_enabled),
+         entitlements = values(entitlements),
+         active = true,
+         updated_at = now()`,
+      [
+        createId(),
+        plan.code,
+        plan.tier,
+        plan.name,
+        `${plan.name} MedExplain AI access`,
+        plan.priceNaira,
+        plan.currency,
+        plan.interval,
+        plan.reportAnalysisLimit,
+        plan.aiChatLimit,
+        plan.doctorConsultationsEnabled,
+        plan.advancedAiEnabled,
+        plan.priorityProcessingEnabled,
+        JSON.stringify(plan.features)
       ]
     );
   }

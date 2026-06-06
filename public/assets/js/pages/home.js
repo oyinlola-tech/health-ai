@@ -128,6 +128,19 @@ function renderUsageOverview(subscription = {}) {
   return `<section class="card stack"><div class="card-header"><div><h2>Usage Analytics</h2><p class="muted">Monthly counters reset with your billing cycle.</p></div><a class="btn btn-quiet" href="/subscription">Manage plan</a></div><div class="grid grid-3">${usageMeter("Report Analyses", usage.reportAnalysis)}${usageMeter("AI Chat", usage.aiChat)}${usageMeter("Doctor Bookings", usage.doctorBookings)}</div></section>`;
 }
 
+function renderEntitlementBanner(subscription = {}, feature = "reportAnalysis") {
+  const usage = subscription.usage?.[feature] || {};
+  const used = Number(usage.used || 0);
+  const limit = usage.limit === null || usage.limit === undefined ? null : Number(usage.limit || 0);
+  const remaining = limit === null ? "Unlimited" : `${Math.max(limit - used, 0)} remaining`;
+  const label = {
+    reportAnalysis: "Report analysis",
+    aiChat: "AI chat",
+    doctorBookings: "Doctor consultations"
+  }[feature];
+  return `<section class="card stack"><div class="card-header"><div><h2>Plan Access</h2><p class="muted">${escapeHtml(label)} access is enforced by backend entitlement checks.</p></div><span class="badge">${escapeHtml(subscription.plan || "FREE")}</span></div><div class="actions"><span class="badge">${escapeHtml(remaining)}</span><a class="btn btn-quiet" href="/subscription">Manage plan</a></div></section>`;
+}
+
 function renderAiUsageOverview(aiUsage = {}) {
   const usage = aiUsage.usage || {};
   const quota = aiUsage.quota || {};

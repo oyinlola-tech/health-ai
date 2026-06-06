@@ -102,7 +102,7 @@ export const entitlementService = {
         [features.REPORT_ANALYSIS]: true,
         [features.AI_CHAT]: true,
         [features.HEALTH_TREND_ANALYTICS]: true,
-        [features.PRIORITY_PROCESSING]: true,
+        [features.PRIORITY_PROCESSING]: false,
         [features.DOCTOR_CONSULTATION]: false,
         [features.ADVANCED_AI_EXPLANATIONS]: false
       };

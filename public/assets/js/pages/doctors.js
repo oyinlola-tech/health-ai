@@ -11,9 +11,9 @@ async function renderChat() {
   const meta = routeTitle("/chat");
   setMain(`${pageHeader(meta)}${loadingState("Loading consultation rooms")}`);
   try {
-    const response = await apiRequest("/consultations");
+    const [response, subscription] = await Promise.all([apiRequest("/consultations"), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
     const consultations = response.data?.consultations || [];
-    setMain(`${pageHeader(meta)}<section class="grid grid-2"><article class="card stack"><h2>Consultation Rooms</h2>${listCard(consultations, { iconName: "forum", title: "No consultation rooms", description: "Rooms open after a doctor confirms an appointment.", actionLabel: "Find doctors", actionHref: "/doctors" }, renderConsultationItem)}</article><article class="card stack"><h2>Messages</h2><div data-consultation-output>${emptyState({ iconName: "forum", title: "Select a room", description: "Choose a consultation room to view message history.", actionLabel: "", actionHref: "" })}</div></article></section>`);
+    setMain(`${pageHeader(meta)}${renderEntitlementBanner(subscription.data || {}, "aiChat")}<section class="grid grid-2"><article class="card stack"><h2>Consultation Rooms</h2>${listCard(consultations, { iconName: "forum", title: "No consultation rooms", description: "Rooms open after a doctor confirms an appointment.", actionLabel: "Find doctors", actionHref: "/doctors" }, renderConsultationItem)}</article><article class="card stack"><h2>Messages</h2><div data-consultation-output>${emptyState({ iconName: "forum", title: "Select a room", description: "Choose a consultation room to view message history.", actionLabel: "", actionHref: "" })}</div></article></section>`);
     bindConsultationRooms();
   } catch {
     setMain(`${pageHeader(meta)}${errorState("We could not load consultation rooms")}`);
@@ -55,9 +55,9 @@ async function renderDoctors() {
   const meta = routeTitle("/doctors");
   setMain(`${pageHeader(meta)}${loadingState("Loading verified doctors")}`);
   try {
-    const response = await apiRequest("/doctors");
+    const [response, subscription] = await Promise.all([apiRequest("/doctors"), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
     const doctors = response.data?.doctors || [];
-    setMain(`${pageHeader(meta)}<section class="form-card"><form class="form" data-doctor-search><div class="grid grid-3">${field("Search doctors", "q", "text", false)}${field("Specialization", "specialization", "text", false)}<div class="field"><label for="availableOnly">Availability</label><select id="availableOnly" name="availableOnly"><option value="">Any</option><option value="true">Has availability</option></select></div></div><button class="btn btn-primary" type="submit">${icon("search")}Search</button></form></section><section class="grid grid-3" data-doctor-results>${doctors.length ? doctors.map(renderDoctorCard).join("") : emptyState({ iconName: "stethoscope", title: "No verified doctors available", description: "Verified doctors appear here after admin approval and availability setup.", actionLabel: "", actionHref: "" })}</section>`);
+    setMain(`${pageHeader(meta)}${renderEntitlementBanner(subscription.data || {}, "doctorBookings")}<section class="form-card"><form class="form" data-doctor-search><div class="grid grid-3">${field("Search doctors", "q", "text", false)}${field("Specialization", "specialization", "text", false)}<div class="field"><label for="availableOnly">Availability</label><select id="availableOnly" name="availableOnly"><option value="">Any</option><option value="true">Has availability</option></select></div></div><button class="btn btn-primary" type="submit">${icon("search")}Search</button></form></section><section class="grid grid-3" data-doctor-results>${doctors.length ? doctors.map(renderDoctorCard).join("") : emptyState({ iconName: "stethoscope", title: "No verified doctors available", description: "Verified doctors appear here after admin approval and availability setup.", actionLabel: "", actionHref: "" })}</section>`);
     const searchForm = document.querySelector("[data-doctor-search]");
     const runSearch = async (form) => {
       const params = new URLSearchParams(new FormData(form));
@@ -192,11 +192,12 @@ async function renderDoctorProfile() {
   const meta = routeTitle("/doctor/:id");
   setMain(`${pageHeader(meta)}${loadingState("Loading doctor profile")}`);
   try {
-    const response = await apiRequest(`/doctors/${id}`);
+    const [response, subscription] = await Promise.all([apiRequest(`/doctors/${id}`), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
     const doctor = response.data?.doctor || {};
     const availability = doctor.availability || [];
     setMain(`
       ${pageHeader(meta)}
+      ${renderEntitlementBanner(subscription.data || {}, "doctorBookings")}
       <section class="grid grid-2">
         <article class="card card-accent stack"><div class="card-header"><div><h2>Dr. ${escapeHtml(doctorName(doctor))}</h2><p class="muted">${escapeHtml(doctor.specialization || doctor.specialty || "General Medicine")}</p></div><span class="badge badge-success">${escapeHtml(doctor.verification_status || "VERIFIED")}</span></div><p>${escapeHtml(doctor.bio || "This doctor has not added a public bio yet.")}</p><div class="actions"><span class="badge">${doctor.years_experience || 0} years experience</span><span class="badge">${doctor.consultation_fee_cents ? money(doctor.consultation_fee_cents) : "Premium included"}</span></div></article>
         <form class="form-card form" data-appointment-form novalidate>
@@ -248,4 +249,3 @@ function bindAppointmentForm() {
     }
   });
 }
-

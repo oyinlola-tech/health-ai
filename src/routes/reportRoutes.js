@@ -7,6 +7,7 @@ import { aiEndpointRateLimit, uploadRateLimit } from "../middlewares/rateLimit.j
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { reportCreateSchema, reportIdSchema } from "../validators/reportValidators.js";
 import { auditAction } from "../middlewares/audit.js";
+import { entitlementGuard } from "../modules/payments/entitlement.guard.js";
 
 export const reportRoutes = Router();
 
@@ -23,5 +24,12 @@ reportRoutes.post(
   asyncHandler(reportController.create)
 );
 reportRoutes.get("/:id", validate(reportIdSchema, "params"), asyncHandler(reportController.detail));
-reportRoutes.post("/:id/analyze", aiEndpointRateLimit, validate(reportIdSchema, "params"), auditAction("report.analyze"), asyncHandler(reportController.analyze));
+reportRoutes.post(
+  "/:id/analyze",
+  aiEndpointRateLimit,
+  entitlementGuard.requireReportAnalysis,
+  validate(reportIdSchema, "params"),
+  auditAction("report.analyze"),
+  asyncHandler(reportController.analyze)
+);
 reportRoutes.delete("/:id", validate(reportIdSchema, "params"), auditAction("report.delete"), asyncHandler(reportController.remove));

@@ -102,6 +102,7 @@ const envSchema = z
     PREMIUM_MONTHLY_PRICE_NAIRA: z.coerce.number().int().positive().default(12000),
     FREE_REPORT_ANALYSIS_LIMIT: z.coerce.number().int().nonnegative().default(3),
     FREE_AI_CHAT_LIMIT: z.coerce.number().int().nonnegative().default(10),
+    PAYMENT_DATA_ENCRYPTION_SECRET: z.string().min(16).default("development-payment-secret-change-before-production"),
     MESSAGE_ENCRYPTION_SECRET: z.string().min(16).default("development-message-secret-change-before-production")
   })
   .superRefine((value, ctx) => {
@@ -121,6 +122,13 @@ const envSchema = z
         code: z.ZodIssueCode.custom,
         path: ["ADMIN_PASSWORD"],
         message: "ADMIN_PASSWORD must be explicitly configured for production."
+      });
+    }
+    if (value.PAYMENT_DATA_ENCRYPTION_SECRET === "development-payment-secret-change-before-production") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["PAYMENT_DATA_ENCRYPTION_SECRET"],
+        message: "PAYMENT_DATA_ENCRYPTION_SECRET must be explicitly configured for production."
       });
     }
   });

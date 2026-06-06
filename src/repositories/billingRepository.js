@@ -1,4 +1,5 @@
 import { pool } from "../config/database.js";
+import { protectPaymentPayload } from "../modules/payments/paymentDataSecurity.js";
 import { createId } from "../utils/uuid.js";
 
 export const billingRepository = {
@@ -36,7 +37,7 @@ export const billingRepository = {
       `insert into payment_attempts (id, user_id, plan_id, provider_reference, amount_cents, currency, raw_request)
        values ($1, $2, $3, $4, $5, $6, $7::jsonb)
        returning *`,
-      [id, userId, planId, providerReference, amountCents, currency, JSON.stringify(rawRequest || {})]
+      [id, userId, planId, providerReference, amountCents, currency, JSON.stringify(protectPaymentPayload(rawRequest || {}))]
     );
     return rows[0];
   },
@@ -65,7 +66,7 @@ export const billingRepository = {
            updated_at = now()
        where id = $1
        returning *`,
-      [attemptId, paymentId, checkoutUrl, JSON.stringify(rawResponse || {})]
+      [attemptId, paymentId, checkoutUrl, JSON.stringify(protectPaymentPayload(rawResponse || {}))]
     );
     return rows[0] || null;
   },
@@ -92,7 +93,7 @@ export const billingRepository = {
            updated_at = now()
        where provider_reference = $1
        returning *`,
-      [providerReference, status, providerOrderNo, failureReason, rawResponse ? JSON.stringify(rawResponse) : null]
+      [providerReference, status, providerOrderNo, failureReason, rawResponse ? JSON.stringify(protectPaymentPayload(rawResponse)) : null]
     );
     return rows[0] || null;
   },
@@ -239,7 +240,7 @@ export const billingRepository = {
       `insert into payment_transactions (id, payment_id, provider, provider_transaction_id, status, amount_cents, currency, raw_response)
        values ($1, $2, $3, $4, $5, $6, $7, $8::jsonb)
        returning *`,
-      [id, paymentId, provider, providerTransactionId, status, amountCents, currency, JSON.stringify(rawResponse)]
+      [id, paymentId, provider, providerTransactionId, status, amountCents, currency, JSON.stringify(protectPaymentPayload(rawResponse))]
     );
     return rows[0];
   },
@@ -272,7 +273,7 @@ export const billingRepository = {
        from payments
        where id = $6
        returning *`,
-      [id, providerRefundId, amountCents, reason, JSON.stringify(rawResponse), paymentId]
+      [id, providerRefundId, amountCents, reason, JSON.stringify(protectPaymentPayload(rawResponse)), paymentId]
     );
     return rows[0] || null;
   },
@@ -306,7 +307,7 @@ export const billingRepository = {
        values ($1, 'opay', $2, $3, $4, $5, now(), $6, $7, $8, $9)
        on duplicate key update id = id
        returning *`,
-      [id, eventId, eventType, signatureValid, JSON.stringify(payload), providerReference, signature, replayKey, signatureValid ? "received" : "rejected"]
+      [id, eventId, eventType, signatureValid, JSON.stringify(protectPaymentPayload(payload)), providerReference, signature, replayKey, signatureValid ? "received" : "rejected"]
     );
     return rows[0] || null;
   }
