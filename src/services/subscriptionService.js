@@ -7,6 +7,7 @@ import { opayClient } from "./opayClient.js";
 import { entitlementService } from "./entitlementService.js";
 import { safeEqual } from "../utils/crypto.js";
 import { consentTypes, legalService } from "./legalService.js";
+import { couponService } from "../modules/promotions/coupon.service.js";
 
 function callbackUrls(reference) {
   const base = env.PUBLIC_APP_URL.replace(/\/$/, "");
@@ -17,8 +18,8 @@ function callbackUrls(reference) {
   };
 }
 
-function buildReference() {
-  return `MX-${createId()}`;
+function buildReference(prefix = "MX") {
+  return `${prefix}-${createId()}`;
 }
 
 function normalizeProviderReference(payload) {
@@ -105,11 +106,84 @@ export const subscriptionService = {
     return { plans, ...entitlementStatus, billingHistory };
   },
 
-  async initializeCheckout({ user, planCode }) {
+  async initializeCheckout({ user, planCode, couponCode = null }) {
     if (user.role !== "Patient") throw errors.forbidden("Only patients can purchase subscriptions.");
-    await legalService.requireConsent(user.id, consentTypes.PAYMENT_PROCESSING, "Payment processing consent is required before starting checkout.");
     const plan = await billingRepository.findPlanByCode(planCode);
     if (!plan || plan.code === "FREE") throw errors.badRequest("Select a paid subscription plan.");
+    const baseAmount = Number(plan.price_naira ?? plan.price_cents ?? 0);
+
+    let discount = { coupon: null, discountAmount: 0, finalAmount: baseAmount };
+    if (couponCode) {
+      discount = await couponService.validateCoupon({ code: couponCode, userId: user.id, baseAmount });
+    }
+
+    if (discount.finalAmount > 0) {
+      await legalService.requireConsent(user.id, consentTypes.PAYMENT_PROCESSING, "Payment processing consent is required before starting checkout.");
+    }
+
+    if (discount.finalAmount === 0) {
+      return withTransaction(async (client) => {
+        const redemption = couponCode
+          ? await couponService.redeemCoupon({ code: couponCode, userId: user.id, planId: plan.id, baseAmount }, client)
+          : null;
+        const reference = buildReference("MX-FREE");
+        const payment = await billingRepository.createPayment(
+          {
+            userId: user.id,
+            planId: plan.id,
+            provider: redemption ? "coupon" : "trial",
+            providerReference: reference,
+            purpose: redemption ? "subscription_coupon" : "subscription_trial",
+            amountCents: 0,
+            currency: "NGN",
+            status: "verified",
+            metadata: {
+              baseAmount,
+              discountAmount: discount.discountAmount,
+              finalAmount: 0,
+              couponCode: redemption?.coupon?.code || null,
+              checkoutSkipped: true
+            }
+          },
+          client
+        );
+        if (redemption?.redemption?.id) {
+          await client.query("update coupon_redemptions set payment_id = $1 where id = $2", [payment.id, redemption.redemption.id]);
+        }
+        const subscription = await billingRepository.activateSubscription({
+          userId: user.id,
+          planId: plan.id,
+          interval: plan.interval,
+          paymentId: payment.id
+        }, client);
+        await billingRepository.upsertEntitlements({ userId: user.id, subscriptionId: subscription.id, plan }, client);
+        await billingRepository.createPaymentTransaction({
+          paymentId: payment.id,
+          provider: payment.provider,
+          status: "verified",
+          amountCents: 0,
+          currency: "NGN",
+          rawResponse: { checkoutSkipped: true, reason: redemption ? "coupon_full_discount" : "trial" }
+        }, client);
+        await billingRepository.createBillingEvent({
+          userId: user.id,
+          subscriptionId: subscription.id,
+          paymentId: payment.id,
+          eventType: redemption ? "payment.coupon_verified" : "payment.trial_verified",
+          providerReference: reference,
+          metadata: { checkoutSkipped: true, baseAmount, discountAmount: discount.discountAmount }
+        }, client);
+        return {
+          reference,
+          checkoutSkipped: true,
+          finalAmount: 0,
+          baseAmount,
+          discountAmount: discount.discountAmount,
+          payment,
+          subscription
+        };
+      });
+    }
 
     const reference = buildReference();
     const urls = callbackUrls(reference);
@@ -117,7 +191,7 @@ export const subscriptionService = {
       merchantId: env.OPAY_MERCHANT_ID,
       reference,
       country: env.OPAY_COUNTRY,
-      amount: { total: plan.price_cents, currency: plan.currency || env.OPAY_CURRENCY },
+      amount: { total: discount.finalAmount, currency: "NGN" },
       productName: plan.name,
       productDescription: `MedExplain AI ${plan.name}`,
       userClientIP: "127.0.0.1",
@@ -128,8 +202,8 @@ export const subscriptionService = {
       userId: user.id,
       planId: plan.id,
       providerReference: reference,
-      amountCents: plan.price_cents,
-      currency: plan.currency || env.OPAY_CURRENCY,
+      amountCents: discount.finalAmount,
+      currency: "NGN",
       rawRequest: { ...requestBody, merchantId: "***" }
     });
     const providerResponse = await opayClient.createCashierPayment(requestBody);
@@ -140,20 +214,48 @@ export const subscriptionService = {
       planId: plan.id,
       attemptId: attempt.id,
       providerReference: reference,
-      amountCents: plan.price_cents,
-      currency: plan.currency || env.OPAY_CURRENCY,
-      checkoutUrl
+      amountCents: discount.finalAmount,
+      currency: "NGN",
+      checkoutUrl,
+      metadata: {
+        baseAmount,
+        discountAmount: discount.discountAmount,
+        finalAmount: discount.finalAmount,
+        couponCode: discount.coupon?.code || null
+      }
     });
+    if (couponCode) {
+      await couponService.redeemCoupon({ code: couponCode, userId: user.id, planId: plan.id, paymentId: payment.id, baseAmount });
+    }
     await billingRepository.attachPaymentToAttempt({ attemptId: attempt.id, paymentId: payment.id, checkoutUrl, rawResponse: providerResponse });
     await billingRepository.createPaymentTransaction({
       paymentId: payment.id,
       status: "initialized",
-      amountCents: plan.price_cents,
-      currency: plan.currency || env.OPAY_CURRENCY,
+      amountCents: discount.finalAmount,
+      currency: "NGN",
       rawResponse: providerResponse
     });
     await billingRepository.createBillingEvent({ userId: user.id, paymentId: payment.id, eventType: "payment.initialized", providerReference: reference });
-    return { reference, checkoutUrl, payment };
+    return { reference, checkoutUrl, payment, checkoutSkipped: false, baseAmount, discountAmount: discount.discountAmount, finalAmount: discount.finalAmount };
+  },
+
+  async validateCoupon({ user, planCode, couponCode }) {
+    const plan = await billingRepository.findPlanByCode(planCode);
+    if (!plan || plan.code === "FREE") throw errors.badRequest("Select a paid subscription plan.");
+    const baseAmount = Number(plan.price_naira ?? plan.price_cents ?? 0);
+    const discount = await couponService.validateCoupon({ code: couponCode, userId: user.id, baseAmount });
+    return {
+      planCode: plan.code,
+      baseAmount,
+      discountAmount: discount.discountAmount,
+      finalAmount: discount.finalAmount,
+      coupon: {
+        code: discount.coupon.code,
+        discountType: discount.coupon.discount_type,
+        discountValue: discount.coupon.discount_value,
+        expiryDate: discount.coupon.expiry_date
+      }
+    };
   },
 
   async verifyPayment({ reference, actor = null }) {

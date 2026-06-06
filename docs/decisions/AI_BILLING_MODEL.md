@@ -10,11 +10,11 @@ Token estimates are calculated server-side for:
 
 Cost is calculated from model-specific per-1K-token rates:
 
-- `AI_FLASH_COST_PER_1K_TOKENS_CENTS`
-- `AI_PRO_COST_PER_1K_TOKENS_CENTS`
-- `AI_EMBEDDING_COST_PER_1K_TOKENS_CENTS`
+- `AI_FLASH_COST_PER_1K_TOKENS_NAIRA`
+- `AI_PRO_COST_PER_1K_TOKENS_NAIRA`
+- `AI_EMBEDDING_COST_PER_1K_TOKENS_NAIRA`
 
-The system stores both legacy cent estimates and USD cost fields. Optional NGN conversion is available through `AI_NGN_PER_USD`.
+The system stores AI usage and budget estimates in Naira. No foreign-exchange conversion is performed in the application.
 
 ## Plan-Aware Quotas
 
@@ -41,4 +41,3 @@ When a budget is exceeded, the API returns:
 Operators can configure defaults through environment variables and persist active budgets in `ai_budget_limits`.
 
 Emergency throttling is supported at the system budget level.
-

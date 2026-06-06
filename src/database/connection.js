@@ -53,7 +53,7 @@ function normalizeSyntax(sql) {
     .replace(/on conflict\s*\([^)]+\)(?:\s+where\s+[^)]+)?\s+do nothing/gi, "on duplicate key update id = id")
     .replace(/on conflict\s*\([^)]+\)\s*do update\s*set/gi, "on duplicate key update")
     .replace(/excluded\.([a-z0-9_]+)/gi, "values($1)")
-    .replace(/\b[a-z0-9_]+\.(requests|input_tokens|output_tokens|cost_usd|cache_hits|blocked_requests|used_count|metadata)\b/gi, "$1")
+    .replace(/\b[a-z0-9_]+\.(requests|input_tokens|output_tokens|cost_ngn|cache_hits|blocked_requests|used_count|metadata)\b/gi, "$1")
     .replace(/metadata\s*=\s*metadata\s*\|\|\s*values\(metadata\)/gi, "metadata = json_merge_patch(coalesce(metadata, json_object()), coalesce(values(metadata), json_object()))")
     .replace(/date_format\(current_date, '%Y-%m-01'\)\s*\+\s*interval\s*'1 month - 1 day'/gi, "last_day(current_date)")
     .replace(/date_format\(current_date, '%Y-%m-01'\)\s*\+\s*interval\s*'1 month'/gi, "date_add(date_format(current_date, '%Y-%m-01'), interval 1 month)")

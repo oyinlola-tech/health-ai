@@ -10,10 +10,20 @@
 function renderPlanCard(plan, currentPlan) {
   const isCurrent = currentPlan === plan.code || (currentPlan === "FREE" && plan.code === "FREE");
   const features = Array.isArray(plan.features) ? plan.features : [];
+  const price = Number(plan.price_naira ?? plan.price_cents ?? 0);
   return `<article class="card stack">
-    <div class="card-header"><div><h2>${escapeHtml(plan.name)}</h2><p class="muted">${plan.interval === "free" ? "Included by default" : `${money(plan.price_cents, plan.currency)} / ${plan.interval}`}</p></div><span class="badge ${isCurrent ? "badge-success" : ""}">${isCurrent ? "Current" : "Available"}</span></div>
+    <div class="card-header"><div><h2>${escapeHtml(plan.name)}</h2><p class="muted">${plan.code === "FREE" ? "Included by default" : `${money(price, plan.currency)} / ${plan.interval}`}</p></div><span class="badge ${isCurrent ? "badge-success" : ""}">${isCurrent ? "Current" : "Available"}</span></div>
     <ul class="clean-list">${features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join("")}</ul>
-    ${plan.code === "FREE" ? `<a class="btn btn-secondary" href="/reports">Use free plan</a>` : `<button class="btn btn-primary" data-plan-code="${escapeHtml(plan.code)}">${icon("payments")}Upgrade with OPay</button>`}
+    ${
+      plan.code === "FREE"
+        ? `<a class="btn btn-secondary" href="/reports">Use free plan</a>`
+        : `<div class="form stack-sm" data-checkout-panel="${escapeHtml(plan.code)}">
+            <label>Coupon code<input name="couponCode" autocomplete="off" placeholder="MED-8F3K2X"></label>
+            <div class="form-message" data-plan-message hidden></div>
+            <div class="muted" data-price-breakdown>Subtotal ${money(price, plan.currency)}. No coupon applied.</div>
+            <div class="actions"><button class="btn btn-secondary" data-apply-coupon="${escapeHtml(plan.code)}" type="button">${icon("sell")}Apply coupon</button><button class="btn btn-primary" data-plan-code="${escapeHtml(plan.code)}" type="button">${icon("payments")}Continue</button></div>
+          </div>`
+    }
   </article>`;
 }
 
@@ -34,6 +44,7 @@ async function renderSubscription() {
     const [response, aiUsage] = await Promise.all([apiRequest("/subscriptions/me"), apiRequest("/ai/usage/me")]);
     const data = response.data || {};
     const subscription = data.subscription || {};
+    const trial = data.trial || {};
     setMain(`
       ${pageHeader(meta)}
       <section class="grid grid-3">
@@ -41,15 +52,64 @@ async function renderSubscription() {
         ${summaryCard("Renewal Date", "event_repeat", subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : "No renewal", "/billing-history")}
         ${summaryCard("Status", "verified", subscription.status || "free", "/subscription")}
       </section>
+      ${trial.status ? `<section class="card stack"><div class="card-header"><div><h2>Free Trial</h2><p class="muted">${trial.status === "active" ? `${trial.daysRemaining} day${trial.daysRemaining === 1 ? "" : "s"} remaining` : "Trial expired. Free access now applies."}</p></div><span class="badge ${trial.status === "active" ? "badge-success" : "badge-warning"}">${escapeHtml(trial.status)}</span></div></section>` : ""}
       ${renderUsageOverview(data)}
       ${renderAiUsageOverview(aiUsage.data?.usage || {})}
       <section class="grid grid-3">${(data.plans || []).map((plan) => renderPlanCard(plan, subscription.plan_code || data.plan)).join("")}</section>
       <section class="card stack"><h2>Billing Actions</h2><div class="actions"><a class="btn btn-secondary" href="/billing-history">Billing history</a><a class="btn btn-secondary" href="/update-plan">Update plan</a><a class="btn btn-secondary" href="/cancel-subscription">Cancel subscription</a></div></section>
     `);
     bindPlanButtons();
+    bindCouponButtons();
   } catch {
     setMain(`${pageHeader(meta)}${errorState("We could not load subscription details")}`);
   }
+}
+
+function panelForPlan(planCode) {
+  return document.querySelector(`[data-checkout-panel="${CSS.escape(planCode)}"]`);
+}
+
+function couponPayload(panel, planCode) {
+  const couponCode = panel?.querySelector('[name="couponCode"]')?.value.trim().toUpperCase();
+  return couponCode ? { planCode, couponCode } : { planCode };
+}
+
+function showPlanMessage(panel, stateName, text) {
+  const message = panel?.querySelector("[data-plan-message]");
+  if (!message) return;
+  message.hidden = false;
+  message.dataset.state = stateName;
+  message.textContent = text;
+}
+
+function updateBreakdown(panel, quote) {
+  const target = panel?.querySelector("[data-price-breakdown]");
+  if (!target) return;
+  target.textContent = `Subtotal ${money(quote.baseAmount)}. Discount ${money(quote.discountAmount)}. Total ${money(quote.finalAmount)}.`;
+}
+
+function bindCouponButtons() {
+  document.querySelectorAll("[data-apply-coupon]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const planCode = button.dataset.applyCoupon;
+      const panel = panelForPlan(planCode);
+      const payload = couponPayload(panel, planCode);
+      if (!payload.couponCode) {
+        showPlanMessage(panel, "error", "Enter a coupon code first.");
+        return;
+      }
+      button.disabled = true;
+      try {
+        const response = await apiRequest("/subscriptions/coupons/validate", { method: "POST", body: payload });
+        updateBreakdown(panel, response.data || {});
+        showPlanMessage(panel, "success", Number(response.data?.finalAmount || 0) === 0 ? "Coupon covers the full amount. Payment details will not be requested." : "Coupon applied.");
+      } catch (error) {
+        showPlanMessage(panel, "error", error.message || "Coupon could not be applied.");
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
 }
 
 function bindPlanButtons() {
@@ -63,7 +123,13 @@ function bindPlanButtons() {
         message = card.querySelector("[data-plan-message]");
       }
       try {
-        const response = await apiRequest("/subscriptions/checkout", { method: "POST", body: { planCode: button.dataset.planCode } });
+        const panel = panelForPlan(button.dataset.planCode);
+        const response = await apiRequest("/subscriptions/checkout", { method: "POST", body: couponPayload(panel, button.dataset.planCode) });
+        if (response.data?.checkoutSkipped) {
+          state.dataCache.delete("subscription");
+          setMain(`${pageHeader(routeTitle("/payment-success"))}${emptyState({ iconName: "verified", title: "Subscription activated", description: "The backend applied your promotion and activated access without requesting payment details.", actionLabel: "Open dashboard", actionHref: "/dashboard" })}`);
+          return;
+        }
         const checkoutUrl = safeCheckoutUrl(response.data?.checkoutUrl || response.checkoutUrl);
         if (!checkoutUrl) throw new Error("Invalid checkout URL.");
         window.location.assign(checkoutUrl);
@@ -72,7 +138,7 @@ function bindPlanButtons() {
         if (message) {
           message.hidden = false;
           message.dataset.state = "error";
-          message.textContent = "We could not start OPay checkout. Please retry.";
+          message.textContent = "We could not start checkout. Please retry.";
         }
       }
     });
@@ -85,7 +151,7 @@ async function renderBillingHistory() {
   try {
     const response = await apiRequest("/subscriptions/billing-history");
     const payments = response.data?.payments || [];
-    const rows = payments.map((payment) => `<tr><td>${escapeHtml(payment.provider_reference)}</td><td>${money(payment.amount_cents, payment.currency)}</td><td><span class="badge ${badgeClassForStatus(payment.status)}">${escapeHtml(payment.status)}</span></td><td>${new Date(payment.created_at).toLocaleDateString()}</td></tr>`).join("");
+    const rows = payments.map((payment) => `<tr><td>${escapeHtml(payment.provider_reference)}</td><td>${money(payment.amount_naira ?? payment.amount_cents, payment.currency)}</td><td><span class="badge ${badgeClassForStatus(payment.status)}">${escapeHtml(payment.status)}</span></td><td>${new Date(payment.created_at).toLocaleDateString()}</td></tr>`).join("");
     setMain(`${pageHeader(meta)}<section class="table-card stack"><h2>Transaction History</h2><div class="table-wrap"><table><thead><tr><th>Reference</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>${rows || `<tr><td colspan="4">No billing transactions yet.</td></tr>`}</tbody></table></div></section>`);
   } catch {
     setMain(`${pageHeader(meta)}${errorState("We could not load billing history")}`);

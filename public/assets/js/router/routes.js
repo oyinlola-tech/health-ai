@@ -87,6 +87,7 @@ const pageMeta = {
   "/profile": { title: "Profile", description: "Review and update your account information." },
   "/settings": { title: "Settings", description: "Manage privacy, security, notifications, and accessibility preferences." },
   "/subscription": { title: "Subscription", description: "Manage your plan and billing status." },
+  "/checkout": { title: "Checkout", description: "Apply coupons and complete subscription checkout securely." },
   "/payment-success": { title: "Payment success", description: "Verify your OPay payment and activate premium access." },
   "/payment-failed": { title: "Payment failed", description: "Review payment status and retry securely." },
   "/maintenance": { title: "Maintenance mode", description: "Scheduled platform improvements are in progress." },
@@ -117,4 +118,3 @@ const doctorWorkspacePaths = new Set([
 ]);
 
 const uuidLike = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-

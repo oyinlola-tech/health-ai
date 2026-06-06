@@ -89,7 +89,7 @@ function route() {
   if (state.path === "/doctor/:id") return renderDoctorProfile();
   if (state.path === "/appointments") return renderAppointments();
   if (state.path === "/profile") return renderProfile();
-  if (state.path === "/subscription" || state.path === "/update-plan") return renderSubscription();
+  if (state.path === "/subscription" || state.path === "/update-plan" || state.path === "/checkout") return renderSubscription();
   if (state.path === "/billing-history") return renderBillingHistory();
   if (state.path === "/payment-success") return renderPaymentStatus(true);
   if (state.path === "/payment-failed") return renderPaymentStatus(false);

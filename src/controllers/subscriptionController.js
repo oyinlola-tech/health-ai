@@ -11,7 +11,11 @@ export const subscriptionController = {
   },
 
   async checkout(req, res) {
-    return sendSuccess(res, await subscriptionService.initializeCheckout({ user: req.user, planCode: req.body.planCode }), {}, 201);
+    return sendSuccess(res, await subscriptionService.initializeCheckout({ user: req.user, planCode: req.body.planCode, couponCode: req.body.couponCode }), {}, 201);
+  },
+
+  async validateCoupon(req, res) {
+    return sendSuccess(res, await subscriptionService.validateCoupon({ user: req.user, planCode: req.body.planCode, couponCode: req.body.couponCode }));
   },
 
   async verify(req, res) {

@@ -112,12 +112,8 @@ async function renderPatientDashboard() {
   }
 }
 
-function money(cents, currency = "NGN") {
-  return new Intl.NumberFormat("en-NG", { style: "currency", currency }).format((Number(cents) || 0) / 100);
-}
-
-function moneyUsd(value) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 4 }).format(Number(value) || 0);
+function money(amount, currency = "NGN") {
+  return new Intl.NumberFormat("en-NG", { style: "currency", currency, maximumFractionDigits: 0 }).format(Number(amount) || 0);
 }
 
 function usageMeter(label, usage = {}) {
@@ -136,8 +132,8 @@ function renderAiUsageOverview(aiUsage = {}) {
   const usage = aiUsage.usage || {};
   const quota = aiUsage.quota || {};
   const percent = Number(usage.quotaPercent || 0);
-  const monthlyLimit = quota.monthlyCostLimitUsd ? moneyUsd(quota.monthlyCostLimitUsd) : "Quota initializes on first AI request";
-  return `<section class="card stack"><div class="card-header"><div><h2>AI Usage Governance</h2><p class="muted">AI analysis used ${percent}% of your monthly quota.</p></div><span class="badge ${percent > 85 ? "badge-warning" : "badge-success"}">${escapeHtml(quota.planCode || "Measured")}</span></div><div class="usage-meter"><div class="card-header"><div><p class="caption">Monthly AI quota</p><strong>${moneyUsd(usage.monthlyCostUsd || 0)} used</strong></div><span class="badge">${monthlyLimit}</span></div><div class="meter-track"><span style="width:${Math.min(100, percent)}%"></span></div></div><div class="grid grid-3">${metricTile("AI Requests", "bolt", String(usage.monthlyRequests || 0))}${metricTile("Tokens Used", "data_usage", String(usage.monthlyTokens || 0))}${metricTile("Daily Cap", "speed", quota.dailyRequestLimit ? `${quota.dailyRequestLimit} requests` : "Managed")}</div></section>`;
+  const monthlyLimit = quota.monthlyCostLimitNaira ? money(quota.monthlyCostLimitNaira) : "Quota initializes on first AI request";
+  return `<section class="card stack"><div class="card-header"><div><h2>AI Usage Governance</h2><p class="muted">AI analysis used ${percent}% of your monthly quota.</p></div><span class="badge ${percent > 85 ? "badge-warning" : "badge-success"}">${escapeHtml(quota.planCode || "Measured")}</span></div><div class="usage-meter"><div class="card-header"><div><p class="caption">Monthly AI quota</p><strong>${money(usage.monthlyCostNaira || 0)} used</strong></div><span class="badge">${monthlyLimit}</span></div><div class="meter-track"><span style="width:${Math.min(100, percent)}%"></span></div></div><div class="grid grid-3">${metricTile("AI Requests", "bolt", String(usage.monthlyRequests || 0))}${metricTile("Tokens Used", "data_usage", String(usage.monthlyTokens || 0))}${metricTile("Daily Cap", "speed", quota.dailyRequestLimit ? `${quota.dailyRequestLimit} requests` : "Managed")}</div></section>`;
 }
 
 function summaryCard(title, iconName, value, href) {
@@ -191,4 +187,3 @@ function renderReportItem(report) {
 function renderHealthItem(entry) {
   return `<article class="card stack"><h3>${escapeHtml(entry.title || entry.category || "Health entry")}</h3><p class="muted">${escapeHtml(entry.value || "Saved health history entry")}</p></article>`;
 }
-

@@ -20,6 +20,7 @@ datasets/extracted/
 datasets/processed/
 
 # Local logs
+.server.log
 logs/*
 src/logs/*
 !logs/.gitkeep

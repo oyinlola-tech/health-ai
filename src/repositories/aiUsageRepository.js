@@ -9,10 +9,10 @@ export const aiUsageRepository = {
          id, user_id, endpoint, tokens_used, prompt_tokens, response_tokens,
          cost_estimate, model_used, cache_hit, blocked_reason, metadata,
          feature_type, request_id, input_tokens, output_tokens, estimated_cost,
-         cost_usd, cost_ngn, response_time_ms, status, prompt_hash, safety_flags
+         cost_ngn, response_time_ms, status, prompt_hash, safety_flags
        )
        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb,
-               $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22::jsonb)
+               $12, $13, $14, $15, $16, $17, $18, $19, $20, $21::jsonb)
        returning *`,
       [
         id,
@@ -31,8 +31,7 @@ export const aiUsageRepository = {
         log.inputTokens ?? log.promptTokens,
         log.outputTokens ?? log.responseTokens,
         log.estimatedCost ?? log.costEstimate,
-        log.costUsd ?? (Number(log.costEstimate || 0) / 100),
-        log.costNgn ?? null,
+        log.costNaira ?? log.costEstimate ?? 0,
         log.responseTimeMs || 0,
         log.status || (log.blockedReason ? "blocked" : log.cacheHit ? "cached" : "completed"),
         log.promptHash || null,
@@ -48,7 +47,7 @@ export const aiUsageRepository = {
     await client.query(
       `insert into ai_cost_summary (
          id, period_start, period_end, feature_type, model_used, requests,
-         input_tokens, output_tokens, cost_usd, cache_hits, blocked_requests,
+         input_tokens, output_tokens, cost_ngn, cache_hits, blocked_requests,
          average_response_time_ms
        )
        values (
@@ -61,7 +60,7 @@ export const aiUsageRepository = {
            requests = requests + 1,
            input_tokens = input_tokens + values(input_tokens),
            output_tokens = output_tokens + values(output_tokens),
-           cost_usd = cost_usd + values(cost_usd),
+           cost_ngn = cost_ngn + values(cost_ngn),
            cache_hits = cache_hits + values(cache_hits),
            blocked_requests = blocked_requests + values(blocked_requests),
            average_response_time_ms = round(((average_response_time_ms * requests) + values(average_response_time_ms)) / (requests + 1)),
@@ -73,7 +72,7 @@ export const aiUsageRepository = {
         log.model_used,
         log.input_tokens || log.prompt_tokens || 0,
         log.output_tokens || log.response_tokens || 0,
-        log.cost_usd || 0,
+        log.cost_ngn || 0,
         Boolean(log.cache_hit),
         log.blocked_reason,
         log.response_time_ms || 0
@@ -105,7 +104,7 @@ export const aiUsageRepository = {
 
   async monthlySpendForUser(userId, client = pool) {
     const { rows } = await client.query(
-      `select coalesce(sum(cost_usd), 0) as cost_usd,
+      `select coalesce(sum(cost_ngn), 0) as cost_ngn,
               coalesce(sum(tokens_used), 0) as tokens_used,
               sum(case when blocked_reason is null then 1 else 0 end) as requests
        from ai_usage_logs
@@ -119,24 +118,24 @@ export const aiUsageRepository = {
 
   async monthlySpendForFeature(featureType, client = pool) {
     const { rows } = await client.query(
-      `select coalesce(sum(cost_usd), 0) as cost_usd
+      `select coalesce(sum(cost_ngn), 0) as cost_ngn
        from ai_usage_logs
        where feature_type = $1
          and created_at >= date_format(current_date, '%Y-%m-01')
          and blocked_reason is null`,
       [featureType]
     );
-    return rows[0].cost_usd;
+    return rows[0].cost_ngn;
   },
 
   async monthlyGlobalSpend(client = pool) {
     const { rows } = await client.query(
-      `select coalesce(sum(cost_usd), 0) as cost_usd
+      `select coalesce(sum(cost_ngn), 0) as cost_ngn
        from ai_usage_logs
        where created_at >= date_format(current_date, '%Y-%m-01')
          and blocked_reason is null`
     );
-    return rows[0].cost_usd;
+    return rows[0].cost_ngn;
   },
 
   async requestCountSince({ userId, since }, client = pool) {
@@ -186,11 +185,11 @@ export const aiUsageRepository = {
     return rows[0] || null;
   },
 
-  async upsertQuota({ userId, planCode, monthlyCostLimitUsd, monthlyTokenLimit = null, dailyRequestLimit = null, burstPerMinute = null }, client = pool) {
+  async upsertQuota({ userId, planCode, monthlyCostLimitNaira, monthlyTokenLimit = null, dailyRequestLimit = null, burstPerMinute = null }, client = pool) {
     const id = createId();
     const { rows } = await client.query(
       `insert into user_ai_quotas (
-         id, user_id, plan_code, monthly_cost_limit_usd, monthly_token_limit,
+         id, user_id, plan_code, monthly_cost_limit_ngn, monthly_token_limit,
          daily_request_limit, burst_per_minute, period_start, period_end
        )
        values (
@@ -200,13 +199,13 @@ export const aiUsageRepository = {
        )
        on duplicate key update
            plan_code = values(plan_code),
-           monthly_cost_limit_usd = values(monthly_cost_limit_usd),
+           monthly_cost_limit_ngn = values(monthly_cost_limit_ngn),
            monthly_token_limit = values(monthly_token_limit),
            daily_request_limit = values(daily_request_limit),
            burst_per_minute = values(burst_per_minute),
            updated_at = now()
        returning *`,
-      [id, userId, planCode, monthlyCostLimitUsd, monthlyTokenLimit, dailyRequestLimit, burstPerMinute]
+      [id, userId, planCode, monthlyCostLimitNaira, monthlyTokenLimit, dailyRequestLimit, burstPerMinute]
     );
     return rows[0];
   },
@@ -240,7 +239,7 @@ export const aiUsageRepository = {
   async summary(client = pool) {
     const { rows } = await client.query(
       `select count(*) as total_requests,
-              coalesce(sum(cost_usd), 0) as total_cost_usd,
+              coalesce(sum(cost_ngn), 0) as total_cost_ngn,
               coalesce(sum(cost_estimate), 0) as total_cost,
               coalesce(sum(tokens_used), 0) as total_tokens,
               coalesce(sum(input_tokens), 0) as input_tokens,
@@ -274,44 +273,44 @@ export const aiUsageRepository = {
       client.query(
         `select model_used,
                 count(*) as requests,
-                coalesce(sum(cost_usd), 0) as cost_usd,
+                coalesce(sum(cost_ngn), 0) as cost_ngn,
                 coalesce(sum(tokens_used), 0) as tokens
          from ai_usage_logs
          group by model_used
-         order by cost_usd desc`
+         order by cost_ngn desc`
       ),
       client.query(
-        `select id, user_id, endpoint, feature_type, model_used, tokens_used, cost_usd, response_time_ms, created_at, metadata
+        `select id, user_id, endpoint, feature_type, model_used, tokens_used, cost_ngn, response_time_ms, created_at, metadata
          from ai_usage_logs
          where blocked_reason is null
-         order by cost_usd desc
+         order by cost_ngn desc
          limit 10`
       ),
       client.query(
         `select feature_type,
                 count(*) as requests,
-                coalesce(sum(cost_usd), 0) as cost_usd,
+                coalesce(sum(cost_ngn), 0) as cost_ngn,
                 coalesce(round(avg(tokens_used)), 0) as average_tokens,
                 sum(case when cache_hit then 1 else 0 end) as cache_hits
          from ai_usage_logs
          where created_at >= date_format(current_date, '%Y-%m-01')
          group by feature_type
-         order by cost_usd desc`
+         order by cost_ngn desc`
       ),
       client.query(
         `select user_id,
                 count(*) as requests,
-                coalesce(sum(cost_usd), 0) as cost_usd,
+                coalesce(sum(cost_ngn), 0) as cost_ngn,
                 sum(case when blocked_reason is not null then 1 else 0 end) as blocked_requests
          from ai_usage_logs
          where created_at >= date_format(current_date, '%Y-%m-01')
          group by user_id
-         order by cost_usd desc
+         order by cost_ngn desc
          limit 10`
       ),
       client.query(
         `select date(created_at) as day,
-                coalesce(sum(cost_usd), 0) as cost_usd,
+                coalesce(sum(cost_ngn), 0) as cost_ngn,
                 count(*) as requests
          from ai_usage_logs
          where created_at >= date_sub(now(), interval 30 day)
@@ -332,15 +331,15 @@ export const aiUsageRepository = {
   async dashboard(client = pool) {
     const [summary, costs, globalBudget] = await Promise.all([this.summary(client), this.costs(client), this.activeBudget("system", "global", client)]);
     const monthlySpend = await this.monthlyGlobalSpend(client);
-    const budgetLimit = Number(globalBudget?.monthly_cost_limit_usd || 0);
+    const budgetLimit = Number(globalBudget?.monthly_cost_limit_ngn || 0);
     const forecastedBurnRate = monthlySpend > 0 ? (monthlySpend / Math.max(new Date().getDate(), 1)) * 30 : 0;
     return {
       summary,
       costs,
-      monthlySpendUsd: monthlySpend,
-      monthlyBudgetUsd: budgetLimit,
+      monthlySpendNaira: monthlySpend,
+      monthlyBudgetNaira: budgetLimit,
       emergencyThrottle: Boolean(globalBudget?.emergency_throttle),
-      forecastedBurnRateUsd: forecastedBurnRate,
+      forecastedBurnRateNaira: forecastedBurnRate,
       cacheHitRate:
         summary.total_requests > 0 ? Number(((summary.cache_hits / summary.total_requests) * 100).toFixed(2)) : 0
     };

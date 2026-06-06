@@ -12,6 +12,7 @@ import { up as legalPrivacy } from "./legal_privacy.js";
 import { up as medicalKnowledge } from "./medical_knowledge.js";
 import { up as pubmed } from "./pubmed.js";
 import { up as kaggleMedicalData } from "./kaggle_medical_data.js";
+import { up as promotions } from "./promotions.js";
 
 export const migrations = [
   ["users", users],
@@ -27,5 +28,6 @@ export const migrations = [
   ["legal_privacy", legalPrivacy],
   ["medical_knowledge", medicalKnowledge],
   ["pubmed", pubmed],
-  ["kaggle_medical_data", kaggleMedicalData]
+  ["kaggle_medical_data", kaggleMedicalData],
+  ["promotions", promotions]
 ];

@@ -4,12 +4,12 @@ import { createId } from "../utils/uuid.js";
 export const billingRepository = {
   async listPlans(client = pool) {
     const { rows } = await client.query("select * from subscription_plans where active = true order by price_cents asc");
-    return rows;
+    return rows.map((row) => ({ ...row, price_naira: Number(row.price_cents || 0), currency: row.currency || "NGN" }));
   },
 
   async findPlanByCode(code, client = pool) {
     const { rows } = await client.query("select * from subscription_plans where code = $1 and active = true", [code]);
-    return rows[0] || null;
+    return rows[0] ? { ...rows[0], price_naira: Number(rows[0].price_cents || 0), currency: rows[0].currency || "NGN" } : null;
   },
 
   async currentSubscription(userId, client = pool) {
@@ -22,6 +22,7 @@ export const billingRepository = {
        join subscription_plans sp on sp.id = s.plan_id
        where s.user_id = $1
          and s.status in ('active', 'trialing', 'past_due')
+         and s.current_period_end > now()
        order by s.created_at desc
        limit 1`,
       [userId]
@@ -40,13 +41,16 @@ export const billingRepository = {
     return rows[0];
   },
 
-  async createPayment({ userId, planId, attemptId, providerReference, amountCents, currency, checkoutUrl = null }, client = pool) {
+  async createPayment(
+    { userId, planId, attemptId = null, provider = "opay", providerReference, purpose = "premium_subscription", amountCents, currency, checkoutUrl = null, status = "pending", metadata = {} },
+    client = pool
+  ) {
     const id = createId();
     const { rows } = await client.query(
-      `insert into payments (id, user_id, plan_id, payment_attempt_id, provider, provider_reference, purpose, amount_cents, currency, status, checkout_url)
-       values ($1, $2, $3, $4, 'opay', $5, 'premium_subscription', $6, $7, 'pending', $8)
+      `insert into payments (id, user_id, plan_id, payment_attempt_id, provider, provider_reference, purpose, amount_cents, currency, status, checkout_url, metadata)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::jsonb)
        returning *`,
-      [id, userId, planId, attemptId, providerReference, amountCents, currency, checkoutUrl]
+      [id, userId, planId, attemptId, provider, providerReference, purpose, amountCents, currency, status, checkoutUrl, JSON.stringify(metadata)]
     );
     return rows[0];
   },
@@ -135,6 +139,23 @@ export const billingRepository = {
     return rows[0];
   },
 
+  async activeCouponAccess(userId, client = pool) {
+    const { rows } = await client.query(
+      `select cr.*
+       from coupon_redemptions cr
+       join payments p on p.id = cr.payment_id
+       join subscriptions s on s.user_id = cr.user_id and s.plan_id = cr.plan_id
+       where cr.user_id = $1
+         and p.status = 'verified'
+         and s.status in ('active', 'trialing', 'past_due')
+         and s.current_period_end > now()
+       order by cr.used_at desc
+       limit 1`,
+      [userId]
+    );
+    return rows[0] || null;
+  },
+
   async cancelSubscription({ userId, subscriptionId }, client = pool) {
     const { rows } = await client.query(
       `update subscriptions
@@ -212,13 +233,13 @@ export const billingRepository = {
     return rows[0];
   },
 
-  async createPaymentTransaction({ paymentId, status, amountCents, currency, providerTransactionId = null, rawResponse = {} }, client = pool) {
+  async createPaymentTransaction({ paymentId, status, amountCents, currency, provider = "opay", providerTransactionId = null, rawResponse = {} }, client = pool) {
     const id = createId();
     const { rows } = await client.query(
       `insert into payment_transactions (id, payment_id, provider, provider_transaction_id, status, amount_cents, currency, raw_response)
-       values ($1, $2, 'opay', $3, $4, $5, $6, $7::jsonb)
+       values ($1, $2, $3, $4, $5, $6, $7, $8::jsonb)
        returning *`,
-      [id, paymentId, providerTransactionId, status, amountCents, currency, JSON.stringify(rawResponse)]
+      [id, paymentId, provider, providerTransactionId, status, amountCents, currency, JSON.stringify(rawResponse)]
     );
     return rows[0];
   },

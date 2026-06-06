@@ -77,6 +77,12 @@ export const paymentRateLimit = moduleLimit({
   scope: "payment"
 });
 
+export const couponRateLimit = moduleLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 12,
+  scope: "coupon"
+});
+
 export const webhookRateLimit = moduleLimit({
   windowMs: 60 * 1000,
   max: 120,

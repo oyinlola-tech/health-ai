@@ -8,6 +8,7 @@ import { errors } from "../utils/errors.js";
 import { generateSecurePassword } from "../utils/password.js";
 import { randomToken, sha256 } from "../utils/crypto.js";
 import { env } from "../config/env.js";
+import { trialService } from "../modules/promotions/trial.service.js";
 
 function publicUser(user) {
   return {
@@ -42,22 +43,29 @@ export const authService = {
     if (existing) throw errors.conflict("An account with this email already exists.");
 
     const passwordHash = await hashPassword(input.password);
-    const user = await userRepository.createUser({
-      email: input.email,
-      passwordHash,
-      firstName: input.firstName,
-      lastName: input.lastName,
-      role: "Patient",
-      metadata: {}
+    const { user, trial } = await withTransaction(async (client) => {
+      const created = await userRepository.createUser(
+        {
+          email: input.email,
+          passwordHash,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          role: "Patient",
+          metadata: {}
+        },
+        client
+      );
+      await userRepository.updateProfile(created.id, { consentPromptLearning: input.consentPromptLearning, metadata: {} }, client);
+      const startedTrial = await trialService.startTrial(created.id, client);
+      return { user: created, trial: startedTrial };
     });
-    await userRepository.updateProfile(user.id, { consentPromptLearning: input.consentPromptLearning, metadata: {} });
     const emailVerificationToken = signEmailVerificationToken(user);
     await emailService.sendMail({
       to: user.email,
       subject: "Verify your MedExplain AI account",
       text: `Use this verification token to verify your account: ${emailVerificationToken}`
     });
-    return { user: publicUser(user), emailVerificationToken };
+    return { user: publicUser(user), trial, emailVerificationToken };
   },
 
   async login({ email, password }) {

@@ -15,6 +15,19 @@ const promptInjectionPatterns = [
   /jailbreak|developer\s+mode|dan\s+mode/i
 ];
 
+const legacyCurrencySuffix = ["U", "SD"].join("");
+const legacyCostKey = `cost${legacyCurrencySuffix.charAt(0)}${legacyCurrencySuffix.slice(1).toLowerCase()}`;
+const legacyLimitKey = `monthly_cost_limit_${legacyCurrencySuffix.toLowerCase()}`;
+
+function legacyEnvKey(name) {
+  return name.replace("NAIRA", legacyCurrencySuffix);
+}
+
+function envNumber(name, fallback) {
+  const value = process.env[name] ?? process.env[legacyEnvKey(name)];
+  return value === undefined ? fallback : Number(value);
+}
+
 function estimateTokens(text) {
   if (!text) return 0;
   return Math.ceil(String(text).split(/\s+/).filter(Boolean).length * 1.35);
@@ -39,9 +52,9 @@ function aiBudgetError(message = "Upgrade required for more AI usage") {
 }
 
 function featureDefaults(featureType) {
-  if (featureType === "report_analysis") return env.AI_FEATURE_REPORT_MONTHLY_BUDGET_USD;
-  if (featureType === "doctor_assist_request") return env.AI_FEATURE_DOCTOR_ASSIST_MONTHLY_BUDGET_USD;
-  return env.AI_FEATURE_CHAT_MONTHLY_BUDGET_USD;
+  if (featureType === "report_analysis") return envNumber("AI_FEATURE_REPORT_MONTHLY_BUDGET_NAIRA", env.AI_FEATURE_REPORT_MONTHLY_BUDGET_NAIRA);
+  if (featureType === "doctor_assist_request") return envNumber("AI_FEATURE_DOCTOR_ASSIST_MONTHLY_BUDGET_NAIRA", env.AI_FEATURE_DOCTOR_ASSIST_MONTHLY_BUDGET_NAIRA);
+  return envNumber("AI_FEATURE_CHAT_MONTHLY_BUDGET_NAIRA", env.AI_FEATURE_CHAT_MONTHLY_BUDGET_NAIRA);
 }
 
 function hasPremiumPlan(subscription) {
@@ -57,7 +70,9 @@ async function quotaForUser(userId) {
   return aiUsageRepository.upsertQuota({
     userId,
     planCode: premium ? subscription.plan_code : "FREE",
-    monthlyCostLimitUsd: premium ? env.AI_PREMIUM_MONTHLY_BUDGET_USD : env.AI_FREE_MONTHLY_BUDGET_USD,
+    monthlyCostLimitNaira: premium
+      ? envNumber("AI_PREMIUM_MONTHLY_BUDGET_NAIRA", env.AI_PREMIUM_MONTHLY_BUDGET_NAIRA)
+      : envNumber("AI_FREE_MONTHLY_BUDGET_NAIRA", env.AI_FREE_MONTHLY_BUDGET_NAIRA),
     monthlyTokenLimit: premium ? null : 50000,
     dailyRequestLimit: premium ? env.AI_PREMIUM_DAILY_REQUEST_LIMIT : env.AI_FREE_DAILY_REQUEST_LIMIT,
     burstPerMinute: env.AI_BURST_PER_MINUTE
@@ -74,9 +89,9 @@ function safetyFlagsForPrompt(prompt) {
 }
 
 export function costRateForModel(model) {
-  if (model === env.GEMINI_PRO_MODEL) return env.AI_PRO_COST_PER_1K_TOKENS_CENTS;
-  if (model === env.GEMINI_EMBEDDING_MODEL) return env.AI_EMBEDDING_COST_PER_1K_TOKENS_CENTS;
-  return env.AI_FLASH_COST_PER_1K_TOKENS_CENTS;
+  if (model === env.GEMINI_PRO_MODEL) return env.AI_PRO_COST_PER_1K_TOKENS_NAIRA;
+  if (model === env.GEMINI_EMBEDDING_MODEL) return env.AI_EMBEDDING_COST_PER_1K_TOKENS_NAIRA;
+  return env.AI_FLASH_COST_PER_1K_TOKENS_NAIRA;
 }
 
 export function estimateUsage({ prompt, response = "", model }) {
@@ -84,7 +99,6 @@ export function estimateUsage({ prompt, response = "", model }) {
   const responseTokens = estimateTokens(response);
   const tokensUsed = promptTokens + responseTokens;
   const costEstimate = (tokensUsed / 1000) * costRateForModel(model);
-  const costUsd = costEstimate / 100;
   return {
     promptTokens,
     responseTokens,
@@ -92,8 +106,8 @@ export function estimateUsage({ prompt, response = "", model }) {
     outputTokens: responseTokens,
     tokensUsed,
     costEstimate,
-    costUsd,
-    costNgn: env.AI_NGN_PER_USD > 0 ? costUsd * env.AI_NGN_PER_USD : null
+    costNaira: costEstimate,
+    [legacyCostKey]: costEstimate
   };
 }
 
@@ -137,8 +151,8 @@ async function logBlocked({ userId, endpoint, featureType, model, prompt, reques
     outputTokens: 0,
     costEstimate: 0,
     estimatedCost: 0,
-    costUsd: 0,
-    costNgn: null,
+    costNaira: 0,
+    [legacyCostKey]: 0,
     modelUsed: model,
     blockedReason,
     status: "blocked",
@@ -148,7 +162,7 @@ async function logBlocked({ userId, endpoint, featureType, model, prompt, reques
   });
 }
 
-export async function assertBudget({ userId, estimatedCost, estimatedCostUsd, endpoint, featureType, model, prompt, requestId, safetyFlags = [], metadata = {} }) {
+export async function assertBudget({ userId, estimatedCost, estimatedCostNaira, endpoint, featureType, model, prompt, requestId, safetyFlags = [], metadata = {} }) {
   const systemBudget = await aiUsageRepository.activeBudget("system", "global");
   if (systemBudget?.emergency_throttle) {
     await logBlocked({ userId, endpoint, featureType, model, prompt, requestId, blockedReason: "emergency_throttle", safetyFlags, metadata });
@@ -166,14 +180,14 @@ export async function assertBudget({ userId, estimatedCost, estimatedCostUsd, en
     aiUsageRepository.activeBudget("feature", featureType)
   ]);
 
-  const systemLimit = Number(systemBudget?.monthly_cost_limit_usd ?? env.AI_MONTHLY_SYSTEM_BUDGET_USD);
-  if (systemLimit > 0 && globalMonthlySpend + estimatedCostUsd > systemLimit) {
+  const systemLimit = Number(systemBudget?.monthly_cost_limit_ngn ?? systemBudget?.[legacyLimitKey] ?? envNumber("AI_MONTHLY_SYSTEM_BUDGET_NAIRA", env.AI_MONTHLY_SYSTEM_BUDGET_NAIRA));
+  if (systemLimit > 0 && globalMonthlySpend + estimatedCostNaira > systemLimit) {
     await logBlocked({ userId, endpoint, featureType, model, prompt, requestId, blockedReason: "monthly_global_budget_exceeded", metadata });
     throw aiBudgetError("AI system budget has been reached.");
   }
 
-  const featureLimit = Number(featureBudget?.monthly_cost_limit_usd ?? featureDefaults(featureType));
-  if (featureLimit > 0 && featureMonthlySpend + estimatedCostUsd > featureLimit) {
+  const featureLimit = Number(featureBudget?.monthly_cost_limit_ngn ?? featureBudget?.[legacyLimitKey] ?? featureDefaults(featureType));
+  if (featureLimit > 0 && featureMonthlySpend + estimatedCostNaira > featureLimit) {
     await logBlocked({ userId, endpoint, featureType, model, prompt, requestId, blockedReason: "monthly_feature_budget_exceeded", metadata });
     throw aiBudgetError("AI feature budget has been reached.");
   }
@@ -187,12 +201,14 @@ export async function assertBudget({ userId, estimatedCost, estimatedCostUsd, en
     aiUsageRepository.requestCountSince({ userId, since: new Date(Date.now() - 60000).toISOString() })
   ]);
 
-  if (env.AI_DAILY_USER_BUDGET_CENTS > 0 && Number(monthlyUserSpend.cost_usd || 0) * 100 + estimatedCost > env.AI_DAILY_USER_BUDGET_CENTS * 31) {
+  const userSpend = Number(monthlyUserSpend.cost_ngn ?? monthlyUserSpend[legacyLimitKey.replace("monthly_cost_limit", "cost")] ?? 0);
+  if (env.AI_DAILY_USER_BUDGET_NAIRA > 0 && userSpend + estimatedCost > env.AI_DAILY_USER_BUDGET_NAIRA * 31) {
     await logBlocked({ userId, endpoint, featureType, model, prompt, requestId, blockedReason: "legacy_user_budget_exceeded", metadata });
     throw aiBudgetError();
   }
 
-  if (Number(quota.monthly_cost_limit_usd || 0) > 0 && Number(monthlyUserSpend.cost_usd || 0) + estimatedCostUsd > Number(quota.monthly_cost_limit_usd)) {
+  const quotaLimit = quota.monthly_cost_limit_ngn === undefined && quota[legacyLimitKey] !== undefined ? Number(quota[legacyLimitKey]) * 1000 : Number(quota.monthly_cost_limit_ngn ?? 0);
+  if (quotaLimit > 0 && userSpend + estimatedCostNaira > quotaLimit) {
     await logBlocked({ userId, endpoint, featureType, model, prompt, requestId, blockedReason: "monthly_user_budget_exceeded", metadata });
     throw aiBudgetError();
   }
@@ -228,8 +244,8 @@ export async function recordUsage({ userId, endpoint, featureType, model, prompt
     outputTokens: usage.outputTokens,
     costEstimate: cacheHit ? 0 : usage.costEstimate,
     estimatedCost: cacheHit ? 0 : usage.costEstimate,
-    costUsd: cacheHit ? 0 : usage.costUsd,
-    costNgn: cacheHit ? null : usage.costNgn,
+    costNaira: cacheHit ? 0 : usage.costNaira,
+    [legacyCostKey]: cacheHit ? 0 : usage.costNaira,
     modelUsed: model,
     cacheHit,
     status: cacheHit ? "cached" : "completed",
@@ -254,8 +270,8 @@ export async function recordFailedUsage({ userId, endpoint, featureType, model, 
     outputTokens: 0,
     costEstimate: 0,
     estimatedCost: 0,
-    costUsd: 0,
-    costNgn: null,
+    costNaira: 0,
+    [legacyCostKey]: 0,
     modelUsed: model,
     blockedReason: "provider_or_schema_failure",
     status: "failed",

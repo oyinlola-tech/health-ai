@@ -26,7 +26,7 @@ Every AI request stores:
 - output tokens
 - total tokens
 - estimated cost
-- USD cost
+- NGN cost
 - optional NGN cost
 - response time
 - cache hit status
@@ -60,4 +60,3 @@ Admin dashboards expose:
 - cost by model
 - top AI users
 - expensive requests
-

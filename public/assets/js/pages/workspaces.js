@@ -53,8 +53,9 @@ function renderAppointmentItem(item) {
 }
 
 async function renderAdminDashboard() {
+  if (state.path === "/admin/coupons") return renderAdminCoupons();
   const meta = routeTitle("/admin");
-  const tabs = ["Overview", "Users", "Doctors", "Doctor Applications", "Reports", "AI Usage", "Payments", "Subscriptions", "Security Logs", "Audit Logs", "System Settings"];
+  const tabs = ["Overview", "Users", "Doctors", "Doctor Applications", "Reports", "AI Usage", "Payments", "Subscriptions", "Coupons", "Security Logs", "Audit Logs", "System Settings"];
   setMain(`${pageHeader(meta)}${loadingState("Loading admin workspace")}`);
   const [users, logs, reportMetrics, monetization, aiCosts, applications] = await Promise.allSettled([
     apiRequest("/admin/users"),
@@ -102,6 +103,96 @@ async function renderAdminDashboard() {
   `);
 }
 
+async function renderAdminCoupons() {
+  const meta = { title: "Coupon Controls", description: "Create, disable, and monitor server-enforced promotional codes." };
+  setMain(`${pageHeader(meta)}${loadingState("Loading coupons")}`);
+  try {
+    const response = await apiRequest("/admin/coupons");
+    const coupons = response.data?.coupons || [];
+    setMain(`
+      ${pageHeader(meta)}
+      <section class="grid grid-2">
+        <article class="card stack">
+          <h2>Create Coupon</h2>
+          <form class="form" data-coupon-form novalidate>
+            <div class="form-message" data-form-message hidden></div>
+            <label>Code<input name="code" autocomplete="off" placeholder="Generated if blank"></label>
+            <label>Discount type<select name="discountType"><option value="percentage">Percentage</option><option value="fixed">Fixed Naira</option></select></label>
+            <label>Discount value<input name="discountValue" type="number" min="1" required></label>
+            <label>Max uses<input name="maxUses" type="number" min="1"></label>
+            <label>Expiry date<input name="expiryDate" type="datetime-local"></label>
+            <button class="btn btn-primary" type="submit">${icon("add")}Create coupon</button>
+          </form>
+        </article>
+        <article class="card stack">
+          <h2>Promotion Safety</h2>
+          <p class="muted">Discounts are recalculated on the backend during checkout. Full-discount totals skip OPay and activate access immediately.</p>
+          <div class="actions"><span class="badge">One use per account</span><span class="badge">Rate limited</span><span class="badge">Admin only</span></div>
+        </article>
+      </section>
+      <section class="table-card stack">
+        <h2>Coupons</h2>
+        <div class="table-wrap"><table><thead><tr><th>Code</th><th>Discount</th><th>Usage</th><th>Expiry</th><th>Status</th><th>Action</th></tr></thead><tbody>
+          ${
+            coupons.length
+              ? coupons
+                  .map((coupon) => {
+                    const discount = coupon.discount_type === "percentage" ? `${coupon.discount_value}%` : money(coupon.discount_value);
+                    const usage = `${coupon.used_count || 0}${coupon.max_uses ? `/${coupon.max_uses}` : ""}`;
+                    return `<tr><td>${escapeHtml(coupon.code)}</td><td>${discount}</td><td>${usage}</td><td>${coupon.expiry_date ? new Date(coupon.expiry_date).toLocaleString() : "No expiry"}</td><td><span class="badge ${coupon.is_active ? "badge-success" : "badge-warning"}">${coupon.is_active ? "Active" : "Disabled"}</span></td><td>${coupon.is_active ? `<button class="btn btn-secondary" data-disable-coupon="${escapeHtml(coupon.id)}" type="button">Disable</button>` : ""}</td></tr>`;
+                  })
+                  .join("")
+              : `<tr><td colspan="6">No coupons created yet.</td></tr>`
+          }
+        </tbody></table></div>
+      </section>
+    `);
+    bindAdminCouponForm();
+    bindDisableCouponButtons();
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("We could not load coupon controls")}`);
+  }
+}
+
+function couponFormPayload(form) {
+  const formData = new FormData(form);
+  const payload = Object.fromEntries(formData.entries());
+  if (!payload.code) delete payload.code;
+  if (!payload.maxUses) delete payload.maxUses;
+  if (payload.expiryDate) payload.expiryDate = new Date(payload.expiryDate).toISOString();
+  else delete payload.expiryDate;
+  payload.discountValue = Number(payload.discountValue);
+  if (payload.maxUses) payload.maxUses = Number(payload.maxUses);
+  return payload;
+}
+
+function bindAdminCouponForm() {
+  document.querySelector("[data-coupon-form]")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    setSubmitLoading(form, true);
+    try {
+      await apiRequest("/admin/coupons", { method: "POST", body: couponFormPayload(form) });
+      showFormMessage(form, "success", "Coupon created.");
+      window.setTimeout(() => rerenderCurrentRoute(), 500);
+    } catch (error) {
+      showFormMessage(form, "error", error.message || "Coupon could not be created.");
+    } finally {
+      setSubmitLoading(form, false);
+    }
+  });
+}
+
+function bindDisableCouponButtons() {
+  document.querySelectorAll("[data-disable-coupon]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      await apiRequest(`/admin/coupons/${button.dataset.disableCoupon}/disable`, { method: "POST" });
+      rerenderCurrentRoute();
+    });
+  });
+}
+
 function renderListCard(items) {
   if (!items.length) return `<p class="muted">No feature usage recorded this month.</p>`;
   return `<ul class="clean-list">${items.map((item) => `<li>${escapeHtml(item.feature)}: ${escapeHtml(item.used_count)}</li>`).join("")}</ul>`;
@@ -112,22 +203,22 @@ function renderAdminAiCostPanel(dashboard = {}) {
   const costs = dashboard.costs || {};
   const featureRows = costs.featureCostBreakdown || [];
   const topUsers = costs.topAiUsers || [];
-  const budget = Number(dashboard.monthlyBudgetUsd || 0);
-  const spend = Number(dashboard.monthlySpendUsd || 0);
+  const budget = Number(dashboard.monthlyBudgetNaira || 0);
+  const spend = Number(dashboard.monthlySpendNaira || 0);
   const budgetPercent = budget > 0 ? Math.min(100, Math.round((spend / budget) * 100)) : 0;
   const featureList = featureRows.length
     ? `<ul class="clean-list">${featureRows
         .slice(0, 5)
-        .map((item) => `<li>${escapeHtml(item.feature_type || "unknown")}: ${moneyUsd(item.cost_usd)} across ${escapeHtml(item.requests)} requests</li>`)
+        .map((item) => `<li>${escapeHtml(item.feature_type || "unknown")}: ${money(item.cost_ngn)} across ${escapeHtml(item.requests)} requests</li>`)
         .join("")}</ul>`
     : `<p class="muted">No feature cost data yet.</p>`;
   const userList = topUsers.length
     ? `<ul class="clean-list">${topUsers
         .slice(0, 5)
-        .map((item) => `<li>${escapeHtml(item.user_id || "anonymous")}: ${moneyUsd(item.cost_usd)} ${Number(item.blocked_requests || 0) ? `(${item.blocked_requests} blocked)` : ""}</li>`)
+        .map((item) => `<li>${escapeHtml(item.user_id || "anonymous")}: ${money(item.cost_ngn)} ${Number(item.blocked_requests || 0) ? `(${item.blocked_requests} blocked)` : ""}</li>`)
         .join("")}</ul>`
     : `<p class="muted">No top user data yet.</p>`;
-  return `<article class="card stack"><div class="card-header"><div><h2>AI Cost Dashboard</h2><p class="muted">Gemini spend, cache efficiency, budget enforcement, and abuse signals.</p></div><span class="badge ${dashboard.emergencyThrottle ? "badge-error" : "badge-success"}">${dashboard.emergencyThrottle ? "Throttled" : "Active"}</span></div><div class="usage-meter"><div class="card-header"><div><p class="caption">Monthly Gemini budget</p><strong>${moneyUsd(spend)} spent</strong></div><span class="badge">${budget ? `${budgetPercent}% of ${moneyUsd(budget)}` : "No budget"}</span></div><div class="meter-track"><span style="width:${budgetPercent}%"></span></div></div><div class="grid grid-3">${metricTile("Forecast Burn", "trending_up", moneyUsd(dashboard.forecastedBurnRateUsd || 0))}${metricTile("Cache Hit Rate", "cached", `${dashboard.cacheHitRate || 0}%`)}${metricTile("Blocked Requests", "block", String(summary.blocked_requests || 0))}</div><div class="grid grid-2"><div><h3>Cost Per Feature</h3>${featureList}</div><div><h3>Top AI Users</h3>${userList}</div></div></article>`;
+  return `<article class="card stack"><div class="card-header"><div><h2>AI Cost Dashboard</h2><p class="muted">Gemini spend, cache efficiency, budget enforcement, and abuse signals.</p></div><span class="badge ${dashboard.emergencyThrottle ? "badge-error" : "badge-success"}">${dashboard.emergencyThrottle ? "Throttled" : "Active"}</span></div><div class="usage-meter"><div class="card-header"><div><p class="caption">Monthly Gemini budget</p><strong>${money(spend)} spent</strong></div><span class="badge">${budget ? `${budgetPercent}% of ${money(budget)}` : "No budget"}</span></div><div class="meter-track"><span style="width:${budgetPercent}%"></span></div></div><div class="grid grid-3">${metricTile("Forecast Burn", "trending_up", money(dashboard.forecastedBurnRateNaira || 0))}${metricTile("Cache Hit Rate", "cached", `${dashboard.cacheHitRate || 0}%`)}${metricTile("Blocked Requests", "block", String(summary.blocked_requests || 0))}</div><div class="grid grid-2"><div><h3>Cost Per Feature</h3>${featureList}</div><div><h3>Top AI Users</h3>${userList}</div></div></article>`;
 }
 
 function renderUserItem(user) {
@@ -142,4 +233,3 @@ function renderApplicationItem(application) {
   const name = [application.first_name, application.last_name].filter(Boolean).join(" ") || application.email || "Doctor applicant";
   return `<article class="card stack"><div class="card-header"><div><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></div></article>`;
 }
-

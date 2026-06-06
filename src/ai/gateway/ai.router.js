@@ -75,7 +75,7 @@ export const aiGateway = {
         metadata: { ...metadata, cacheKey, cacheLayer: "memory" },
         safetyFlags: safety.flags
       });
-      return { text: cached, model, cacheHit: true, requestId, cost: { estimatedUsd: 0 } };
+      return { text: cached, model, cacheHit: true, requestId, cost: { estimatedNaira: 0 } };
     }
 
     const persistentCache = await aiUsageRepository.findCache(cacheKey);
@@ -94,14 +94,14 @@ export const aiGateway = {
         metadata: { ...metadata, cacheKey, cacheLayer: "database" },
         safetyFlags: safety.flags
       });
-      return { text: persistentCache.response_text, model, cacheHit: true, requestId, cost: { estimatedUsd: 0 } };
+      return { text: persistentCache.response_text, model, cacheHit: true, requestId, cost: { estimatedNaira: 0 } };
     }
 
     const estimated = estimateUsage({ prompt: optimizedPrompt, model });
     await assertBudget({
       userId: user?.id,
       estimatedCost: estimated.costEstimate,
-      estimatedCostUsd: estimated.costUsd,
+      estimatedCostNaira: estimated.costNaira,
       endpoint,
       featureType,
       model,

@@ -1,7 +1,13 @@
 import { z } from "zod";
 
 export const checkoutSchema = z.object({
-  planCode: z.enum(["PREMIUM_MONTHLY", "PREMIUM_ANNUAL"])
+  planCode: z.enum(["BASIC_MONTHLY", "PREMIUM_MONTHLY"]),
+  couponCode: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^MED-[A-Z0-9]{6,12}$/)
+    .optional()
 });
 
 export const paymentReferenceSchema = z.object({
