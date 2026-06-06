@@ -10,6 +10,7 @@ import { up as chat } from "./chat.js";
 import { up as auditLogs } from "./audit_logs.js";
 import { up as legalPrivacy } from "./legal_privacy.js";
 import { up as medicalKnowledge } from "./medical_knowledge.js";
+import { up as pubmed } from "./pubmed.js";
 
 export const migrations = [
   ["users", users],
@@ -23,5 +24,6 @@ export const migrations = [
   ["chat", chat],
   ["audit_logs", auditLogs],
   ["legal_privacy", legalPrivacy],
-  ["medical_knowledge", medicalKnowledge]
+  ["medical_knowledge", medicalKnowledge],
+  ["pubmed", pubmed]
 ];

@@ -20,6 +20,7 @@
     "normalize:public": "node scripts/normalize-public.mjs",
     "audit:integrity": "node scripts/integrity-audit.mjs",
     "ingest:medlineplus": "node scripts/ingest-medlineplus.mjs",
+    "ingest:pubmed": "node scripts/ingest-pubmed.mjs",
     "smoke:frontend": "node scripts/verify-frontend.mjs",
     "lint": "eslint . --ext .js,.mjs,.cjs",
     "test": "vitest run",
