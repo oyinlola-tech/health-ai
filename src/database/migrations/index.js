@@ -13,6 +13,7 @@ import { up as medicalKnowledge } from "./medical_knowledge.js";
 import { up as pubmed } from "./pubmed.js";
 import { up as kaggleMedicalData } from "./kaggle_medical_data.js";
 import { up as promotions } from "./promotions.js";
+import { up as controlledDatasetSources } from "./controlled_dataset_sources.js";
 
 export const migrations = [
   ["users", users],
@@ -29,5 +30,6 @@ export const migrations = [
   ["medical_knowledge", medicalKnowledge],
   ["pubmed", pubmed],
   ["kaggle_medical_data", kaggleMedicalData],
-  ["promotions", promotions]
+  ["promotions", promotions],
+  ["controlled_dataset_sources", controlledDatasetSources]
 ];

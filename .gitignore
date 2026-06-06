@@ -18,6 +18,7 @@ AGENTS.md
 datasets/raw/
 datasets/extracted/
 datasets/processed/
+datasets/kaggle-pipeline/
 
 # Local logs
 .server.log
