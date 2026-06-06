@@ -32,8 +32,6 @@ src/uploads/*
 !uploads/cv/.gitkeep
 !uploads/documents/.gitkeep
 !src/uploads/.gitkeep
-scripts
-
 
 # OS/editor noise
 .DS_Store

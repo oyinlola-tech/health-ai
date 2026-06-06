@@ -7,7 +7,7 @@ export default [
     ignores: ["node_modules/**", "coverage/**", "public/**/*.html"]
   },
   {
-    files: ["**/*.js", "**/*.mjs"],
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs"],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: "module",

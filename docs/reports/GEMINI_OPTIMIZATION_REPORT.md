@@ -25,7 +25,7 @@ Before Gemini:
 Implemented two cache layers:
 
 - in-memory LRU cache for fast repeated requests
-- persistent PostgreSQL cache in `ai_cache_store`
+- persistent MySQL cache in `ai_cache_store`
 
 Cache keys include:
 
@@ -40,4 +40,3 @@ Cache hits are logged with zero Gemini cost.
 ## Failure Logging
 
 Provider or schema failures are recorded as failed AI usage logs with request id, latency, prompt hash, and feature metadata.
-

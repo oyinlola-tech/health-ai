@@ -1,6 +1,6 @@
 # Integrity Audit Report
 
-Generated: 2026-06-06T07:55:20.633Z
+Generated: 2026-06-06T08:45:37.003Z
 
 ## Page Connectivity Map
 
@@ -24,7 +24,7 @@ Generated: 2026-06-06T07:55:20.633Z
 7. Unused API Report: Shared frontend API modules delegate to /assets/js/http.js and are retained for page-local imports.
 8. Unused Backend Route Report: None found; all route modules are mounted from src/routes/index.js.
 9. Orphaned Page Report: None
-10. Missing Feature Report: Static audit complete; runtime feature verification depends on a configured PostgreSQL database and AI/payment provider credentials.
+10. Missing Feature Report: Static audit complete; runtime feature verification depends on a configured MySQL/AMPPS database and AI/payment provider credentials.
 
 ## Gates
 

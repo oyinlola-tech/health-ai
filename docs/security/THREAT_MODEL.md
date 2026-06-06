@@ -5,7 +5,7 @@
 In scope:
 
 - Express API server
-- PostgreSQL-backed repositories
+- MySQL-backed repositories
 - AI/Gemini gateway
 - OCR/report upload flow
 - OPay payment flow
@@ -34,7 +34,7 @@ Out of scope:
 
 - Browser to Express API over HTTPS in production
 - Browser Socket.io client to realtime server with JWT auth
-- Express API to PostgreSQL with parameterized queries
+- Express API to MySQL with parameterized queries
 - Express API to OPay with signed requests/webhooks
 - Express API to Gemini through backend-only gateway
 - Upload parser/OCR boundary for attacker-supplied files
@@ -126,4 +126,3 @@ Controls added:
 - Access tokens remain JavaScript-readable in `sessionStorage`.
 - Append-only/tamper-resistant audit log storage is an infrastructure requirement not visible in repo code.
 - HSTS/TLS deployment posture must be validated outside the app.
-

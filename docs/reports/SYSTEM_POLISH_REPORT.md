@@ -36,4 +36,4 @@ git diff --check
 
 ## Migration Note
 
-`npm.cmd run migrate` was attempted, but the local PostgreSQL server rejected the configured `postgres` credentials. The migration file was added safely and is ready to run in an environment with valid database credentials.
+`npm.cmd run migrate` was attempted during the earlier polish pass, but local database credentials were unavailable. The migration file was added safely and is ready to run in an environment with valid MySQL/AMPPS credentials.

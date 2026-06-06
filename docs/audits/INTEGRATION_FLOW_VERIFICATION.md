@@ -55,4 +55,4 @@ npm.cmd run migrate
 - Test cases: 33 passed, 10 skipped
 - Dependency audit: 0 vulnerabilities
 - Diff check: passed
-- Migration command: blocked locally by PostgreSQL password authentication for user `postgres`
+- Migration command: blocked locally by unavailable MySQL/AMPPS credentials

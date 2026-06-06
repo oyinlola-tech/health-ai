@@ -40,7 +40,7 @@ Implemented files:
 - OPay credentials are read only from environment variables.
 - Webhook signature validation uses HMAC SHA-512.
 - Webhook replay keys are uniquely indexed.
-- Client totals are ignored; plan price comes from PostgreSQL.
+- Client totals are ignored; plan price comes from MySQL.
 - Payment verification is server-side only.
 - Internal provider requests and secrets are not exposed to the frontend.
 
@@ -53,4 +53,3 @@ Implemented files:
 - `OPAY_WEBHOOK_SECRET`
 - `OPAY_COUNTRY`
 - `OPAY_CURRENCY`
-

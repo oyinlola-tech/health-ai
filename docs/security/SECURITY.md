@@ -25,6 +25,6 @@ AI responses are stored and labeled as educational support. Legal policies and c
 
 - Replace all example secrets before production.
 - Use HTTPS on the VPS.
-- Use a managed backup strategy for PostgreSQL and uploads.
+- Use a managed backup strategy for MySQL and uploads.
 - Configure SMTP credentials and Gemini API key through environment variables.
 - Review local healthcare compliance obligations before processing real patient data.

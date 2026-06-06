@@ -20,7 +20,7 @@
     "normalize:public": "node scripts/normalize-public.mjs",
     "audit:integrity": "node scripts/integrity-audit.mjs",
     "smoke:frontend": "node scripts/verify-frontend.mjs",
-    "lint": "eslint . --ext .js,.mjs",
+    "lint": "eslint . --ext .js,.mjs,.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:integration": "RUN_INTEGRATION_TESTS=true vitest run tests/integration"
