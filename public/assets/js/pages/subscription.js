@@ -17,6 +17,16 @@ function renderPlanCard(plan, currentPlan) {
   </article>`;
 }
 
+function safeCheckoutUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    if (!["http:", "https:"].includes(url.protocol)) return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
 async function renderSubscription() {
   const meta = routeTitle("/subscription");
   setMain(`${pageHeader(meta)}${loadingState("Loading subscription")}`);
@@ -54,7 +64,9 @@ function bindPlanButtons() {
       }
       try {
         const response = await apiRequest("/subscriptions/checkout", { method: "POST", body: { planCode: button.dataset.planCode } });
-        window.location.assign(response.data?.checkoutUrl || response.checkoutUrl);
+        const checkoutUrl = safeCheckoutUrl(response.data?.checkoutUrl || response.checkoutUrl);
+        if (!checkoutUrl) throw new Error("Invalid checkout URL.");
+        window.location.assign(checkoutUrl);
       } catch {
         button.disabled = false;
         if (message) {
@@ -111,4 +123,3 @@ async function renderCancelSubscription() {
     }
   });
 }
-
