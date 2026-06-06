@@ -222,6 +222,7 @@ async function upsertLabRanges(connection, sourceId, rows) {
 }
 
 async function insertRiskFactors(connection, sourceId, conditionId, rows) {
+  await connection.execute("delete from disease_risk_factors where source_id = ?", [sourceId]);
   let inserted = 0;
   const batchSize = 250;
   for (let offset = 0; offset < rows.length; offset += batchSize) {
@@ -261,6 +262,7 @@ async function insertRiskFactors(connection, sourceId, conditionId, rows) {
 }
 
 async function insertSymptoms(connection, sourceId, conditionId, rows, category) {
+  await connection.execute("delete from medical_symptoms where source_id = ?", [sourceId]);
   if (category !== "symptoms") return 0;
   const names = new Set();
   for (const row of rows) {
