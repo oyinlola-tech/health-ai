@@ -1,5 +1,4 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
-import crypto from "node:crypto";
 import path from "node:path";
 import zlib from "node:zlib";
 import { JSDOM } from "jsdom";
@@ -22,10 +21,6 @@ function text(node) {
 
 function cleanDefinition(value) {
   return String(value || "").trim().replace(/^>\s*/, "").trim();
-}
-
-function sha256(value) {
-  return crypto.createHash("sha256").update(String(value || "")).digest("hex");
 }
 
 function parseXml(source) {
@@ -146,10 +141,10 @@ async function upsertTopics(connection, topics) {
   for (const topic of topics) {
     await connection.execute(
       `insert into medlineplus_topics (
-        id, medlineplus_id, title, summary, url, url_hash, related_topics, nih_institute,
+        id, medlineplus_id, title, summary, url, related_topics, nih_institute,
         language, categories, source_url, source_generated_at
       )
-      values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       on duplicate key update
         medlineplus_id = values(medlineplus_id),
         title = values(title),
@@ -167,7 +162,6 @@ async function upsertTopics(connection, topics) {
         topic.title,
         topic.summary,
         topic.url,
-        sha256(topic.url),
         JSON.stringify(topic.relatedTopics),
         topic.nihInstitute,
         topic.language,
@@ -185,13 +179,13 @@ async function upsertTerms(connection, terms) {
   let imported = 0;
   for (const term of terms) {
     await connection.execute(
-      `insert into medical_terms (id, term, term_hash, definition, source, source_url, category)
-       values (?, ?, ?, ?, ?, ?, ?)
+      `insert into medical_terms (id, term, definition, source, source_url, category)
+       values (?, ?, ?, ?, ?, ?)
        on duplicate key update
         definition = values(definition),
         source_url = values(source_url),
         updated_at = now()`,
-      [createId(), term.term, sha256(`${term.term}|${term.source}|${term.category}`), term.definition, term.source, term.sourceUrl, term.category]
+      [createId(), term.term, term.definition, term.source, term.sourceUrl, term.category]
     );
     imported += 1;
   }

@@ -8,7 +8,6 @@ export async function up(connection) {
       title varchar(500) not null,
       summary ${text} null,
       url varchar(900) not null,
-      url_hash char(64) not null,
       related_topics ${json} null,
       nih_institute varchar(500) null,
       language varchar(80) not null,
@@ -16,22 +15,21 @@ export async function up(connection) {
       source_url varchar(900) not null,
       source_generated_at varchar(120) null,
       ${timestamps()},
-      unique key uq_medlineplus_topics_url_hash (url_hash),
+      unique key uq_medlineplus_topics_url (url),
       index idx_medlineplus_topics_language (language),
       index idx_medlineplus_topics_title (title)
     )`,
     `create table if not exists medical_terms (
       id ${id} primary key,
       term varchar(500) not null,
-      term_hash char(64) not null,
       definition ${text} not null,
       source varchar(500) null,
       source_url varchar(900) null,
       category varchar(120) null,
       created_at datetime not null default current_timestamp,
       updated_at datetime not null default current_timestamp on update current_timestamp,
-      unique key uq_medical_terms_term_hash (term_hash),
-      index idx_medical_terms_term (term(191))
+      unique key uq_medical_terms_term_source_category (term, source, category),
+      index idx_medical_terms_term (term)
     )`
   ]);
 }

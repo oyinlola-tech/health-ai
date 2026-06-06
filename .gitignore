@@ -42,3 +42,5 @@ Thumbs.db
 
 test/*
 tests/
+.kaggle/
+kaggle.json
