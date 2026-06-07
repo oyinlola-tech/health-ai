@@ -237,6 +237,8 @@ textarea:disabled {
   border-radius: var(--radius-medium);
   background: var(--color-surface);
   box-shadow: var(--shadow-dropdown);
+  transform-origin: top right;
+  animation: dropdownReveal 180ms ease-out both;
 }
 
 .dropdown-header {
@@ -308,6 +310,7 @@ textarea:disabled {
 .page-main {
   flex: 1;
   padding: 48px 0 64px;
+  animation: pageReveal 260ms ease-out both;
 }
 
 .page-section {
@@ -494,6 +497,42 @@ p {
 .loading-state,
 .table-card {
   padding: 24px;
+}
+
+.page-section > .card,
+.page-section > .form-card,
+.page-section > .table-card,
+.grid > .card,
+.stack > .card,
+.admin-list > *,
+.admin-compact-list > *,
+.knowledge-result,
+.knowledge-detail-card {
+  animation: softRise 320ms ease-out both;
+}
+
+.grid > .card:nth-child(2),
+.stack > .card:nth-child(2),
+.admin-list > *:nth-child(2),
+.admin-compact-list > *:nth-child(2),
+.knowledge-result:nth-child(2) {
+  animation-delay: 45ms;
+}
+
+.grid > .card:nth-child(3),
+.stack > .card:nth-child(3),
+.admin-list > *:nth-child(3),
+.admin-compact-list > *:nth-child(3),
+.knowledge-result:nth-child(3) {
+  animation-delay: 90ms;
+}
+
+.grid > .card:nth-child(4),
+.stack > .card:nth-child(4),
+.admin-list > *:nth-child(4),
+.admin-compact-list > *:nth-child(4),
+.knowledge-result:nth-child(4) {
+  animation-delay: 135ms;
 }
 
 .card-accent {
@@ -1136,6 +1175,7 @@ thead th:last-child {
   border-radius: var(--radius-medium);
   background: var(--color-background);
   border: 1px solid var(--color-border-warm);
+  animation: messageIn 220ms ease-out both;
 }
 
 .message-bubble[data-role="user"] {
@@ -1203,6 +1243,7 @@ thead th:last-child {
   background: var(--color-surface);
   color: var(--color-primary);
   box-shadow: var(--shadow-dropdown);
+  animation: toastIn 240ms ease-out both;
 }
 
 .empty-state,
@@ -1229,6 +1270,7 @@ thead th:last-child {
   border-radius: var(--radius-medium);
   background: rgba(255, 110, 92, 0.12);
   color: var(--color-accent);
+  animation: quietPulse 2.8s ease-in-out infinite;
 }
 
 .skeleton-grid {
@@ -1415,6 +1457,77 @@ thead th:last-child {
 
   100% {
     background-position: -200% 0;
+  }
+}
+
+@keyframes pageReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dropdownReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes quietPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 110, 92, 0.18);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 110, 92, 0);
   }
 }
 

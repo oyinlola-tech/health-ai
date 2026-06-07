@@ -3,63 +3,58 @@
 ## AI-Powered Medical Intelligence Platform
 
 <p align="center">
-  <a href="https://lottiefiles.com/animations/medical-healthcare-icon-animation-v7z9Z5W5jS" aria-label="Optional healthcare animation reference">
-    <img src="https://img.shields.io/badge/Animated%20Healthcare%20Visual-LottieFiles-FF6E5C?style=for-the-badge" alt="Animated healthcare visual" />
-  </a>
+  <strong>Understand medical reports, continue AI-supported health conversations, and connect with verified doctors.</strong>
 </p>
 
 <p align="center">
-  <strong>Understand your medical reports. Connect with verified doctors. Powered by trusted medical intelligence.</strong>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Frontend-HTML%20%2B%20Tailwind%20CSS%20%2B%20JavaScript-2B2724" alt="Frontend stack" />
-  <img src="https://img.shields.io/badge/Backend-Node.js-22C55E" alt="Backend stack" />
+  <img src="https://img.shields.io/badge/Frontend-HTML%20%2B%20CSS%20%2B%20JavaScript-2B2724" alt="Frontend stack" />
+  <img src="https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-22C55E" alt="Backend stack" />
   <img src="https://img.shields.io/badge/Database-MySQL%20%28AMPPS%29-F59E0B" alt="Database stack" />
   <img src="https://img.shields.io/badge/AI-Gemini%20via%20Backend-FF6E5C" alt="AI stack" />
-  <img src="https://img.shields.io/badge/Security-RBAC%20%2B%20Consent%20%2B%20Rate%20Limits-EF4444" alt="Security controls" />
+  <img src="https://img.shields.io/badge/Security-RBAC%20%2B%20CSRF%20%2B%20Audit-EF4444" alt="Security controls" />
 </p>
 
-MedExplain AI is a secure healthcare workspace for medical report explanation, trusted-source AI support, verified doctor consultations, doctor recruitment, OPay subscriptions, and user-controlled consent.
+MedExplain AI is a secure healthcare workspace for medical report explanation, trusted-source AI support, verified doctor consultations, doctor recruitment, OPay subscriptions, notifications, and user-controlled privacy settings.
 
 ## Features
 
-- 🧠 AI Medical Report Explanation
-- 🩺 Doctor Verification System
-- 💳 Secure OPay Payments
-- 💬 Real-time Chat & Consultation
-- 📚 RAG-based Medical Knowledge System
-- 🔐 Consent & Privacy Control Center
+- AI medical report explanation.
+- AI chat with persisted conversation history.
+- Report upload, report history, report detail, and analysis workflow.
+- Verified doctor marketplace, appointments, and doctor workspace.
+- Admin workspace for users, doctors, reports, subscriptions, payments, coupons, analytics, and audit logs.
+- OPay subscriptions with a safe development simulator.
+- RAG-based medical knowledge from MedlinePlus and PubMed imports.
+- Consent, privacy, settings, notification, and billing-address controls.
+- Accessible UI motion for page entry, cards, dropdowns, toasts, loading states, and chat messages.
 
 ## Tech Stack
 
 | Layer | Technology |
 | --- | --- |
-| Frontend | HTML, Tailwind CSS, JavaScript |
+| Frontend | HTML, CSS, JavaScript |
 | Backend | Node.js, Express |
 | Database | MySQL, AMPPS-compatible local setup |
 | AI | Gemini API through backend services only |
 | Realtime | WebSockets / Socket.IO |
-| Security | Rate limiting, RBAC, input validation, CSRF, audit logs |
+| Security | Rate limiting, RBAC, CSRF, input validation, upload validation, audit logs |
 | Storage | Local file system under `/uploads` |
 
 ## Architecture
 
 ```text
-Frontend
+Frontend SPA
   |
   v
 Backend API -----> MySQL
   |                 |
-  |                 +--> Consent, audit, reports, payments, jobs
+  |                 +--> users, reports, chat, subscriptions, payments, audit logs
   |
-  +--> Gemini AI through RAG Layer
-  |       |
-  |       +--> Trusted medical sources only
+  +--> Gemini AI through backend services and trusted-source context
   |
-  +--> OPay Payment Gateway
+  +--> OPay payment gateway or development simulator
   |
-  +--> WebSocket Server
+  +--> WebSocket server
 ```
 
 ## Project Flow
@@ -67,31 +62,51 @@ Backend API -----> MySQL
 Patient:
 
 ```text
-Register -> Grant consent -> Upload report -> AI analysis -> Doctor consultation -> Payment -> History tracking
+Register -> Upload report -> AI analysis -> Chat support -> Subscription/history tracking
 ```
 
 Doctor:
 
 ```text
-Apply -> Admin review -> Verification -> Consult patients -> Receive notifications
+Apply or admin-created account -> Verification -> Dashboard -> Appointments -> Notifications
 ```
 
 Admin:
 
 ```text
-Manage system -> Post jobs -> Verify doctors -> Monitor AI usage and payments -> Review audit logs
+Login -> Dashboard -> Manage users/doctors/reports -> Monitor payments/subscriptions/AI usage -> Review audit logs
 ```
 
 ## Security Features
 
 - Rate limiting for authentication, AI, payments, uploads, webhooks, and bookings.
-- Consent enforcement for medical data processing, AI analysis, doctor sharing, and payment processing.
-- Sensitive data handling through backend-controlled services and server-side validation.
+- CSRF protection for unsafe API requests.
 - Role-based access control for patients, doctors, and admins.
-- Input validation with Zod and SQL injection prevention through parameterized queries.
+- Consent and privacy controls for data processing preferences.
+- Sensitive data handling through backend-controlled services and server-side validation.
+- SQL injection prevention through parameterized queries.
 - Secure file upload validation with MIME, extension, path, size, magic-byte, and malware-signature checks.
 - OPay payment verification is server-side only.
 - RAG context is limited to trusted medical sources.
+
+## Local Development Mode
+
+Local development can run without live OPay or SMTP credentials.
+
+```env
+NODE_ENV=development
+OPAY_MOCK_MODE=true
+```
+
+In this mode:
+
+- OPay API calls are not made.
+- Payment references and successful verification are simulated through backend business logic.
+- Payment records, subscriptions, entitlements, analytics, email events, and audit logs still run.
+- SMTP delivery is skipped safely when SMTP credentials are absent.
+- Authentication, authorization, CSRF, rate limiting, database validation, and entitlement checks are not bypassed.
+
+Production ignores OPay mock mode and must have real payment credentials configured.
 
 ## Legal And Privacy
 
@@ -102,7 +117,7 @@ The platform includes route-connected legal and trust pages:
 - `/data-policy`
 - `/consent`
 
-Users can grant, revoke, view, and download consent history. Revoking consent immediately blocks affected processing paths.
+Users can manage privacy and notification preferences from `/settings`.
 
 ## Setup
 
@@ -112,7 +127,7 @@ Users can grant, revoke, view, and download consent history. Revoking consent im
 npm install
 ```
 
-2. Create `.env` from `.env.example` and configure:
+2. Create `.env` from `.env.example` and configure local values:
 
 ```bash
 DB_HOST=127.0.0.1
@@ -125,11 +140,11 @@ ADMIN_PASSWORD=change-this-password
 JWT_ACCESS_SECRET=replace-with-a-strong-secret
 JWT_REFRESH_SECRET=replace-with-a-strong-secret
 GEMINI_API_KEY=your-gemini-key
-OPAY_MERCHANT_ID=your-opay-merchant-id
-OPAY_PUBLIC_KEY=your-opay-public-key
-OPAY_SECRET_KEY=your-opay-secret-key
-OPAY_WEBHOOK_SECRET=your-opay-webhook-secret
+GEMINI_FLASH_MODEL=gemini-2.5-flash
+OPAY_MOCK_MODE=true
 ```
+
+Production also requires live OPay credentials, webhook secrets, cookie/CSRF secrets, encryption secrets, and SMTP settings.
 
 3. Bootstrap database and seed required system data:
 
@@ -159,20 +174,39 @@ docker compose up
 
 ```bash
 npm run lint
+npm run smoke:frontend
+npm run audit:integrity
 npm test
 ```
 
 Health check:
 
 ```bash
-curl http://localhost:3000/health
+curl http://localhost:3000/api/health
+```
+
+Admin-only Gemini diagnostic:
+
+```text
+POST /api/system/test-gemini
 ```
 
 ## Documentation
 
 Project reports, audits, architecture notes, implementation summaries, API specs, security documents, and decisions live in [`docs/`](docs/README.md).
 
+Recent recovery reports are available at the project root:
+
+- [`SYSTEM_INVENTORY.md`](SYSTEM_INVENTORY.md)
+- [`DATABASE_HEALTH_REPORT.md`](DATABASE_HEALTH_REPORT.md)
+- [`AUTH_RECOVERY_REPORT.md`](AUTH_RECOVERY_REPORT.md)
+- [`ROLE_VALIDATION_REPORT.md`](ROLE_VALIDATION_REPORT.md)
+- [`FRONTEND_REPAIR_REPORT.md`](FRONTEND_REPAIR_REPORT.md)
+- [`API_VALIDATION_REPORT.md`](API_VALIDATION_REPORT.md)
+- [`GEMINI_VALIDATION_REPORT.md`](GEMINI_VALIDATION_REPORT.md)
+- [`SYSTEM_VALIDATION_REPORT.md`](SYSTEM_VALIDATION_REPORT.md)
+- [`FINAL_RELEASE_READINESS_REPORT.md`](FINAL_RELEASE_READINESS_REPORT.md)
+
 ## Disclaimer
 
 MedExplain AI is for informational support only. It does not replace medical professionals, diagnose conditions, prescribe treatment, or provide emergency instructions. Users should consult qualified clinicians for medical decisions and seek emergency care through appropriate local emergency services when needed.
-
