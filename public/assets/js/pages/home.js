@@ -110,7 +110,7 @@ function bindAuthForm() {
       setAccessToken(response.data?.accessToken);
       localStorage.setItem("medexplain_onboarding_seen", "true");
       showFormMessage(form, "success", "Success. Redirecting to your dashboard.");
-      window.setTimeout(() => window.location.assign(authRedirectTarget(response.data?.user)), 400);
+      window.setTimeout(() => window.location.assign(authRedirectTarget(response.data?.user, response.data?.accessToken)), 400);
     } catch {
       showFormMessage(form, "error", "We could not complete that request. Check your details and try again.");
     } finally {
@@ -119,20 +119,21 @@ function bindAuthForm() {
   });
 }
 
-function authRedirectTarget(user = {}) {
+function authRedirectTarget(user = {}, accessToken = getAccessToken()) {
   const next = new URLSearchParams(location.search).get("next");
   const blocked = new Set(["/login", "/register", "/splash", "/onboarding", "/chat"]);
-  const roleHome = String(user.role || "").toLowerCase() === "admin" ? "/admin" : "/dashboard";
+  const tokenRole = String(decodeAccessTokenPayload(accessToken).role || "").toLowerCase();
+  const isAdminUser = String(user.role || "").toLowerCase() === "admin" || tokenRole === "admin";
+  const roleHome = isAdminUser ? "/admin" : "/dashboard";
   if (!next) return roleHome;
   try {
     const target = new URL(next, window.location.origin);
     const normalized = normalizePath(target.pathname);
-    const isAdmin = String(user.role || "").toLowerCase() === "admin";
     const allowed =
       target.origin === window.location.origin &&
       !blocked.has(normalized) &&
-      (pageMeta[normalized] || normalized === "/report/:id" || normalized === "/doctor/:id" || doctorWorkspacePaths.has(normalized) || (isAdmin && normalized.startsWith("/admin")));
-    if (isAdmin && !normalized.startsWith("/admin")) return "/admin";
+      (pageMeta[normalized] || normalized === "/report/:id" || normalized === "/doctor/:id" || doctorWorkspacePaths.has(normalized) || (isAdminUser && normalized.startsWith("/admin")));
+    if (isAdminUser && !normalized.startsWith("/admin")) return "/admin";
     return allowed ? `${target.pathname}${target.search}` : roleHome;
   } catch {
     return roleHome;

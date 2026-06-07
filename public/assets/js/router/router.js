@@ -113,9 +113,9 @@ function bindRealtimeUpdates() {
 function route() {
   document.title = `${routeTitle(state.path).title} | MedExplain AI`;
   if (requiresSignedInUser(state.path) && !getAccessToken()) return redirectTo(loginRedirectPath());
-  if (["/login", "/register", "/splash", "/onboarding"].includes(state.path) && getAccessToken()) return redirectTo("/dashboard");
+  if (["/login", "/register", "/splash", "/onboarding"].includes(state.path) && getAccessToken()) return redirectTo(signedInHomePath());
   if (state.path === "/" && !getAccessToken()) return renderSplash();
-  if (state.path === "/") return redirectTo("/dashboard");
+  if (state.path === "/") return redirectTo(signedInHomePath());
   if (state.path === "/splash") return renderSplash();
   if (state.path === "/onboarding") return renderOnboarding();
   if (state.path === "/login") return renderAuth("login");

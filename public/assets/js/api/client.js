@@ -37,6 +37,25 @@ function clearAccessToken() {
   sessionStorage.removeItem(appConfig.accessTokenKey);
 }
 
+function decodeAccessTokenPayload(token = getAccessToken()) {
+  if (!token || !token.includes(".")) return {};
+  try {
+    const payload = token.split(".")[1].replaceAll("-", "+").replaceAll("_", "/");
+    const padded = payload.padEnd(Math.ceil(payload.length / 4) * 4, "=");
+    return JSON.parse(atob(padded));
+  } catch {
+    return {};
+  }
+}
+
+function currentUserRole() {
+  return String(decodeAccessTokenPayload().role || "").toLowerCase();
+}
+
+function signedInHomePath() {
+  return currentUserRole() === "admin" ? "/admin" : "/dashboard";
+}
+
 async function ensureCsrfToken() {
   if (csrfToken) return csrfToken;
   const response = await fetch(`${appConfig.apiBaseUrl}/auth/csrf`, { credentials: "include" });
