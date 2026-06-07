@@ -125,7 +125,7 @@ function bindAuthForm() {
 
 function authRedirectTarget() {
   const next = new URLSearchParams(location.search).get("next");
-  const blocked = new Set(["/login", "/register", "/splash", "/onboarding"]);
+  const blocked = new Set(["/login", "/register", "/splash", "/onboarding", "/chat"]);
   if (!next || !next.startsWith("/") || next.startsWith("//") || blocked.has(next.split("?")[0])) return "/dashboard";
   return next;
 }
@@ -134,12 +134,11 @@ async function renderPatientDashboard() {
   const meta = routeTitle("/dashboard");
   setMain(`${pageHeader(meta)}${loadingState("Loading dashboard")}`);
   try {
-    const [reports, appointments, health, subscription, aiUsage] = await Promise.allSettled([
+    const [reports, appointments, health, subscription] = await Promise.allSettled([
       cachedRequest("reports", "/reports"),
       cachedRequest("appointments", "/appointments"),
       cachedRequest("health", "/health-history"),
-      cachedRequest("subscription", "/subscriptions/me"),
-      cachedRequest("ai-usage-me", "/ai/usage/me")
+      cachedRequest("subscription", "/subscriptions/me")
     ]);
     const reportItems = reports.value?.data?.reports || [];
     const appointmentItems = appointments.value?.data?.appointments || [];
@@ -152,13 +151,9 @@ async function renderPatientDashboard() {
         ${summaryCard("Upcoming Consultations", "calendar_month", appointmentItems.length ? `${appointmentItems.length} appointments` : "No appointments booked", "/doctors")}
         ${summaryCard("Subscription Status", "workspace_premium", subscription.value?.data?.plan || "Plan unavailable", "/subscription")}
       </section>
-      ${renderUsageOverview(subscription.value?.data || {})}
-      ${renderAiUsageOverview(aiUsage.value?.data?.usage || {})}
       <section class="grid grid-2">
-        <article class="card card-accent stack"><div class="card-header"><h2>Recent Reports</h2><a class="btn btn-quiet" href="/reports">View reports</a></div>${listCard(reportItems.slice(0, 3), { iconName: "description", title: "No reports yet", description: "Upload a report to receive an AI-assisted explanation.", actionLabel: "Upload report", actionHref: "/reports" }, renderReportItem)}</article>
-        <article class="card stack"><div class="card-header"><h2>AI Insights</h2><a class="btn btn-quiet" href="/chat">Open chat</a></div>${emptyState({ iconName: "psychology", title: "No AI insights yet", description: "Insights appear after reports are analyzed or questions are asked.", actionLabel: "Ask AI", actionHref: "/chat" })}</article>
-        <article class="card stack"><div class="card-header"><h2>Health Trends</h2><a class="btn btn-quiet" href="/profile">Add entry</a></div>${listCard(healthItems.slice(0, 3), { iconName: "monitor_heart", title: "No health trend data", description: "Save health history entries to review them from this dashboard.", actionLabel: "Open profile", actionHref: "/profile" }, renderHealthItem)}</article>
-        <article class="card stack"><div class="card-header"><h2>Messages</h2><a class="btn btn-quiet" href="/chat">Open chat</a></div>${emptyState({ iconName: "mark_chat_unread", title: "No active conversations", description: "Confirmed consultations and AI conversations are listed in the chat workspace.", actionLabel: "Open chat", actionHref: "/chat" })}</article>
+        <article class="card card-accent stack"><div class="card-header"><h2>Recent Reports</h2></div>${listCard(reportItems.slice(0, 3), { iconName: "description", title: "No reports yet", description: "Upload a report to receive an AI-assisted explanation.", actionLabel: "Upload report", actionHref: "/reports" }, renderReportItem)}</article>
+        <article class="card stack"><div class="card-header"><h2>Health Trends</h2></div>${listCard(healthItems.slice(0, 3), { iconName: "monitor_heart", title: "No health trend data", description: "Save health history entries to review them from this dashboard.", actionLabel: "Add health entry", actionHref: "/profile" }, renderHealthItem)}</article>
       </section>
       <section class="card stack"><h2>Quick Actions</h2><div class="actions"><a class="btn btn-primary" href="/reports">${icon("upload_file")}Upload report</a><a class="btn btn-secondary" href="/chat">Ask AI</a><a class="btn btn-secondary" href="/doctors">Book consultation</a></div></section>
     `);
@@ -206,7 +201,7 @@ function renderAiUsageOverview(aiUsage = {}) {
 }
 
 function summaryCard(title, iconName, value, href) {
-  return `<article class="card stack"><div class="card-header"><div><p class="caption">${title}</p><h3>${escapeHtml(value)}</h3></div><div class="icon-tile">${icon(iconName)}</div></div><a class="btn btn-quiet" href="${href}">Open</a></article>`;
+  return `<a class="card stack summary-card" href="${href}"><div class="card-header"><div><p class="caption">${title}</p><h3>${escapeHtml(value)}</h3></div><div class="icon-tile">${icon(iconName)}</div></div></a>`;
 }
 
 function metricTile(title, iconName, value) {
@@ -244,12 +239,13 @@ function reportTitle(report) {
 function renderReportItem(report) {
   const extractionStatus = report.extraction_status || "pending";
   const confidence = confidenceText(report.analysis_confidence);
+  const href = `/report/${report.id || ""}`;
   return `<article class="card stack">
     <div class="card-header">
-      <div><h3>${escapeHtml(reportTitle(report))}</h3><p class="muted">Extraction confidence: ${escapeHtml(confidence)}</p></div>
+      <div><h3><a class="item-title" href="${href}">${escapeHtml(reportTitle(report))}</a></h3><p class="muted">Extraction confidence: ${escapeHtml(confidence)}</p></div>
       <span class="badge ${badgeClassForStatus(extractionStatus)}">${escapeHtml(displayStatus(extractionStatus))}</span>
     </div>
-    <div class="actions"><span class="badge">${escapeHtml(displayStatus(report.status || "uploaded"))}</span><a class="btn btn-quiet" href="/report/${report.id || ""}">Review report</a></div>
+    <div class="actions"><span class="badge">${escapeHtml(displayStatus(report.status || "uploaded"))}</span></div>
   </article>`;
 }
 
