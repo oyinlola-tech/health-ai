@@ -85,11 +85,7 @@ function renderAuth(kind) {
           ${!isLogin ? field("First name", "firstName", "text", true) + field("Last name", "lastName", "text", true) : ""}
           ${field("Email address", "email", "email", true)}
           ${field("Password", "password", "password", true)}
-          ${
-            !isLogin
-              ? `<label class="actions"><input type="checkbox" name="consentPromptLearning" /> <span class="muted">Allow anonymized prompt learning to improve MedExplain AI.</span></label>`
-              : ""
-          }
+          ${!isLogin ? `<p class="muted">By creating an account, you agree to the <a class="item-title" href="/terms">Terms</a> and <a class="item-title" href="/privacy">Privacy Policy</a>.</p>` : ""}
           <button class="btn btn-primary btn-full" type="submit">${isLogin ? "Sign in" : "Create account"}</button>
           <a class="btn btn-secondary btn-full" href="${isLogin ? "/register" : "/login"}">${isLogin ? "Create an account" : "I already have an account"}</a>
         </form>
@@ -107,7 +103,7 @@ function bindAuthForm() {
     const mode = form.dataset.authForm;
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
-    payload.consentPromptLearning = formData.get("consentPromptLearning") === "on";
+    payload.consentPromptLearning = mode === "register";
     setSubmitLoading(form, true);
     try {
       const response = await apiRequest(`/auth/${mode === "login" ? "login" : "register"}`, { method: "POST", body: payload });

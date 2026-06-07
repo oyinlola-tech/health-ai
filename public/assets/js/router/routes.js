@@ -70,7 +70,7 @@ const footerSections = [
   { title: "Company", links: [["About", "/"], ["Contact", "/contact"]] },
   { title: "Product", links: [["Reports", "/reports"], ["Doctors", "/doctors"], ["Doctor careers", "/doctor-careers"], ["Subscription", "/subscription"]] },
   { title: "Resources", links: [["Help", "/help"], ["Medical Knowledge", "/help"], ["Data policy", "/data-policy"]] },
-  { title: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"], ["Consent", "/consent"]] }
+  { title: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"]] }
 ];
 
 const pageMeta = {
@@ -100,7 +100,7 @@ const pageMeta = {
   "/contact": { title: "Contact", description: "Reach the MedExplain AI support team." },
   "/privacy": { title: "Privacy", description: "How MedExplain AI protects and handles personal health information." },
   "/terms": { title: "Terms", description: "Terms for using MedExplain AI." },
-  "/consent": { title: "Consent center", description: "Control medical processing, AI analysis, doctor sharing, and payment permissions." },
+  "/consent": { title: "Account permissions", description: "Review the platform permissions covered by your account terms." },
   "/data-policy": { title: "Data usage transparency", description: "Understand why data is collected and what MedExplain AI does not do with it." },
   "/notifications": { title: "Notification center", description: "Review email, AI, payment, security, and doctor notifications." },
   "/doctor": { title: "Doctor dashboard", description: "Appointments, patient queue, reports, messages, analytics, and settings." },

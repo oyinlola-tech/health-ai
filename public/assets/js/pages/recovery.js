@@ -34,12 +34,12 @@ const recoveryPages = {
     code: "403",
     iconName: "shield_lock",
     title: "You don't have permission to access this area.",
-    description: "Your role or consent settings do not allow this request to continue.",
+    description: "Your role or account permissions do not allow this request to continue.",
     actions: [
       { label: "Return Dashboard", href: "/dashboard", iconName: "dashboard" },
       { label: "Contact Support", href: "/contact", iconName: "support_agent" }
     ],
-    details: ["Patients, doctors, and admins see different protected workspaces.", "Consent revocation can restrict doctor or AI access immediately."]
+    details: ["Patients, doctors, and admins see different protected workspaces.", "Account permissions can restrict doctor or AI access when required."]
   },
   "/error/404": {
     code: "404",
@@ -175,7 +175,7 @@ const recoveryPages = {
       { label: "Choose Another Time", href: "/doctors", iconName: "event" },
       { label: "Retry Booking", action: "retry", iconName: "refresh" }
     ],
-    details: ["Only confirmed appointments appear in your schedule.", "Payment and consent checks must pass before booking is finalized."]
+    details: ["Only confirmed appointments appear in your schedule.", "Payment and account permission checks must pass before booking is finalized."]
   },
   "/error/chat-disconnected": {
     code: "CHAT",
@@ -302,7 +302,7 @@ const emptyPages = {
   "/empty/no-ai-analyses": {
     iconName: "psychology",
     title: "No AI analyses",
-    description: "AI explanations will appear after a report is uploaded and consent is active.",
+    description: "AI explanations will appear after a report is uploaded and your account has access.",
     primary: { label: "Analyze Report", href: "/reports", iconName: "upload_file" },
     secondary: { label: "AI Chat", href: "/chat", iconName: "chat" }
   }
@@ -466,4 +466,3 @@ function bindCountdowns() {
     }, 1000);
   });
 }
-

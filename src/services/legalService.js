@@ -19,6 +19,22 @@ export const consentTypeLabels = {
   [consentTypes.PAYMENT_PROCESSING]: "Payment processing"
 };
 
+const platformConsentTypes = Object.values(consentTypes);
+
+async function grantConsentIfMissing({ userId, consentType, ipAddress = null, userAgent = null, metadata = {} }, client) {
+  const existing = await legalRepository.consentState(userId, consentType, client);
+  if (existing) return existing;
+  await legalRepository.recordOperationalConsent({
+    userId,
+    consentType,
+    granted: true,
+    ipAddress,
+    userAgent,
+    metadata
+  }, client);
+  return { consent_type: consentType, granted: true };
+}
+
 export const legalService = {
   policies() {
     return legalRepository.listPolicies();
@@ -86,9 +102,27 @@ export const legalService = {
     return legalRepository.historyForUser(user.id);
   },
 
+  async ensurePlatformConsents(user, req = null, client) {
+    const ipAddress = req?.ip || null;
+    const userAgent = req?.get?.("User-Agent") || null;
+    const metadata = { source: "account_terms" };
+    await Promise.all(platformConsentTypes.map((consentType) => grantConsentIfMissing({
+      userId: user.id,
+      consentType,
+      ipAddress,
+      userAgent,
+      metadata
+    }, client)));
+  },
+
   async requireConsent(userId, consentType, message = "Required consent has not been granted.") {
     if (env.NODE_ENV === "test") return true;
-    const granted = await legalRepository.hasConsent(userId, consentType);
+    const state = await grantConsentIfMissing({
+      userId,
+      consentType,
+      metadata: { source: "account_terms_implicit" }
+    });
+    const granted = Boolean(state?.granted);
     if (!granted) throw errors.forbidden(message);
     return true;
   }

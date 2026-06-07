@@ -31,7 +31,7 @@ export const authController = {
   },
 
   async register(req, res) {
-    const result = await authService.registerPatient(req.body);
+    const result = await authService.registerPatient(req.body, req);
     setRefreshCookie(res, result.refreshToken);
     return sendSuccess(res, {
       user: result.user,
@@ -41,7 +41,7 @@ export const authController = {
   },
 
   async login(req, res) {
-    const result = await authService.login(req.body);
+    const result = await authService.login(req.body, req);
     setRefreshCookie(res, result.refreshToken);
     await eventTracker.startSession({ user: result.user, req, refreshTokenId: result.refreshTokenId });
     await eventTracker.track({

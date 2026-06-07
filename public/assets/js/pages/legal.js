@@ -62,7 +62,7 @@ function renderStaticPage(path) {
     "/contact": {
       badge: "Support",
       sections: [
-        ["Account help", "Use this path for login, profile, consent, or access issues.", "support_agent", "/profile"],
+        ["Account help", "Use this path for login, profile, or access issues.", "support_agent", "/profile"],
         ["Billing help", "Review subscriptions and payment records before contacting support about OPay transactions.", "receipt_long", "/billing-history"],
         ["Medical data help", "For upload, OCR, or AI explanation issues, include the report title and time of upload.", "description", "/reports"]
       ]
@@ -141,9 +141,9 @@ async function renderSettings() {
             <div class="card-header"><div><h2>Privacy Settings</h2><p class="muted">Privacy preferences are stored with your account metadata.</p></div>${icon("privacy_tip")}</div>
             <div class="form-message" data-form-message hidden></div>
             <div class="field"><label for="profileVisibility">Profile visibility</label><select id="profileVisibility" name="profileVisibility"><option value="private" ${privacy.profileVisibility === "private" ? "selected" : ""}>Private</option><option value="doctors" ${privacy.profileVisibility === "doctors" ? "selected" : ""}>Verified doctors</option></select><span class="field-error" data-error-for="profileVisibility"></span></div>
-            ${settingsCheckbox("allowDoctorSharing", "Allow doctor sharing", privacy.allowDoctorSharing)}
-            ${settingsCheckbox("allowAiAnalysis", "Allow AI analysis", privacy.allowAiAnalysis)}
-            ${settingsCheckbox("allowPromptLearning", "Allow prompt learning", privacy.allowPromptLearning)}
+            ${settingsCheckbox("allowDoctorSharing", "Doctor sharing preference", privacy.allowDoctorSharing)}
+            ${settingsCheckbox("allowAiAnalysis", "AI analysis preference", privacy.allowAiAnalysis)}
+            ${settingsCheckbox("allowPromptLearning", "Prompt learning preference", privacy.allowPromptLearning)}
             <button class="btn btn-primary" type="submit">${icon("save")}Save privacy</button>
           </form>
         </article>
@@ -153,7 +153,7 @@ async function renderSettings() {
           <div><h2>Subscription Settings</h2><p class="muted">${escapeHtml(subscription.plan || "FREE")} access is managed through the billing workspace.</p></div>
           <span class="badge">${escapeHtml(subscription.subscription?.status || subscription.trial?.status || "free")}</span>
         </div>
-        <div class="actions"><a class="btn btn-secondary" href="/subscription">Manage plan</a><a class="btn btn-secondary" href="/billing-history">Billing history</a><a class="btn btn-secondary" href="/consent">Consent center</a></div>
+        <div class="actions"><a class="btn btn-secondary" href="/subscription">Manage plan</a><a class="btn btn-secondary" href="/billing-history">Billing history</a></div>
       </section>
     `);
     bindSettingsForms();
@@ -248,6 +248,7 @@ const legalFallbacks = {
   terms: [
     "MedExplain AI provides AI medical report explanations, verified doctor marketplace workflows, OPay-backed payments, real-time consultation tools, and privacy controls.",
     "AI explanations are informational only. MedExplain AI is not a doctor, does not diagnose conditions, does not prescribe treatment, and does not replace emergency or professional medical care.",
+    "Creating an account means you agree to the platform permissions required to operate MedExplain AI, including medical report processing, AI analysis, doctor sharing for consultation workflows, payment processing, audit logging, and account security checks.",
     "Users must provide accurate information, upload only records they are authorized to use, keep account credentials safe, and avoid abuse, scraping, impersonation, fraud, prompt-injection attempts, or unauthorized access.",
     "Payments are processed through OPay and premium access activates only after server-side verification. Refunds may be limited by payment status, subscription consumption, fraud review, provider rules, and applicable law.",
     "Doctor verification reduces risk but does not guarantee clinical outcomes, availability, future conduct, or suitability for every user.",
@@ -256,15 +257,15 @@ const legalFallbacks = {
   privacy: [
     "MedExplain AI collects profile data, medical reports, extracted report text, AI chat history, payment records, consultation records, consent records, and security/audit logs required to operate the platform.",
     "Data is stored in MySQL and backend-controlled file storage. Uploaded reports are not exposed from the public web directory.",
-    "Gemini AI processing happens through backend services only and is controlled by consent checks, rate limits, trusted-source RAG, prompt-injection filters, and access controls.",
+    "Gemini AI processing happens through backend services only and is controlled by account permissions, rate limits, trusted-source RAG, prompt-injection filters, and access controls.",
     "MedExplain AI does not sell medical data, publish medical reports publicly, or share patient data with unauthorized third parties.",
-    "Doctors access patient information only through authorized consultation/report workflows and active doctor-sharing consent.",
-    "Security practices include RBAC, input validation, SQL parameterization, secure uploads, audit logs, consent enforcement, rate limiting, and production-safe errors."
+    "Doctors access patient information only through authorized consultation/report workflows.",
+    "Security practices include RBAC, input validation, SQL parameterization, secure uploads, audit logs, account permission checks, rate limiting, and production-safe errors."
   ],
   "data-policy": [
     "Data is collected to operate accounts, explain reports, support consultations, process subscriptions, prevent abuse, and maintain auditability.",
-    "Uploaded reports are used for extraction and AI explanations only when medical data processing and AI analysis consents are active.",
-    "Doctors access patient data only when appointment/report relationships and doctor-sharing consent allow it.",
+    "Uploaded reports are used for extraction and AI explanations under the account terms accepted when a user creates an account.",
+    "Doctors access patient data only when appointment/report relationships allow it.",
     "Admins use logs, payment records, AI usage metrics, recruitment records, and audit trails to operate and secure the system.",
     "MedExplain AI does not sell data, expose medical reports publicly, misuse external marketing tracking, or let AI systems directly access the database.",
     "Consent records are timestamped and include request metadata for compliance tracking."
@@ -283,7 +284,7 @@ async function renderLegalPage(slug) {
       <section class="card stack">
         <div class="card-header"><div><h2>${escapeHtml(policy?.title || meta.title)}</h2><p class="muted">Version ${escapeHtml(policy?.version || "current")}</p></div><span class="badge">Legal</span></div>
         ${paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}
-        <div class="actions"><a class="btn btn-primary" href="/consent">${icon("privacy_tip")}Manage consent</a><a class="btn btn-secondary" href="/contact">Contact support</a></div>
+        <div class="actions"><a class="btn btn-secondary" href="/contact">Contact support</a></div>
       </section>
     `);
   } catch {
@@ -295,7 +296,7 @@ async function renderLegalPage(slug) {
 function renderConsentToggle(consent) {
   return `<article class="card stack">
     <div class="card-header"><div><h2>${escapeHtml(consent.label)}</h2><p class="muted">${escapeHtml(consent.consentType)}</p></div><span class="badge ${consent.granted ? "badge-success" : "badge-error"}">${consent.granted ? "Granted" : "Revoked"}</span></div>
-    <label class="toggle-row"><input type="checkbox" data-consent-toggle="${escapeHtml(consent.consentType)}" ${consent.granted ? "checked" : ""} /> <span>${consent.granted ? "Consent is active" : "Consent is not active"}</span></label>
+    <p class="muted">${consent.granted ? "Covered by your account terms." : "Access is currently restricted for this permission."}</p>
     <p class="muted">Last updated ${escapeHtml(consent.updatedAt || consent.grantedAt || consent.revokedAt || "not recorded")}</p>
   </article>`;
 }
@@ -311,21 +312,6 @@ async function renderConsentCenter() {
       <section class="grid grid-2">${consents.map(renderConsentToggle).join("")}</section>
       <section class="card stack"><h2>Consent history</h2><p class="muted">Download a timestamped JSON log of consent grants and revocations for your account.</p><button class="btn btn-secondary" type="button" data-download-consent>${icon("download")}Download history</button></section>
     `);
-    document.querySelectorAll("[data-consent-toggle]").forEach((input) => {
-      input.addEventListener("change", async () => {
-        input.disabled = true;
-        try {
-          await apiRequest("/legal/consents/status", {
-            method: "POST",
-            body: { consentType: input.dataset.consentToggle, granted: input.checked }
-          });
-          await renderConsentCenter();
-        } catch {
-          input.checked = !input.checked;
-          input.disabled = false;
-        }
-      });
-    });
     document.querySelector("[data-download-consent]")?.addEventListener("click", async () => {
       const history = await apiRequest("/legal/consents/history");
       const blob = new Blob([JSON.stringify(history.data?.history || [], null, 2)], { type: "application/json" });

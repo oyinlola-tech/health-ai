@@ -46,7 +46,7 @@ function bindUploadForm() {
       state.dataCache.delete("reports");
       window.setTimeout(renderReports, 500);
     } catch (error) {
-      const message = error?.status === 401 ? "Please sign in again." : error?.status === 403 ? "Grant medical data processing consent before uploading reports." : "Server connection unavailable. Please try again.";
+      const message = error?.status === 401 ? "Please sign in again." : error?.status === 403 ? "Your account does not currently have access to report uploads." : "Server connection unavailable. Please try again.";
       showFormMessage(form, "error", message);
     } finally {
       setSubmitLoading(form, false);

@@ -11,6 +11,7 @@ import { trialService } from "../modules/promotions/trial.service.js";
 import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
 import { eventBus } from "../modules/events/event.bus.js";
 import { eventTypes } from "../modules/events/event.types.js";
+import { legalService } from "./legalService.js";
 
 function publicUser(user) {
   return {
@@ -69,7 +70,7 @@ export const authService = {
 
   settingsForUser,
 
-  async registerPatient(input) {
+  async registerPatient(input, req = null) {
     const existing = await userRepository.findByEmail(input.email);
     if (existing) throw errors.conflict("An account with this email already exists.");
 
@@ -86,10 +87,11 @@ export const authService = {
         },
         client
       );
-      await userRepository.updateProfile(created.id, { consentPromptLearning: input.consentPromptLearning, metadata: {} }, client);
+      const updated = await userRepository.updateProfile(created.id, { consentPromptLearning: input.consentPromptLearning, metadata: {} }, client);
+      await legalService.ensurePlatformConsents(updated, req, client);
       const startedTrial = await trialService.startTrial(created.id, client);
-      const createdSession = await issueSession(created, client);
-      return { user: created, trial: startedTrial, session: createdSession };
+      const createdSession = await issueSession(updated, client);
+      return { user: updated, trial: startedTrial, session: createdSession };
     });
     const emailVerificationToken = signEmailVerificationToken(user);
     await eventTracker.track({
@@ -108,7 +110,7 @@ export const authService = {
     return { user: publicUser(user), trial, emailVerificationToken, ...session };
   },
 
-  async login({ email, password }) {
+  async login({ email, password }, req = null) {
     const user = await userRepository.findByEmail(email);
     if (!user) throw errors.unauthorized("Invalid email or password.");
     const valid = await bcrypt.compare(password, user.password_hash);
@@ -125,6 +127,7 @@ export const authService = {
       throw errors.unauthorized("Invalid email or password.");
     }
     failedLoginAttempts.delete(user.id);
+    await legalService.ensurePlatformConsents(user, req);
     const session = await issueSession(user);
     return { user: publicUser(user), ...session };
   },

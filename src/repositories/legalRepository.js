@@ -68,6 +68,14 @@ export const legalRepository = {
     return Boolean(rows[0]?.granted);
   },
 
+  async consentState(userId, consentType, client = pool) {
+    const { rows } = await client.query(
+      "select consent_type, granted, granted_at, revoked_at, updated_at from consent_status where user_id = $1 and consent_type = $2 limit 1",
+      [userId, consentType]
+    );
+    return rows[0] || null;
+  },
+
   async historyForUser(userId, client = pool) {
     const { rows } = await client.query(
       `select consent_type, granted, action, ip_address, user_agent, metadata, created_at

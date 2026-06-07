@@ -12,6 +12,7 @@ const policies = [
     body: [
       "MedExplain AI provides secure medical report explanations, trusted-source AI support, verified doctor marketplace workflows, real-time consultations, and OPay-backed subscription payments.",
       "MedExplain AI does not provide diagnosis, prescriptions, emergency instructions, or a replacement for licensed medical care. AI explanations are informational and must be reviewed with qualified healthcare professionals.",
+      "Creating an account means the user accepts the platform permissions required to operate MedExplain AI, including medical report processing, AI analysis, doctor sharing for consultation workflows, payment processing, audit logging, and account security checks.",
       "Users are responsible for submitting accurate account information, uploading only reports they are authorized to use, protecting account access, and using consultation and AI tools lawfully.",
       "Payments are processed through OPay. Premium access is activated only after server-side verification. Refunds may be limited by provider status, subscription consumption, fraud review, and applicable law.",
       "Doctor verification reduces risk but cannot guarantee all future conduct, clinical outcomes, availability, or individual suitability. Users must make their own care decisions with licensed professionals.",
@@ -26,11 +27,11 @@ const policies = [
     body: [
       "MedExplain AI collects account profile data, medical reports, extracted report text, AI chat history, consultation records, payment records, consent records, and security/audit logs needed to operate the platform.",
       "Data is stored in a MySQL database and secure backend-controlled file storage under the configured uploads directory. Medical reports are not served from the public web directory.",
-      "AI processing is performed through backend services only. Gemini API calls are mediated by the server, guarded by consent checks, rate limits, budget controls, prompt-injection filters, and trusted-source RAG context.",
-      "MedExplain AI does not sell medical data, publish reports publicly, or share patient data with unauthorized third parties. Doctors receive access only through authorized consultation/report workflows and consent controls.",
+      "AI processing is performed through backend services only. Gemini API calls are mediated by the server, guarded by account permission checks, rate limits, budget controls, prompt-injection filters, and trusted-source RAG context.",
+      "MedExplain AI does not sell medical data, publish reports publicly, or share patient data with unauthorized third parties. Doctors receive access only through authorized consultation/report workflows.",
       "Payment records are stored for billing, audit, fraud prevention, and subscription integrity. OPay verification is performed server-side and frontend payment status is never trusted by itself.",
-      "Security practices include role-based access control, input validation, SQL parameterization, secure upload validation, rate limiting, audit logging, consent enforcement, and production-safe error handling.",
-      "Data retention follows operational, legal, payment, audit, and safety requirements. Users can revoke operational consents, which immediately blocks affected processing paths going forward."
+      "Security practices include role-based access control, input validation, SQL parameterization, secure upload validation, rate limiting, audit logging, account permission checks, and production-safe error handling.",
+      "Data retention follows operational, legal, payment, audit, and safety requirements."
     ].join("\n\n")
   },
   {
@@ -39,11 +40,11 @@ const policies = [
     version: "2026-06-05",
     body: [
       "MedExplain AI collects data to operate user accounts, explain medical reports, support doctor consultations, process subscriptions, prevent abuse, and maintain auditability.",
-      "Uploaded reports are used to extract medical text, identify lab values, and produce educational AI explanations when the user has granted medical data processing and AI analysis consent.",
-      "Doctors can access patient reports and consultation messages only when appointment/report relationships and doctor sharing consent permit access.",
+      "Uploaded reports are used to extract medical text, identify lab values, and produce educational AI explanations under the account terms accepted when a user creates an account.",
+      "Doctors can access patient reports and consultation messages only when appointment/report relationships permit access.",
       "Admins use system logs, payment records, AI usage metrics, recruitment records, and audit trails to operate the platform, investigate abuse, verify doctors, and maintain service reliability.",
       "MedExplain AI does not sell data, expose medical reports publicly, use uploaded reports for unauthorized marketing, or allow AI systems to directly access the database.",
-      "Consent records are timestamped and include request metadata so users and operators can understand when permissions were granted or revoked."
+      "Account permission records are timestamped and include request metadata so users and operators can understand when platform permissions were recorded."
     ].join("\n\n")
   }
 ];
