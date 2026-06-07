@@ -57,9 +57,34 @@ function normalizeSyntax(sql) {
     .replace(/metadata\s*=\s*metadata\s*\|\|\s*values\(metadata\)/gi, "metadata = json_merge_patch(coalesce(metadata, json_object()), coalesce(values(metadata), json_object()))")
     .replace(/date_format\(current_date, '%Y-%m-01'\)\s*\+\s*interval\s*'1 month - 1 day'/gi, "last_day(current_date)")
     .replace(/date_format\(current_date, '%Y-%m-01'\)\s*\+\s*interval\s*'1 month'/gi, "date_add(date_format(current_date, '%Y-%m-01'), interval 1 month)")
-    .replace(/\$(\d+)/g, "?")
     .replace(/\(\?\s*\|\|\s*' seconds'\)/gi, "interval ? second")
     .replace(/\(\?\s*\|\|\s*' minutes'\)/gi, "interval ? minute");
+}
+
+function applyPostgresPlaceholders(sql, params) {
+  const orderedParams = [];
+  const mysqlSql = sql.replace(/\$(\d+)/g, (_match, index) => {
+    orderedParams.push(params[Number(index) - 1]);
+    return "?";
+  });
+  return {
+    mysqlSql: mysqlSql
+      .replace(/\(\?\s*\|\|\s*' seconds'\)/gi, "interval ? second")
+      .replace(/\(\?\s*\|\|\s*' minutes'\)/gi, "interval ? minute"),
+    orderedParams: orderedParams.length ? orderedParams : params
+  };
+}
+
+function coerceLimitOffsetParams(sql, params) {
+  const nextParams = [...params];
+  const matches = sql.matchAll(/\b(?:limit|offset)\s+\?/gi);
+  for (const match of matches) {
+    const placeholderIndex = (sql.slice(0, match.index).match(/\?/g) || []).length;
+    if (Number.isFinite(Number(nextParams[placeholderIndex]))) {
+      nextParams[placeholderIndex] = String(Math.max(0, Number(nextParams[placeholderIndex])));
+    }
+  }
+  return nextParams;
 }
 
 function extractReturning(sql) {
@@ -126,8 +151,8 @@ function createPgLikeClient(connection) {
       }
 
       const { sql: withoutReturning, returning } = extractReturning(sql);
-      const mysqlSql = normalizeSyntax(withoutReturning);
-      const [result] = await connection.execute(mysqlSql, normalizedParams);
+      const { mysqlSql, orderedParams } = applyPostgresPlaceholders(normalizeSyntax(withoutReturning), normalizedParams);
+      const [result] = await connection.execute(mysqlSql, coerceLimitOffsetParams(mysqlSql, orderedParams));
       if (Array.isArray(result)) {
         return { rows: normalizeRows(result), rowCount: result.length };
       }

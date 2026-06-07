@@ -25,6 +25,8 @@ datasets/kaggle-pipeline/
 .server.err.log
 .server.current.log
 .server.current.err.log
+.server.audit.log
+.server.audit.err.log
 logs/*
 src/logs/*
 !logs/.gitkeep

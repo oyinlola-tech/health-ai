@@ -25,6 +25,31 @@ function publicUser(user) {
   };
 }
 
+function settingsForUser(user) {
+  const metadata = user.metadata || {};
+  return {
+    profile: {
+      firstName: user.first_name,
+      lastName: user.last_name,
+      email: user.email,
+      consentPromptLearning: Boolean(user.consent_prompt_learning)
+    },
+    notifications: {
+      email: metadata.notifications?.email ?? true,
+      product: metadata.notifications?.product ?? true,
+      security: metadata.notifications?.security ?? true,
+      billing: metadata.notifications?.billing ?? true,
+      doctor: metadata.notifications?.doctor ?? true
+    },
+    privacy: {
+      profileVisibility: metadata.privacy?.profileVisibility || "private",
+      allowDoctorSharing: metadata.privacy?.allowDoctorSharing ?? false,
+      allowAiAnalysis: metadata.privacy?.allowAiAnalysis ?? false,
+      allowPromptLearning: metadata.privacy?.allowPromptLearning ?? Boolean(user.consent_prompt_learning)
+    }
+  };
+}
+
 async function hashPassword(password) {
   return bcrypt.hash(password, 12);
 }
@@ -41,6 +66,8 @@ async function issueSession(user, client) {
 
 export const authService = {
   publicUser,
+
+  settingsForUser,
 
   async registerPatient(input) {
     const existing = await userRepository.findByEmail(input.email);
@@ -165,6 +192,35 @@ export const authService = {
     if (payload.purpose !== "email_verification") throw errors.unauthorized("Invalid verification token.");
     const user = await userRepository.verifyEmail(payload.sub);
     return { user: publicUser(user) };
+  },
+
+  async updateSettings(user, input) {
+    if (input.email && input.email.toLowerCase() !== user.email.toLowerCase()) {
+      const existing = await userRepository.findByEmail(input.email);
+      if (existing && existing.id !== user.id) throw errors.conflict("An account with this email already exists.");
+    }
+    const metadata = {
+      ...(input.notifications ? { notifications: input.notifications } : {}),
+      ...(input.privacy ? { privacy: input.privacy } : {})
+    };
+    const updated = await userRepository.updateSettings(user.id, {
+      firstName: input.firstName,
+      lastName: input.lastName,
+      email: input.email,
+      consentPromptLearning: input.consentPromptLearning,
+      metadata
+    });
+    return { user: publicUser(updated), settings: settingsForUser(updated) };
+  },
+
+  async changePassword(user, { currentPassword, newPassword }) {
+    const stored = await userRepository.findById(user.id);
+    const valid = stored ? await bcrypt.compare(currentPassword, stored.password_hash) : false;
+    if (!valid) throw errors.unauthorized("Current password is incorrect.");
+    await userRepository.updatePassword(user.id, await hashPassword(newPassword));
+    await userRepository.revokeUserRefreshTokens(user.id);
+    eventBus.publishLater(eventTypes.PASSWORD_CHANGED, { user }, { userId: user.id, entityType: "users", entityId: user.id });
+    return { changed: true };
   },
 
   async createDoctor(input, actor) {

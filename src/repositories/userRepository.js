@@ -63,6 +63,22 @@ export const userRepository = {
     return mapUser(rows[0]);
   },
 
+  async updateSettings(id, { firstName, lastName, email, consentPromptLearning, metadata = {} }, client = pool) {
+    const { rows } = await client.query(
+      `update users
+       set first_name = coalesce($2, first_name),
+           last_name = coalesce($3, last_name),
+           email = coalesce(lower($4), email),
+           consent_prompt_learning = coalesce($5, consent_prompt_learning),
+           metadata = json_merge_patch(coalesce(metadata, json_object()), cast($6 as json)),
+           updated_at = now()
+       where id = $1 and deleted_at is null
+       returning id, email, first_name, last_name, role, status, consent_prompt_learning, metadata, created_at`,
+      [id, firstName, lastName, email, consentPromptLearning, metadata]
+    );
+    return mapUser(rows[0]);
+  },
+
   async setPasswordReset(id, tokenHash, expiresAt, client = pool) {
     await client.query(
       "update users set password_reset_token_hash = $2, password_reset_expires_at = $3, updated_at = now() where id = $1",

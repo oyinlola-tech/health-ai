@@ -162,8 +162,9 @@ async function renderPatientDashboard() {
       </section>
       <section class="card stack"><h2>Quick Actions</h2><div class="actions"><a class="btn btn-primary" href="/reports">${icon("upload_file")}Upload report</a><a class="btn btn-secondary" href="/chat">Ask AI</a><a class="btn btn-secondary" href="/doctors">Book consultation</a></div></section>
     `);
-  } catch {
-    setMain(`${pageHeader(meta)}${errorState("We could not load your dashboard")}`);
+  } catch (error) {
+    const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
+    setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
 }
 
@@ -302,7 +303,8 @@ async function renderNotifications() {
         renderNotifications();
       });
     });
-  } catch {
-    setMain(`${pageHeader(meta)}${errorState("We could not load notifications")}`);
+  } catch (error) {
+    const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
+    setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
 }

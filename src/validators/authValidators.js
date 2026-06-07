@@ -45,3 +45,32 @@ export const updateProfileSchema = z.object({
   consentPromptLearning: z.boolean().optional(),
   metadata: z.record(z.unknown()).optional().default({})
 });
+
+export const updateSettingsSchema = z.object({
+  firstName: z.string().min(1).max(80).optional(),
+  lastName: z.string().min(1).max(80).optional(),
+  email: z.string().email().optional(),
+  consentPromptLearning: z.boolean().optional(),
+  notifications: z
+    .object({
+      email: z.boolean().optional(),
+      product: z.boolean().optional(),
+      security: z.boolean().optional(),
+      billing: z.boolean().optional(),
+      doctor: z.boolean().optional()
+    })
+    .optional(),
+  privacy: z
+    .object({
+      profileVisibility: z.enum(["private", "doctors"]).optional(),
+      allowDoctorSharing: z.boolean().optional(),
+      allowAiAnalysis: z.boolean().optional(),
+      allowPromptLearning: z.boolean().optional()
+    })
+    .optional()
+});
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: password
+});

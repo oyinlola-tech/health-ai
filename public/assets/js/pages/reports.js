@@ -24,11 +24,12 @@ async function renderReports() {
           <button class="btn btn-primary" type="submit">${icon("upload_file")}Upload securely</button>
         </form>
       </section>
-      <section class="stack"><h2>Report library</h2>${listCard(reports, { iconName: "description", title: "No reports uploaded", description: "Upload a report to create your first secure report record.", actionLabel: "Choose a file", actionHref: "/reports" }, renderReportItem)}</section>
+      <section class="stack"><h2>Report library</h2>${listCard(reports, { iconName: "description", title: "No reports found", description: "Upload your first report to begin.", actionLabel: "Choose a file", actionHref: "/reports" }, renderReportItem)}</section>
     `);
     bindUploadForm();
-  } catch {
-    setMain(`${pageHeader(meta)}${errorState("We could not load reports")}`);
+  } catch (error) {
+    const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
+    setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
 }
 
@@ -44,8 +45,9 @@ function bindUploadForm() {
       showFormMessage(form, "success", "Report uploaded. Your library is refreshing.");
       state.dataCache.delete("reports");
       window.setTimeout(renderReports, 500);
-    } catch {
-      showFormMessage(form, "error", "We could not upload that report. Please retry or contact support.");
+    } catch (error) {
+      const message = error?.status === 401 ? "Please sign in again." : error?.status === 403 ? "Grant medical data processing consent before uploading reports." : "Server connection unavailable. Please try again.";
+      showFormMessage(form, "error", message);
     } finally {
       setSubmitLoading(form, false);
     }
@@ -177,7 +179,8 @@ async function renderReportDetail() {
         document.querySelector("[data-analysis-target]").innerHTML = errorState(message, false);
       }
     });
-  } catch {
-    setMain(`${pageHeader(meta)}${errorState("We could not load this report")}`);
+  } catch (error) {
+    const message = error?.status === 401 ? "Please sign in again." : error?.status === 404 ? "Report not found." : "Server connection unavailable. Please try again.";
+    setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
 }
