@@ -1,4 +1,5 @@
 import { env } from "../config/env.js";
+import { isOpayMockMode } from "../config/startupValidation.js";
 import { withTransaction } from "../config/database.js";
 import { billingRepository } from "../repositories/billingRepository.js";
 import { createId } from "../utils/uuid.js";
@@ -347,6 +348,47 @@ export const subscriptionService = {
     const payment = await billingRepository.findPaymentByReference(reference);
     if (!payment) throw errors.notFound("Payment not found.");
     if (actor?.role !== "Admin" && payment.user_id !== actor?.id) throw errors.forbidden("You can only view your own payment status.");
+    if (isOpayMockMode() && payment.provider === "opay" && payment.status !== "verified") {
+      const providerResponse = await opayClient.verifyPayment({
+        reference,
+        amount: { total: payment.amount_cents, currency: payment.currency }
+      });
+      const rawBody = JSON.stringify(providerResponse);
+      const transactionId = providerTransactionId(providerResponse);
+      await withTransaction(async (client) => {
+        await billingRepository.recordWebhook(
+          {
+            eventId: providerResponse?.data?.orderNo || transactionId || reference,
+            eventType: "opay.payment.mock_verified",
+            payload: providerResponse,
+            signature: opayClient.signatureForPayload(rawBody),
+            replayKey: transactionId || reference,
+            signatureValid: true,
+            providerReference: reference
+          },
+          client
+        );
+        await assertUniqueProviderTransaction(transactionId, payment.id, client);
+        await activateVerifiedPayment(payment, client);
+        await billingRepository.createPaymentTransaction(
+          {
+            paymentId: payment.id,
+            status: "verified",
+            amountCents: payment.amount_cents,
+            currency: payment.currency,
+            providerTransactionId: transactionId,
+            rawResponse: providerResponse
+          },
+          client
+        );
+      });
+      return {
+        ...(await billingRepository.findPaymentByReference(reference)),
+        webhookRequired: false,
+        simulated: true,
+        message: "Development payment simulator verified the payment and activated access."
+      };
+    }
     return {
       ...payment,
       webhookRequired: payment.provider === "opay" && payment.status !== "verified",
@@ -358,9 +400,9 @@ export const subscriptionService = {
   },
 
   async processWebhook({ payload, rawBody, signature }) {
-    if (!signature) throw errors.forbidden("Missing OPay webhook signature.");
+    if (!signature && !isOpayMockMode()) throw errors.forbidden("Missing OPay webhook signature.");
     const expected = opayClient.signatureForPayload(rawBody);
-    const signatureValid = Boolean(signature && expected && safeEqual(signature.toLowerCase(), expected.toLowerCase()));
+    const signatureValid = isOpayMockMode() || Boolean(signature && expected && safeEqual(signature.toLowerCase(), expected.toLowerCase()));
     const reference = normalizeProviderReference(payload);
     const replayKey = payload?.eventId || providerTransactionId(payload) || reference;
     if (!replayKey) throw errors.badRequest("Webhook did not include a replay key.");
