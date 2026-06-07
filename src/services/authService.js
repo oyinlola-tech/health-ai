@@ -47,6 +47,16 @@ function settingsForUser(user) {
       allowDoctorSharing: metadata.privacy?.allowDoctorSharing ?? false,
       allowAiAnalysis: metadata.privacy?.allowAiAnalysis ?? false,
       allowPromptLearning: metadata.privacy?.allowPromptLearning ?? Boolean(user.consent_prompt_learning)
+    },
+    billingAddress: {
+      fullName: metadata.billingAddress?.fullName || "",
+      phone: metadata.billingAddress?.phone || "",
+      line1: metadata.billingAddress?.line1 || "",
+      line2: metadata.billingAddress?.line2 || "",
+      city: metadata.billingAddress?.city || "",
+      state: metadata.billingAddress?.state || "",
+      postalCode: metadata.billingAddress?.postalCode || "",
+      country: metadata.billingAddress?.country || "Nigeria"
     }
   };
 }
@@ -204,7 +214,8 @@ export const authService = {
     }
     const metadata = {
       ...(input.notifications ? { notifications: input.notifications } : {}),
-      ...(input.privacy ? { privacy: input.privacy } : {})
+      ...(input.privacy ? { privacy: input.privacy } : {}),
+      ...(input.billingAddress ? { billingAddress: input.billingAddress } : {})
     };
     const updated = await userRepository.updateSettings(user.id, {
       firstName: input.firstName,

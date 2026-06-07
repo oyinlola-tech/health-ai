@@ -100,6 +100,7 @@ async function renderSettings() {
     const profile = settings.profile || {};
     const notifications = settings.notifications || {};
     const privacy = settings.privacy || {};
+    const billingAddress = settings.billingAddress || {};
     const subscription = subscriptionResponse.data || {};
     setMain(`
       ${pageHeader(meta)}
@@ -145,6 +146,21 @@ async function renderSettings() {
             ${settingsCheckbox("allowAiAnalysis", "AI analysis preference", privacy.allowAiAnalysis)}
             ${settingsCheckbox("allowPromptLearning", "Prompt learning preference", privacy.allowPromptLearning)}
             <button class="btn btn-primary" type="submit">${icon("save")}Save privacy</button>
+          </form>
+        </article>
+        <article class="form-card">
+          <form class="form" data-settings-billing-address-form novalidate>
+            <div class="card-header"><div><h2>Billing Address</h2><p class="muted">Used for billing records and payment receipts.</p></div>${icon("location_on")}</div>
+            <div class="form-message" data-form-message hidden></div>
+            ${field("Billing name", "fullName", "text", false, billingAddress.fullName || "")}
+            ${field("Phone number", "phone", "tel", false, billingAddress.phone || "")}
+            ${field("Address line 1", "line1", "text", false, billingAddress.line1 || "")}
+            ${field("Address line 2", "line2", "text", false, billingAddress.line2 || "")}
+            ${field("City", "city", "text", false, billingAddress.city || "")}
+            ${field("State", "state", "text", false, billingAddress.state || "")}
+            ${field("Postal code", "postalCode", "text", false, billingAddress.postalCode || "")}
+            ${field("Country", "country", "text", false, billingAddress.country || "Nigeria")}
+            <button class="btn btn-primary" type="submit">${icon("save")}Save billing address</button>
           </form>
         </article>
       </section>
@@ -222,6 +238,23 @@ function bindSettingsForms() {
         allowDoctorSharing: checked(form, "allowDoctorSharing"),
         allowAiAnalysis: checked(form, "allowAiAnalysis"),
         allowPromptLearning: checked(form, "allowPromptLearning")
+      }
+    });
+  });
+  document.querySelector("[data-settings-billing-address-form]")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries());
+    await submitSettingsForm(form, {
+      billingAddress: {
+        fullName: data.fullName,
+        phone: data.phone,
+        line1: data.line1,
+        line2: data.line2,
+        city: data.city,
+        state: data.state,
+        postalCode: data.postalCode,
+        country: data.country
       }
     });
   });

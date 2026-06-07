@@ -67,6 +67,18 @@ export const updateSettingsSchema = z.object({
       allowAiAnalysis: z.boolean().optional(),
       allowPromptLearning: z.boolean().optional()
     })
+    .optional(),
+  billingAddress: z
+    .object({
+      fullName: z.string().max(160).optional(),
+      phone: z.string().max(40).optional(),
+      line1: z.string().max(180).optional(),
+      line2: z.string().max(180).optional(),
+      city: z.string().max(120).optional(),
+      state: z.string().max(120).optional(),
+      postalCode: z.string().max(40).optional(),
+      country: z.string().max(80).optional()
+    })
     .optional()
 });
 

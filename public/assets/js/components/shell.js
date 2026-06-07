@@ -28,7 +28,7 @@ function renderShell() {
             <button class="mobile-menu-button" type="button" aria-controls="mobile-drawer" aria-expanded="false">${icon("menu")}<span class="sr-only">Menu</span></button>
           </div>
         </div>
-        <nav class="mobile-drawer" id="mobile-drawer" aria-label="Mobile menu">${navLinks()}<a class="nav-link" href="/subscription">${icon("workspace_premium")}<span>Subscription</span></a><a class="nav-link" href="/settings">${icon("settings")}<span>Settings</span></a></nav>
+        <nav class="mobile-drawer" id="mobile-drawer" aria-label="Mobile menu">${navLinks()}<a class="nav-link" href="/subscription">${icon("workspace_premium")}<span>Subscription</span></a></nav>
       </header>
       <main class="page-main" id="main-content" tabindex="-1"></main>
       <div class="realtime-toast" data-realtime-toast hidden></div>

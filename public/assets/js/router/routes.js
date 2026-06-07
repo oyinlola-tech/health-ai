@@ -59,7 +59,8 @@ const routeAliases = new Map([
 
 const primaryNav = [
   { label: "Home", href: "/dashboard", icon: "home" },
-  { label: "Reports", href: "/reports", icon: "description" }
+  { label: "Reports", href: "/reports", icon: "description" },
+  { label: "Settings", href: "/settings", icon: "settings" }
 ];
 
 const footerSections = [
@@ -82,7 +83,7 @@ const pageMeta = {
   "/doctor-careers": { title: "Doctor careers", description: "Apply for verified doctor roles and track application status securely." },
   "/appointments": { title: "Appointments", description: "Review doctor bookings and consultation status." },
   "/profile": { title: "Profile", description: "Review and update your account information." },
-  "/settings": { title: "Settings", description: "Manage privacy, security, notifications, and accessibility preferences." },
+  "/settings": { title: "Settings", description: "Manage account, security, notifications, privacy, subscription, and billing address details." },
   "/subscription": { title: "Subscription", description: "Manage your plan and billing status." },
   "/checkout": { title: "Checkout", description: "Apply coupons and complete subscription checkout securely." },
   "/payment-success": { title: "Payment success", description: "Verify your OPay payment and activate premium access." },
