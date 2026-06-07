@@ -11,11 +11,17 @@ async function renderChat() {
   const meta = routeTitle("/chat");
   setMain(`${pageHeader(meta)}${loadingState("Loading chat")}`);
   try {
-    const [history, subscription] = await Promise.all([apiRequest("/ai/chat-history"), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
+    const [history, subscription, consentStatus] = await Promise.all([
+      apiRequest("/ai/chat-history"),
+      cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} })),
+      apiRequest("/legal/consents/status").catch(() => ({ data: { consents: [] } }))
+    ]);
     const messages = history.data?.messages || [];
+    const hasAiConsent = aiConsentGranted(consentStatus.data?.consents || []);
     setMain(`
       ${pageHeader(meta)}
       ${renderEntitlementBanner(subscription.data || {}, "aiChat")}
+      ${renderAiConsentNotice(hasAiConsent)}
       <section class="grid grid-2">
         <article class="card stack">
           <div class="card-header">
@@ -30,17 +36,33 @@ async function renderChat() {
           <form class="form" data-ai-chat-form novalidate>
             <div class="form-message" data-form-message hidden></div>
             ${textarea("Ask a health question", "message", true)}
-            <button class="btn btn-primary" type="submit">${icon("send")}Send message</button>
+            <button class="btn btn-primary" type="submit" ${hasAiConsent ? "" : "disabled"}>${icon("send")}Send message</button>
           </form>
           <div class="actions"><a class="btn btn-secondary" href="/reports">Open reports</a><a class="btn btn-secondary" href="/consent">Consent center</a></div>
         </article>
       </section>
     `);
+    bindAiConsentAction();
     bindAiChatForm();
   } catch (error) {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
     setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
+}
+
+function aiConsentGranted(consents = []) {
+  return Boolean(consents.find((consent) => consent.consentType === "AI_analysis")?.granted);
+}
+
+function renderAiConsentNotice(hasAiConsent) {
+  if (hasAiConsent) return "";
+  return `<section class="card stack">
+    <div class="card-header">
+      <div><h2>AI Consent Required</h2><p class="muted">AI chat is blocked until you grant AI analysis consent.</p></div>
+      <span class="badge badge-warning">Required</span>
+    </div>
+    <div class="actions"><button class="btn btn-primary" type="button" data-grant-ai-consent>${icon("verified_user")}Grant AI consent</button><a class="btn btn-secondary" href="/consent">Review consent center</a></div>
+  </section>`;
 }
 
 function renderAiChatMessages(messages = []) {
@@ -64,9 +86,24 @@ function renderAiChatMessage(message) {
 
 function chatErrorMessage(error) {
   if (error?.status === 401) return "Please sign in again.";
-  if (error?.status === 403) return "Grant AI analysis consent before using chat.";
+  if (error?.status === 403) return error?.message || "Grant AI analysis consent before using chat.";
   if (error?.payload?.error?.code === "CONFIGURATION_ERROR") return "AI service is not configured for this environment.";
   return error?.message || "Server connection unavailable. Please try again.";
+}
+
+function bindAiConsentAction() {
+  document.querySelector("[data-grant-ai-consent]")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    try {
+      await apiRequest("/legal/consents/status", { method: "POST", body: { consentType: "AI_analysis", granted: true } });
+      state.dataCache.delete("subscription");
+      await renderChat();
+    } catch {
+      button.disabled = false;
+      button.closest(".card")?.insertAdjacentHTML("beforeend", `<p class="form-message" data-state="error" role="alert">We could not save AI consent. Please try again.</p>`);
+    }
+  });
 }
 
 function bindAiChatForm() {
