@@ -8,6 +8,23 @@ import { getHealthStatus } from "./services/healthCheckService.js";
 import { registerSockets } from "./sockets/index.js";
 import { logger } from "./utils/logger.js";
 
+function listen(server, port) {
+  return new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(port, () => {
+      server.off("error", reject);
+      resolve();
+    });
+  });
+}
+
+function startupErrorMessage(error) {
+  if (error?.code === "EADDRINUSE") {
+    return `Port ${env.PORT} is already in use. Stop the existing process or set PORT to another value.`;
+  }
+  return error.message;
+}
+
 async function bootstrap() {
   for (const warning of validateStartupEnvironment()) {
     logger.warn(warning, { module: "startup" });
@@ -21,13 +38,12 @@ async function bootstrap() {
   const app = createApp();
   const server = http.createServer(app);
   registerSockets(server);
-  server.listen(env.PORT, async () => {
-    const health = await getHealthStatus();
-    logger.info(`${env.APP_NAME} listening.`, { module: "startup", port: env.PORT, environment: env.NODE_ENV, health });
-  });
+  await listen(server, env.PORT);
+  const health = await getHealthStatus();
+  logger.info(`${env.APP_NAME} listening.`, { module: "startup", port: env.PORT, environment: env.NODE_ENV, health });
 }
 
 bootstrap().catch((error) => {
-  logger.error("Application startup failed.", { module: "startup", message: error.message, stack: error.stack });
+  logger.error("Application startup failed.", { module: "startup", message: startupErrorMessage(error), code: error.code, stack: error.stack });
   process.exit(1);
 });
