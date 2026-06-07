@@ -112,7 +112,7 @@ async function renderSettings() {
             ${field("First name", "firstName", "text", true, profile.firstName || "")}
             ${field("Last name", "lastName", "text", true, profile.lastName || "")}
             ${field("Email address", "email", "email", true, profile.email || "")}
-            <label class="actions"><input type="checkbox" name="consentPromptLearning" ${profile.consentPromptLearning ? "checked" : ""} /> <span class="muted">Allow anonymized prompt learning.</span></label>
+            <label class="actions"><input type="checkbox" name="consentPromptLearning" ${profile.consentPromptLearning ? "checked" : ""} /> <span class="muted">Use my reports, messages, conversations, and AI responses to improve MedExplain AI.</span></label>
             <button class="btn btn-primary" type="submit">${icon("save")}Save profile</button>
           </form>
         </article>
@@ -144,7 +144,7 @@ async function renderSettings() {
             <div class="field"><label for="profileVisibility">Profile visibility</label><select id="profileVisibility" name="profileVisibility"><option value="private" ${privacy.profileVisibility === "private" ? "selected" : ""}>Private</option><option value="doctors" ${privacy.profileVisibility === "doctors" ? "selected" : ""}>Verified doctors</option></select><span class="field-error" data-error-for="profileVisibility"></span></div>
             ${settingsCheckbox("allowDoctorSharing", "Doctor sharing preference", privacy.allowDoctorSharing)}
             ${settingsCheckbox("allowAiAnalysis", "AI analysis preference", privacy.allowAiAnalysis)}
-            ${settingsCheckbox("allowPromptLearning", "Prompt learning preference", privacy.allowPromptLearning)}
+            ${settingsCheckbox("allowPromptLearning", "AI training and improvement preference", privacy.allowPromptLearning)}
             <button class="btn btn-primary" type="submit">${icon("save")}Save privacy</button>
           </form>
         </article>
@@ -281,23 +281,23 @@ const legalFallbacks = {
   terms: [
     "MedExplain AI provides AI medical report explanations, verified doctor marketplace workflows, OPay-backed payments, real-time consultation tools, and privacy controls.",
     "AI explanations are informational only. MedExplain AI is not a doctor, does not diagnose conditions, does not prescribe treatment, and does not replace emergency or professional medical care.",
-    "Creating an account means you agree to the platform permissions required to operate MedExplain AI, including medical report processing, AI analysis, doctor sharing for consultation workflows, payment processing, audit logging, and account security checks.",
+    "Creating an account means you agree to the platform permissions required to operate MedExplain AI, including medical report processing, AI analysis, doctor sharing for consultation workflows, payment processing, audit logging, account security checks, and AI training/improvement from saved reports, messages, conversations, and AI responses.",
     "Users must provide accurate information, upload only records they are authorized to use, keep account credentials safe, and avoid abuse, scraping, impersonation, fraud, prompt-injection attempts, or unauthorized access.",
     "Payments are processed through OPay and premium access activates only after server-side verification. Refunds may be limited by payment status, subscription consumption, fraud review, provider rules, and applicable law.",
     "Doctor verification reduces risk but does not guarantee clinical outcomes, availability, future conduct, or suitability for every user.",
     "Accounts may be restricted or terminated for abuse, safety risks, non-payment, fraud, privacy violations, legal compliance, or attempts to bypass controls."
   ],
   privacy: [
-    "MedExplain AI collects profile data, medical reports, extracted report text, AI chat history, payment records, consultation records, consent records, and security/audit logs required to operate the platform.",
+    "MedExplain AI collects profile data, medical reports, extracted report text, AI chat history, AI responses, payment records, consultation records, consent records, and security/audit logs required to operate the platform.",
     "Data is stored in MySQL and backend-controlled file storage. Uploaded reports are not exposed from the public web directory.",
-    "Gemini AI processing happens through backend services only and is controlled by account permissions, rate limits, trusted-source RAG, prompt-injection filters, and access controls.",
+    "Gemini AI processing happens through backend services only and is controlled by account permissions, rate limits, trusted-source RAG, prompt-injection filters, and access controls. Saved reports, messages, conversations, and AI responses may be used to train and improve MedExplain AI unless the user turns off the related preference in Settings.",
     "MedExplain AI does not sell medical data, publish medical reports publicly, or share patient data with unauthorized third parties.",
     "Doctors access patient information only through authorized consultation/report workflows.",
     "Security practices include RBAC, input validation, SQL parameterization, secure uploads, audit logs, account permission checks, rate limiting, and production-safe errors."
   ],
   "data-policy": [
     "Data is collected to operate accounts, explain reports, support consultations, process subscriptions, prevent abuse, and maintain auditability.",
-    "Uploaded reports are used for extraction and AI explanations under the account terms accepted when a user creates an account.",
+    "Uploaded reports are used for extraction, AI explanations, and AI training/improvement under the account terms accepted when a user creates an account.",
     "Doctors access patient data only when appointment/report relationships allow it.",
     "Admins use logs, payment records, AI usage metrics, recruitment records, and audit trails to operate and secure the system.",
     "MedExplain AI does not sell data, expose medical reports publicly, misuse external marketing tracking, or let AI systems directly access the database.",

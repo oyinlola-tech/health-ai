@@ -44,8 +44,8 @@ function settingsForUser(user) {
     },
     privacy: {
       profileVisibility: metadata.privacy?.profileVisibility || "private",
-      allowDoctorSharing: metadata.privacy?.allowDoctorSharing ?? false,
-      allowAiAnalysis: metadata.privacy?.allowAiAnalysis ?? false,
+      allowDoctorSharing: metadata.privacy?.allowDoctorSharing ?? true,
+      allowAiAnalysis: metadata.privacy?.allowAiAnalysis ?? true,
       allowPromptLearning: metadata.privacy?.allowPromptLearning ?? Boolean(user.consent_prompt_learning)
     },
     billingAddress: {
@@ -93,11 +93,18 @@ export const authService = {
           firstName: input.firstName,
           lastName: input.lastName,
           role: "Patient",
-          metadata: {}
+          metadata: {
+            privacy: {
+              profileVisibility: "private",
+              allowDoctorSharing: true,
+              allowAiAnalysis: true,
+              allowPromptLearning: true
+            }
+          }
         },
         client
       );
-      const updated = await userRepository.updateProfile(created.id, { consentPromptLearning: input.consentPromptLearning, metadata: {} }, client);
+      const updated = await userRepository.updateProfile(created.id, { consentPromptLearning: true, metadata: {} }, client);
       await legalService.ensurePlatformConsents(updated, req, client);
       const startedTrial = await trialService.startTrial(created.id, client);
       const createdSession = await issueSession(updated, client);

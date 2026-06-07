@@ -83,7 +83,7 @@ export const entitlementService = {
         },
         aiChat: {
           used: usageByFeature[features.AI_CHAT]?.used_count || 0,
-          limit: premiumLike ? null : subscription?.ai_chat_limit ?? env.FREE_AI_CHAT_LIMIT
+          limit: premiumLike || trialActive ? null : subscription?.ai_chat_limit ?? env.FREE_AI_CHAT_LIMIT
         },
         doctorBookings: {
           used: usageByFeature[features.DOCTOR_CONSULTATION]?.used_count || 0,
@@ -97,6 +97,7 @@ export const entitlementService = {
     if (user.role !== "Patient") return { allowed: true, plan: "STAFF" };
     const status = await this.status(user);
     if (status.plan === "PREMIUM" || (status.plan === "FREE_TRIAL" && status.trial?.fullAccess)) return { allowed: true, plan: status.plan };
+    if (status.plan === "FREE_TRIAL" && feature === features.AI_CHAT) return { allowed: true, plan: status.plan };
     if (status.plan === "BASIC") {
       const enabledMap = {
         [features.REPORT_ANALYSIS]: true,
