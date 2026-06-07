@@ -15,7 +15,7 @@ const apiKey = process.env.NCBI_API_KEY || "";
 const toolName = process.env.NCBI_TOOL || "MedExplainAI";
 const email = process.env.NCBI_EMAIL || "";
 
-const queryTerms = [
+const defaultQueryTerms = [
   "Diabetes",
   "Hypertension",
   "Anemia",
@@ -25,6 +25,16 @@ const queryTerms = [
   "CBC tests",
   "Blood tests"
 ];
+
+function configuredQueryTerms() {
+  const configured = String(process.env.PUBMED_QUERY_TERMS || "")
+    .split(",")
+    .map((term) => term.trim())
+    .filter(Boolean);
+  return configured.length ? [...new Set(configured)] : defaultQueryTerms;
+}
+
+const queryTerms = configuredQueryTerms();
 
 function boundedLimit(value) {
   if (!Number.isFinite(value) || value < 1) return 10000;
@@ -284,7 +294,7 @@ function report({ sourceQuery, searchUrl, totalAvailable, requested, searchedPmi
     "## Imported",
     "",
     `- Total PubMed matches available: ${totalAvailable}`,
-    `- Initial import cap: ${requested}`,
+    `- Import cap this run: ${requested}`,
     `- PMIDs searched this run: ${searchedPmids}`,
     `- Existing matching articles skipped: ${skippedExisting}`,
     `- Articles imported/upserted this run: ${imported}`,
@@ -322,9 +332,9 @@ async function main() {
   try {
     await runJavaScriptMigrations(connection);
     totalCached = await articleCount(connection);
-    let retstart = Math.max(0, totalCached - 100);
-    while (totalCached < maxArticles) {
-      const retmax = Math.min(1000, maxArticles - totalCached + 100);
+    let retstart = 0;
+    while (imported < maxArticles) {
+      const retmax = Math.min(1000, maxArticles - imported + skippedExisting + 100);
       const search = await searchPmids(sourceQuery, retmax, retstart);
       if (!searchUrl) searchUrl = search.url;
       if (search.count > 0) totalAvailable = search.count;
@@ -339,10 +349,10 @@ async function main() {
         return !alreadyExists;
       });
 
-      for (let offset = 0; offset < remainingPmids.length && totalCached < maxArticles; offset += batchSize) {
+      for (let offset = 0; offset < remainingPmids.length && imported < maxArticles; offset += batchSize) {
         const batch = remainingPmids.slice(offset, offset + batchSize);
         const fetched = await fetchArticles(batch, batches * batchSize);
-        const articles = parseArticles(fetched.xml, fetched.url, sourceQuery).slice(0, maxArticles - totalCached);
+        const articles = parseArticles(fetched.xml, fetched.url, sourceQuery).slice(0, maxArticles - imported);
         imported += await upsertArticles(connection, articles);
         totalCached = await articleCount(connection);
         batches += 1;
