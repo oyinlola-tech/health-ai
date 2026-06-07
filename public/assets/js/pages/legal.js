@@ -99,13 +99,11 @@ function knowledgeSummary(text = "", maxLength = 220) {
 }
 
 function renderKnowledgeSource(item = {}, index = 0) {
-  const href = item.url || "/medical-knowledge";
   return `<button class="knowledge-result" type="button" data-knowledge-result="${index}">
     <span class="caption">${escapeHtml(item.type || item.source || "Medical source")}</span>
     <strong>${escapeHtml(item.title || "Untitled source")}</strong>
     ${item.source ? `<span class="badge">${escapeHtml(item.source)}</span>` : ""}
     <span class="muted">${escapeHtml(knowledgeSummary(item.summary, 130))}</span>
-    ${item.url ? `<span class="sr-only">${escapeHtml(href)}</span>` : ""}
   </button>`;
 }
 
