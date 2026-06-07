@@ -66,7 +66,6 @@ function renderChatWorkspace(messages = [], subscription = {}) {
     <section class="chat-panel">
       <div class="chat-panel-header">
         <div><h2>MedExplain AI</h2><p class="muted">Messages, reports, conversations, and responses are saved for AI improvement unless turned off in Settings.</p></div>
-        <span class="badge">${messages.length} messages</span>
       </div>
       <div class="chat-thread" data-ai-chat-thread>
         ${renderAiChatMessages(messages)}

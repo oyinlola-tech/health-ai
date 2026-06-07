@@ -136,7 +136,6 @@ async function renderPatientDashboard() {
     ]);
     const messages = history.data?.messages || [];
     setMain(`
-      ${pageHeader(meta)}
       ${renderChatWorkspace(messages, subscription.data || {})}
     `);
     bindAiChatForm();
