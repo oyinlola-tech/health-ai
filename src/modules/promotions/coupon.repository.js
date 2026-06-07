@@ -16,11 +16,16 @@ export const couponRepository = {
   async listCoupons(client = pool) {
     const { rows } = await client.query(
       `select c.*,
-              count(cr.id) as redemption_count,
-              coalesce(sum(cr.discount_amount), 0) as total_discount_amount
+              coalesce(stats.redemption_count, 0) as redemption_count,
+              coalesce(stats.total_discount_amount, 0) as total_discount_amount
        from coupons c
-       left join coupon_redemptions cr on cr.coupon_id = c.id
-       group by c.id
+       left join (
+         select coupon_id,
+                count(id) as redemption_count,
+                coalesce(sum(discount_amount), 0) as total_discount_amount
+         from coupon_redemptions
+         group by coupon_id
+       ) stats on stats.coupon_id = c.id
        order by c.created_at desc`
     );
     return rows;
