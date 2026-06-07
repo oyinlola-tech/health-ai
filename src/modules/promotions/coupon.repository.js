@@ -4,13 +4,12 @@ import { createId } from "../../utils/uuid.js";
 export const couponRepository = {
   async createCoupon(input, client = pool) {
     const id = createId();
-    const { rows } = await client.query(
+    await client.query(
       `insert into coupons (id, code, discount_type, discount_value, max_uses, expiry_date, is_active, created_by)
-       values ($1, $2, $3, $4, $5, $6, $7, $8)
-       returning *`,
+       values ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [id, input.code, input.discountType, input.discountValue, input.maxUses ?? null, input.expiryDate ?? null, input.isActive ?? true, input.createdBy ?? null]
     );
-    return rows[0];
+    return this.findById(id, client);
   },
 
   async listCoupons(client = pool) {
@@ -42,8 +41,8 @@ export const couponRepository = {
   },
 
   async disableCoupon(id, client = pool) {
-    const { rows } = await client.query("update coupons set is_active = false, updated_at = now() where id = $1 returning *", [id]);
-    return rows[0] || null;
+    await client.query("update coupons set is_active = false, updated_at = now() where id = $1", [id]);
+    return this.findById(id, client);
   },
 
   async findRedemption({ userId, couponId }, client = pool) {
@@ -53,14 +52,14 @@ export const couponRepository = {
 
   async redeem({ userId, couponId, paymentId = null, planId = null, discountAmount, finalAmount }, client = pool) {
     const id = createId();
-    const { rows } = await client.query(
+    await client.query(
       `insert into coupon_redemptions (id, user_id, coupon_id, payment_id, plan_id, discount_amount, final_amount)
-       values ($1, $2, $3, $4, $5, $6, $7)
-       returning *`,
+       values ($1, $2, $3, $4, $5, $6, $7)`,
       [id, userId, couponId, paymentId, planId, discountAmount, finalAmount]
     );
     await client.query("update coupons set used_count = used_count + 1, updated_at = now() where id = $1", [couponId]);
-    return rows[0];
+    const { rows } = await client.query("select * from coupon_redemptions where id = $1", [id]);
+    return rows[0] || null;
   },
 
   async usageStats(couponId, client = pool) {
