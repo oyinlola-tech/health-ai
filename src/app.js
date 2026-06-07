@@ -66,6 +66,7 @@ const legacyFrontendRedirects = new Map([
   ["/learning-center/articles.html", "/medical-knowledge"],
   ["/learning-center/terms.html", "/terms"],
   ["/learning-center/trusted-source.html", "/medical-knowledge"],
+  ["/medical-knowlegde", "/medical-knowledge"],
   ["/notifications/list.html", "/dashboard"],
   ["/notifications/details.html", "/dashboard"],
   ["/notifications/settings.html", "/dashboard"],

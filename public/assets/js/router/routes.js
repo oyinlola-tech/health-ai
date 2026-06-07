@@ -40,6 +40,7 @@ const routeAliases = new Map([
   ["/learning-center/home.html", "/medical-knowledge"],
   ["/learning-center/articles.html", "/medical-knowledge"],
   ["/learning-center/trusted-source.html", "/medical-knowledge"],
+  ["/medical-knowlegde", "/medical-knowledge"],
   ["/notifications/list.html", "/notifications"],
   ["/admin/index.html", "/admin"],
   ["/admin/user.html", "/admin/users"],

@@ -133,7 +133,7 @@ async function renderMedicalKnowledge() {
       ${renderKnowledgeSection("PubMed articles", data.pubmedArticles || [], "PubMed", "Run the PubMed ingestion to populate articles.")}
     `);
   } catch (error) {
-    setMain(`${pageHeader(meta)}${errorState(error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.")}`);
+    setMain(`${errorState(error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.")}`);
   }
 }
 
