@@ -18,25 +18,7 @@ async function renderChat() {
     const messages = history.data?.messages || [];
     setMain(`
       ${pageHeader(meta)}
-      ${renderEntitlementBanner(subscription.data || {}, "aiChat")}
-      <section class="grid grid-2">
-        <article class="card stack">
-          <div class="card-header">
-            <div><h2>Conversation</h2><p class="muted">Messages are stored through the backend AI gateway.</p></div>
-            <span class="badge">${messages.length} messages</span>
-          </div>
-          <div class="chat-thread stack" data-ai-chat-thread>
-            ${renderAiChatMessages(messages)}
-          </div>
-        </article>
-        <article class="form-card stack">
-          <form class="form" data-ai-chat-form novalidate>
-            <div class="form-message" data-form-message hidden></div>
-            ${textarea("Ask a health question", "message", true)}
-            <button class="btn btn-primary" type="submit">${icon("send")}Send message</button>
-          </form>
-        </article>
-      </section>
+      ${renderChatWorkspace(messages, subscription.data || {})}
     `);
     bindAiChatForm();
   } catch (error) {
@@ -45,23 +27,71 @@ async function renderChat() {
   }
 }
 
-function renderAiChatMessages(messages = []) {
-  if (!messages.length) {
-    return emptyState({
-      iconName: "psychology",
-      title: "No chat messages yet",
-      description: "Ask a question about your reports or health context to begin.",
-      actionLabel: "",
-      actionHref: ""
-    });
-  }
-  return messages.map(renderAiChatMessage).join("");
+function chatPlanLabel(subscription = {}) {
+  const plan = subscription.plan || "FREE";
+  if (plan === "FREE_TRIAL") return "Free trial";
+  return String(plan).toLowerCase().replace(/(^|\s)\S/g, (letter) => letter.toUpperCase());
 }
 
-function renderAiChatMessage(message) {
+function chatTopicTitle(message = {}) {
+  const content = String(message.content || "").replace(/\s+/g, " ").trim();
+  if (!content) return "New conversation";
+  return content.length > 44 ? `${content.slice(0, 44)}...` : content;
+}
+
+function chatTopics(messages = []) {
+  const userMessages = messages.filter((message) => String(message.role || "").toLowerCase() === "user");
+  return (userMessages.length ? userMessages : messages).slice(-8).reverse();
+}
+
+function renderChatTopics(messages = []) {
+  const topics = chatTopics(messages);
+  if (!topics.length) return `<p class="muted">Previous chats will appear here after you send messages.</p>`;
+  return topics
+    .map((message, index) => `<a class="chat-topic" href="#message-${escapeHtml(message.id || index)}"><span>${escapeHtml(chatTopicTitle(message))}</span><small>${escapeHtml(message.created_at ? new Date(message.created_at).toLocaleDateString() : "Recent")}</small></a>`)
+    .join("");
+}
+
+function renderChatWorkspace(messages = [], subscription = {}) {
+  return `<section class="chat-workspace">
+    <aside class="chat-sidebar">
+      <div class="chat-sidebar-header">
+        <h2>Chats</h2>
+        <span class="badge">${escapeHtml(chatPlanLabel(subscription))}</span>
+      </div>
+      <nav class="chat-topic-list" aria-label="Previous chat topics">
+        ${renderChatTopics(messages)}
+      </nav>
+    </aside>
+    <section class="chat-panel">
+      <div class="chat-panel-header">
+        <div><h2>MedExplain AI</h2><p class="muted">Messages, reports, conversations, and responses are saved for AI improvement unless turned off in Settings.</p></div>
+        <span class="badge">${messages.length} messages</span>
+      </div>
+      <div class="chat-thread" data-ai-chat-thread>
+        ${renderAiChatMessages(messages)}
+      </div>
+      <form class="chat-composer" data-ai-chat-form novalidate>
+        <div class="form-message" data-form-message hidden></div>
+        <label class="sr-only" for="message">Ask MedExplain AI</label>
+        <textarea id="message" name="message" placeholder="Ask anything about your health reports..." required></textarea>
+        <button class="icon-button" type="submit" aria-label="Send message">${icon("send")}</button>
+      </form>
+    </section>
+  </section>`;
+}
+
+function renderAiChatMessages(messages = []) {
+  if (!messages.length) {
+    return `<section class="chat-empty"><div class="state-icon">${icon("psychology")}</div><h2>How can I help with your health today?</h2><p class="muted">Ask about a report, symptom context, or next questions to discuss with a clinician.</p></section>`;
+  }
+  return messages.map((message, index) => renderAiChatMessage(message, index)).join("");
+}
+
+function renderAiChatMessage(message, index = 0) {
   const role = String(message.role || "assistant").toLowerCase();
   const label = role === "user" ? "You" : "MedExplain AI";
-  return `<article class="message-bubble" data-role="${escapeHtml(role)}"><p class="caption">${escapeHtml(label)}</p><p>${escapeHtml(message.content || "")}</p></article>`;
+  return `<article class="message-bubble" id="message-${escapeHtml(message.id || index)}" data-role="${escapeHtml(role)}"><p class="caption">${escapeHtml(label)}</p><p>${escapeHtml(message.content || "")}</p></article>`;
 }
 
 function chatErrorMessage(error) {
@@ -81,11 +111,13 @@ function bindAiChatForm() {
     const thread = document.querySelector("[data-ai-chat-thread]");
     setSubmitLoading(form, true);
     try {
-      thread.innerHTML = `${thread.querySelector(".empty-state") ? "" : thread.innerHTML}${renderAiChatMessage({ role: "user", content: message })}`;
+      thread.innerHTML = `${thread.querySelector(".chat-empty") ? "" : thread.innerHTML}`;
+      thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "user", content: message }));
       textareaField.value = "";
       const response = await apiRequest("/ai/chat", { method: "POST", body: { message } });
       const assistantMessage = response.data?.message || response.data?.response?.summary || "Response saved.";
       thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "assistant", content: assistantMessage }));
+      thread.scrollTop = thread.scrollHeight;
       showFormMessage(form, "success", "Message sent.");
     } catch (error) {
       showFormMessage(form, "error", chatErrorMessage(error));

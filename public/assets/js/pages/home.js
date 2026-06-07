@@ -137,25 +137,7 @@ async function renderPatientDashboard() {
     const messages = history.data?.messages || [];
     setMain(`
       ${pageHeader(meta)}
-      ${renderEntitlementBanner(subscription.data || {}, "aiChat")}
-      <section class="grid grid-2">
-        <article class="card stack">
-          <div class="card-header">
-            <div><h2>Conversation</h2><p class="muted">Messages are stored through the backend AI gateway.</p></div>
-            <span class="badge">${messages.length} messages</span>
-          </div>
-          <div class="chat-thread stack" data-ai-chat-thread>
-            ${renderAiChatMessages(messages)}
-          </div>
-        </article>
-        <article class="form-card stack">
-          <form class="form" data-ai-chat-form novalidate>
-            <div class="form-message" data-form-message hidden></div>
-            ${textarea("Ask a health question", "message", true)}
-            <button class="btn btn-primary" type="submit">${icon("send")}Send message</button>
-          </form>
-        </article>
-      </section>
+      ${renderChatWorkspace(messages, subscription.data || {})}
     `);
     bindAiChatForm();
   } catch (error) {
