@@ -17,9 +17,6 @@ export function validateStartupEnvironment() {
   }
 
   if (env.NODE_ENV === "production") {
-    if (env.DEMO_MODE) {
-      weak.push("DEMO_MODE");
-    }
     for (const key of ["COOKIE_SECRET", "CSRF_SECRET", "MESSAGE_ENCRYPTION_SECRET", "PAYMENT_DATA_ENCRYPTION_SECRET"]) {
       if (!hasValue(env[key])) missing.push(key);
     }
@@ -41,7 +38,7 @@ export function validateStartupEnvironment() {
   const warnings = [];
   if (env.NODE_ENV !== "production") {
     for (const key of ["GEMINI_API_KEY", "OPAY_MERCHANT_ID", "OPAY_PUBLIC_KEY", "OPAY_SECRET_KEY"]) {
-      if (!hasValue(env[key])) warnings.push(`${key} is not set; related live integrations are unavailable outside DEMO_MODE.`);
+      if (!hasValue(env[key])) warnings.push(`${key} is not set; related live integrations are unavailable until configured.`);
     }
   }
   return warnings;

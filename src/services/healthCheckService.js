@@ -31,7 +31,7 @@ async function checkStorage() {
 }
 
 function checkAi() {
-  return Boolean(env.GEMINI_API_KEY || env.DEMO_MODE);
+  return Boolean(env.GEMINI_API_KEY);
 }
 
 function checkRealtime() {

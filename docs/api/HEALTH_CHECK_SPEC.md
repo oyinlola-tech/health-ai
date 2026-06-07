@@ -38,7 +38,7 @@ GET /api/health
 ## Checks
 
 - `db`: runs a MySQL `select 1` through the configured pool.
-- `ai`: true when `GEMINI_API_KEY` is configured or `DEMO_MODE=true`.
+- `ai`: true when `GEMINI_API_KEY` is configured.
 - `realtime`: true after Socket.IO is registered.
 - `storage`: creates/accesses the configured upload root.
 
@@ -46,4 +46,3 @@ GET /api/health
 
 - `200`: all services are healthy.
 - `503`: one or more services are degraded.
-

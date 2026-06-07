@@ -167,7 +167,12 @@ async function renderPaymentStatus(success) {
   }
   setMain(`${pageHeader(meta)}${loadingState("Verifying payment")}`);
   try {
-    await apiRequest("/subscriptions/verify", { method: "POST", body: { reference } });
+    const response = await apiRequest("/subscriptions/verify", { method: "POST", body: { reference } });
+    const payment = response.data?.payment || {};
+    if (payment.status !== "verified") {
+      setMain(`${pageHeader(meta)}${emptyState({ iconName: "pending", title: "Payment confirmation pending", description: "OPay has not sent verified webhook confirmation yet. Access activates automatically when the backend receives it.", actionLabel: "Check billing history", actionHref: "/billing-history" })}`);
+      return;
+    }
     state.dataCache.delete("subscription");
     setMain(`${pageHeader(meta)}${emptyState({ iconName: "verified", title: "Premium activated", description: "OPay confirmed your payment and premium access is active.", actionLabel: "Open dashboard", actionHref: "/dashboard" })}`);
   } catch {

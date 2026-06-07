@@ -2,13 +2,15 @@ import bcrypt from "bcryptjs";
 import { withTransaction } from "../config/database.js";
 import { userRepository } from "../repositories/userRepository.js";
 import { auditRepository } from "../repositories/auditRepository.js";
-import { emailService } from "./emailService.js";
 import { signAccessToken, signEmailVerificationToken, signRefreshToken, verifyEmailVerificationToken, verifyRefreshToken } from "./tokenService.js";
 import { errors } from "../utils/errors.js";
 import { generateSecurePassword } from "../utils/password.js";
 import { randomToken, sha256 } from "../utils/crypto.js";
 import { env } from "../config/env.js";
 import { trialService } from "../modules/promotions/trial.service.js";
+import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
+import { eventBus } from "../modules/events/event.bus.js";
+import { eventTypes } from "../modules/events/event.types.js";
 
 function publicUser(user) {
   return {
@@ -27,12 +29,14 @@ async function hashPassword(password) {
   return bcrypt.hash(password, 12);
 }
 
+const failedLoginAttempts = new Map();
+
 async function issueSession(user, client) {
   const accessToken = signAccessToken(user);
   const { token: refreshToken, tokenId } = signRefreshToken(user);
   const expiresAt = new Date(Date.now() + env.JWT_REFRESH_TTL_SECONDS * 1000);
   await userRepository.createRefreshToken({ id: tokenId, userId: user.id, tokenHash: sha256(refreshToken), expiresAt }, client);
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, refreshTokenId: tokenId };
 }
 
 export const authService = {
@@ -43,7 +47,7 @@ export const authService = {
     if (existing) throw errors.conflict("An account with this email already exists.");
 
     const passwordHash = await hashPassword(input.password);
-    const { user, trial } = await withTransaction(async (client) => {
+    const { user, trial, session } = await withTransaction(async (client) => {
       const created = await userRepository.createUser(
         {
           email: input.email,
@@ -57,22 +61,43 @@ export const authService = {
       );
       await userRepository.updateProfile(created.id, { consentPromptLearning: input.consentPromptLearning, metadata: {} }, client);
       const startedTrial = await trialService.startTrial(created.id, client);
-      return { user: created, trial: startedTrial };
+      const createdSession = await issueSession(created, client);
+      return { user: created, trial: startedTrial, session: createdSession };
     });
     const emailVerificationToken = signEmailVerificationToken(user);
-    await emailService.sendMail({
-      to: user.email,
-      subject: "Verify your MedExplain AI account",
-      text: `Use this verification token to verify your account: ${emailVerificationToken}`
+    await eventTracker.track({
+      userId: user.id,
+      eventType: analyticsEvents.USER_REGISTERED,
+      entityType: "users",
+      entityId: user.id,
+      metadata: { role: user.role }
     });
-    return { user: publicUser(user), trial, emailVerificationToken };
+    eventBus.publishLater(eventTypes.USER_REGISTERED, {
+      user,
+      adminMessage: `${user.email} created a ${user.role} account.`
+    }, { userId: user.id, entityType: "users", entityId: user.id });
+    eventBus.publishLater(eventTypes.EMAIL_VERIFICATION_REQUESTED, { user, token: emailVerificationToken }, { userId: user.id });
+    eventBus.publishLater(eventTypes.TRIAL_STARTED, { user, days: env.FREE_TRIAL_DAYS }, { userId: user.id });
+    return { user: publicUser(user), trial, emailVerificationToken, ...session };
   },
 
   async login({ email, password }) {
     const user = await userRepository.findByEmail(email);
     if (!user) throw errors.unauthorized("Invalid email or password.");
     const valid = await bcrypt.compare(password, user.password_hash);
-    if (!valid) throw errors.unauthorized("Invalid email or password.");
+    if (!valid) {
+      const attempts = (failedLoginAttempts.get(user.id) || []).filter((timestamp) => Date.now() - timestamp < 15 * 60 * 1000);
+      attempts.push(Date.now());
+      failedLoginAttempts.set(user.id, attempts);
+      if (attempts.length >= 5) {
+        eventBus.publishLater(eventTypes.LOGIN_FAILED_MULTIPLE, {
+          user,
+          keyData: { Attempts: attempts.length, Window: "15 minutes" }
+        }, { userId: user.id, entityType: "users", entityId: user.id, idempotencyKey: `login-failed:${user.id}:${Math.floor(Date.now() / 900000)}` });
+      }
+      throw errors.unauthorized("Invalid email or password.");
+    }
+    failedLoginAttempts.delete(user.id);
     const session = await issueSession(user);
     return { user: publicUser(user), ...session };
   },
@@ -111,11 +136,13 @@ export const authService = {
     if (!user) return { sent: true };
     const token = randomToken(32);
     await userRepository.setPasswordReset(user.id, sha256(token), new Date(Date.now() + 30 * 60 * 1000));
-    await emailService.sendMail({
-      to: user.email,
-      subject: "Reset your MedExplain AI password",
-      text: `Use this password reset token within 30 minutes: ${token}`
+    await eventTracker.track({
+      userId: user.id,
+      eventType: analyticsEvents.PASSWORD_RESET_REQUEST,
+      entityType: "users",
+      entityId: user.id
     });
+    eventBus.publishLater(eventTypes.PASSWORD_RESET_REQUESTED, { user, token }, { userId: user.id, entityType: "users", entityId: user.id });
     return { sent: true };
   },
 
@@ -124,6 +151,7 @@ export const authService = {
     if (!user) throw errors.unauthorized("Password reset token is invalid or expired.");
     await userRepository.updatePassword(user.id, await hashPassword(password));
     await userRepository.revokeUserRefreshTokens(user.id);
+    eventBus.publishLater(eventTypes.PASSWORD_CHANGED, { user }, { userId: user.id, entityType: "users", entityId: user.id });
     return { reset: true };
   },
 
@@ -180,7 +208,13 @@ export const authService = {
       return user;
     });
 
-    await emailService.sendDoctorCredentials({ to: result.email, email: result.email, password: temporaryPassword });
+    eventBus.publishLater(eventTypes.DOCTOR_ASSIGNED, {
+      user: result,
+      email: result.email,
+      temporaryPassword,
+      message: "Your MedExplain AI doctor account has been created. Sign in and change this temporary password immediately.",
+      adminMessage: `${result.email} was created by ${actor.email || actor.id}.`
+    }, { userId: result.id, entityType: "users", entityId: result.id });
     return { user: publicUser(result), temporaryPassword };
   }
 };

@@ -9,6 +9,9 @@ import { errors } from "../utils/errors.js";
 import { entitlementService, features } from "./entitlementService.js";
 import { consentTypes, legalService } from "./legalService.js";
 import { socketHub } from "../sockets/hub.js";
+import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
+import { eventBus } from "../modules/events/event.bus.js";
+import { eventTypes } from "../modules/events/event.types.js";
 
 const medicalDisclaimer =
   "This information is for educational purposes only and is not medical advice. Please consult a qualified healthcare professional for interpretation and diagnosis.";
@@ -286,6 +289,22 @@ async function notifyCriticalReport({ report, user, response }) {
     title: "Critical report finding detected",
     body: "Your report analysis contains findings that should be reviewed by a qualified medical professional."
   });
+  eventBus.publishLater(eventTypes.AI_CRITICAL_HEALTH_FLAG, {
+    user,
+    reportTitle: report.title,
+    urgencyLevel: response.urgencyLevel,
+    message: "Your report analysis contains findings that should be reviewed by a qualified medical professional."
+  }, { userId: user.id, entityType: "reports", entityId: report.id, idempotencyKey: `critical-health:${report.id}` });
+}
+
+async function alertOnAiSpike() {
+  const count = await eventTracker.countRecent({ eventType: analyticsEvents.AI_ANALYSIS, minutes: 60 });
+  if (count > 0 && count % env.AI_USAGE_SPIKE_ALERT_THRESHOLD === 0) {
+    eventBus.publishLater(eventTypes.HIGH_AI_COST_ALERT, {
+      message: `${count} report analysis events were recorded in the last hour.`,
+      keyData: { "Analysis events": count, Window: "60 minutes" }
+    }, { idempotencyKey: `ai-spike:${count}:${new Date().toISOString().slice(0, 13)}` });
+  }
 }
 
 export const aiService = {
@@ -354,6 +373,19 @@ export const aiService = {
         usedForLearning: consentAllowsLearning(user)
       });
       await entitlementService.recordUsage(user, features.REPORT_ANALYSIS, { reportId: report.id });
+      await eventTracker.track({
+        userId: user.id,
+        eventType: analyticsEvents.AI_ANALYSIS,
+        entityType: "reports",
+        entityId: report.id,
+        metadata: { model: result.model, cacheHit: result.cacheHit, contextCount: contextChunks.length }
+      });
+      eventBus.publishLater(eventTypes.AI_REPORT_ANALYZED, {
+        user,
+        reportTitle: report.title,
+        reportId: report.id
+      }, { userId: user.id, entityType: "reports", entityId: report.id, idempotencyKey: `ai-report-analyzed:${report.id}:${result.requestId}` });
+      await alertOnAiSpike();
       const updatedReport = await reportRepository.updateAnalysis(report.id, { status: "analyzed", summary: responseSummary(response) });
       socketHub.toUser(user.id, "ai_processing_completed", { reportId: report.id, progress: 100 });
       socketHub.toUser(user.id, "ai_analysis_ready", { reportId: report.id, report: updatedReport, analysis: response });
@@ -412,6 +444,13 @@ export const aiService = {
     await aiRepository.storeMessage({ userId: user.id, role: "user", content: message });
     await aiRepository.storeMessage({ userId: user.id, role: "assistant", content: responseSummary(response), aiInteractionId: interaction.id });
     await entitlementService.recordUsage(user, features.AI_CHAT, { reportId: reportId || null });
+    await eventTracker.track({
+      userId: user.id,
+      eventType: analyticsEvents.AI_CHAT,
+      entityType: reportId ? "reports" : "ai_interactions",
+      entityId: reportId || interaction.id,
+      metadata: { model: result.model, cacheHit: result.cacheHit, contextCount: contextChunks.length }
+    });
     return { interaction, message: responseSummary(response), response };
   },
 

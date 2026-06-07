@@ -8,16 +8,13 @@
 // -----------------------------------------------------------------------------
 
 const routeAliases = new Map([
-  ["/splash", "/"],
-  ["/onboarding", "/"],
   ["/upload", "/reports"],
   ["/history", "/reports"],
-  ["/notifications", "/dashboard"],
   ["/admin/login", "/login"],
   ["/auth/login.html", "/login"],
   ["/auth/signup.html", "/register"],
   ["/auth/welcome.html", "/"],
-  ["/auth/splash.html", "/"],
+  ["/auth/splash.html", "/splash"],
   ["/app/dashboard.html", "/dashboard"],
   ["/app/upload.html", "/reports"],
   ["/app/uploadfile.html", "/reports"],
@@ -40,7 +37,7 @@ const routeAliases = new Map([
   ["/premium/activated.html", "/payment-success"],
   ["/learning-center/home.html", "/help"],
   ["/learning-center/articles.html", "/help"],
-  ["/notifications/list.html", "/dashboard"],
+  ["/notifications/list.html", "/notifications"],
   ["/admin/index.html", "/admin"],
   ["/admin/user.html", "/admin/users"],
   ["/admin/report.html", "/admin/reports"],
@@ -76,6 +73,8 @@ const footerSections = [
 
 const pageMeta = {
   "/": { title: "Calm healthcare intelligence", description: "Upload reports, understand results, and connect with verified medical support in one steady workspace." },
+  "/splash": { title: "Welcome to MedExplain AI", description: "A calm, secure place to understand reports and manage healthcare decisions." },
+  "/onboarding": { title: "Get started", description: "Set up your secure MedExplain AI workspace." },
   "/login": { title: "Welcome back", description: "Sign in to continue your private health workspace." },
   "/register": { title: "Create your account", description: "Start a private MedExplain AI workspace." },
   "/dashboard": { title: "Patient dashboard", description: "Your health overview, report status, AI insights, consultations, and account state." },
@@ -101,6 +100,7 @@ const pageMeta = {
   "/terms": { title: "Terms", description: "Terms for using MedExplain AI." },
   "/consent": { title: "Consent center", description: "Control medical processing, AI analysis, doctor sharing, and payment permissions." },
   "/data-policy": { title: "Data usage transparency", description: "Understand why data is collected and what MedExplain AI does not do with it." },
+  "/notifications": { title: "Notification center", description: "Review email, AI, payment, security, and doctor notifications." },
   "/doctor": { title: "Doctor dashboard", description: "Appointments, patient queue, reports, messages, analytics, and settings." },
   "/admin": { title: "Admin dashboard", description: "Users, doctors, applications, reports, payments, logs, and system settings." }
 };

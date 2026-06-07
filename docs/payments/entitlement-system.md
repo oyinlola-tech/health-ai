@@ -17,6 +17,8 @@ Sensitive MedExplain AI features are protected by backend entitlement checks.
 
 Route-level guards block early and return upgrade metadata. Service-level checks remain in place as defense-in-depth for direct service calls and future routes.
 
+Entitlements are written only by subscription activation paths: free/trial bootstrap, server-approved zero-total promotional checkout, or signed OPay webhook processing for paid checkout.
+
 ## Upgrade Response
 
 When access is insufficient, the API returns a forbidden error with:

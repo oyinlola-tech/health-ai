@@ -20,5 +20,4 @@ Known dynamic SQL is limited to server-controlled fragments such as role-specifi
 
 ## Data Integrity
 
-The hardening pass disables synthetic demo database seeding. `DEMO_MODE` may still support demo health behavior, but it no longer inserts fake users, reports, appointments, or AI examples.
-
+Synthetic demo database seeding has been removed from startup. Health checks now reflect real configured services, and the app no longer inserts fake users, reports, appointments, or AI examples.

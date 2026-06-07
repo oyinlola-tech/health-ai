@@ -11,8 +11,8 @@ export const adminController = {
     return sendSuccess(res, await authService.createDoctor(req.body, req.user), {}, 201);
   },
 
-  async analytics(_req, res) {
-    return sendSuccess(res, { analytics: await adminService.analytics() });
+  async analytics(req, res) {
+    return sendSuccess(res, { analytics: await adminService.analytics(req.query) });
   },
 
   async auditLogs(req, res) {

@@ -7,6 +7,9 @@ import { errors } from "../utils/errors.js";
 import { decryptMessage, encryptMessage } from "../utils/messageCrypto.js";
 import { socketHub } from "../sockets/hub.js";
 import { consentTypes, legalService } from "./legalService.js";
+import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
+import { eventBus } from "../modules/events/event.bus.js";
+import { eventTypes } from "../modules/events/event.types.js";
 
 function doctorDisplayName(row) {
   return [row.first_name, row.last_name].filter(Boolean).join(" ");
@@ -35,6 +38,11 @@ export const doctorMarketplaceService = {
       title: "Verification status updated",
       body: `Your doctor verification status is now ${status}.`
     });
+    eventBus.publishLater(eventTypes.DOCTOR_VERIFIED, {
+      user: { id: doctorId, email: profile.email, first_name: profile.first_name, last_name: profile.last_name },
+      message: `Your doctor verification status is now ${status}.`,
+      keyData: { Status: status }
+    }, { userId: doctorId, entityType: "doctor_profiles", entityId: doctorId, idempotencyKey: `doctor-verified:${doctorId}:${status}` });
     socketHub.toUser(doctorId, "doctor.verification.updated", { status });
     return updated;
   },
@@ -87,6 +95,13 @@ export const doctorMarketplaceService = {
       body: `Your request with Dr. ${doctorDisplayName(doctor)} has been saved.`
     });
     await entitlementService.recordUsage(user, features.DOCTOR_CONSULTATION, { appointmentId: appointment.id });
+    await eventTracker.track({
+      userId: user.id,
+      eventType: analyticsEvents.DOCTOR_BOOKING,
+      entityType: "appointments",
+      entityId: appointment.id,
+      metadata: { doctorId: input.doctorId }
+    });
     socketHub.toUser(input.doctorId, "appointment_created", { appointment });
     socketHub.toUser(user.id, "appointment_created", { appointment });
     socketHub.toAppointment(appointment.id, "appointment_created", { appointment });
@@ -126,6 +141,12 @@ export const doctorMarketplaceService = {
         CANCELLED: "appointment_cancelled",
         COMPLETED: "appointment_completed"
       }[status] || "appointment_created";
+      if (status === "CONFIRMED" || status === "CANCELLED") {
+        eventBus.publishLater(status === "CONFIRMED" ? eventTypes.APPOINTMENT_CONFIRMED : eventTypes.APPOINTMENT_CANCELLED, {
+          user: { id: appointment.patient_id, email: appointment.patient_email, first_name: appointment.patient_first_name, last_name: appointment.patient_last_name },
+          appointmentId: appointment.id
+        }, { userId: appointment.patient_id, entityType: "appointments", entityId: appointment.id, idempotencyKey: `appointment-${status.toLowerCase()}:${appointment.id}` });
+      }
       socketHub.toUser(appointment.patient_id, eventName, { appointment: updated, session });
       socketHub.toUser(appointment.doctor_id, eventName, { appointment: updated, session });
       socketHub.toAppointment(appointment.id, eventName, { appointment: updated, session });
@@ -168,6 +189,10 @@ export const doctorMarketplaceService = {
       title: "New consultation message",
       body: "You have a new message in a consultation room."
     });
+    eventBus.publishLater(eventTypes.DOCTOR_RESPONSE_RECEIVED, {
+      user: { id: recipientId, email: session.recipient_email, first_name: session.recipient_first_name, last_name: session.recipient_last_name },
+      sessionId
+    }, { userId: recipientId, entityType: "consultation_sessions", entityId: sessionId });
     socketHub.toConsultation(sessionId, "message_receive", { message });
     socketHub.toUser(recipientId, "notification_push", { type: "consultation_message", sessionId });
     return message;

@@ -7,6 +7,53 @@
 // Landing, authentication, dashboard, and shared dashboard renderers.
 // -----------------------------------------------------------------------------
 
+function renderSplash() {
+  const meta = routeTitle("/splash");
+  setMain(`
+    <section class="page-hero">
+      <div class="hero-panel">
+        ${pageHeader(meta)}
+        <p class="muted">Start with a guided setup, then sign in or create an account to keep reports, consultations, subscriptions, and AI analysis private.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="/onboarding">${icon("arrow_forward")}Get started</a>
+          <a class="btn btn-secondary" href="/login">Sign in</a>
+        </div>
+      </div>
+      <div class="hero-panel hero-visual">
+        <div class="icon-tile">${icon("health_and_safety")}</div>
+        <h2>Understand health information without panic.</h2>
+        <p class="muted">MedExplain AI keeps medical explanations grounded, private, and connected to real account access.</p>
+      </div>
+    </section>
+  `);
+}
+
+function renderOnboarding() {
+  const meta = routeTitle("/onboarding");
+  localStorage.setItem("medexplain_onboarding_seen", "true");
+  setMain(`
+    ${pageHeader(meta)}
+    <section class="grid grid-3" aria-label="MedExplain onboarding">
+      ${featureCard("Upload securely", "upload_file", "Send medical reports through the protected backend upload flow.", "/register")}
+      ${featureCard("Get grounded explanations", "psychology", "AI analysis uses trusted medical context and backend safety checks.", "/register")}
+      ${featureCard("Continue with care", "stethoscope", "Use subscriptions and doctor workflows when your account has access.", "/register")}
+    </section>
+    <section class="card stack">
+      <div class="card-header">
+        <div>
+          <h2>Create your private workspace</h2>
+          <p class="muted">New accounts start directly in the dashboard after registration.</p>
+        </div>
+        <span class="badge">14-day trial</span>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="/register">${icon("person_add")}Create account</a>
+        <a class="btn btn-secondary" href="/login">I already have an account</a>
+      </div>
+    </section>
+  `);
+}
+
 function renderLanding() {
   const meta = routeTitle("/");
   setMain(`
@@ -65,14 +112,22 @@ function bindAuthForm() {
     try {
       const response = await apiRequest(`/auth/${mode === "login" ? "login" : "register"}`, { method: "POST", body: payload });
       setAccessToken(response.data?.accessToken);
+      localStorage.setItem("medexplain_onboarding_seen", "true");
       showFormMessage(form, "success", "Success. Redirecting to your dashboard.");
-      window.setTimeout(() => window.location.assign("/dashboard"), 400);
+      window.setTimeout(() => window.location.assign(authRedirectTarget()), 400);
     } catch {
       showFormMessage(form, "error", "We could not complete that request. Check your details and try again.");
     } finally {
       setSubmitLoading(form, false);
     }
   });
+}
+
+function authRedirectTarget() {
+  const next = new URLSearchParams(location.search).get("next");
+  const blocked = new Set(["/login", "/register", "/splash", "/onboarding"]);
+  if (!next || !next.startsWith("/") || next.startsWith("//") || blocked.has(next.split("?")[0])) return "/dashboard";
+  return next;
 }
 
 async function renderPatientDashboard() {
@@ -199,4 +254,55 @@ function renderReportItem(report) {
 
 function renderHealthItem(entry) {
   return `<article class="card stack"><h3>${escapeHtml(entry.title || entry.category || "Health entry")}</h3><p class="muted">${escapeHtml(entry.value || "Saved health history entry")}</p></article>`;
+}
+
+function notificationCategory(item = {}) {
+  const raw = String(item.category || item.type || "system").toLowerCase();
+  if (raw.includes("ai") || raw.includes("critical") || raw.includes("report")) return "AI";
+  if (raw.includes("payment") || raw.includes("subscription") || raw.includes("coupon")) return "Payment";
+  if (raw.includes("security") || raw.includes("login") || raw.includes("password") || raw.includes("account")) return "Security";
+  if (raw.includes("doctor") || raw.includes("appointment") || raw.includes("consultation")) return "Doctor";
+  return "System";
+}
+
+async function renderNotifications() {
+  const meta = routeTitle("/notifications");
+  const filter = new URLSearchParams(location.search).get("type") || "All";
+  setMain(`${pageHeader(meta)}${loadingState("Loading notifications")}`);
+  try {
+    const response = await apiRequest("/notifications");
+    const notifications = response.data?.notifications || [];
+    const filtered = filter === "All" ? notifications : notifications.filter((item) => notificationCategory(item) === filter);
+    const tabs = ["All", "AI", "Payment", "Security", "Doctor"];
+    setMain(`
+      ${pageHeader(meta)}
+      <section class="tabs" aria-label="Notification filters">
+        ${tabs.map((tab) => `<a class="tab" href="/notifications${tab === "All" ? "" : `?type=${encodeURIComponent(tab)}`}"${tab === filter ? ' aria-current="page"' : ""}>${tab}</a>`).join("")}
+      </section>
+      <section class="table-card stack">
+        <div class="card-header"><div><h2>Email and notification history</h2><p class="muted">Persisted alerts from AI, payment, security, doctor, and system workflows.</p></div><span class="badge">${filtered.length} shown</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Type</th><th>Title</th><th>Channel</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>
+          ${
+            filtered.length
+              ? filtered
+                  .map((item) => {
+                    const category = notificationCategory(item);
+                    return `<tr><td>${escapeHtml(category)}</td><td><strong>${escapeHtml(item.title)}</strong><p class="muted">${escapeHtml(item.body || "")}</p></td><td>${escapeHtml(item.source || item.delivery_channel || "in_app")}</td><td><span class="badge ${item.read_at ? "badge-success" : "badge-warning"}">${item.read_at ? "Read" : "Unread"}</span></td><td>${escapeHtml(new Date(item.created_at).toLocaleString())}</td><td>${item.read_at ? "" : `<button class="btn btn-secondary" type="button" data-mark-notification="${escapeHtml(item.id)}">Mark read</button>`}</td></tr>`;
+                  })
+                  .join("")
+              : `<tr><td colspan="6">No notifications in this filter.</td></tr>`
+          }
+        </tbody></table></div>
+      </section>
+    `);
+    document.querySelectorAll("[data-mark-notification]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        await apiRequest(`/notifications/${button.dataset.markNotification}/read`, { method: "PATCH" });
+        renderNotifications();
+      });
+    });
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("We could not load notifications")}`);
+  }
 }

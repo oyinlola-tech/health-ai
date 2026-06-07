@@ -31,6 +31,41 @@ function renderNotFound() {
   setMain(`${pageHeader(routeTitle(state.path))}${emptyState({ iconName: "map", title: "Page unavailable", description: "Use the navigation to continue in your healthcare workspace.", actionLabel: "Go to dashboard", actionHref: "/dashboard" })}`);
 }
 
+function redirectTo(path) {
+  window.location.assign(path);
+}
+
+function requiresSignedInUser(path) {
+  if (path === "/doctor/:id") return false;
+  if (path.startsWith("/admin")) return true;
+  if (path === "/doctor" || path.startsWith("/doctor/")) return true;
+  return new Set([
+    "/dashboard",
+    "/reports",
+    "/report/:id",
+    "/chat",
+    "/appointments",
+    "/profile",
+    "/settings",
+    "/subscription",
+    "/checkout",
+    "/payment-success",
+    "/billing-history",
+    "/update-plan",
+    "/cancel-subscription",
+    "/notifications"
+  ]).has(path);
+}
+
+function loginRedirectPath() {
+  const current = `${location.pathname}${location.search}`;
+  return `/login?next=${encodeURIComponent(current)}`;
+}
+
+function onboardingSeen() {
+  return localStorage.getItem("medexplain_onboarding_seen") === "true";
+}
+
 function bindGlobalActions() {
   document.addEventListener("click", (event) => {
     const action = event.target.closest("[data-action]")?.dataset.action;
@@ -77,7 +112,12 @@ function bindRealtimeUpdates() {
 
 function route() {
   document.title = `${routeTitle(state.path).title} | MedExplain AI`;
-  if (state.path === "/") return renderLanding();
+  if (requiresSignedInUser(state.path) && !getAccessToken()) return redirectTo(loginRedirectPath());
+  if (["/login", "/register", "/splash", "/onboarding"].includes(state.path) && getAccessToken()) return redirectTo("/dashboard");
+  if (state.path === "/" && !getAccessToken()) return renderSplash();
+  if (state.path === "/") return redirectTo("/dashboard");
+  if (state.path === "/splash") return renderSplash();
+  if (state.path === "/onboarding") return renderOnboarding();
   if (state.path === "/login") return renderAuth("login");
   if (state.path === "/register") return renderAuth("register");
   if (state.path === "/dashboard") return renderPatientDashboard();
@@ -102,6 +142,7 @@ function route() {
   if (emptyPages[state.path]) return renderEmptyPage(state.path);
   if (successPages[state.path]) return renderSuccessPage(state.path);
   if (["/settings", "/help", "/contact"].includes(state.path)) return renderStaticPage(state.path);
+  if (state.path === "/notifications") return renderNotifications();
   if (state.path === "/doctor" || state.path.startsWith("/doctor/")) return renderDoctorDashboard();
   if (state.path === "/admin" || state.path.startsWith("/admin/")) return renderAdminDashboard();
   return renderNotFound();

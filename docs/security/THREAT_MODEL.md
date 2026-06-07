@@ -104,7 +104,7 @@ Controls added:
 
 - timing-safe webhook signature comparison
 - replay-key uniqueness
-- server-side OPay verification
+- signed OPay webhook verification
 - amount/currency integrity checks
 - payment transaction audit records
 

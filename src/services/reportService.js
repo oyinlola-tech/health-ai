@@ -2,6 +2,7 @@ import { reportRepository } from "../repositories/reportRepository.js";
 import { reportAnalysisPipeline } from "../modules/report-processing/reportAnalysisPipeline.js";
 import { errors } from "../utils/errors.js";
 import { consentTypes, legalService } from "./legalService.js";
+import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
 
 function parseLatestAnalysis(interaction) {
   if (!interaction?.response) return null;
@@ -35,7 +36,15 @@ export const reportService = {
       sizeBytes: file.size
     });
 
-    return reportAnalysisPipeline.extractAndPersist({ report, reportRepository });
+    const processed = await reportAnalysisPipeline.extractAndPersist({ report, reportRepository });
+    await eventTracker.track({
+      userId: user.id,
+      eventType: analyticsEvents.REPORT_UPLOAD,
+      entityType: "reports",
+      entityId: report.id,
+      metadata: { mimeType: file.mimetype, sizeBytes: file.size }
+    });
+    return processed;
   },
 
   async listReports(user) {

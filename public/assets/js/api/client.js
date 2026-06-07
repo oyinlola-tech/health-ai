@@ -7,7 +7,7 @@
 // API communication and auth token helpers.
 // -----------------------------------------------------------------------------
 
-﻿const appConfig = {
+const appConfig = {
   apiBaseUrl: "/api",
   csrfHeader: "x-csrf-token",
   accessTokenKey: "medexplain_access_token"
@@ -80,7 +80,7 @@ async function apiRequest(path, options = {}) {
     body: options.body instanceof FormData ? options.body : options.body ? JSON.stringify(options.body) : undefined
   });
 
-  if (response.status === 401 && !options.skipRefresh) {
+  if (response.status === 401 && token && !options.skipRefresh) {
     const refreshed = await refreshAccessToken();
     if (refreshed) return apiRequest(path, { ...options, skipRefresh: true });
   }
@@ -97,4 +97,3 @@ async function apiRequest(path, options = {}) {
 
   return payload;
 }
-

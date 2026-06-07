@@ -10,8 +10,8 @@ export const adminService = {
     return userRepository.list(query);
   },
 
-  analytics() {
-    return adminRepository.getAnalytics();
+  analytics(query) {
+    return adminRepository.getAnalytics(query);
   },
 
   auditLogs(query) {

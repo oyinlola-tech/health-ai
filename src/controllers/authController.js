@@ -2,6 +2,9 @@ import { authService } from "../services/authService.js";
 import { issueCsrfToken } from "../middlewares/csrf.js";
 import { sendSuccess } from "../utils/response.js";
 import { env } from "../config/env.js";
+import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
+import { eventBus } from "../modules/events/event.bus.js";
+import { eventTypes } from "../modules/events/event.types.js";
 
 const refreshCookieName = "mx_refresh";
 
@@ -29,12 +32,34 @@ export const authController = {
 
   async register(req, res) {
     const result = await authService.registerPatient(req.body);
-    return sendSuccess(res, result, {}, 201);
+    setRefreshCookie(res, result.refreshToken);
+    return sendSuccess(res, {
+      user: result.user,
+      trial: result.trial,
+      accessToken: result.accessToken
+    }, {}, 201);
   },
 
   async login(req, res) {
     const result = await authService.login(req.body);
     setRefreshCookie(res, result.refreshToken);
+    await eventTracker.startSession({ user: result.user, req, refreshTokenId: result.refreshTokenId });
+    await eventTracker.track({
+      userId: result.user.id,
+      eventType: analyticsEvents.LOGIN,
+      entityType: "users",
+      entityId: result.user.id,
+      req
+    });
+    eventBus.publishLater(
+      eventTypes.USER_LOGIN_NEW_DEVICE,
+      {
+        user: result.user,
+        time: new Date().toISOString(),
+        device: req.get("user-agent") || "Unknown device"
+      },
+      { userId: result.user.id, entityType: "users", entityId: result.user.id }
+    );
     return sendSuccess(res, {
       user: result.user,
       accessToken: result.accessToken

@@ -6,6 +6,7 @@
   --color-accent: #ff6e5c;
   --color-background: #fdf6f3;
   --color-surface: #ffffff;
+  --color-surface-soft: #fffaf7;
   --color-border: #e5e7eb;
   --color-border-warm: #e8e4e1;
   --color-success: #22c55e;
@@ -1132,4 +1133,31 @@ thead th:last-child {
   .tabs .tab {
     width: 100%;
   }
+}
+
+.chart-box {
+  display: grid;
+  gap: 12px;
+  min-height: 220px;
+}
+
+.chart-box svg {
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-small);
+  background: var(--color-surface-soft);
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--color-secondary);
+  font-size: 13px;
+}
+
+.bar-row {
+  display: grid;
+  gap: 6px;
 }

@@ -18,7 +18,7 @@ The API follows a consistent layered structure: routes -> validators -> controll
 
 ## No Mock Data
 
-No active endpoint was found returning hardcoded fake records as a successful real workflow. Demo seeding exists as a development seed path and is controlled by environment behavior.
+No active endpoint was found returning hardcoded fake records as a successful real workflow. Synthetic demo seeding has been removed from startup, and service health now reflects real configured integrations.
 
 ## Remaining Work
 

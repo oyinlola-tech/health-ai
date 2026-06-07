@@ -25,10 +25,6 @@ export const opayService = {
     return opayClient.createCashierPayment(body);
   },
 
-  verifyProviderPayment(body) {
-    return opayClient.verifyPayment(body);
-  },
-
   checkoutUrlFrom(payload) {
     return opayClient.checkoutUrlFrom(payload);
   }

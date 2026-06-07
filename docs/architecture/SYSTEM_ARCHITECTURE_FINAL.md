@@ -19,7 +19,6 @@ validate env
   -> run JavaScript migrations
   -> seed system data
   -> seed admin if missing
-  -> seed demo data only when DEMO_MODE=true
   -> verify DB
   -> create Express app
   -> register Socket.IO
@@ -43,4 +42,3 @@ validate env
 ## Deployment Notes
 
 The production backend can serve the frontend directly. The Docker compose frontend service exists for demonstration/static-hosting compatibility, while API and realtime traffic should point to the backend service.
-

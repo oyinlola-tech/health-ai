@@ -31,9 +31,8 @@ docker compose up
 - JavaScript migrations create missing tables only.
 - System subscription data is seeded idempotently.
 - Admin user is created only when no admin exists.
-- `DEMO_MODE=true` adds isolated judge/demo sample data outside production only.
 - HTTP frontend/backend and Socket.IO start from one server process.
-- `/health` verifies DB, AI configuration/demo availability, realtime, and upload storage.
+- `/health` verifies DB, AI configuration, realtime, and upload storage.
 
 ## Production Safety
 
@@ -47,4 +46,4 @@ docker compose up
 
 ## Known Operator Requirement
 
-For real production, set `NODE_ENV=production`, keep `DEMO_MODE=false`, and provide real Gemini, OPay, JWT, cookie, CSRF, message encryption, database, and admin credentials.
+For real production, set `NODE_ENV=production` and provide real Gemini, OPay, JWT, cookie, CSRF, message encryption, database, and admin credentials.

@@ -2,6 +2,8 @@ import { withTransaction } from "../config/database.js";
 import { recruitmentRepository } from "../repositories/recruitmentRepository.js";
 import { authService } from "./authService.js";
 import { errors } from "../utils/errors.js";
+import { eventBus } from "../modules/events/event.bus.js";
+import { eventTypes } from "../modules/events/event.types.js";
 
 export const recruitmentService = {
   createJob(user, input) {
@@ -34,6 +36,11 @@ export const recruitmentService = {
         sizeBytes: file.size
       });
     }
+    eventBus.publishLater(eventTypes.NEW_DOCTOR_APPLICATION, {
+      application,
+      message: `${application.first_name} ${application.last_name} submitted a doctor application for ${application.specialization}.`,
+      keyData: { Applicant: `${application.first_name} ${application.last_name}`, Specialization: application.specialization }
+    }, { entityType: "doctor_applications", entityId: application.id });
     return application;
   },
 

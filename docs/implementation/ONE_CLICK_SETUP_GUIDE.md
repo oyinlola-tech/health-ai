@@ -13,14 +13,13 @@ DB_PASSWORD=
 DB_NAME=medexplain_ai
 ```
 
-3. For judging without live Gemini/OPay keys:
+3. For local runs without live Gemini/OPay keys, keep those integrations blank and expect `/health` to report AI or payment-dependent flows as degraded until credentials are configured:
 
 ```bash
-DEMO_MODE=true
 NODE_ENV=development
 ```
 
-Demo mode creates isolated sample patient, doctor, report, appointment, chat, consent, and AI usage records. It is blocked in production startup validation.
+The app no longer seeds sample patients, doctors, reports, appointments, chat, consent, or AI usage records. Use the real registration and admin flows to create test data.
 
 4. Start:
 
@@ -37,7 +36,6 @@ Set:
 
 ```bash
 NODE_ENV=production
-DEMO_MODE=false
 GEMINI_API_KEY=...
 OPAY_MERCHANT_ID=...
 OPAY_PUBLIC_KEY=...

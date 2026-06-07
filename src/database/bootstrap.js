@@ -4,7 +4,6 @@ import { logger } from "../utils/logger.js";
 import { pool } from "./connection.js";
 import { migrations } from "./migrations/index.js";
 import { seedAdminUser } from "./seeds/admin.js";
-import { seedDemoData } from "./seeds/demoData.js";
 import { seedSystemData } from "./seeds/systemData.js";
 
 function assertSafeDatabaseName(name) {
@@ -89,7 +88,6 @@ export async function bootstrapDatabase() {
     await runJavaScriptMigrations(connection);
     await seedSystemData(connection);
     await seedAdminUser(connection);
-    await seedDemoData(connection);
   } finally {
     connection.release();
   }

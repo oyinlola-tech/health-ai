@@ -25,8 +25,15 @@ export const notificationRepository = {
   },
 
   async listForUser(userId, client = pool) {
-    const { rows } = await client.query("select * from notifications where user_id = $1 order by created_at desc", [userId]);
-    return rows;
+    const notifications = await client.query("select *, 'in_app' as source, type as category from notifications where user_id = $1", [userId]);
+    let centerRows = [];
+    try {
+      const center = await client.query("select *, 'email' as source from notification_center where user_id = $1", [userId]);
+      centerRows = center.rows;
+    } catch (error) {
+      if (error?.code !== "ER_NO_SUCH_TABLE" && !String(error?.message || "").includes("notification_center")) throw error;
+    }
+    return [...notifications.rows, ...centerRows].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   },
 
   async markRead({ id, userId }, client = pool) {
@@ -34,6 +41,16 @@ export const notificationRepository = {
       "update notifications set read_at = coalesce(read_at, now()) where id = $1 and user_id = $2 returning *",
       [id, userId]
     );
-    return rows[0] || null;
+    if (rows[0]) return rows[0];
+    try {
+      const center = await client.query(
+        "update notification_center set read_at = coalesce(read_at, now()) where id = $1 and user_id = $2 returning *",
+        [id, userId]
+      );
+      return center.rows[0] || null;
+    } catch (error) {
+      if (error?.code === "ER_NO_SUCH_TABLE" || String(error?.message || "").includes("notification_center")) return null;
+      throw error;
+    }
   }
 };

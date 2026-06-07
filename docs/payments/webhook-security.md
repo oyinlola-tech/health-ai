@@ -18,4 +18,4 @@ OPay webhooks are accepted at:
 
 ## Processing Rule
 
-Frontend payment completion is never trusted. Subscription activation happens only after backend verification or a valid OPay webhook confirms the transaction.
+Frontend payment completion is never trusted. Paid subscription activation happens only after a valid OPay webhook confirms the transaction. Browser-side return pages can read local status, but they cannot activate access.

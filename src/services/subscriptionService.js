@@ -8,6 +8,10 @@ import { entitlementService } from "./entitlementService.js";
 import { safeEqual } from "../utils/crypto.js";
 import { consentTypes, legalService } from "./legalService.js";
 import { couponService } from "../modules/promotions/coupon.service.js";
+import { userRepository } from "../repositories/userRepository.js";
+import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
+import { eventBus } from "../modules/events/event.bus.js";
+import { eventTypes } from "../modules/events/event.types.js";
 
 function callbackUrls(reference) {
   const base = env.PUBLIC_APP_URL.replace(/\/$/, "");
@@ -89,6 +93,40 @@ async function activateVerifiedPayment(payment, client) {
     eventType: "payment.verified",
     providerReference: updatedPayment.provider_reference
   }, client);
+  const user = await userRepository.findById(updatedPayment.user_id, client);
+  if (user) {
+    await eventTracker.track(
+      {
+        userId: user.id,
+        eventType: analyticsEvents.PAYMENT_SUCCESS,
+        entityType: "payments",
+        entityId: updatedPayment.id,
+        metadata: { amountNaira: updatedPayment.amount_cents, provider: updatedPayment.provider, planCode: plan.code }
+      },
+      client
+    );
+    await eventTracker.track(
+      {
+        userId: user.id,
+        eventType: analyticsEvents.SUBSCRIPTION_UPGRADE,
+        entityType: "subscriptions",
+        entityId: subscription.id,
+        metadata: { planCode: plan.code }
+      },
+      client
+    );
+    eventBus.publishLater(eventTypes.PAYMENT_SUCCESS, {
+      user,
+      amount: updatedPayment.amount_cents,
+      amountNaira: updatedPayment.amount_cents,
+      reference: updatedPayment.provider_reference,
+      keyData: { Amount: updatedPayment.amount_cents, Plan: plan.name }
+    }, { userId: user.id, entityType: "payments", entityId: updatedPayment.id, idempotencyKey: `payment-success:${updatedPayment.id}` });
+    eventBus.publishLater(eventTypes.SUBSCRIPTION_ACTIVATED, {
+      user,
+      planName: plan.name
+    }, { userId: user.id, entityType: "subscriptions", entityId: subscription.id, idempotencyKey: `subscription-activated:${subscription.id}` });
+  }
   return updatedPayment;
 }
 
@@ -122,7 +160,7 @@ export const subscriptionService = {
     }
 
     if (discount.finalAmount === 0) {
-      return withTransaction(async (client) => {
+      const result = await withTransaction(async (client) => {
         const redemption = couponCode
           ? await couponService.redeemCoupon({ code: couponCode, userId: user.id, planId: plan.id, baseAmount }, client)
           : null;
@@ -183,6 +221,33 @@ export const subscriptionService = {
           subscription
         };
       });
+      await eventTracker.track({
+        userId: user.id,
+        eventType: analyticsEvents.SUBSCRIPTION_UPGRADE,
+        entityType: "subscriptions",
+        entityId: result.subscription.id,
+        metadata: { planCode: plan.code, checkoutSkipped: true }
+      });
+      if (couponCode) {
+        await eventTracker.track({
+          userId: user.id,
+          eventType: analyticsEvents.COUPON_APPLIED,
+          entityType: "coupons",
+          entityId: result.payment.id,
+          metadata: { couponCode, discountAmount: result.discountAmount }
+        });
+        eventBus.publishLater(eventTypes.COUPON_APPLIED, {
+          user,
+          code: couponCode,
+          couponCode,
+          discountAmount: result.discountAmount
+        }, { userId: user.id, entityType: "payments", entityId: result.payment.id, idempotencyKey: `coupon-applied:${result.payment.id}` });
+      }
+      eventBus.publishLater(eventTypes.SUBSCRIPTION_ACTIVATED, {
+        user,
+        planName: plan.name
+      }, { userId: user.id, entityType: "subscriptions", entityId: result.subscription.id, idempotencyKey: `subscription-activated:${result.subscription.id}` });
+      return result;
     }
 
     const reference = buildReference();
@@ -206,6 +271,13 @@ export const subscriptionService = {
       currency: "NGN",
       rawRequest: { ...requestBody, merchantId: "***" }
     });
+    await eventTracker.track({
+      userId: user.id,
+      eventType: analyticsEvents.PAYMENT_ATTEMPT,
+      entityType: "payment_attempts",
+      entityId: attempt.id,
+      metadata: { planCode: plan.code, amountNaira: discount.finalAmount, couponCode: discount.coupon?.code || null }
+    });
     const providerResponse = await opayClient.createCashierPayment(requestBody);
     const checkoutUrl = opayClient.checkoutUrlFrom(providerResponse);
     if (!checkoutUrl) throw errors.badRequest("OPay did not return a checkout URL.");
@@ -226,6 +298,19 @@ export const subscriptionService = {
     });
     if (couponCode) {
       await couponService.redeemCoupon({ code: couponCode, userId: user.id, planId: plan.id, paymentId: payment.id, baseAmount });
+      await eventTracker.track({
+        userId: user.id,
+        eventType: analyticsEvents.COUPON_APPLIED,
+        entityType: "payments",
+        entityId: payment.id,
+        metadata: { couponCode, discountAmount: discount.discountAmount }
+      });
+      eventBus.publishLater(eventTypes.COUPON_APPLIED, {
+        user,
+        code: couponCode,
+        couponCode,
+        discountAmount: discount.discountAmount
+      }, { userId: user.id, entityType: "payments", entityId: payment.id, idempotencyKey: `coupon-applied:${payment.id}` });
     }
     await billingRepository.attachPaymentToAttempt({ attemptId: attempt.id, paymentId: payment.id, checkoutUrl, rawResponse: providerResponse });
     await billingRepository.createPaymentTransaction({
@@ -261,36 +346,15 @@ export const subscriptionService = {
   async verifyPayment({ reference, actor = null }) {
     const payment = await billingRepository.findPaymentByReference(reference);
     if (!payment) throw errors.notFound("Payment not found.");
-    const providerResponse = await opayClient.verifyPayment({ merchantId: env.OPAY_MERCHANT_ID, reference });
-    if (!opayClient.verifiedFrom(providerResponse)) {
-      await billingRepository.updatePaymentStatus({
-        providerReference: reference,
-        status: "failed",
-        failureReason: "OPay verification did not confirm payment.",
-        rawResponse: providerResponse
-      });
-      throw errors.badRequest("Payment has not been verified by OPay.");
-    }
-    const fraudFlags = detectFraudFlags(payment, providerResponse);
-    if (fraudFlags.length) {
-      await flagPaymentFraud({ paymentId: payment.id, providerReference: reference, flags: fraudFlags });
-      throw errors.forbidden("Payment failed fraud integrity checks.");
-    }
-    assertPaymentIntegrity(payment, providerResponse);
-    return withTransaction(async (client) => {
-      const transactionId = providerTransactionId(providerResponse);
-      await assertUniqueProviderTransaction(transactionId, payment.id, client);
-      const updated = await activateVerifiedPayment({ ...payment, status: payment.status, verified_by: actor?.id || null }, client);
-      await billingRepository.createPaymentTransaction({
-        paymentId: payment.id,
-        status: "verified",
-        amountCents: payment.amount_cents,
-        currency: payment.currency,
-        providerTransactionId: transactionId,
-        rawResponse: providerResponse
-      }, client);
-      return updated;
-    });
+    if (actor?.role !== "Admin" && payment.user_id !== actor?.id) throw errors.forbidden("You can only view your own payment status.");
+    return {
+      ...payment,
+      webhookRequired: payment.provider === "opay" && payment.status !== "verified",
+      message:
+        payment.status === "verified"
+          ? "Payment has been verified by OPay webhook and access is active."
+          : "Payment is awaiting OPay webhook confirmation. Access will activate automatically after verification."
+    };
   },
 
   async processWebhook({ payload, rawBody, signature }) {
@@ -338,7 +402,15 @@ export const subscriptionService = {
       });
       return { payment: updated };
     }
-    await billingRepository.updatePaymentStatus({ providerReference: reference, status: "failed", rawResponse: payload });
+    const failedPayment = await billingRepository.updatePaymentStatus({ providerReference: reference, status: "failed", rawResponse: payload });
+    if (failedPayment) {
+      const user = await userRepository.findById(failedPayment.user_id);
+      eventBus.publishLater(eventTypes.PAYMENT_FAILED, {
+        user,
+        reference: failedPayment.provider_reference,
+        adminMessage: `Payment ${failedPayment.provider_reference} failed provider verification.`
+      }, { userId: failedPayment.user_id, entityType: "payments", entityId: failedPayment.id, idempotencyKey: `payment-failed:${failedPayment.id}` });
+    }
     return { payment: await billingRepository.findPaymentByReference(reference) };
   },
 
@@ -379,6 +451,12 @@ export const subscriptionService = {
       rawResponse: providerResponse
     });
     await billingRepository.updatePaymentStatus({ providerReference: payment.provider_reference, status: "refunded", rawResponse: providerResponse });
+    eventBus.publishLater(eventTypes.REFUND_PROCESSED, {
+      user,
+      amount: payment.amount_cents,
+      reference: payment.provider_reference,
+      adminMessage: `${user.email} refund was processed for ${payment.provider_reference}.`
+    }, { userId: user.id, entityType: "payments", entityId: payment.id, idempotencyKey: `refund-processed:${payment.id}` });
     return refund;
   },
 

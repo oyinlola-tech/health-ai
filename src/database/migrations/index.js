@@ -16,6 +16,8 @@ import { up as promotions } from "./promotions.js";
 import { up as controlledDatasetSources } from "./controlled_dataset_sources.js";
 import { up as medicalIntelligence } from "./medical_intelligence.js";
 import { up as pricingPlans } from "./pricing_plans.js";
+import { up as analyticsEmail } from "./analytics_email.js";
+import { up as eventEmailSystem } from "./event_email_system.js";
 
 export const migrations = [
   ["users", users],
@@ -35,5 +37,7 @@ export const migrations = [
   ["promotions", promotions],
   ["controlled_dataset_sources", controlledDatasetSources],
   ["medical_intelligence", medicalIntelligence],
-  ["pricing_plans", pricingPlans]
+  ["pricing_plans", pricingPlans],
+  ["analytics_email", analyticsEmail],
+  ["event_email_system", eventEmailSystem]
 ];

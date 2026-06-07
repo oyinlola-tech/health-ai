@@ -1,34 +1,48 @@
 # Frontend Route Map
 
-## Canonical Routes
+Generated: 2026-06-07
 
-- `/` -> landing
-- `/login` -> login form -> `POST /api/auth/login`
-- `/register` -> registration form -> `POST /api/auth/register`
-- `/dashboard` -> reports, appointments, health history, subscription, AI usage
-- `/reports` -> report list/upload -> `GET/POST /api/reports`
-- `/report/:id` -> report detail/analyze -> `GET /api/reports/:id`, `POST /api/reports/:id/analyze`
-- `/chat` -> consultations/messages -> `GET /api/consultations`, `GET/POST /api/consultations/:id/messages`
-- `/doctors` -> doctor directory -> `GET /api/doctors`
-- `/doctor/:id` -> doctor profile/booking -> `GET /api/doctors/:id`, `POST /api/appointments`
-- `/appointments` -> appointment list -> `GET /api/appointments`
-- `/profile` -> profile/settings -> `GET/PUT /api/me`
-- `/settings` -> static settings shell
-- `/subscription` -> plans, usage, checkout -> subscription/payment APIs
-- `/checkout` -> same subscription checkout renderer
-- `/payment-success` -> verifies payment -> `POST /api/subscriptions/verify`
-- `/payment-failed` -> payment failure state
-- `/billing-history` -> `GET /api/subscriptions/billing-history`
-- `/update-plan` -> subscription renderer
-- `/cancel-subscription` -> `POST /api/subscriptions/cancel`
-- `/privacy`, `/terms`, `/data-policy` -> `GET /api/legal/policies`
-- `/consent` -> consent center -> legal consent APIs
-- `/help`, `/contact` -> intentional static support pages
-- `/sitemap` -> route-style directory
+The production frontend is served from `public/index.html` as a route-style shell. Legacy generated `.html` files remain in `public/` for compatibility, but Express redirects those paths to canonical routes.
 
-## Doctor Workspace
+## Patient Routes
+
+- `/` -> landing page.
+- `/login` -> login form -> `POST /api/auth/login`.
+- `/register` -> registration form -> `POST /api/auth/register`.
+- `/dashboard` -> patient overview; loads reports, appointments, health history, subscription, and AI usage APIs.
+- `/reports` -> report upload and report list -> `GET /api/reports`, `POST /api/reports`.
+- `/report/:id`, `/reports/:id`, `/analysis/:id` -> report detail and analysis -> `GET /api/reports/:id`, `POST /api/reports/:id/analyze`.
+- `/chat` -> AI/consultation conversation workspace -> AI and consultation APIs.
+- `/doctors` -> doctor directory -> `GET /api/doctors`.
+- `/doctor/:id` -> doctor profile and booking -> `GET /api/doctors/:id`, `POST /api/appointments`.
+- `/appointments` -> appointment list -> `GET /api/appointments`.
+- `/profile` -> current profile -> `GET /api/me`, `PUT /api/me`.
+- `/settings` -> intentional static settings shell.
+
+## Subscription and Payment Routes
+
+- `/subscription` -> plans, usage, trial countdown, coupon quote, checkout -> subscription APIs.
+- `/checkout` -> same checkout renderer as subscription.
+- `/update-plan` -> same plan selection renderer as subscription.
+- `/billing-history` -> billing history -> `GET /api/subscriptions/billing-history`.
+- `/cancel-subscription` -> cancellation action -> `POST /api/subscriptions/cancel`.
+- `/payment-success` -> local payment status read -> `POST /api/subscriptions/verify`.
+- `/payment-failed` -> failed/pending payment state.
+
+## Legal and Support Routes
+
+- `/privacy`, `/terms`, `/data-policy` -> legal policies -> `GET /api/legal/policies`.
+- `/consent` -> consent center -> legal consent APIs.
+- `/help` -> intentional static help page.
+- `/contact` -> intentional static support page.
+- `/sitemap` -> route directory.
+
+## Doctor Workspace Routes
+
+These routes render through the doctor workspace shell and call doctor, appointment, report, and consultation APIs.
 
 - `/doctor`
+- `/doctor-dashboard`
 - `/doctor/patient-queue`
 - `/doctor/appointments`
 - `/doctor/consultations`
@@ -39,9 +53,9 @@
 - `/doctor/analytics`
 - `/doctor/settings`
 
-All render through the doctor workspace shell and use `/api/doctor/*`, `/api/appointments`, and `/api/consultations`.
+## Admin Workspace Routes
 
-## Admin Workspace
+These routes render through the admin workspace shell and call admin APIs. `/admin/coupons` has a dedicated coupon management renderer.
 
 - `/admin`
 - `/admin/users`
@@ -55,16 +69,27 @@ All render through the doctor workspace shell and use `/api/doctor/*`, `/api/app
 - `/admin/security-logs`
 - `/admin/audit-logs`
 - `/admin/system-settings`
+- `/admin/system`
+- `/admin/jobs`
+- `/admin/analytics`
 
-All render through the admin workspace shell. Coupon management uses `/api/admin/coupons`.
+## State Routes
 
-## Legacy Redirects
+- Success: `/success/report-uploaded`, `/success/analysis-complete`, `/success/appointment-booked`, `/success/payment`, `/success/subscription-activated`, `/success/doctor-application`, `/success/profile-updated`, `/success/password-changed`.
+- Errors: `/error/400`, `/error/401`, `/error/403`, `/error/404`, `/error/408`, `/error/429`, `/error/500`, `/error/database`, `/error/ai`, `/error/report-processing`, `/error/ocr`, `/error/payment`, `/error/subscription-expired`, `/error/doctor-unavailable`, `/error/booking`, `/error/chat-disconnected`, `/error/file-too-large`, `/error/file-type`.
+- Empty states: `/empty/no-reports`, `/empty/no-appointments`, `/empty/no-notifications`, `/empty/no-doctors`, `/empty/no-search-results`, `/empty/no-chat-history`, `/empty/no-health-history`, `/empty/no-payments`, `/empty/no-subscriptions`, `/empty/no-ai-analyses`.
+- System: `/maintenance`, `/offline`.
 
-Legacy generated `.html` paths are not canonical navigation. The Express app redirects them to route-style paths, for example:
+## Legacy Redirect Examples
 
-- `/app/dashboard.html` -> `/dashboard`
+- `/index.html` -> `/`
+- `/sitemap.html` -> `/sitemap`
 - `/auth/login.html` -> `/login`
+- `/auth/signup.html` -> `/register`
+- `/app/dashboard.html` -> `/dashboard`
+- `/app/upload.html` -> `/reports`
+- `/app/ai-analysis.html` -> `/chat`
 - `/premium/plans.html` -> `/subscription`
+- `/premium/payment.html` -> `/update-plan`
 - `/consultation/find-doctor.html` -> `/doctors`
 - `/admin/index.html` -> `/admin`
-- `/sitemap.html` -> `/sitemap`

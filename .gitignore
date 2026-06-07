@@ -22,6 +22,7 @@ datasets/kaggle-pipeline/
 
 # Local logs
 .server.log
+.server.err.log
 logs/*
 src/logs/*
 !logs/.gitkeep

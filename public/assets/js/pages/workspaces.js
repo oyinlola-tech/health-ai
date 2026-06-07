@@ -54,6 +54,7 @@ function renderAppointmentItem(item) {
 
 async function renderAdminDashboard() {
   if (state.path === "/admin/coupons") return renderAdminCoupons();
+  if (state.path === "/admin/analytics") return renderAdminAnalytics();
   const meta = routeTitle("/admin");
   const tabs = ["Overview", "Users", "Doctors", "Doctor Applications", "Reports", "AI Usage", "Payments", "Subscriptions", "Coupons", "Security Logs", "Audit Logs", "System Settings"];
   setMain(`${pageHeader(meta)}${loadingState("Loading admin workspace")}`);
@@ -101,6 +102,134 @@ async function renderAdminDashboard() {
       </div>
     </section>
   `);
+}
+
+function chartRows(rows = [], labelKey = "label", valueKey = "value") {
+  const max = Math.max(1, ...rows.map((row) => Number(row[valueKey] || row.count || 0)));
+  return rows.map((row) => ({
+    label: String(row[labelKey] || row.event_type || row.segment || ""),
+    value: Number(row[valueKey] || row.count || 0),
+    percent: Math.round((Number(row[valueKey] || row.count || 0) / max) * 100)
+  }));
+}
+
+function lineChart(rows = [], valueFormatter = (value) => value) {
+  const data = chartRows(rows);
+  if (!data.length) return `<p class="muted">No chart data for this range.</p>`;
+  const width = 520;
+  const height = 160;
+  const max = Math.max(1, ...data.map((row) => row.value));
+  const points = data
+    .map((row, index) => {
+      const x = data.length === 1 ? width / 2 : (index / (data.length - 1)) * width;
+      const y = height - (row.value / max) * (height - 20) - 10;
+      return `${x},${y}`;
+    })
+    .join(" ");
+  return `<div class="chart-box"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Line chart"><polyline fill="none" stroke="#FF6E5C" stroke-width="4" points="${points}"></polyline></svg><div class="chart-legend">${data
+    .slice(-4)
+    .map((row) => `<span>${escapeHtml(row.label)}: ${escapeHtml(valueFormatter(row.value))}</span>`)
+    .join("")}</div></div>`;
+}
+
+function barChart(rows = []) {
+  const data = chartRows(rows);
+  if (!data.length) return `<p class="muted">No event activity for this range.</p>`;
+  return `<div class="stack-sm">${data
+    .map(
+      (row) =>
+        `<div class="bar-row"><div class="card-header"><span>${escapeHtml(row.label)}</span><strong>${escapeHtml(row.value)}</strong></div><div class="meter-track"><span style="width:${row.percent}%"></span></div></div>`
+    )
+    .join("")}</div>`;
+}
+
+function pieLikeChart(rows = []) {
+  const data = chartRows(rows, "segment");
+  if (!data.length) return `<p class="muted">No user segment data yet.</p>`;
+  const total = data.reduce((sum, row) => sum + row.value, 0) || 1;
+  return `<div class="grid grid-2">${data
+    .map((row) => {
+      const percent = Math.round((row.value / total) * 100);
+      return `<article class="card stack-sm"><h3>${escapeHtml(row.label)}</h3><strong>${percent}%</strong><div class="meter-track"><span style="width:${percent}%"></span></div><p class="muted">${escapeHtml(row.value)} users</p></article>`;
+    })
+    .join("")}</div>`;
+}
+
+function analyticsFilterValues() {
+  const params = new URLSearchParams(location.search);
+  return {
+    startDate: params.get("startDate") || "",
+    endDate: params.get("endDate") || ""
+  };
+}
+
+function bindAnalyticsFilters() {
+  document.querySelector("[data-analytics-filter]")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const values = Object.fromEntries(new FormData(event.currentTarget).entries());
+    const params = new URLSearchParams();
+    if (values.startDate) params.set("startDate", values.startDate);
+    if (values.endDate) params.set("endDate", values.endDate);
+    window.history.pushState({}, "", `/admin/analytics${params.toString() ? `?${params}` : ""}`);
+    state.path = normalizePath(location.pathname);
+    renderAdminAnalytics();
+  });
+}
+
+async function renderAdminAnalytics() {
+  const meta = { title: "Analytics Dashboard", description: "Real user, revenue, AI usage, and behaviour metrics from MySQL." };
+  const filters = analyticsFilterValues();
+  const query = new URLSearchParams();
+  if (filters.startDate) query.set("startDate", filters.startDate);
+  if (filters.endDate) query.set("endDate", filters.endDate);
+  setMain(`${pageHeader(meta)}${loadingState("Loading analytics")}`);
+  try {
+    const response = await apiRequest(`/admin/analytics${query.toString() ? `?${query}` : ""}`);
+    const analytics = response.data?.analytics || {};
+    const metrics = analytics.metrics || {};
+    const charts = analytics.charts || {};
+    const tables = analytics.tables || {};
+    setMain(`
+      ${pageHeader(meta)}
+      <section class="card stack">
+        <form class="form compact-form" data-analytics-filter>
+          <div class="grid grid-3">
+            <label>Start date<input name="startDate" type="date" value="${escapeHtml(filters.startDate)}"></label>
+            <label>End date<input name="endDate" type="date" value="${escapeHtml(filters.endDate)}"></label>
+            <div class="actions"><button class="btn btn-primary" type="submit">${icon("filter_alt")}Apply filters</button><a class="btn btn-secondary" href="/admin/analytics">Reset</a></div>
+          </div>
+        </form>
+      </section>
+      <section class="grid grid-4">
+        ${summaryCard("Total Users", "groups", String(metrics.totalUsers ?? 0), "/admin/users")}
+        ${summaryCard("Free Trial Users", "schedule", String(metrics.freeTrialUsers ?? 0), "/admin/subscriptions")}
+        ${summaryCard("Paying Users", "workspace_premium", String(metrics.payingUsers ?? 0), "/admin/subscriptions")}
+        ${summaryCard("Active 7 Days", "monitoring", String(metrics.activeUsersLast7Days ?? 0), "/admin/analytics")}
+      </section>
+      <section class="grid grid-3">
+        ${summaryCard("Revenue", "payments", money(metrics.revenueNaira || 0), "/admin/payments")}
+        ${summaryCard("AI Usage", "auto_awesome", String(metrics.aiUsageCount ?? 0), "/admin/ai-usage")}
+        ${summaryCard("Trial to Paid", "trending_up", `${metrics.trialToPaidConversionRate ?? 0}%`, "/admin/analytics")}
+      </section>
+      <section class="grid grid-2">
+        <article class="card stack"><h2>User Growth</h2>${lineChart(charts.userGrowth || [])}</article>
+        <article class="card stack"><h2>Free vs Paid Users</h2>${pieLikeChart(charts.freeVsPaidUsers || [])}</article>
+        <article class="card stack"><h2>Revenue Over Time</h2>${lineChart(charts.revenueOverTime || [], (value) => money(value))}</article>
+        <article class="card stack"><h2>User Activity Events</h2>${barChart(charts.userActivityEvents || [])}</article>
+      </section>
+      <section class="grid grid-2">
+        <article class="table-card stack"><h2>Recent Events</h2><div class="table-wrap"><table><thead><tr><th>Event</th><th>User</th><th>Entity</th><th>Time</th></tr></thead><tbody>${(tables.recentEvents || [])
+          .map((event) => `<tr><td>${escapeHtml(event.event_type)}</td><td>${escapeHtml(event.email || "System")}</td><td>${escapeHtml([event.entity_type, event.entity_id].filter(Boolean).join(": ") || "-")}</td><td>${escapeHtml(new Date(event.created_at).toLocaleString())}</td></tr>`)
+          .join("") || `<tr><td colspan="4">No events for this range.</td></tr>`}</tbody></table></div></article>
+        <article class="table-card stack"><h2>Top Events</h2><div class="table-wrap"><table><thead><tr><th>Event</th><th>Count</th></tr></thead><tbody>${(tables.topEvents || [])
+          .map((event) => `<tr><td>${escapeHtml(event.event_type)}</td><td>${escapeHtml(event.count)}</td></tr>`)
+          .join("") || `<tr><td colspan="2">No event totals yet.</td></tr>`}</tbody></table></div></article>
+      </section>
+    `);
+    bindAnalyticsFilters();
+  } catch {
+    setMain(`${pageHeader(meta)}${errorState("We could not load analytics")}`);
+  }
 }
 
 async function renderAdminCoupons() {

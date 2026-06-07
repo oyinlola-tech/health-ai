@@ -6,13 +6,14 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { createDoctorSchema } from "../validators/authValidators.js";
 import { auditAction } from "../middlewares/audit.js";
 import { couponRoutes } from "../modules/promotions/coupon.routes.js";
+import { adminAnalyticsController } from "../modules/analytics/admin.analytics.controller.js";
 
 export const adminRoutes = Router();
 
 adminRoutes.use(authenticate, requireRoles("Admin"));
 adminRoutes.get("/users", asyncHandler(adminController.users));
 adminRoutes.post("/doctors", validate(createDoctorSchema), auditAction("admin.doctor.create"), asyncHandler(adminController.createDoctor));
-adminRoutes.get("/analytics", asyncHandler(adminController.analytics));
+adminRoutes.get("/analytics", asyncHandler(adminAnalyticsController.dashboard));
 adminRoutes.get("/monetization", asyncHandler(adminController.monetization));
 adminRoutes.get("/ai-costs", asyncHandler(adminController.aiCosts));
 adminRoutes.get("/reports/processing-metrics", asyncHandler(adminController.reportProcessingMetrics));
