@@ -11,7 +11,8 @@ const appConfig = {
   apiBaseUrl: "/api",
   csrfHeader: "x-csrf-token",
   accessTokenKey: "medexplain_access_token",
-  requestTimeoutMs: 20000
+  requestTimeoutMs: 20000,
+  aiRequestTimeoutMs: 90000
 };
 
 function loadRealtimeClient() {
@@ -86,7 +87,9 @@ async function apiRequest(path, options = {}) {
       body: options.body instanceof FormData ? options.body : options.body ? JSON.stringify(options.body) : undefined
     });
   } catch (error) {
-    if (error.name === "AbortError") throw Object.assign(new Error("The server took too long to respond."), { status: 408 });
+    if (error.name === "AbortError") {
+      throw Object.assign(new Error(options.timeoutMessage || "The server took too long to respond."), { status: 408 });
+    }
     throw error;
   } finally {
     window.clearTimeout(timeoutId);

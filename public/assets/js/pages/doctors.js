@@ -115,7 +115,12 @@ function bindAiChatForm() {
       thread.innerHTML = `${thread.querySelector(".chat-empty") ? "" : thread.innerHTML}`;
       thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "user", content: message }));
       textareaField.value = "";
-      const response = await apiRequest("/ai/chat", { method: "POST", body: { message } });
+      const response = await apiRequest("/ai/chat", {
+        method: "POST",
+        body: { message },
+        timeoutMs: appConfig.aiRequestTimeoutMs,
+        timeoutMessage: "AI is taking longer than expected. Please try again."
+      });
       const assistantMessage = response.data?.message || response.data?.response?.summary || "Response saved.";
       thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "assistant", content: assistantMessage }));
       thread.scrollTop = thread.scrollHeight;

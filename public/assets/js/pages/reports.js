@@ -200,7 +200,11 @@ async function renderReportDetail() {
     document.querySelector('[data-action="analyze-report"]')?.addEventListener("click", async (event) => {
       event.currentTarget.disabled = true;
       try {
-        const analyzed = await apiRequest(`/reports/${id}/analyze`, { method: "POST" });
+        const analyzed = await apiRequest(`/reports/${id}/analyze`, {
+          method: "POST",
+          timeoutMs: appConfig.aiRequestTimeoutMs,
+          timeoutMessage: "AI analysis is taking longer than expected. Please try again."
+        });
         const updatedReport = analyzed.data?.report || {};
         document.querySelector("[data-analysis-target]").outerHTML = renderAnalysisResponse({ ...report, ...updatedReport });
       } catch (error) {
