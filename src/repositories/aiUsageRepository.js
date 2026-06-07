@@ -207,7 +207,17 @@ export const aiUsageRepository = {
        returning *`,
       [id, userId, planCode, monthlyCostLimitNaira, monthlyTokenLimit, dailyRequestLimit, burstPerMinute]
     );
-    return rows[0];
+    if (rows[0]) return rows[0];
+    const updated = await client.query(
+      `select * from user_ai_quotas
+       where user_id = $1
+         and period_start <= current_date
+         and period_end >= current_date
+       order by updated_at desc
+       limit 1`,
+      [userId]
+    );
+    return updated.rows[0] || null;
   },
 
   async findCache(cacheKey, client = pool) {

@@ -95,6 +95,8 @@ function renderAiChatMessage(message, index = 0) {
 
 function chatErrorMessage(error) {
   if (error?.status === 401) return "Please sign in again.";
+  if (error?.payload?.error?.code === "AI_BUDGET_EXCEEDED") return "AI access is temporarily limited for your account. Please try again later or check your subscription.";
+  if (error?.payload?.error?.code === "PLAN_LIMIT_REACHED") return "Your current plan limit has been reached. Manage your plan to continue.";
   if (error?.status === 403) return error?.message || "Your account does not currently have access to AI chat.";
   if (error?.payload?.error?.code === "CONFIGURATION_ERROR") return "AI service is not configured for this environment.";
   return error?.message || "Server connection unavailable. Please try again.";

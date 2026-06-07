@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import { env } from "../../config/env.js";
 import { aiUsageRepository } from "../../repositories/aiUsageRepository.js";
 import { billingRepository } from "../../repositories/billingRepository.js";
+import { trialService } from "../../modules/promotions/trial.service.js";
 import { AppError, errors } from "../../utils/errors.js";
 
 const promptInjectionPatterns = [
@@ -62,21 +63,59 @@ function hasPremiumPlan(subscription) {
 }
 
 async function quotaForUser(userId) {
-  const existing = await aiUsageRepository.currentQuota(userId);
-  if (existing) return existing;
-
-  const subscription = await billingRepository.currentSubscription(userId);
+  const [existing, subscription, trial] = await Promise.all([
+    aiUsageRepository.currentQuota(userId),
+    billingRepository.currentSubscription(userId),
+    trialService.currentTrial(userId).catch((error) => {
+      if (error?.code === "ER_NO_SUCH_TABLE") return null;
+      throw error;
+    })
+  ]);
+  const trialActive = trialService.isActive(trial);
   const premium = hasPremiumPlan(subscription);
-  return aiUsageRepository.upsertQuota({
+  const premiumLike = premium || (trialActive && env.FREE_TRIAL_FULL_ACCESS);
+  const planCode = premium ? subscription.plan_code : trialActive ? "FREE_TRIAL" : "FREE";
+  const monthlyCostLimitNaira = premiumLike
+    ? envNumber("AI_PREMIUM_MONTHLY_BUDGET_NAIRA", env.AI_PREMIUM_MONTHLY_BUDGET_NAIRA)
+    : envNumber("AI_FREE_MONTHLY_BUDGET_NAIRA", env.AI_FREE_MONTHLY_BUDGET_NAIRA);
+  const monthlyTokenLimit = premiumLike ? null : 50000;
+  const dailyRequestLimit = premiumLike ? env.AI_PREMIUM_DAILY_REQUEST_LIMIT : env.AI_FREE_DAILY_REQUEST_LIMIT;
+  const burstPerMinute = env.AI_BURST_PER_MINUTE;
+
+  if (
+    existing &&
+    !existing.plan_code &&
+    existing[legacyLimitKey] !== undefined
+  ) {
+    return existing;
+  }
+
+  if (
+    existing &&
+    existing.plan_code === planCode &&
+    Number(existing.monthly_cost_limit_ngn) === Number(monthlyCostLimitNaira) &&
+    Number(existing.daily_request_limit || 0) === Number(dailyRequestLimit || 0) &&
+    Number(existing.burst_per_minute || 0) === Number(burstPerMinute || 0)
+  ) {
+    return existing;
+  }
+
+  const upserted = await aiUsageRepository.upsertQuota({
     userId,
-    planCode: premium ? subscription.plan_code : "FREE",
-    monthlyCostLimitNaira: premium
-      ? envNumber("AI_PREMIUM_MONTHLY_BUDGET_NAIRA", env.AI_PREMIUM_MONTHLY_BUDGET_NAIRA)
-      : envNumber("AI_FREE_MONTHLY_BUDGET_NAIRA", env.AI_FREE_MONTHLY_BUDGET_NAIRA),
-    monthlyTokenLimit: premium ? null : 50000,
-    dailyRequestLimit: premium ? env.AI_PREMIUM_DAILY_REQUEST_LIMIT : env.AI_FREE_DAILY_REQUEST_LIMIT,
-    burstPerMinute: env.AI_BURST_PER_MINUTE
+    planCode,
+    monthlyCostLimitNaira,
+    monthlyTokenLimit,
+    dailyRequestLimit,
+    burstPerMinute
   });
+  return upserted || {
+    user_id: userId,
+    plan_code: planCode,
+    monthly_cost_limit_ngn: monthlyCostLimitNaira,
+    monthly_token_limit: monthlyTokenLimit,
+    daily_request_limit: dailyRequestLimit,
+    burst_per_minute: burstPerMinute
+  };
 }
 
 function safetyFlagsForPrompt(prompt) {
