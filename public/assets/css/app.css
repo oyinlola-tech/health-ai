@@ -552,6 +552,62 @@ p {
   font-size: 18px;
 }
 
+.medical-knowledge-page {
+  display: grid;
+  gap: 24px;
+}
+
+.knowledge-search-card {
+  max-width: 880px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.knowledge-search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.knowledge-browser {
+  display: grid;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.knowledge-results {
+  display: grid;
+  gap: 12px;
+}
+
+.knowledge-result {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  text-align: left;
+  box-shadow: var(--shadow-card);
+}
+
+.knowledge-result:hover,
+.knowledge-result[aria-current="true"] {
+  border-color: rgba(255, 110, 92, 0.45);
+}
+
+.knowledge-result .badge {
+  justify-self: start;
+}
+
+.knowledge-detail {
+  min-height: 320px;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -1355,7 +1411,9 @@ thead th:last-child {
   .grid-2,
   .grid-3,
   .grid-4,
-  .metric-grid {
+  .metric-grid,
+  .knowledge-browser,
+  .knowledge-search-row {
     grid-template-columns: 1fr;
   }
 

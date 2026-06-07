@@ -5,3 +5,4 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 export const medicalKnowledgeRoutes = Router();
 
 medicalKnowledgeRoutes.get("/", asyncHandler(medicalKnowledgeController.overview));
+medicalKnowledgeRoutes.get("/search", asyncHandler(medicalKnowledgeController.search));

@@ -86,55 +86,121 @@ function renderStaticPage(path) {
   `);
 }
 
-function knowledgeSummary(text = "") {
-  const clean = String(text || "").replace(/\s+/g, " ").trim();
-  if (!clean) return "No summary is available for this imported source yet.";
-  return clean.length > 220 ? `${clean.slice(0, 220)}...` : clean;
+function stripKnowledgeMarkup(text = "") {
+  const container = document.createElement("div");
+  container.innerHTML = String(text || "");
+  return (container.textContent || container.innerText || "").replace(/\s+/g, " ").trim();
 }
 
-function renderKnowledgeSource(item = {}, sourceLabel) {
+function knowledgeSummary(text = "", maxLength = 220) {
+  const clean = stripKnowledgeMarkup(text);
+  if (!clean) return "No summary is available for this imported source yet.";
+  return clean.length > maxLength ? `${clean.slice(0, maxLength)}...` : clean;
+}
+
+function renderKnowledgeSource(item = {}, index = 0) {
   const href = item.url || "/medical-knowledge";
-  return `<article class="card stack">
-    <div class="card-header"><div><p class="caption">${escapeHtml(sourceLabel)}</p><h2>${escapeHtml(item.title || "Untitled source")}</h2></div></div>
-    <p class="muted">${escapeHtml(knowledgeSummary(item.summary))}</p>
+  return `<button class="knowledge-result" type="button" data-knowledge-result="${index}">
+    <span class="caption">${escapeHtml(item.type || item.source || "Medical source")}</span>
+    <strong>${escapeHtml(item.title || "Untitled source")}</strong>
     ${item.source ? `<span class="badge">${escapeHtml(item.source)}</span>` : ""}
-    ${item.url ? `<a class="item-title" href="${escapeHtml(href)}" target="_blank" rel="noreferrer">Open source</a>` : ""}
+    <span class="muted">${escapeHtml(knowledgeSummary(item.summary, 130))}</span>
+    ${item.url ? `<span class="sr-only">${escapeHtml(href)}</span>` : ""}
+  </button>`;
+}
+
+function renderKnowledgeDetail(item = null) {
+  if (!item) {
+    return `<section class="knowledge-detail empty-state">
+      <div class="state-content">
+        <div class="state-icon">${icon("manage_search")}</div>
+        <h2>Search a medical term</h2>
+        <p class="muted">Enter a word like triglycerides, tuberculosis, kidney disease, or vitamin C to view trusted MedlinePlus and PubMed information.</p>
+      </div>
+    </section>`;
+  }
+
+  return `<article class="knowledge-detail card stack">
+    <div class="card-header">
+      <div>
+        <p class="caption">${escapeHtml(item.type || "Medical source")}</p>
+        <h2>${escapeHtml(item.title || "Untitled source")}</h2>
+      </div>
+      ${item.source ? `<span class="badge">${escapeHtml(item.source)}</span>` : ""}
+    </div>
+    <p class="muted">${escapeHtml(stripKnowledgeMarkup(item.summary))}</p>
+    ${item.url ? `<a class="btn btn-secondary" href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${icon("open_in_new")}Open trusted source</a>` : ""}
   </article>`;
 }
 
-function renderKnowledgeSection(title, items = [], sourceLabel, emptyText) {
-  return `<section class="stack">
-    <div class="card-header"><h2>${escapeHtml(title)}</h2><span class="badge">${items.length} shown</span></div>
-    <div class="grid grid-3">
-      ${items.length ? items.map((item) => renderKnowledgeSource(item, sourceLabel)).join("") : emptyState({ iconName: "travel_explore", title: "No records found", description: emptyText, actionLabel: "", actionHref: "" })}
-    </div>
-  </section>`;
+function renderKnowledgeResults(results = [], hasSearched = false) {
+  if (!hasSearched) return `<div class="knowledge-results"><p class="muted">Results will appear here after you search.</p></div>`;
+  if (!results.length) {
+    return `<div class="knowledge-results">${emptyState({ iconName: "travel_explore", title: "No matching source found", description: "Try another medical word or a shorter term.", actionLabel: "", actionHref: "" })}</div>`;
+  }
+  return `<div class="knowledge-results">${results.map(renderKnowledgeSource).join("")}</div>`;
+}
+
+function bindKnowledgeResultClicks(results = []) {
+  document.querySelectorAll("[data-knowledge-result]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.knowledgeResult || 0);
+      document.querySelectorAll("[data-knowledge-result]").forEach((item) => item.removeAttribute("aria-current"));
+      button.setAttribute("aria-current", "true");
+      const detail = document.querySelector("[data-knowledge-detail]");
+      if (detail) detail.innerHTML = renderKnowledgeDetail(results[index]);
+    });
+  });
 }
 
 async function renderMedicalKnowledge() {
-  const meta = routeTitle("/medical-knowledge");
-  setMain(`${loadingState("Loading medical knowledge")}`);
-  try {
-    const response = await apiRequest("/medical-knowledge");
-    const data = response.data || {};
-    const counts = data.counts || {};
-    setMain(`
-      <section class="card stack">
-        <div class="card-header"><div><h2>Imported knowledge sources</h2><p class="muted">Records imported from MedlinePlus and PubMed for source-grounded explanations.</p></div><span class="badge">Trusted sources</span></div>
-        <section class="metric-grid">
-          ${metricTile("MedlinePlus topics", "local_library", String(counts.medlineplus_topics || 0))}
-          ${metricTile("Definitions", "menu_book", String(counts.medlineplus_definitions || 0))}
-          ${metricTile("PubMed articles", "science", String(counts.pubmed_articles || 0))}
-          ${metricTile("Source use", "verified", "RAG context")}
-        </section>
+  setMain(`
+    <section class="medical-knowledge-page">
+      <section class="form-card knowledge-search-card">
+        <form class="form" data-knowledge-search novalidate>
+          <div class="field">
+            <label for="knowledge-query">Search medical knowledge</label>
+            <div class="knowledge-search-row">
+              <input id="knowledge-query" name="q" type="search" required minlength="2" autocomplete="off" placeholder="Search a term or topic" />
+              <button class="btn btn-primary" type="submit">${icon("search")}Search</button>
+            </div>
+          </div>
+          <p class="muted">Sources come from imported MedlinePlus topics, MedlinePlus definitions, and PubMed articles.</p>
+          <div class="form-message" data-form-message hidden></div>
+        </form>
       </section>
-      ${renderKnowledgeSection("MedlinePlus topics", data.medlineplusTopics || [], "MedlinePlus", "Run the MedlinePlus ingestion to populate topics.")}
-      ${renderKnowledgeSection("MedlinePlus definitions", data.medlineplusDefinitions || [], "MedlinePlus definition", "Run the MedlinePlus definitions ingestion to populate terms.")}
-      ${renderKnowledgeSection("PubMed articles", data.pubmedArticles || [], "PubMed", "Run the PubMed ingestion to populate articles.")}
-    `);
-  } catch (error) {
-    setMain(`${errorState(error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.")}`);
-  }
+      <section class="knowledge-browser">
+        <div data-knowledge-results>${renderKnowledgeResults([], false)}</div>
+        <div data-knowledge-detail>${renderKnowledgeDetail()}</div>
+      </section>
+    </section>
+  `);
+
+  const form = document.querySelector("[data-knowledge-search]");
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const query = new FormData(form).get("q")?.toString().trim();
+    const message = form.querySelector("[data-form-message]");
+    if (!query || query.length < 2) {
+      showFormMessage(form, "error", "Enter at least two characters to search.");
+      return;
+    }
+    if (message) message.hidden = true;
+    const resultsTarget = document.querySelector("[data-knowledge-results]");
+    const detailTarget = document.querySelector("[data-knowledge-detail]");
+    resultsTarget.innerHTML = `<div class="knowledge-results"><p class="muted">Searching trusted sources...</p></div>`;
+    detailTarget.innerHTML = renderKnowledgeDetail();
+    try {
+      const response = await apiRequest(`/medical-knowledge/search?q=${encodeURIComponent(query)}`);
+      const results = response.data?.results || [];
+      resultsTarget.innerHTML = renderKnowledgeResults(results, true);
+      detailTarget.innerHTML = renderKnowledgeDetail(results[0] || null);
+      bindKnowledgeResultClicks(results);
+      document.querySelector("[data-knowledge-result]")?.setAttribute("aria-current", "true");
+    } catch (error) {
+      resultsTarget.innerHTML = errorState(error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.", false);
+    }
+  });
 }
 
 async function renderSettings() {
