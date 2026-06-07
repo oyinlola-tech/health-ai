@@ -55,9 +55,9 @@ function renderAppointmentItem(item) {
 async function renderAdminDashboard() {
   if (state.path === "/admin/coupons") return renderAdminCoupons();
   if (state.path === "/admin/analytics") return renderAdminAnalytics();
-  const meta = routeTitle("/admin");
-  const tabs = ["Overview", "Users", "Doctors", "Doctor Applications", "Reports", "AI Usage", "Payments", "Subscriptions", "Coupons", "Security Logs", "Audit Logs", "System Settings"];
-  setMain(`${pageHeader(meta)}${loadingState("Loading admin workspace")}`);
+  if (state.path !== "/admin") return renderAdminSection();
+  const meta = { title: "Admin dashboard", description: "A concise operating view of platform health, users, reports, payments, and AI usage." };
+  setMain(`${adminLayout(loadingState("Loading admin workspace"), meta)}`);
   const [users, logs, reportMetrics, monetization, aiCosts, applications] = await Promise.allSettled([
     apiRequest("/admin/users"),
     apiRequest("/admin/audit-logs"),
@@ -73,35 +73,242 @@ async function renderAdminDashboard() {
   const aiDashboard = aiCosts.value?.data?.dashboard || {};
   const aiSummary = aiDashboard.summary || {};
   const applicationItems = applications.value?.data?.applications || [];
-  setMain(`
-    <section class="dashboard-shell">
-      <aside class="side-nav" aria-label="Admin dashboard sections">${tabs.map((tab, index) => `<a class="nav-link" href="/admin${index ? `/${tab.toLowerCase().replaceAll(" ", "-")}` : ""}"${index === 0 ? ' aria-current="page"' : ""}>${icon(index === 0 ? "admin_panel_settings" : "chevron_right")}<span>${tab}</span></a>`).join("")}</aside>
-      <div class="stack-lg">
-        ${pageHeader(meta)}
-        <section class="grid grid-4">
-          ${summaryCard("Users", "groups", userItems.length ? `${userItems.length} users` : "No users returned", "/admin/users")}
-          ${summaryCard("AI Usage", "auto_awesome", aiSummary.total_requests ? `${aiSummary.total_requests} requests` : "No AI usage", "/admin/ai-usage")}
-          ${summaryCard("Reports Processed", "description", String(metrics.reports_processed ?? 0), "/admin/reports")}
-          ${summaryCard("Failed Extractions", "report_problem", String(metrics.failed_extractions ?? 0), "/admin/reports")}
-        </section>
-        <section class="grid grid-4">
-          ${summaryCard("Monthly Revenue", "payments", money(revenue.monthly_revenue_cents || 0), "/admin/payments")}
-          ${summaryCard("Active Subscribers", "workspace_premium", String(revenue.active_subscribers ?? 0), "/admin/subscriptions")}
-          ${summaryCard("Failed Payments", "credit_card_off", String(revenue.failed_payments ?? 0), "/admin/payments")}
-          ${summaryCard("Churn Rate", "trending_down", `${revenue.churn_rate ?? 0}%`, "/admin/subscriptions")}
-        </section>
-        <section class="grid grid-2">
-          <article class="card stack"><h2>Report Processing</h2><p class="muted">Operational view of extraction quality and pipeline health.</p><div class="actions"><span class="badge ${Number(metrics.ocr_failure_rate || 0) > 10 ? "badge-error" : "badge-success"}">OCR failure rate ${metrics.ocr_failure_rate ?? 0}%</span><span class="badge">Average confidence ${metrics.average_confidence ?? 0}%</span></div></article>
-          ${renderAdminAiCostPanel(aiDashboard)}
-          <article class="card stack"><h2>Revenue Dashboard</h2><p class="muted">OPay-backed subscription health and monetization activity.</p><div class="actions"><span class="badge">Refund rate ${revenue.refund_rate ?? 0}%</span><span class="badge">Refunds ${revenue.refunds ?? 0}</span></div>${renderListCard(revenue.top_features_used || [])}</article>
-          <article class="card stack"><h2>Users</h2>${listCard(userItems, { iconName: "groups", title: "No users returned", description: "User records from the admin API are shown here.", actionLabel: "", actionHref: "" }, renderUserItem)}</article>
-          <article class="card stack"><h2>Audit Logs</h2>${listCard(logItems, { iconName: "fact_check", title: "No audit logs returned", description: "Security and admin actions from the audit log are shown here.", actionLabel: "", actionHref: "" }, renderAuditItem)}</article>
-          <article class="card stack"><h2>Doctor Applications</h2>${listCard(applicationItems, { iconName: "badge", title: "No applications returned", description: "Submitted doctor applications from the recruitment workflow are shown here.", actionLabel: "", actionHref: "" }, renderApplicationItem)}</article>
-          <article class="card stack"><h2>System Settings</h2><p class="muted">Administrative settings are grouped here to keep operational controls consistent.</p><a class="btn btn-quiet" href="/admin/system-settings">Open settings</a></article>
-        </section>
+  const overview = `
+    <section class="admin-hero card stack">
+      <div class="card-header">
+        <div>
+          <p class="caption">Platform snapshot</p>
+          <h2>Everything important, nothing noisy.</h2>
+        </div>
+        <span class="badge ${Number(metrics.failed_extractions || 0) ? "badge-warning" : "badge-success"}">${Number(metrics.failed_extractions || 0) ? "Needs review" : "Stable"}</span>
+      </div>
+      <div class="admin-kpi-grid">
+        ${metricTile("Users", "groups", String(userItems.length || 0))}
+        ${metricTile("AI Requests", "auto_awesome", String(aiSummary.total_requests || 0))}
+        ${metricTile("Reports Processed", "description", String(metrics.reports_processed ?? 0))}
+        ${metricTile("Monthly Revenue", "payments", money(revenue.monthly_revenue_cents || 0))}
       </div>
     </section>
-  `);
+    <section class="grid grid-3">
+      ${summaryCard("Users", "groups", "Manage accounts", "/admin/users")}
+      ${summaryCard("Reports", "description", "Review processing", "/admin/reports")}
+      ${summaryCard("Payments", "payments", "Monitor billing", "/admin/payments")}
+    </section>
+    <section class="grid grid-2">
+      <article class="card stack">
+        <div class="card-header"><div><h2>Report health</h2><p class="muted">Extraction quality from the backend processing metrics.</p></div><a class="item-title" href="/admin/reports">View reports</a></div>
+        <div class="admin-status-row"><span class="badge ${Number(metrics.ocr_failure_rate || 0) > 10 ? "badge-error" : "badge-success"}">OCR failure ${metrics.ocr_failure_rate ?? 0}%</span><span class="badge">Confidence ${metrics.average_confidence ?? 0}%</span></div>
+      </article>
+      <article class="card stack">
+        <div class="card-header"><div><h2>Recent activity</h2><p class="muted">Latest audit events only. Full history lives in Audit Logs.</p></div><a class="item-title" href="/admin/audit-logs">View all</a></div>
+        ${compactAdminList(logItems.slice(0, 5), renderCompactAuditItem, { iconName: "fact_check", title: "No audit activity", description: "Audit events will appear here when recorded." })}
+      </article>
+      <article class="card stack">
+        <div class="card-header"><div><h2>Doctor applications</h2><p class="muted">Pending recruitment review queue.</p></div><a class="item-title" href="/admin/doctor-applications">Review</a></div>
+        ${compactAdminList(applicationItems.slice(0, 4), renderCompactApplicationItem, { iconName: "badge", title: "No applications", description: "Submitted doctor applications will appear here." })}
+      </article>
+      <article class="card stack">
+        <div class="card-header"><div><h2>Billing pulse</h2><p class="muted">Subscription activity from payment records.</p></div><a class="item-title" href="/admin/subscriptions">View subscriptions</a></div>
+        <div class="admin-status-row"><span class="badge">Active ${revenue.active_subscribers ?? 0}</span><span class="badge">Failed ${revenue.failed_payments ?? 0}</span><span class="badge">Churn ${revenue.churn_rate ?? 0}%</span></div>
+      </article>
+    </section>
+  `;
+  setMain(adminLayout(overview, meta));
+}
+
+const adminSections = [
+  { label: "Overview", href: "/admin", icon: "dashboard" },
+  { label: "Users", href: "/admin/users", icon: "groups" },
+  { label: "Doctors", href: "/admin/doctors", icon: "stethoscope" },
+  { label: "Applications", href: "/admin/doctor-applications", icon: "badge" },
+  { label: "Reports", href: "/admin/reports", icon: "description" },
+  { label: "AI Usage", href: "/admin/ai-usage", icon: "auto_awesome" },
+  { label: "Payments", href: "/admin/payments", icon: "payments" },
+  { label: "Subscriptions", href: "/admin/subscriptions", icon: "workspace_premium" },
+  { label: "Coupons", href: "/admin/coupons", icon: "sell" },
+  { label: "Audit Logs", href: "/admin/audit-logs", icon: "fact_check" },
+  { label: "System", href: "/admin/system-settings", icon: "settings" }
+];
+
+function adminLayout(content, meta = routeTitle("/admin")) {
+  return `
+    <section class="dashboard-shell admin-workspace">
+      <aside class="side-nav admin-side-nav" aria-label="Admin dashboard sections">${adminSections
+        .map((item) => `<a class="nav-link" href="${item.href}"${isActive(item.href) ? ' aria-current="page"' : ""}>${icon(item.icon)}<span>${item.label}</span></a>`)
+        .join("")}</aside>
+      <div class="stack-lg">
+        ${pageHeader(meta)}
+        ${content}
+      </div>
+    </section>
+  `;
+}
+
+async function renderAdminSection() {
+  const route = normalizePath(state.path);
+  const meta = adminMeta(route);
+  setMain(adminLayout(loadingState(`Loading ${meta.title.toLowerCase()}`), meta));
+  try {
+    if (route === "/admin/users") return renderAdminUsers(meta);
+    if (route === "/admin/doctors") return renderAdminDoctors(meta);
+    if (route === "/admin/doctor-applications") return renderAdminApplications(meta);
+    if (route === "/admin/reports") return renderAdminReports(meta);
+    if (route === "/admin/ai-usage") return renderAdminAiUsage(meta);
+    if (route === "/admin/payments") return renderAdminPayments(meta);
+    if (route === "/admin/subscriptions") return renderAdminSubscriptions(meta);
+    if (route === "/admin/audit-logs" || route === "/admin/security-logs") return renderAdminAuditLogs(meta, route === "/admin/security-logs");
+    if (route === "/admin/system" || route === "/admin/system-settings" || route === "/admin/jobs") return renderAdminSystem(meta);
+    setMain(adminLayout(emptyState({ iconName: "map", title: "Admin section unavailable", description: "Choose a section from the admin navigation.", actionLabel: "", actionHref: "" }), meta));
+  } catch (error) {
+    const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
+    setMain(adminLayout(errorState(message), meta));
+  }
+}
+
+function adminMeta(route) {
+  const match = adminSections.find((item) => item.href === route);
+  const title = match?.label || "Admin";
+  const descriptions = {
+    "/admin/users": "Search, scan, and manage real user accounts.",
+    "/admin/doctors": "Review verified doctor directory records.",
+    "/admin/doctor-applications": "Review submitted doctor applications.",
+    "/admin/reports": "Monitor report uploads, analysis status, and processing quality.",
+    "/admin/ai-usage": "Track AI spend, blocked requests, cache efficiency, and budget signals.",
+    "/admin/payments": "Review payment health and monetization records.",
+    "/admin/subscriptions": "Monitor plan adoption and subscription health.",
+    "/admin/audit-logs": "Review persisted admin and security actions.",
+    "/admin/security-logs": "Review security-related audit events.",
+    "/admin/system": "Operational controls and platform health links.",
+    "/admin/system-settings": "Operational controls and platform health links.",
+    "/admin/jobs": "Recruitment controls and application links."
+  };
+  return { title, description: descriptions[route] || "Focused admin workspace." };
+}
+
+async function renderAdminUsers(meta) {
+  const response = await apiRequest("/admin/users");
+  const users = response.data?.users || [];
+  setMain(adminLayout(`
+    <section class="grid grid-3">
+      ${summaryCard("Total users", "groups", String(users.length), "/admin/users")}
+      ${summaryCard("Doctors", "stethoscope", String(users.filter((user) => String(user.role).toLowerCase() === "doctor").length), "/admin/doctors")}
+      ${summaryCard("Admins", "admin_panel_settings", String(users.filter((user) => String(user.role).toLowerCase() === "admin").length), "/admin/users")}
+    </section>
+    <section class="table-card stack">
+      <div class="card-header"><div><h2>Users</h2><p class="muted">Real accounts returned by the admin API.</p></div><span class="badge">${users.length} records</span></div>
+      ${adminUserTable(users)}
+    </section>
+  `, meta));
+}
+
+async function renderAdminDoctors(meta) {
+  const response = await apiRequest("/doctors");
+  const doctors = response.data?.doctors || [];
+  setMain(adminLayout(`
+    <section class="table-card stack">
+      <div class="card-header"><div><h2>Doctors</h2><p class="muted">Verified doctor directory records.</p></div><span class="badge">${doctors.length} records</span></div>
+      ${doctors.length ? `<div class="admin-list">${doctors.map(renderAdminDoctorRow).join("")}</div>` : emptyState({ iconName: "stethoscope", title: "No doctors found", description: "Verified doctors will appear here after approval.", actionLabel: "", actionHref: "" })}
+    </section>
+  `, meta));
+}
+
+async function renderAdminApplications(meta) {
+  const response = await apiRequest("/recruitment/applications");
+  const applications = response.data?.applications || [];
+  setMain(adminLayout(`
+    <section class="table-card stack">
+      <div class="card-header"><div><h2>Doctor applications</h2><p class="muted">Submitted applications from the doctor careers workflow.</p></div><span class="badge">${applications.length} records</span></div>
+      ${applications.length ? `<div class="admin-list">${applications.map(renderApplicationItem).join("")}</div>` : emptyState({ iconName: "badge", title: "No applications", description: "Doctor applications will appear here when submitted.", actionLabel: "", actionHref: "" })}
+    </section>
+  `, meta));
+}
+
+async function renderAdminReports(meta) {
+  const [reportsResponse, metricsResponse] = await Promise.all([apiRequest("/reports"), apiRequest("/admin/reports/processing-metrics")]);
+  const reports = reportsResponse.data?.reports || [];
+  const metrics = metricsResponse.data?.metrics || {};
+  setMain(adminLayout(`
+    <section class="grid grid-4">
+      ${summaryCard("Processed", "description", String(metrics.reports_processed ?? 0), "/admin/reports")}
+      ${summaryCard("Failed", "report_problem", String(metrics.failed_extractions ?? 0), "/admin/reports")}
+      ${summaryCard("OCR Failure", "document_scanner", `${metrics.ocr_failure_rate ?? 0}%`, "/admin/reports")}
+      ${summaryCard("Confidence", "verified", `${metrics.average_confidence ?? 0}%`, "/admin/reports")}
+    </section>
+    <section class="table-card stack">
+      <div class="card-header"><div><h2>Reports</h2><p class="muted">Reports visible to admin through the reports API.</p></div><span class="badge">${reports.length} records</span></div>
+      ${reports.length ? `<div class="admin-list">${reports.map(renderReportItem).join("")}</div>` : emptyState({ iconName: "description", title: "No reports found", description: "Uploaded reports will appear here.", actionLabel: "", actionHref: "" })}
+    </section>
+  `, meta));
+}
+
+async function renderAdminAiUsage(meta) {
+  const response = await apiRequest("/admin/ai-costs");
+  setMain(adminLayout(renderAdminAiCostPanel(response.data?.dashboard || {}), meta));
+}
+
+async function renderAdminPayments(meta) {
+  const response = await apiRequest("/admin/monetization");
+  const revenue = response.data?.metrics || {};
+  setMain(adminLayout(`
+    <section class="grid grid-4">
+      ${summaryCard("Monthly Revenue", "payments", money(revenue.monthly_revenue_cents || 0), "/admin/payments")}
+      ${summaryCard("Failed Payments", "credit_card_off", String(revenue.failed_payments ?? 0), "/admin/payments")}
+      ${summaryCard("Refunds", "undo", String(revenue.refunds ?? 0), "/admin/payments")}
+      ${summaryCard("Refund Rate", "percent", `${revenue.refund_rate ?? 0}%`, "/admin/payments")}
+    </section>
+    <section class="card stack">
+      <h2>Feature usage</h2>
+      ${renderListCard(revenue.top_features_used || [])}
+    </section>
+  `, meta));
+}
+
+async function renderAdminSubscriptions(meta) {
+  const response = await apiRequest("/admin/monetization");
+  const revenue = response.data?.metrics || {};
+  setMain(adminLayout(`
+    <section class="grid grid-3">
+      ${summaryCard("Active Subscribers", "workspace_premium", String(revenue.active_subscribers ?? 0), "/admin/subscriptions")}
+      ${summaryCard("Churn Rate", "trending_down", `${revenue.churn_rate ?? 0}%`, "/admin/subscriptions")}
+      ${summaryCard("Monthly Revenue", "payments", money(revenue.monthly_revenue_cents || 0), "/admin/payments")}
+    </section>
+    <section class="card stack">
+      <h2>Subscription health</h2>
+      <p class="muted">Subscription totals are generated from the billing system. Detailed plan management remains server-enforced.</p>
+      <div class="admin-status-row"><span class="badge">Active ${revenue.active_subscribers ?? 0}</span><span class="badge">Failed payments ${revenue.failed_payments ?? 0}</span><span class="badge">Churn ${revenue.churn_rate ?? 0}%</span></div>
+    </section>
+  `, meta));
+}
+
+async function renderAdminAuditLogs(meta, securityOnly = false) {
+  const response = await apiRequest("/admin/audit-logs");
+  const logs = response.data?.auditLogs || [];
+  const visibleLogs = securityOnly ? logs.filter((log) => /auth|login|password|security|token/i.test(log.action || "")) : logs;
+  setMain(adminLayout(`
+    <section class="table-card stack">
+      <div class="card-header"><div><h2>${securityOnly ? "Security logs" : "Audit logs"}</h2><p class="muted">Persisted operational events from MySQL.</p></div><span class="badge">${visibleLogs.length} records</span></div>
+      ${visibleLogs.length ? `<div class="admin-list">${visibleLogs.map(renderAuditItem).join("")}</div>` : emptyState({ iconName: "fact_check", title: "No logs found", description: "Matching audit events will appear here when recorded.", actionLabel: "", actionHref: "" })}
+    </section>
+  `, meta));
+}
+
+function renderAdminSystem(meta) {
+  setMain(adminLayout(`
+    <section class="grid grid-3">
+      ${summaryCard("Analytics", "monitoring", "Open metrics", "/admin/analytics")}
+      ${summaryCard("Coupons", "sell", "Manage promotions", "/admin/coupons")}
+      ${summaryCard("Audit Logs", "fact_check", "Review activity", "/admin/audit-logs")}
+    </section>
+    <section class="card stack">
+      <h2>System controls</h2>
+      <p class="muted">Operational controls are split into their own admin sections so the overview remains readable.</p>
+    </section>
+  `, meta));
+}
+
+function compactAdminList(items, renderItem, emptyConfig) {
+  if (!items.length) return emptyState(emptyConfig);
+  return `<div class="admin-compact-list">${items.map(renderItem).join("")}</div>`;
 }
 
 function chartRows(rows = [], labelKey = "label", valueKey = "value") {
@@ -182,15 +389,14 @@ async function renderAdminAnalytics() {
   const query = new URLSearchParams();
   if (filters.startDate) query.set("startDate", filters.startDate);
   if (filters.endDate) query.set("endDate", filters.endDate);
-  setMain(`${pageHeader(meta)}${loadingState("Loading analytics")}`);
+  setMain(adminLayout(loadingState("Loading analytics"), meta));
   try {
     const response = await apiRequest(`/admin/analytics${query.toString() ? `?${query}` : ""}`);
     const analytics = response.data?.analytics || {};
     const metrics = analytics.metrics || {};
     const charts = analytics.charts || {};
     const tables = analytics.tables || {};
-    setMain(`
-      ${pageHeader(meta)}
+    setMain(adminLayout(`
       <section class="card stack">
         <form class="form compact-form" data-analytics-filter>
           <div class="grid grid-3">
@@ -225,21 +431,20 @@ async function renderAdminAnalytics() {
           .map((event) => `<tr><td>${escapeHtml(event.event_type)}</td><td>${escapeHtml(event.count)}</td></tr>`)
           .join("") || `<tr><td colspan="2">No event totals yet.</td></tr>`}</tbody></table></div></article>
       </section>
-    `);
+    `, meta));
     bindAnalyticsFilters();
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("We could not load analytics")}`);
+    setMain(adminLayout(errorState("We could not load analytics"), meta));
   }
 }
 
 async function renderAdminCoupons() {
   const meta = { title: "Coupon Controls", description: "Create, disable, and monitor server-enforced promotional codes." };
-  setMain(`${pageHeader(meta)}${loadingState("Loading coupons")}`);
+  setMain(adminLayout(loadingState("Loading coupons"), meta));
   try {
     const response = await apiRequest("/admin/coupons");
     const coupons = response.data?.coupons || [];
-    setMain(`
-      ${pageHeader(meta)}
+    setMain(adminLayout(`
       <section class="grid grid-2">
         <article class="card stack">
           <h2>Create Coupon</h2>
@@ -275,11 +480,11 @@ async function renderAdminCoupons() {
           }
         </tbody></table></div>
       </section>
-    `);
+    `, meta));
     bindAdminCouponForm();
     bindDisableCouponButtons();
   } catch {
-    setMain(`${pageHeader(meta)}${errorState("We could not load coupon controls")}`);
+    setMain(adminLayout(errorState("We could not load coupon controls"), meta));
   }
 }
 
@@ -354,11 +559,38 @@ function renderUserItem(user) {
   return `<article class="card stack"><h3>${escapeHtml([user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || "User")}</h3><p class="muted">${escapeHtml(user.role || "Account")}</p></article>`;
 }
 
+function adminUserTable(users = []) {
+  if (!users.length) {
+    return emptyState({ iconName: "groups", title: "No users found", description: "User records will appear here when available.", actionLabel: "", actionHref: "" });
+  }
+  return `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead><tbody>${users
+    .map((user) => {
+      const name = [user.firstName, user.lastName, user.first_name, user.last_name].filter(Boolean).slice(0, 2).join(" ") || user.email || "User";
+      return `<tr><td><strong>${escapeHtml(name)}</strong></td><td>${escapeHtml(user.email || "")}</td><td>${escapeHtml(user.role || "Account")}</td><td><span class="badge ${String(user.status || "").toLowerCase() === "active" ? "badge-success" : ""}">${escapeHtml(user.status || "active")}</span></td></tr>`;
+    })
+    .join("")}</tbody></table></div>`;
+}
+
+function renderAdminDoctorRow(doctor = {}) {
+  const name = [doctor.firstName, doctor.lastName, doctor.first_name, doctor.last_name].filter(Boolean).slice(0, 2).join(" ") || doctor.name || doctor.email || "Doctor";
+  const specialty = doctor.specialty || doctor.specialization || "Specialty not listed";
+  return `<article class="admin-row"><div><h3><a class="item-title" href="/doctor/${escapeHtml(doctor.id || "")}">${escapeHtml(name)}</a></h3><p class="muted">${escapeHtml(specialty)}</p></div><span class="badge ${badgeClassForStatus(doctor.verificationStatus || doctor.verification_status || "verified")}">${escapeHtml(displayStatus(doctor.verificationStatus || doctor.verification_status || "verified"))}</span></article>`;
+}
+
 function renderAuditItem(log) {
-  return `<article class="card stack"><h3>${escapeHtml(log.action || "Audit event")}</h3><p class="muted">${escapeHtml(log.createdAt || "Timestamp unavailable")}</p></article>`;
+  return `<article class="admin-row"><div><h3>${escapeHtml(log.action || "Audit event")}</h3><p class="muted">${escapeHtml(log.createdAt || log.created_at || "Timestamp unavailable")}</p></div><span class="badge">${escapeHtml(log.entityType || log.entity_type || "event")}</span></article>`;
+}
+
+function renderCompactAuditItem(log) {
+  return `<article class="admin-row"><div><h3>${escapeHtml(log.action || "Audit event")}</h3><p class="muted">${escapeHtml(log.createdAt || log.created_at || "Timestamp unavailable")}</p></div><span class="badge">${escapeHtml(log.entityType || log.entity_type || "event")}</span></article>`;
 }
 
 function renderApplicationItem(application) {
   const name = [application.first_name, application.last_name].filter(Boolean).join(" ") || application.email || "Doctor applicant";
-  return `<article class="card stack"><div class="card-header"><div><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></div></article>`;
+  return `<article class="admin-row"><div><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></article>`;
+}
+
+function renderCompactApplicationItem(application) {
+  const name = [application.first_name, application.last_name].filter(Boolean).join(" ") || application.email || "Doctor applicant";
+  return `<article class="admin-row"><div><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></article>`;
 }

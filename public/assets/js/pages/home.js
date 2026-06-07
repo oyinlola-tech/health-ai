@@ -110,7 +110,7 @@ function bindAuthForm() {
       setAccessToken(response.data?.accessToken);
       localStorage.setItem("medexplain_onboarding_seen", "true");
       showFormMessage(form, "success", "Success. Redirecting to your dashboard.");
-      window.setTimeout(() => window.location.assign(authRedirectTarget()), 400);
+      window.setTimeout(() => window.location.assign(authRedirectTarget(response.data?.user)), 400);
     } catch {
       showFormMessage(form, "error", "We could not complete that request. Check your details and try again.");
     } finally {
@@ -119,20 +119,23 @@ function bindAuthForm() {
   });
 }
 
-function authRedirectTarget() {
+function authRedirectTarget(user = {}) {
   const next = new URLSearchParams(location.search).get("next");
   const blocked = new Set(["/login", "/register", "/splash", "/onboarding", "/chat"]);
-  if (!next) return "/dashboard";
+  const roleHome = String(user.role || "").toLowerCase() === "admin" ? "/admin" : "/dashboard";
+  if (!next) return roleHome;
   try {
     const target = new URL(next, window.location.origin);
     const normalized = normalizePath(target.pathname);
+    const isAdmin = String(user.role || "").toLowerCase() === "admin";
     const allowed =
       target.origin === window.location.origin &&
       !blocked.has(normalized) &&
-      (pageMeta[normalized] || normalized === "/report/:id" || normalized === "/doctor/:id" || doctorWorkspacePaths.has(normalized));
-    return allowed ? `${target.pathname}${target.search}` : "/dashboard";
+      (pageMeta[normalized] || normalized === "/report/:id" || normalized === "/doctor/:id" || doctorWorkspacePaths.has(normalized) || (isAdmin && normalized.startsWith("/admin")));
+    if (isAdmin && !normalized.startsWith("/admin")) return "/admin";
+    return allowed ? `${target.pathname}${target.search}` : roleHome;
   } catch {
-    return "/dashboard";
+    return roleHome;
   }
 }
 

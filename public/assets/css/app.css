@@ -744,6 +744,70 @@ p {
   justify-content: flex-start;
 }
 
+.admin-workspace {
+  align-items: start;
+}
+
+.admin-side-nav {
+  padding: 12px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.admin-side-nav .nav-link {
+  min-height: 40px;
+  padding: 8px 10px;
+  color: #6b625d;
+}
+
+.admin-side-nav .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.admin-hero {
+  background: linear-gradient(180deg, var(--color-surface), var(--color-surface-soft));
+}
+
+.admin-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-status-row,
+.admin-compact-list,
+.admin-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-status-row {
+  grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
+  align-items: center;
+}
+
+.admin-row {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-small);
+  background: var(--color-surface-soft);
+}
+
+.admin-row h3 {
+  font-size: 20px;
+}
+
+.admin-row .badge {
+  flex: 0 0 auto;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -1444,6 +1508,10 @@ thead th:last-child {
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .admin-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -1500,10 +1568,15 @@ thead th:last-child {
   .grid-2,
   .grid-3,
   .grid-4,
+  .admin-kpi-grid,
   .metric-grid,
   .knowledge-browser,
   .knowledge-search-row {
     grid-template-columns: 1fr;
+  }
+
+  .admin-row {
+    display: grid;
   }
 
   .chat-panel-header {
