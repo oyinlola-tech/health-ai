@@ -748,6 +748,10 @@ p {
   align-items: start;
 }
 
+.admin-workspace > .stack-lg {
+  min-width: 0;
+}
+
 .admin-side-nav {
   padding: 12px;
   border: 1px solid var(--color-border-warm);
@@ -779,6 +783,7 @@ p {
 .admin-status-row,
 .admin-compact-list,
 .admin-list {
+  min-width: 0;
   display: grid;
   gap: 12px;
 }
@@ -800,8 +805,19 @@ p {
   background: var(--color-surface-soft);
 }
 
+.admin-row-main {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
 .admin-row h3 {
   font-size: 20px;
+}
+
+.admin-row h3,
+.admin-row p {
+  overflow-wrap: anywhere;
 }
 
 .admin-row .badge {
@@ -1501,6 +1517,15 @@ thead th:last-child {
     padding-bottom: 8px;
   }
 
+  .admin-side-nav {
+    margin-inline: -4px;
+    padding: 8px;
+  }
+
+  .admin-side-nav .nav-link {
+    flex: 0 0 auto;
+  }
+
   .grid-4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1577,6 +1602,10 @@ thead th:last-child {
 
   .admin-row {
     display: grid;
+  }
+
+  .admin-row .badge {
+    width: fit-content;
   }
 
   .chat-panel-header {

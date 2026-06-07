@@ -574,23 +574,24 @@ function adminUserTable(users = []) {
 function renderAdminDoctorRow(doctor = {}) {
   const name = [doctor.firstName, doctor.lastName, doctor.first_name, doctor.last_name].filter(Boolean).slice(0, 2).join(" ") || doctor.name || doctor.email || "Doctor";
   const specialty = doctor.specialty || doctor.specialization || "Specialty not listed";
-  return `<article class="admin-row"><div><h3><a class="item-title" href="/doctor/${escapeHtml(doctor.id || "")}">${escapeHtml(name)}</a></h3><p class="muted">${escapeHtml(specialty)}</p></div><span class="badge ${badgeClassForStatus(doctor.verificationStatus || doctor.verification_status || "verified")}">${escapeHtml(displayStatus(doctor.verificationStatus || doctor.verification_status || "verified"))}</span></article>`;
+  const title = doctor.id ? `<a class="item-title" href="/doctor/${escapeHtml(doctor.id)}">${escapeHtml(name)}</a>` : escapeHtml(name);
+  return `<article class="admin-row"><div class="admin-row-main"><h3>${title}</h3><p class="muted">${escapeHtml(specialty)}</p></div><span class="badge ${badgeClassForStatus(doctor.verificationStatus || doctor.verification_status || "verified")}">${escapeHtml(displayStatus(doctor.verificationStatus || doctor.verification_status || "verified"))}</span></article>`;
 }
 
 function renderAuditItem(log) {
-  return `<article class="admin-row"><div><h3>${escapeHtml(log.action || "Audit event")}</h3><p class="muted">${escapeHtml(log.createdAt || log.created_at || "Timestamp unavailable")}</p></div><span class="badge">${escapeHtml(log.entityType || log.entity_type || "event")}</span></article>`;
+  return `<article class="admin-row"><div class="admin-row-main"><h3>${escapeHtml(log.action || "Audit event")}</h3><p class="muted">${escapeHtml(log.createdAt || log.created_at || "Timestamp unavailable")}</p></div><span class="badge">${escapeHtml(log.entityType || log.entity_type || "event")}</span></article>`;
 }
 
 function renderCompactAuditItem(log) {
-  return `<article class="admin-row"><div><h3>${escapeHtml(log.action || "Audit event")}</h3><p class="muted">${escapeHtml(log.createdAt || log.created_at || "Timestamp unavailable")}</p></div><span class="badge">${escapeHtml(log.entityType || log.entity_type || "event")}</span></article>`;
+  return `<article class="admin-row"><div class="admin-row-main"><h3>${escapeHtml(log.action || "Audit event")}</h3><p class="muted">${escapeHtml(log.createdAt || log.created_at || "Timestamp unavailable")}</p></div><span class="badge">${escapeHtml(log.entityType || log.entity_type || "event")}</span></article>`;
 }
 
 function renderApplicationItem(application) {
   const name = [application.first_name, application.last_name].filter(Boolean).join(" ") || application.email || "Doctor applicant";
-  return `<article class="admin-row"><div><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></article>`;
+  return `<article class="admin-row"><div class="admin-row-main"><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></article>`;
 }
 
 function renderCompactApplicationItem(application) {
   const name = [application.first_name, application.last_name].filter(Boolean).join(" ") || application.email || "Doctor applicant";
-  return `<article class="admin-row"><div><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></article>`;
+  return `<article class="admin-row"><div class="admin-row-main"><h3>${escapeHtml(name)}</h3><p class="muted">${escapeHtml(application.specialization || application.job_title || "Specialization not listed")}</p></div><span class="badge ${badgeClassForStatus(application.status)}">${escapeHtml(application.status || "PENDING")}</span></article>`;
 }
