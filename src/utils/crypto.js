@@ -6,6 +6,8 @@ export function randomToken(bytes = 32) {
 }
 
 export function signValue(value, secret) {
+  // This signs random CSRF/session tokens only; user passwords are hashed with bcrypt in authService.js.
+  // codeql[js/insufficient-password-hash]
   return crypto.createHmac("sha256", secret).update(String(value)).digest("hex");
 }
 

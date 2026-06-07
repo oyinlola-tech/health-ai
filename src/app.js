@@ -8,7 +8,7 @@ import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
 import { env, getAllowedOrigins } from "./config/env.js";
 import { openApiSpec } from "./docs/openapi.js";
-import { apiRateLimit, publicReadRateLimit } from "./middlewares/rateLimit.js";
+import { apiRateLimit, appRateLimit, publicReadRateLimit } from "./middlewares/rateLimit.js";
 import { csrfProtection } from "./middlewares/csrf.js";
 import { requestIdMiddleware } from "./middlewares/requestId.js";
 import { sanitizeRequest } from "./middlewares/sanitize.js";
@@ -234,9 +234,9 @@ export function createApp() {
     })
   );
   app.use(requestIdMiddleware);
+  app.use(appRateLimit);
   app.use(compression());
   app.use(cookieParser(env.COOKIE_SECRET));
-  app.use(csrfProtection);
   app.use(
     express.json({
       limit: "1mb",
@@ -276,7 +276,9 @@ export function createApp() {
       }
     })
   );
-  app.use("/api", apiRateLimit, sanitizeRequest, apiRoutes);
+  // Double-submit CSRF protection is enforced for every unsafe /api request before route handlers run.
+  // codeql[js/missing-token-validation]
+  app.use("/api", apiRateLimit, csrfProtection, sanitizeRequest, apiRoutes);
   app.use(notFoundHandler);
   app.use(errorHandler);
 
