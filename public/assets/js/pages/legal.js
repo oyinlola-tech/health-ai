@@ -103,7 +103,6 @@ async function renderSettings() {
     const billingAddress = settings.billingAddress || {};
     const subscription = subscriptionResponse.data || {};
     setMain(`
-      ${pageHeader(meta)}
       <section class="grid grid-2">
         <article class="form-card">
           <form class="form" data-settings-profile-form novalidate>
@@ -113,7 +112,7 @@ async function renderSettings() {
             ${field("Last name", "lastName", "text", true, profile.lastName || "")}
             ${field("Email address", "email", "email", true, profile.email || "")}
             <label class="actions"><input type="checkbox" name="consentPromptLearning" ${profile.consentPromptLearning ? "checked" : ""} /> <span class="muted">Use my reports, messages, conversations, and AI responses to improve MedExplain AI.</span></label>
-            <button class="btn btn-primary" type="submit">${icon("save")}Save profile</button>
+            <button class="btn btn-primary hide" type="submit" data-save-on-change>${icon("save")}Save profile</button>
           </form>
         </article>
         <article class="form-card">
@@ -122,7 +121,7 @@ async function renderSettings() {
             <div class="form-message" data-form-message hidden></div>
             ${field("Current password", "currentPassword", "password", true)}
             ${field("New password", "newPassword", "password", true)}
-            <button class="btn btn-primary" type="submit">${icon("key")}Change password</button>
+            <button class="btn btn-primary hide" type="submit" data-save-on-change>${icon("key")}Change password</button>
           </form>
         </article>
         <article class="form-card">
@@ -134,7 +133,7 @@ async function renderSettings() {
             ${settingsCheckbox("security", "Security alerts", notifications.security)}
             ${settingsCheckbox("billing", "Billing and payment alerts", notifications.billing)}
             ${settingsCheckbox("doctor", "Doctor and appointment alerts", notifications.doctor)}
-            <button class="btn btn-primary" type="submit">${icon("save")}Save notifications</button>
+            <button class="btn btn-primary hide" type="submit" data-save-on-change>${icon("save")}Save notifications</button>
           </form>
         </article>
         <article class="form-card">
@@ -145,7 +144,7 @@ async function renderSettings() {
             ${settingsCheckbox("allowDoctorSharing", "Doctor sharing preference", privacy.allowDoctorSharing)}
             ${settingsCheckbox("allowAiAnalysis", "AI analysis preference", privacy.allowAiAnalysis)}
             ${settingsCheckbox("allowPromptLearning", "AI training and improvement preference", privacy.allowPromptLearning)}
-            <button class="btn btn-primary" type="submit">${icon("save")}Save privacy</button>
+            <button class="btn btn-primary hide" type="submit" data-save-on-change>${icon("save")}Save privacy</button>
           </form>
         </article>
         <article class="form-card">
@@ -160,7 +159,7 @@ async function renderSettings() {
             ${field("State", "state", "text", false, billingAddress.state || "")}
             ${field("Postal code", "postalCode", "text", false, billingAddress.postalCode || "")}
             ${field("Country", "country", "text", false, billingAddress.country || "Nigeria")}
-            <button class="btn btn-primary" type="submit">${icon("save")}Save billing address</button>
+            <button class="btn btn-primary hide" type="submit" data-save-on-change>${icon("save")}Save billing address</button>
           </form>
         </article>
       </section>
@@ -186,7 +185,28 @@ function checked(form, name) {
   return Boolean(form.querySelector(`[name="${CSS.escape(name)}"]`)?.checked);
 }
 
+function markSettingsFormSaved(form) {
+  form.dataset.dirty = "false";
+  const button = form.querySelector("[data-save-on-change]");
+  if (!button) return;
+  button.classList.add("hide");
+}
+
+function watchSettingsFormChanges(form) {
+  const button = form.querySelector("[data-save-on-change]");
+  if (!button) return;
+  const showSave = () => {
+    form.dataset.dirty = "true";
+    button.classList.remove("hide");
+  };
+  form.addEventListener("input", showSave);
+  form.addEventListener("change", showSave);
+  markSettingsFormSaved(form);
+}
+
 function bindSettingsForms() {
+  document.querySelectorAll("[data-settings-profile-form], [data-settings-password-form], [data-settings-notifications-form], [data-settings-privacy-form], [data-settings-billing-address-form]").forEach(watchSettingsFormChanges);
+
   document.querySelector("[data-settings-profile-form]")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -209,6 +229,7 @@ function bindSettingsForms() {
     try {
       await apiRequest("/me/password", { method: "PUT", body: { currentPassword: data.currentPassword, newPassword: data.newPassword } });
       form.reset();
+      markSettingsFormSaved(form);
       showFormMessage(form, "success", "Password changed. Sign in again on other devices.");
     } catch (error) {
       showFormMessage(form, "error", error?.status === 401 ? "Current password is incorrect." : "Server connection unavailable. Please try again.");
@@ -264,6 +285,7 @@ async function submitSettingsForm(form, body) {
   setSubmitLoading(form, true);
   try {
     await apiRequest("/me/settings", { method: "PUT", body });
+    markSettingsFormSaved(form);
     showFormMessage(form, "success", "Settings saved.");
   } catch (error) {
     const message = error?.status === 401 ? "Please sign in again." : error?.status === 409 ? "That email address is already in use." : "Server connection unavailable. Please try again.";
