@@ -13,6 +13,7 @@ import { legalRoutes } from "./legalRoutes.js";
 import { healthHistoryRoutes } from "./healthHistoryRoutes.js";
 import { subscriptionRoutes } from "./subscriptionRoutes.js";
 import { doctorMarketplaceRoutes } from "./doctorMarketplaceRoutes.js";
+import { medicalKnowledgeRoutes } from "./medicalKnowledgeRoutes.js";
 
 export const apiRoutes = Router();
 
@@ -35,5 +36,6 @@ apiRoutes.use("/admin", adminRoutes);
 apiRoutes.use("/doctor", doctorRoutes);
 apiRoutes.use("/legal", legalRoutes);
 apiRoutes.use("/health-history", healthHistoryRoutes);
+apiRoutes.use("/medical-knowledge", medicalKnowledgeRoutes);
 apiRoutes.use("/", subscriptionRoutes);
 apiRoutes.use("/", doctorMarketplaceRoutes);

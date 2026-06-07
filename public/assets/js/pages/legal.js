@@ -50,6 +50,10 @@ function renderStaticPage(path) {
     renderSettings();
     return;
   }
+  if (path === "/medical-knowledge") {
+    renderMedicalKnowledge();
+    return;
+  }
   const content = {
     "/help": {
       badge: "Support",
@@ -57,14 +61,6 @@ function renderStaticPage(path) {
         ["Upload reports", "Use PDF, PNG, JPG, JPEG, or WebP files. Keep one report per upload for cleaner extraction.", "upload_file", "/reports"],
         ["AI explanations", "MedExplain AI explains report content and suggests questions. It does not diagnose or replace a clinician.", "psychology", "/chat"],
         ["Doctor support", "Book verified doctor consultations when you need human review of reports or symptoms.", "stethoscope", "/doctors"]
-      ]
-    },
-    "/medical-knowledge": {
-      badge: "Resources",
-      sections: [
-        ["Report explanations", "Understand how uploaded reports are extracted, summarized, and checked against trusted medical context.", "description", "/reports"],
-        ["Trusted source context", "AI explanations are supported by backend retrieval from curated medical knowledge sources.", "travel_explore", "/data-policy"],
-        ["AI health chat", "Ask follow-up questions about report language, lab values, and topics to discuss with a clinician.", "psychology", "/dashboard"]
       ]
     },
     "/contact": {
@@ -88,6 +84,57 @@ function renderStaticPage(path) {
       ${content.sections.map(([title, description, iconName, href]) => `<article class="card stack"><div class="icon-tile">${icon(iconName)}</div><h2>${escapeHtml(title)}</h2><p class="muted">${escapeHtml(description)}</p><a class="btn btn-quiet" href="${href}">Open</a></article>`).join("")}
     </section>
   `);
+}
+
+function knowledgeSummary(text = "") {
+  const clean = String(text || "").replace(/\s+/g, " ").trim();
+  if (!clean) return "No summary is available for this imported source yet.";
+  return clean.length > 220 ? `${clean.slice(0, 220)}...` : clean;
+}
+
+function renderKnowledgeSource(item = {}, sourceLabel) {
+  const href = item.url || "/medical-knowledge";
+  return `<article class="card stack">
+    <div class="card-header"><div><p class="caption">${escapeHtml(sourceLabel)}</p><h2>${escapeHtml(item.title || "Untitled source")}</h2></div></div>
+    <p class="muted">${escapeHtml(knowledgeSummary(item.summary))}</p>
+    ${item.source ? `<span class="badge">${escapeHtml(item.source)}</span>` : ""}
+    ${item.url ? `<a class="item-title" href="${escapeHtml(href)}" target="_blank" rel="noreferrer">Open source</a>` : ""}
+  </article>`;
+}
+
+function renderKnowledgeSection(title, items = [], sourceLabel, emptyText) {
+  return `<section class="stack">
+    <div class="card-header"><h2>${escapeHtml(title)}</h2><span class="badge">${items.length} shown</span></div>
+    <div class="grid grid-3">
+      ${items.length ? items.map((item) => renderKnowledgeSource(item, sourceLabel)).join("") : emptyState({ iconName: "travel_explore", title: "No records found", description: emptyText, actionLabel: "", actionHref: "" })}
+    </div>
+  </section>`;
+}
+
+async function renderMedicalKnowledge() {
+  const meta = routeTitle("/medical-knowledge");
+  setMain(`${loadingState("Loading medical knowledge")}`);
+  try {
+    const response = await apiRequest("/medical-knowledge");
+    const data = response.data || {};
+    const counts = data.counts || {};
+    setMain(`
+      <section class="card stack">
+        <div class="card-header"><div><h2>Imported knowledge sources</h2><p class="muted">Records imported from MedlinePlus and PubMed for source-grounded explanations.</p></div><span class="badge">Trusted sources</span></div>
+        <section class="metric-grid">
+          ${metricTile("MedlinePlus topics", "local_library", String(counts.medlineplus_topics || 0))}
+          ${metricTile("Definitions", "menu_book", String(counts.medlineplus_definitions || 0))}
+          ${metricTile("PubMed articles", "science", String(counts.pubmed_articles || 0))}
+          ${metricTile("Source use", "verified", "RAG context")}
+        </section>
+      </section>
+      ${renderKnowledgeSection("MedlinePlus topics", data.medlineplusTopics || [], "MedlinePlus", "Run the MedlinePlus ingestion to populate topics.")}
+      ${renderKnowledgeSection("MedlinePlus definitions", data.medlineplusDefinitions || [], "MedlinePlus definition", "Run the MedlinePlus definitions ingestion to populate terms.")}
+      ${renderKnowledgeSection("PubMed articles", data.pubmedArticles || [], "PubMed", "Run the PubMed ingestion to populate articles.")}
+    `);
+  } catch (error) {
+    setMain(`${pageHeader(meta)}${errorState(error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.")}`);
+  }
 }
 
 async function renderSettings() {
