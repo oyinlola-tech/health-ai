@@ -1,7 +1,7 @@
 import { pool } from "../../config/database.js";
 import { emailMapper } from "../email/email.mapper.js";
 import { createId } from "../../utils/uuid.js";
-import { sha256 } from "../../utils/crypto.js";
+import { tokenDigest } from "../../utils/crypto.js";
 import { logger } from "../../utils/logger.js";
 
 const sensitiveKeys = new Set(["password", "temporaryPassword", "token", "accessToken", "refreshToken", "secret", "apiKey", "authorization"]);
@@ -29,7 +29,7 @@ function eventKey(event) {
     entityId,
     reference
   });
-  return sha256(fingerprint);
+  return tokenDigest(fingerprint);
 }
 
 async function insertEventLog(event, client = pool) {

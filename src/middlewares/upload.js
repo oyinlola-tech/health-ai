@@ -24,6 +24,15 @@ function ensureDirectory(directory) {
   fs.mkdirSync(directory, { recursive: true });
 }
 
+function resolveUploadPath(filePath) {
+  const resolvedPath = path.resolve(filePath || "");
+  const relativePath = path.relative(uploadRoot, resolvedPath);
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    throw errors.badRequest("Invalid upload path.");
+  }
+  return resolvedPath;
+}
+
 function safeOriginalName(originalname) {
   return path.basename(String(originalname || "upload")).replace(/[^\w.\- ]/g, "_").slice(0, 180);
 }
@@ -42,7 +51,7 @@ function destinationForField(fieldname) {
 
 const storage = multer.diskStorage({
   destination: (_req, file, callback) => {
-    const directory = path.join(env.UPLOAD_ROOT, destinationForField(file.fieldname));
+    const directory = path.join(uploadRoot, destinationForField(file.fieldname));
     ensureDirectory(directory);
     callback(null, directory);
   },
@@ -70,7 +79,22 @@ async function scanForMalware(filePath) {
 
 async function removeRejectedFile(file) {
   if (!file?.path) return;
-  await fs.promises.unlink(file.path).catch(() => {});
+  try {
+    await fs.promises.unlink(resolveUploadPath(file.path));
+  } catch {
+    // Ignore cleanup failures for rejected uploads.
+  }
+}
+
+async function readHeader(filePath) {
+  const handle = await fs.promises.open(filePath, "r");
+  try {
+    const buffer = Buffer.alloc(16);
+    await handle.read(buffer, 0, buffer.length, 0);
+    return buffer;
+  } finally {
+    await handle.close();
+  }
 }
 
 export const upload = multer({
@@ -91,15 +115,8 @@ export async function validateUploadedFile(req, _res, next) {
   try {
     const file = req.file;
     if (!file) return next();
-    const resolvedPath = path.resolve(file.path);
-    if (!resolvedPath.startsWith(`${uploadRoot}${path.sep}`)) {
-      await removeRejectedFile(file);
-      return next(errors.badRequest("Invalid upload path."));
-    }
-    const header = await fs.promises.open(resolvedPath, "r");
-    const buffer = Buffer.alloc(16);
-    await header.read(buffer, 0, buffer.length, 0);
-    await header.close();
+    const resolvedPath = resolveUploadPath(file.path);
+    const buffer = await readHeader(resolvedPath);
     if (!hasMagicBytes(buffer, file.mimetype)) {
       await removeRejectedFile(file);
       return next(errors.badRequest("Uploaded file content does not match the declared file type."));
@@ -116,15 +133,8 @@ export async function validateUploadedFiles(req, _res, next) {
   const files = Object.values(req.files || {}).flat();
   try {
     for (const file of files) {
-      const resolvedPath = path.resolve(file.path);
-      if (!resolvedPath.startsWith(`${uploadRoot}${path.sep}`)) {
-        await removeRejectedFile(file);
-        return next(errors.badRequest("Invalid upload path."));
-      }
-      const header = await fs.promises.open(resolvedPath, "r");
-      const buffer = Buffer.alloc(16);
-      await header.read(buffer, 0, buffer.length, 0);
-      await header.close();
+      const resolvedPath = resolveUploadPath(file.path);
+      const buffer = await readHeader(resolvedPath);
       if (!hasMagicBytes(buffer, file.mimetype)) {
         await removeRejectedFile(file);
         return next(errors.badRequest("Uploaded file content does not match the declared file type."));

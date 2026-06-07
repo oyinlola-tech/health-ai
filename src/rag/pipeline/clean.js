@@ -1,40 +1,36 @@
+import { JSDOM } from "jsdom";
+
 function decodeHtmlEntities(value) {
-  return value
-    .replaceAll("&nbsp;", " ")
-    .replaceAll("&amp;", "&")
-    .replaceAll("&lt;", "<")
-    .replaceAll("&gt;", ">")
-    .replaceAll("&quot;", '"')
-    .replaceAll("&#39;", "'");
+  return new JSDOM(`<!doctype html><body>${value}</body>`).window.document.body.textContent || "";
 }
 
-function stripTagBlocks(html) {
-  return html
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
-    .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, " ")
-    .replace(/<svg\b[^>]*>[\s\S]*?<\/svg>/gi, " ")
-    .replace(/<(nav|header|footer|aside|form)\b[^>]*>[\s\S]*?<\/\1>/gi, " ");
+function parseDocument(html) {
+  return new JSDOM(String(html || "")).window.document;
+}
+
+function removeNonContent(document) {
+  document.querySelectorAll("script, style, noscript, svg, nav, header, footer, aside, form").forEach((node) => node.remove());
+}
+
+function normalizedText(node) {
+  return String(node?.textContent || "")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n\s+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function extractTitle(html) {
-  const title = html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1] || "";
-  return decodeHtmlEntities(title.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+  const document = parseDocument(html);
+  return normalizedText(document.querySelector("title"));
 }
 
 export function cleanHtmlDocument({ html, url, source }) {
+  const document = parseDocument(html);
   const title = extractTitle(html) || url;
-  const body = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)?.[1] || html;
-  const content = decodeHtmlEntities(
-    stripTagBlocks(body)
-      .replace(/<br\s*\/?>/gi, "\n")
-      .replace(/<\/(p|li|h1|h2|h3|h4|section|div)>/gi, "\n")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/[ \t]+/g, " ")
-      .replace(/\n\s+/g, "\n")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim()
-  );
+  removeNonContent(document);
+  const contentRoot = document.querySelector("main") || document.querySelector("article") || document.body;
+  const content = decodeHtmlEntities(normalizedText(contentRoot));
 
   return { source, title, url, content };
 }

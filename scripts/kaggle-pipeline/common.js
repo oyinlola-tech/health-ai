@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import zlib from "node:zlib";
+import { JSDOM } from "jsdom";
 
 export const projectRoot = path.resolve(".");
 export const pipelineRoot = path.resolve("datasets/kaggle-pipeline");
@@ -304,12 +305,8 @@ export function parseCsv(source) {
 }
 
 export function stripHtml(value) {
-  return String(value || "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
+  const document = new JSDOM(`<!doctype html><body>${String(value || "")}</body>`).window.document;
+  return String(document.body.textContent || "")
     .replace(/\s+/g, " ")
     .trim();
 }

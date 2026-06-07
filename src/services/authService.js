@@ -5,7 +5,7 @@ import { auditRepository } from "../repositories/auditRepository.js";
 import { signAccessToken, signEmailVerificationToken, signRefreshToken, verifyEmailVerificationToken, verifyRefreshToken } from "./tokenService.js";
 import { errors } from "../utils/errors.js";
 import { generateSecurePassword } from "../utils/password.js";
-import { randomToken, sha256 } from "../utils/crypto.js";
+import { randomToken, tokenDigest } from "../utils/crypto.js";
 import { env } from "../config/env.js";
 import { trialService } from "../modules/promotions/trial.service.js";
 import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
@@ -71,7 +71,7 @@ async function issueSession(user, client) {
   const accessToken = signAccessToken(user);
   const { token: refreshToken, tokenId } = signRefreshToken(user);
   const expiresAt = new Date(Date.now() + env.JWT_REFRESH_TTL_SECONDS * 1000);
-  await userRepository.createRefreshToken({ id: tokenId, userId: user.id, tokenHash: sha256(refreshToken), expiresAt }, client);
+  await userRepository.createRefreshToken({ id: tokenId, userId: user.id, tokenHash: tokenDigest(refreshToken), expiresAt }, client);
   return { accessToken, refreshToken, refreshTokenId: tokenId };
 }
 
@@ -158,7 +158,7 @@ export const authService = {
     }
 
     return withTransaction(async (client) => {
-      const stored = await userRepository.findRefreshToken(payload.jti, sha256(refreshToken), client);
+      const stored = await userRepository.findRefreshToken(payload.jti, tokenDigest(refreshToken), client);
       if (!stored) throw errors.unauthorized("Refresh token is no longer valid.");
       await userRepository.revokeRefreshToken(payload.jti, client);
       const user = await userRepository.findById(payload.sub, client);
@@ -182,7 +182,7 @@ export const authService = {
     const user = await userRepository.findByEmail(email);
     if (!user) return { sent: true };
     const token = randomToken(32);
-    await userRepository.setPasswordReset(user.id, sha256(token), new Date(Date.now() + 30 * 60 * 1000));
+    await userRepository.setPasswordReset(user.id, tokenDigest(token), new Date(Date.now() + 30 * 60 * 1000));
     await eventTracker.track({
       userId: user.id,
       eventType: analyticsEvents.PASSWORD_RESET_REQUEST,
@@ -194,7 +194,7 @@ export const authService = {
   },
 
   async resetPassword({ token, password }) {
-    const user = await userRepository.findByPasswordResetHash(sha256(token));
+    const user = await userRepository.findByPasswordResetHash(tokenDigest(token));
     if (!user) throw errors.unauthorized("Password reset token is invalid or expired.");
     await userRepository.updatePassword(user.id, await hashPassword(password));
     await userRepository.revokeUserRefreshTokens(user.id);

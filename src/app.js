@@ -8,7 +8,7 @@ import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
 import { env, getAllowedOrigins } from "./config/env.js";
 import { openApiSpec } from "./docs/openapi.js";
-import { apiRateLimit } from "./middlewares/rateLimit.js";
+import { apiRateLimit, publicReadRateLimit } from "./middlewares/rateLimit.js";
 import { csrfProtection } from "./middlewares/csrf.js";
 import { requestIdMiddleware } from "./middlewares/requestId.js";
 import { sanitizeRequest } from "./middlewares/sanitize.js";
@@ -236,6 +236,7 @@ export function createApp() {
   app.use(requestIdMiddleware);
   app.use(compression());
   app.use(cookieParser(env.COOKIE_SECRET));
+  app.use(csrfProtection);
   app.use(
     express.json({
       limit: "1mb",
@@ -259,12 +260,13 @@ export function createApp() {
       next(error);
     }
   });
-  app.get("/sitemap", (_req, res) => res.sendFile(sitemapEntry));
-  app.get(frontendRoutes, (_req, res) => res.sendFile(appEntry));
+  app.get("/sitemap", publicReadRateLimit, (_req, res) => res.sendFile(sitemapEntry));
+  app.get(frontendRoutes, publicReadRateLimit, (_req, res) => res.sendFile(appEntry));
 
-  app.get("/api-docs.json", (_req, res) => res.json(openApiSpec));
+  app.get("/api-docs.json", publicReadRateLimit, (_req, res) => res.json(openApiSpec));
   app.use(
     "/api-docs",
+    publicReadRateLimit,
     swaggerUi.serve,
     swaggerUi.setup(openApiSpec, {
       customSiteTitle: "MedExplain AI API Docs",
@@ -274,7 +276,7 @@ export function createApp() {
       }
     })
   );
-  app.use("/api", apiRateLimit, sanitizeRequest, csrfProtection, apiRoutes);
+  app.use("/api", apiRateLimit, sanitizeRequest, apiRoutes);
   app.use(notFoundHandler);
   app.use(errorHandler);
 

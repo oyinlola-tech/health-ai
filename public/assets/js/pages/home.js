@@ -122,8 +122,18 @@ function bindAuthForm() {
 function authRedirectTarget() {
   const next = new URLSearchParams(location.search).get("next");
   const blocked = new Set(["/login", "/register", "/splash", "/onboarding", "/chat"]);
-  if (!next || !next.startsWith("/") || next.startsWith("//") || blocked.has(next.split("?")[0])) return "/dashboard";
-  return next;
+  if (!next) return "/dashboard";
+  try {
+    const target = new URL(next, window.location.origin);
+    const normalized = normalizePath(target.pathname);
+    const allowed =
+      target.origin === window.location.origin &&
+      !blocked.has(normalized) &&
+      (pageMeta[normalized] || normalized === "/report/:id" || normalized === "/doctor/:id" || doctorWorkspacePaths.has(normalized));
+    return allowed ? `${target.pathname}${target.search}` : "/dashboard";
+  } catch {
+    return "/dashboard";
+  }
 }
 
 async function renderPatientDashboard() {
