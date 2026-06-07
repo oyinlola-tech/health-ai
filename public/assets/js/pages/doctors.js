@@ -9,15 +9,88 @@
 
 async function renderChat() {
   const meta = routeTitle("/chat");
-  setMain(`${pageHeader(meta)}${loadingState("Loading consultation rooms")}`);
+  setMain(`${pageHeader(meta)}${loadingState("Loading chat")}`);
   try {
-    const [response, subscription] = await Promise.all([apiRequest("/consultations"), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
-    const consultations = response.data?.consultations || [];
-    setMain(`${pageHeader(meta)}${renderEntitlementBanner(subscription.data || {}, "aiChat")}<section class="grid grid-2"><article class="card stack"><h2>Consultation Rooms</h2>${listCard(consultations, { iconName: "forum", title: "No consultation rooms", description: "Rooms open after a doctor confirms an appointment.", actionLabel: "Find doctors", actionHref: "/doctors" }, renderConsultationItem)}</article><article class="card stack"><h2>Messages</h2><div data-consultation-output>${emptyState({ iconName: "forum", title: "Select a room", description: "Choose a consultation room to view message history.", actionLabel: "", actionHref: "" })}</div></article></section>`);
-    bindConsultationRooms();
-  } catch {
-    setMain(`${pageHeader(meta)}${errorState("We could not load consultation rooms")}`);
+    const [history, subscription] = await Promise.all([apiRequest("/ai/chat-history"), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
+    const messages = history.data?.messages || [];
+    setMain(`
+      ${pageHeader(meta)}
+      ${renderEntitlementBanner(subscription.data || {}, "aiChat")}
+      <section class="grid grid-2">
+        <article class="card stack">
+          <div class="card-header">
+            <div><h2>Conversation</h2><p class="muted">Messages are stored through the backend AI gateway.</p></div>
+            <span class="badge">${messages.length} messages</span>
+          </div>
+          <div class="chat-thread stack" data-ai-chat-thread>
+            ${renderAiChatMessages(messages)}
+          </div>
+        </article>
+        <article class="form-card stack">
+          <form class="form" data-ai-chat-form novalidate>
+            <div class="form-message" data-form-message hidden></div>
+            ${textarea("Ask a health question", "message", true)}
+            <button class="btn btn-primary" type="submit">${icon("send")}Send message</button>
+          </form>
+          <div class="actions"><a class="btn btn-secondary" href="/reports">Open reports</a><a class="btn btn-secondary" href="/consent">Consent center</a></div>
+        </article>
+      </section>
+    `);
+    bindAiChatForm();
+  } catch (error) {
+    const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
+    setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
+}
+
+function renderAiChatMessages(messages = []) {
+  if (!messages.length) {
+    return emptyState({
+      iconName: "psychology",
+      title: "No chat messages yet",
+      description: "Ask a question about your reports or health context to begin.",
+      actionLabel: "",
+      actionHref: ""
+    });
+  }
+  return messages.map(renderAiChatMessage).join("");
+}
+
+function renderAiChatMessage(message) {
+  const role = String(message.role || "assistant").toLowerCase();
+  const label = role === "user" ? "You" : "MedExplain AI";
+  return `<article class="message-bubble" data-role="${escapeHtml(role)}"><p class="caption">${escapeHtml(label)}</p><p>${escapeHtml(message.content || "")}</p></article>`;
+}
+
+function chatErrorMessage(error) {
+  if (error?.status === 401) return "Please sign in again.";
+  if (error?.status === 403) return "Grant AI analysis consent before using chat.";
+  if (error?.payload?.error?.code === "CONFIGURATION_ERROR") return "AI service is not configured for this environment.";
+  return error?.message || "Server connection unavailable. Please try again.";
+}
+
+function bindAiChatForm() {
+  const form = document.querySelector("[data-ai-chat-form]");
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!validateForm(form)) return;
+    const textareaField = form.querySelector('[name="message"]');
+    const message = textareaField.value.trim();
+    const thread = document.querySelector("[data-ai-chat-thread]");
+    setSubmitLoading(form, true);
+    try {
+      thread.innerHTML = `${thread.querySelector(".empty-state") ? "" : thread.innerHTML}${renderAiChatMessage({ role: "user", content: message })}`;
+      textareaField.value = "";
+      const response = await apiRequest("/ai/chat", { method: "POST", body: { message } });
+      const assistantMessage = response.data?.message || response.data?.response?.summary || "Response saved.";
+      thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "assistant", content: assistantMessage }));
+      showFormMessage(form, "success", "Message sent.");
+    } catch (error) {
+      showFormMessage(form, "error", chatErrorMessage(error));
+    } finally {
+      setSubmitLoading(form, false);
+    }
+  });
 }
 
 function renderConsultationItem(item) {
