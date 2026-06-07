@@ -22,7 +22,9 @@ function setRefreshCookie(res, token) {
 }
 
 function clearRefreshCookie(res) {
-  res.clearCookie(refreshCookieName, refreshCookieOptions());
+  const cookieOptions = refreshCookieOptions();
+  delete cookieOptions.maxAge;
+  res.clearCookie(refreshCookieName, cookieOptions);
 }
 
 export const authController = {

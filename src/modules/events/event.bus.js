@@ -19,7 +19,7 @@ class AsyncEventBus extends EventEmitter {
   }
 
   publishLater(type, payload = {}, options = {}) {
-    queueMicrotask(() => {
+    setImmediate(() => {
       this.publish(type, payload, options).catch((error) => {
         logger.error("Async event publish failed.", { module: "events", type, message: error.message });
       });

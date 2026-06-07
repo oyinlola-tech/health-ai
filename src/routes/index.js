@@ -14,6 +14,7 @@ import { healthHistoryRoutes } from "./healthHistoryRoutes.js";
 import { subscriptionRoutes } from "./subscriptionRoutes.js";
 import { doctorMarketplaceRoutes } from "./doctorMarketplaceRoutes.js";
 import { medicalKnowledgeRoutes } from "./medicalKnowledgeRoutes.js";
+import { systemRoutes } from "./systemRoutes.js";
 
 export const apiRoutes = Router();
 
@@ -37,5 +38,6 @@ apiRoutes.use("/doctor", doctorRoutes);
 apiRoutes.use("/legal", legalRoutes);
 apiRoutes.use("/health-history", healthHistoryRoutes);
 apiRoutes.use("/medical-knowledge", medicalKnowledgeRoutes);
+apiRoutes.use("/system", systemRoutes);
 apiRoutes.use("/", subscriptionRoutes);
 apiRoutes.use("/", doctorMarketplaceRoutes);
