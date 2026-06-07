@@ -16,6 +16,7 @@ async function renderReports() {
     setMain(`
       ${pageHeader(meta)}
       ${renderEntitlementBanner(subscription.value?.data || {}, "reportAnalysis")}
+      ${renderReportOverview(reports)}
       <section class="form-card">
         <form class="form" data-upload-form novalidate>
           <div class="form-message" data-form-message hidden></div>
@@ -31,6 +32,37 @@ async function renderReports() {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
     setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
+}
+
+function renderReportStatusBar(label, count, total, className = "") {
+  const percent = total ? Math.round((count / total) * 100) : 0;
+  return `<div class="chart-row">
+    <div class="card-header"><span>${escapeHtml(label)}</span><span class="badge ${className}">${count}</span></div>
+    <div class="meter-track"><span style="width:${percent}%"></span></div>
+  </div>`;
+}
+
+function renderReportOverview(reports = []) {
+  const total = reports.length;
+  const analyzed = reports.filter((report) => ["completed", "analyzed"].includes(String(report.extraction_status || report.status || "").toLowerCase())).length;
+  const processing = reports.filter((report) => ["processing", "pending", "uploaded"].includes(String(report.extraction_status || report.status || "").toLowerCase())).length;
+  const failed = reports.filter((report) => String(report.extraction_status || report.status || "").toLowerCase() === "failed").length;
+  const confidenceValues = reports.map((report) => Number(report.analysis_confidence)).filter(Number.isFinite);
+  const averageConfidence = confidenceValues.length ? Math.round(confidenceValues.reduce((sum, value) => sum + value, 0) / confidenceValues.length) : null;
+  return `<section class="card stack">
+    <div class="card-header"><div><h2>Report overview</h2><p class="muted">Status and extraction quality from your report history.</p></div><span class="badge">${total} total</span></div>
+    <section class="metric-grid">
+      ${metricTile("Reports", "description", String(total))}
+      ${metricTile("Analyzed", "task_alt", String(analyzed))}
+      ${metricTile("Processing", "progress_activity", String(processing))}
+      ${metricTile("Avg confidence", "verified", averageConfidence === null ? "Not available" : `${averageConfidence}%`)}
+    </section>
+    <section class="report-chart" aria-label="Report processing chart">
+      ${renderReportStatusBar("Analyzed", analyzed, total, "badge-success")}
+      ${renderReportStatusBar("Processing", processing, total, "badge-warning")}
+      ${renderReportStatusBar("Needs attention", failed, total, failed ? "badge-error" : "")}
+    </section>
+  </section>`;
 }
 
 function bindUploadForm() {

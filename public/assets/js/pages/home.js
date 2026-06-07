@@ -128,31 +128,36 @@ function authRedirectTarget() {
 
 async function renderPatientDashboard() {
   const meta = routeTitle("/dashboard");
-  setMain(`${pageHeader(meta)}${loadingState("Loading dashboard")}`);
+  setMain(`${pageHeader(meta)}${loadingState("Loading home")}`);
   try {
-    const [reports, appointments, health, subscription] = await Promise.allSettled([
-      cachedRequest("reports", "/reports"),
-      cachedRequest("appointments", "/appointments"),
-      cachedRequest("health", "/health-history"),
-      cachedRequest("subscription", "/subscriptions/me")
+    const [history, subscription] = await Promise.all([
+      apiRequest("/ai/chat-history"),
+      cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))
     ]);
-    const reportItems = reports.value?.data?.reports || [];
-    const appointmentItems = appointments.value?.data?.appointments || [];
-    const healthItems = health.value?.data?.entries || health.value?.data?.healthHistory || [];
+    const messages = history.data?.messages || [];
     setMain(`
       ${pageHeader(meta)}
-      <section class="grid grid-4" aria-label="Patient dashboard summary">
-        ${summaryCard("Health Overview", "monitor_heart", healthItems.length ? `${healthItems.length} health entries` : "No health entries yet", "/profile")}
-        ${summaryCard("Recent Reports", "description", reportItems.length ? `${reportItems.length} reports available` : "No reports uploaded", "/reports")}
-        ${summaryCard("Upcoming Consultations", "calendar_month", appointmentItems.length ? `${appointmentItems.length} appointments` : "No appointments booked", "/doctors")}
-        ${summaryCard("Subscription Status", "workspace_premium", subscription.value?.data?.plan || "Plan unavailable", "/subscription")}
-      </section>
+      ${renderEntitlementBanner(subscription.data || {}, "aiChat")}
       <section class="grid grid-2">
-        <article class="card card-accent stack"><div class="card-header"><h2>Recent Reports</h2></div>${listCard(reportItems.slice(0, 3), { iconName: "description", title: "No reports yet", description: "Upload a report to receive an AI-assisted explanation.", actionLabel: "Upload report", actionHref: "/reports" }, renderReportItem)}</article>
-        <article class="card stack"><div class="card-header"><h2>Health Trends</h2></div>${listCard(healthItems.slice(0, 3), { iconName: "monitor_heart", title: "No health trend data", description: "Save health history entries to review them from this dashboard.", actionLabel: "Add health entry", actionHref: "/profile" }, renderHealthItem)}</article>
+        <article class="card stack">
+          <div class="card-header">
+            <div><h2>Conversation</h2><p class="muted">Messages are stored through the backend AI gateway.</p></div>
+            <span class="badge">${messages.length} messages</span>
+          </div>
+          <div class="chat-thread stack" data-ai-chat-thread>
+            ${renderAiChatMessages(messages)}
+          </div>
+        </article>
+        <article class="form-card stack">
+          <form class="form" data-ai-chat-form novalidate>
+            <div class="form-message" data-form-message hidden></div>
+            ${textarea("Ask a health question", "message", true)}
+            <button class="btn btn-primary" type="submit">${icon("send")}Send message</button>
+          </form>
+        </article>
       </section>
-      <section class="card stack"><h2>Quick Actions</h2><div class="actions"><a class="btn btn-primary" href="/reports">${icon("upload_file")}Upload report</a><a class="btn btn-secondary" href="/chat">Ask AI</a><a class="btn btn-secondary" href="/doctors">Book consultation</a></div></section>
     `);
+    bindAiChatForm();
   } catch (error) {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
     setMain(`${pageHeader(meta)}${errorState(message)}`);

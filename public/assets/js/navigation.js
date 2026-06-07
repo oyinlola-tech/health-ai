@@ -5,10 +5,7 @@
  */
 const navItems = [
   { href: "/dashboard", icon: "home", label: "Home" },
-  { href: "/reports", icon: "description", label: "Reports" },
-  { href: "/chat", icon: "psychology", label: "Chat" },
-  { href: "/doctors", icon: "stethoscope", label: "Doctors" },
-  { href: "/profile", icon: "person", label: "Profile" }
+  { href: "/reports", icon: "description", label: "Reports" }
 ];
 
 export function ensureMobileBottomNav() {

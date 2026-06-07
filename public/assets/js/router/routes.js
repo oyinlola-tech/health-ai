@@ -59,11 +59,7 @@ const routeAliases = new Map([
 
 const primaryNav = [
   { label: "Home", href: "/dashboard", icon: "home" },
-  { label: "Reports", href: "/reports", icon: "description" },
-  { label: "Chat", href: "/chat", icon: "psychology" },
-  { label: "Doctors", href: "/doctors", icon: "stethoscope" },
-  { label: "Careers", href: "/doctor-careers", icon: "work" },
-  { label: "Profile", href: "/profile", icon: "person" }
+  { label: "Reports", href: "/reports", icon: "description" }
 ];
 
 const footerSections = [
@@ -79,8 +75,8 @@ const pageMeta = {
   "/onboarding": { title: "Get started", description: "Set up your secure MedExplain AI workspace." },
   "/login": { title: "Welcome back", description: "Sign in to continue your private health workspace." },
   "/register": { title: "Create your account", description: "Start a private MedExplain AI workspace." },
-  "/dashboard": { title: "Patient dashboard", description: "Your health overview, report status, AI insights, consultations, and account state." },
-  "/reports": { title: "Reports", description: "Upload, review, and analyze medical documents securely." },
+  "/dashboard": { title: "Home", description: "Ask questions and continue your MedExplain AI conversation." },
+  "/reports": { title: "Reports", description: "Report history, upload workflow, processing status, and health document insights." },
   "/chat": { title: "AI health chat", description: "Ask questions about your reports and health context." },
   "/doctors": { title: "Doctors", description: "Connect with verified doctors and manage consultations." },
   "/doctor-careers": { title: "Doctor careers", description: "Apply for verified doctor roles and track application status securely." },

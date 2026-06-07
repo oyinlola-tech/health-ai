@@ -697,6 +697,20 @@ thead th:last-child {
   gap: 10px;
 }
 
+.report-chart {
+  display: grid;
+  gap: 14px;
+}
+
+.chart-row {
+  display: grid;
+  gap: 8px;
+}
+
+.chart-row .card-header {
+  margin-bottom: 0;
+}
+
 .meter-track {
   height: 10px;
   overflow: hidden;
