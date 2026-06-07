@@ -46,13 +46,57 @@ async function renderProfile() {
 
 function renderStaticPage(path) {
   const meta = routeTitle(path);
-  const contentMap = {
-    "/settings": ["Settings", "Review account, privacy, and notification controls from the profile and subscription workspaces."],
-    "/help": ["Help center", "Browse medical report guidance, AI explanation tips, and support paths without leaving the product."],
-    "/contact": ["Contact support", "Use the support action below for help with reports, billing, privacy, or account access."]
-  };
-  const [title, description] = contentMap[path] || [meta.title, meta.description];
-  setMain(`${pageHeader(meta)}<section class="card stack"><div class="icon-tile">${icon("info")}</div><h2>${title}</h2><p class="muted">${description}</p><div class="actions"><a class="btn btn-primary" href="/dashboard">Return to dashboard</a><a class="btn btn-secondary" href="/help">Open help</a></div></section>`);
+  const content = {
+    "/settings": {
+      badge: "Protected",
+      sections: [
+        ["Account", "Manage profile details, password recovery, and active sessions from your secure account workspace.", "account_circle", "/profile"],
+        ["Privacy and consent", "Review medical processing, AI analysis, doctor sharing, and payment permissions.", "privacy_tip", "/consent"],
+        ["Plan and billing", "Check subscription access, usage limits, and verified OPay billing history.", "workspace_premium", "/subscription"]
+      ]
+    },
+    "/help": {
+      badge: "Support",
+      sections: [
+        ["Upload reports", "Use PDF, PNG, JPG, JPEG, or WebP files. Keep one report per upload for cleaner extraction.", "upload_file", "/reports"],
+        ["AI explanations", "MedExplain AI explains report content and suggests questions. It does not diagnose or replace a clinician.", "psychology", "/chat"],
+        ["Doctor support", "Book verified doctor consultations when you need human review of reports or symptoms.", "stethoscope", "/doctors"]
+      ]
+    },
+    "/contact": {
+      badge: "Support",
+      sections: [
+        ["Account help", "Use this path for login, profile, consent, or access issues.", "support_agent", "/profile"],
+        ["Billing help", "Review subscriptions and payment records before contacting support about OPay transactions.", "receipt_long", "/billing-history"],
+        ["Medical data help", "For upload, OCR, or AI explanation issues, include the report title and time of upload.", "description", "/reports"]
+      ]
+    }
+  }[path];
+
+  if (!content) {
+    setMain(`${pageHeader(meta)}${renderStaticFallback(meta)}`);
+    return;
+  }
+
+  setMain(`
+    ${pageHeader(meta)}
+    <section class="card card-accent stack">
+      <div class="card-header">
+        <div>
+          <h2>${escapeHtml(meta.title)}</h2>
+          <p class="muted">${escapeHtml(meta.description)}</p>
+        </div>
+        <span class="badge">${escapeHtml(content.badge)}</span>
+      </div>
+    </section>
+    <section class="grid grid-3">
+      ${content.sections.map(([title, description, iconName, href]) => `<article class="card stack"><div class="icon-tile">${icon(iconName)}</div><h2>${escapeHtml(title)}</h2><p class="muted">${escapeHtml(description)}</p><a class="btn btn-quiet" href="${href}">Open</a></article>`).join("")}
+    </section>
+  `);
+}
+
+function renderStaticFallback(meta) {
+  return `<section class="card stack"><div class="icon-tile">${icon("info")}</div><h2>${escapeHtml(meta.title)}</h2><p class="muted">${escapeHtml(meta.description)}</p><div class="actions"><a class="btn btn-primary" href="/dashboard">Return to dashboard</a><a class="btn btn-secondary" href="/help">Open help</a></div></section>`;
 }
 
 const legalFallbacks = {
@@ -151,4 +195,3 @@ async function renderConsentCenter() {
     setMain(`${pageHeader(meta)}${errorState("We could not load consent controls")}`);
   }
 }
-

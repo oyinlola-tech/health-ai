@@ -10,6 +10,8 @@
 const routeAliases = new Map([
   ["/upload", "/reports"],
   ["/history", "/reports"],
+  ["/repots", "/reports"],
+  ["/report", "/reports"],
   ["/admin/login", "/login"],
   ["/auth/login.html", "/login"],
   ["/auth/signup.html", "/register"],

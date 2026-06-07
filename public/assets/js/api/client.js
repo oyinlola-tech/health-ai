@@ -10,7 +10,8 @@
 const appConfig = {
   apiBaseUrl: "/api",
   csrfHeader: "x-csrf-token",
-  accessTokenKey: "medexplain_access_token"
+  accessTokenKey: "medexplain_access_token",
+  requestTimeoutMs: 20000
 };
 
 function loadRealtimeClient() {
@@ -63,6 +64,8 @@ async function refreshAccessToken() {
 async function apiRequest(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
   const headers = new Headers(options.headers || {});
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), options.timeoutMs || appConfig.requestTimeoutMs);
   headers.set("Accept", "application/json");
   if (!(options.body instanceof FormData)) headers.set("Content-Type", "application/json");
 
@@ -72,13 +75,22 @@ async function apiRequest(path, options = {}) {
     headers.set(appConfig.csrfHeader, await ensureCsrfToken());
   }
 
-  const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
-    ...options,
-    method,
-    credentials: "include",
-    headers,
-    body: options.body instanceof FormData ? options.body : options.body ? JSON.stringify(options.body) : undefined
-  });
+  let response;
+  try {
+    response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
+      ...options,
+      method,
+      credentials: "include",
+      headers,
+      signal: options.signal || controller.signal,
+      body: options.body instanceof FormData ? options.body : options.body ? JSON.stringify(options.body) : undefined
+    });
+  } catch (error) {
+    if (error.name === "AbortError") throw Object.assign(new Error("The server took too long to respond."), { status: 408 });
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
 
   if (response.status === 401 && token && !options.skipRefresh) {
     const refreshed = await refreshAccessToken();
@@ -92,8 +104,18 @@ async function apiRequest(path, options = {}) {
 
   if (!response.ok || payload.success === false) {
     const message = payload?.error?.message || "Request failed.";
+    if (response.status === 401) handleUnauthorizedResponse();
     throw Object.assign(new Error(message), { status: response.status, payload });
   }
 
   return payload;
+}
+
+function handleUnauthorizedResponse() {
+  clearAccessToken();
+  const path = typeof normalizePath === "function" ? normalizePath(location.pathname) : location.pathname;
+  if (typeof requiresSignedInUser === "function" && requiresSignedInUser(path)) {
+    const next = encodeURIComponent(`${location.pathname}${location.search}`);
+    window.location.assign(`/login?next=${next}`);
+  }
 }
