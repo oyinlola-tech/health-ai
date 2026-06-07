@@ -94,6 +94,7 @@ const envSchema = z
     OPAY_PUBLIC_KEY: z.string().optional().default(""),
     OPAY_SECRET_KEY: z.string().optional().default(""),
     OPAY_WEBHOOK_SECRET: z.string().optional().default(""),
+    OPAY_MOCK_MODE: booleanFromEnv,
     OPAY_COUNTRY: z.string().default("NG"),
     OPAY_CURRENCY: z.string().default("NGN"),
     FREE_TRIAL_DAYS: z.coerce.number().int().positive().default(14),

@@ -1,5 +1,9 @@
 import { env } from "./env.js";
 
+export function isOpayMockMode() {
+  return env.NODE_ENV === "development" && env.OPAY_MOCK_MODE === true;
+}
+
 function hasValue(value) {
   return value !== undefined && value !== null && String(value).trim() !== "";
 }
@@ -38,6 +42,7 @@ export function validateStartupEnvironment() {
   const warnings = [];
   if (env.NODE_ENV !== "production") {
     for (const key of ["GEMINI_API_KEY", "OPAY_MERCHANT_ID", "OPAY_PUBLIC_KEY", "OPAY_SECRET_KEY"]) {
+      if (key.startsWith("OPAY_") && isOpayMockMode()) continue;
       if (!hasValue(env[key])) warnings.push(`${key} is not set; related live integrations are unavailable until configured.`);
     }
   }
