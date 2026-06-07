@@ -89,6 +89,11 @@ function emptyState({ iconName = "inbox", title, description, actionLabel, actio
   return `<section class="empty-state"><div class="state-content"><div class="state-icon">${icon(iconName)}</div><h2>${escapeHtml(title)}</h2><p class="muted">${escapeHtml(description)}</p>${actionHref ? `<a class="btn btn-primary" href="${actionHref}">${actionLabel}</a>` : ""}</div></section>`;
 }
 
+function listCard(items = [], emptyConfig, renderItem) {
+  if (!items.length) return emptyState(emptyConfig);
+  return `<div class="stack">${items.map((item) => renderItem(item)).join("")}</div>`;
+}
+
 function errorState(title = "We could not load this view", retry = true) {
   return `<section class="error-state" role="alert"><div class="state-content"><div class="state-icon">${icon("support_agent")}</div><h2>${title}</h2><p class="muted">Please retry. If this keeps happening, support can help.</p><div class="actions">${retry ? `<button class="btn btn-primary" data-action="retry">${icon("refresh")}Retry</button>` : ""}<a class="btn btn-secondary" href="/contact">Contact support</a></div></div></section>`;
 }
@@ -98,4 +103,3 @@ function setMain(content) {
   main.innerHTML = `<div class="container page-section">${content}</div>`;
   main.focus({ preventScroll: true });
 }
-
