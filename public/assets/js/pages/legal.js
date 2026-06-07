@@ -100,20 +100,30 @@ function knowledgeSummary(text = "", maxLength = 220) {
 
 function renderKnowledgeSource(item = {}, index = 0) {
   return `<button class="knowledge-result" type="button" data-knowledge-result="${index}">
-    <span class="caption">${escapeHtml(item.type || item.source || "Medical source")}</span>
-    <strong>${escapeHtml(item.title || "Untitled source")}</strong>
-    ${item.source ? `<span class="badge">${escapeHtml(item.source)}</span>` : ""}
-    <span class="muted">${escapeHtml(knowledgeSummary(item.summary, 130))}</span>
+    <span class="knowledge-result-main">
+      <span class="caption">${escapeHtml(item.type || item.source || "Medical source")}</span>
+      <strong>${escapeHtml(item.title || "Untitled source")}</strong>
+      <span class="muted">${escapeHtml(knowledgeSummary(item.summary, 120))}</span>
+    </span>
+    <span class="knowledge-result-meta">
+      ${item.source ? `<span class="badge">${escapeHtml(item.source)}</span>` : ""}
+      ${icon("chevron_right")}
+    </span>
   </button>`;
 }
 
 function renderKnowledgeDetail(item = null) {
   if (!item) {
-    return `<section class="knowledge-detail empty-state">
+    return `<section class="knowledge-detail knowledge-empty-state">
       <div class="state-content">
         <div class="state-icon">${icon("manage_search")}</div>
         <h2>Search a medical term</h2>
-        <p class="muted">Enter a word like triglycerides, tuberculosis, kidney disease, or vitamin C to view trusted MedlinePlus and PubMed information.</p>
+        <p class="muted">Type a condition, lab marker, medicine, or specialty to view trusted MedlinePlus and PubMed information.</p>
+        <div class="knowledge-suggestions" aria-label="Suggested searches">
+          <button type="button" data-knowledge-suggestion="triglycerides">Triglycerides</button>
+          <button type="button" data-knowledge-suggestion="tuberculosis">Tuberculosis</button>
+          <button type="button" data-knowledge-suggestion="urology">Urology</button>
+        </div>
       </div>
     </section>`;
   }
@@ -132,11 +142,24 @@ function renderKnowledgeDetail(item = null) {
 }
 
 function renderKnowledgeResults(results = [], hasSearched = false) {
-  if (!hasSearched) return `<div class="knowledge-results"><p class="muted">Results will appear here after you search.</p></div>`;
-  if (!results.length) {
-    return `<div class="knowledge-results">${emptyState({ iconName: "travel_explore", title: "No matching source found", description: "Try another medical word or a shorter term.", actionLabel: "", actionHref: "" })}</div>`;
+  if (!hasSearched) {
+    return `<aside class="knowledge-results-shell">
+      <div class="knowledge-results-header"><span class="caption">Results</span><strong>Nothing searched yet</strong></div>
+      <p class="muted">Search results will appear as a short clickable list.</p>
+    </aside>`;
   }
-  return `<div class="knowledge-results">${results.map(renderKnowledgeSource).join("")}</div>`;
+  if (!results.length) {
+    return `<aside class="knowledge-results-shell knowledge-results-empty">
+      <div class="state-icon">${icon("travel_explore")}</div>
+      <h2>No matching source found</h2>
+      <p class="muted">Try another medical word, a shorter term, or import more PubMed topics.</p>
+      <a class="item-title" href="/help">Get help</a>
+    </aside>`;
+  }
+  return `<aside class="knowledge-results-shell">
+    <div class="knowledge-results-header"><span class="caption">Results</span><strong>${results.length} trusted ${results.length === 1 ? "source" : "sources"}</strong></div>
+    <div class="knowledge-results">${results.map(renderKnowledgeSource).join("")}</div>
+  </aside>`;
 }
 
 function bindKnowledgeResultClicks(results = []) {
@@ -147,6 +170,18 @@ function bindKnowledgeResultClicks(results = []) {
       button.setAttribute("aria-current", "true");
       const detail = document.querySelector("[data-knowledge-detail]");
       if (detail) detail.innerHTML = renderKnowledgeDetail(results[index]);
+    });
+  });
+}
+
+function bindKnowledgeSuggestions(form) {
+  if (!form) return;
+  document.querySelectorAll("[data-knowledge-suggestion]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = form.querySelector("#knowledge-query");
+      if (!input) return;
+      input.value = button.dataset.knowledgeSuggestion || "";
+      form.requestSubmit();
     });
   });
 }
@@ -175,6 +210,7 @@ async function renderMedicalKnowledge() {
   `);
 
   const form = document.querySelector("[data-knowledge-search]");
+  bindKnowledgeSuggestions(form);
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const query = new FormData(form).get("q")?.toString().trim();
@@ -186,14 +222,19 @@ async function renderMedicalKnowledge() {
     if (message) message.hidden = true;
     const resultsTarget = document.querySelector("[data-knowledge-results]");
     const detailTarget = document.querySelector("[data-knowledge-detail]");
-    resultsTarget.innerHTML = `<div class="knowledge-results"><p class="muted">Searching trusted sources...</p></div>`;
+    resultsTarget.innerHTML = `<aside class="knowledge-results-shell">
+      <div class="knowledge-results-header"><span class="caption">Results</span><strong>Searching</strong></div>
+      <p class="muted">Searching trusted sources...</p>
+    </aside>`;
     detailTarget.innerHTML = renderKnowledgeDetail();
+    bindKnowledgeSuggestions(form);
     try {
       const response = await apiRequest(`/medical-knowledge/search?q=${encodeURIComponent(query)}`);
       const results = response.data?.results || [];
       resultsTarget.innerHTML = renderKnowledgeResults(results, true);
       detailTarget.innerHTML = renderKnowledgeDetail(results[0] || null);
       bindKnowledgeResultClicks(results);
+      bindKnowledgeSuggestions(form);
       document.querySelector("[data-knowledge-result]")?.setAttribute("aria-current", "true");
     } catch (error) {
       resultsTarget.innerHTML = errorState(error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.", false);

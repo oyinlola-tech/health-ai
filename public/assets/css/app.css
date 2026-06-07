@@ -577,35 +577,124 @@ p {
   align-items: start;
 }
 
+.knowledge-results-shell {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.knowledge-results-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-warm);
+}
+
+.knowledge-results-header strong {
+  font-size: 14px;
+}
+
 .knowledge-results {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .knowledge-result {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
   width: 100%;
   padding: 16px;
   border: 1px solid var(--color-border-warm);
   border-radius: var(--radius-small);
-  background: var(--color-surface);
+  background: var(--color-surface-soft);
   color: var(--color-primary);
   text-align: left;
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
+  transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
 }
 
 .knowledge-result:hover,
 .knowledge-result[aria-current="true"] {
   border-color: rgba(255, 110, 92, 0.45);
+  background: var(--color-surface);
+  transform: translateY(-1px);
+}
+
+.knowledge-result[aria-current="true"] {
+  box-shadow: inset 3px 0 0 var(--color-accent);
+}
+
+.knowledge-result-main {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
 }
 
 .knowledge-result .badge {
   justify-self: start;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knowledge-result-meta {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.knowledge-result-meta .material-symbols-outlined {
+  color: var(--color-secondary);
+  font-size: 20px;
 }
 
 .knowledge-detail {
   min-height: 320px;
+}
+
+.knowledge-empty-state,
+.knowledge-results-empty {
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  padding: 32px;
+  border: 1px dashed var(--color-border-warm);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.knowledge-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.knowledge-suggestions button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-small);
+  background: var(--color-surface-soft);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.knowledge-suggestions button:hover {
+  border-color: rgba(255, 110, 92, 0.45);
+  color: var(--color-accent);
 }
 
 .card-header {
