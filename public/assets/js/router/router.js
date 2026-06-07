@@ -141,7 +141,7 @@ function route() {
   if (recoveryPages[state.path]) return renderRecoveryPage(state.path);
   if (emptyPages[state.path]) return renderEmptyPage(state.path);
   if (successPages[state.path]) return renderSuccessPage(state.path);
-  if (["/settings", "/help", "/contact"].includes(state.path)) return renderStaticPage(state.path);
+  if (["/settings", "/help", "/contact", "/medical-knowledge"].includes(state.path)) return renderStaticPage(state.path);
   if (state.path === "/notifications") return renderNotifications();
   if (state.path === "/doctor" || state.path.startsWith("/doctor/")) return renderDoctorDashboard();
   if (state.path === "/admin" || state.path.startsWith("/admin/")) return renderAdminDashboard();

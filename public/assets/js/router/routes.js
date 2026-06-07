@@ -37,8 +37,9 @@ const routeAliases = new Map([
   ["/premium/plans.html", "/subscription"],
   ["/premium/payment.html", "/update-plan"],
   ["/premium/activated.html", "/payment-success"],
-  ["/learning-center/home.html", "/help"],
-  ["/learning-center/articles.html", "/help"],
+  ["/learning-center/home.html", "/medical-knowledge"],
+  ["/learning-center/articles.html", "/medical-knowledge"],
+  ["/learning-center/trusted-source.html", "/medical-knowledge"],
   ["/notifications/list.html", "/notifications"],
   ["/admin/index.html", "/admin"],
   ["/admin/user.html", "/admin/users"],
@@ -66,7 +67,7 @@ const primaryNav = [
 const footerSections = [
   { title: "Company", links: [["About", "/"], ["Contact", "/contact"]] },
   { title: "Product", links: [["Reports", "/reports"], ["Doctors", "/doctors"], ["Doctor careers", "/doctor-careers"], ["Subscription", "/subscription"]] },
-  { title: "Resources", links: [["Help", "/help"], ["Medical Knowledge", "/help"], ["Data policy", "/data-policy"]] },
+  { title: "Resources", links: [["Help", "/help"], ["Medical Knowledge", "/medical-knowledge"], ["Data policy", "/data-policy"]] },
   { title: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"]] }
 ];
 
@@ -94,6 +95,7 @@ const pageMeta = {
   "/update-plan": { title: "Update plan", description: "Choose a premium plan and continue to OPay checkout." },
   "/cancel-subscription": { title: "Cancel subscription", description: "Manage cancellation for your active premium plan." },
   "/help": { title: "Help center", description: "Find guidance, support, and trusted medical knowledge." },
+  "/medical-knowledge": { title: "Medical knowledge", description: "Trusted medical education resources used to support report explanations." },
   "/contact": { title: "Contact", description: "Reach the MedExplain AI support team." },
   "/privacy": { title: "Privacy", description: "How MedExplain AI protects and handles personal health information." },
   "/terms": { title: "Terms", description: "Terms for using MedExplain AI." },

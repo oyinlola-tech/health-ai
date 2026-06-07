@@ -59,6 +59,14 @@ function renderStaticPage(path) {
         ["Doctor support", "Book verified doctor consultations when you need human review of reports or symptoms.", "stethoscope", "/doctors"]
       ]
     },
+    "/medical-knowledge": {
+      badge: "Resources",
+      sections: [
+        ["Report explanations", "Understand how uploaded reports are extracted, summarized, and checked against trusted medical context.", "description", "/reports"],
+        ["Trusted source context", "AI explanations are supported by backend retrieval from curated medical knowledge sources.", "travel_explore", "/data-policy"],
+        ["AI health chat", "Ask follow-up questions about report language, lab values, and topics to discuss with a clinician.", "psychology", "/dashboard"]
+      ]
+    },
     "/contact": {
       badge: "Support",
       sections: [
@@ -75,16 +83,7 @@ function renderStaticPage(path) {
   }
 
   setMain(`
-    ${pageHeader(meta)}
-    <section class="card card-accent stack">
-      <div class="card-header">
-        <div>
-          <h2>${escapeHtml(meta.title)}</h2>
-          <p class="muted">${escapeHtml(meta.description)}</p>
-        </div>
-        <span class="badge">${escapeHtml(content.badge)}</span>
-      </div>
-    </section>
+    ${path === "/help" ? "" : pageHeader(meta)}
     <section class="grid grid-3">
       ${content.sections.map(([title, description, iconName, href]) => `<article class="card stack"><div class="icon-tile">${icon(iconName)}</div><h2>${escapeHtml(title)}</h2><p class="muted">${escapeHtml(description)}</p><a class="btn btn-quiet" href="${href}">Open</a></article>`).join("")}
     </section>
