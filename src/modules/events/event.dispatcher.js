@@ -1,10 +1,17 @@
 import { pool } from "../../config/database.js";
 import { emailMapper } from "../email/email.mapper.js";
 import { createId } from "../../utils/uuid.js";
-import { tokenDigest } from "../../utils/crypto.js";
 import { logger } from "../../utils/logger.js";
 
 const sensitiveKeys = new Set(["password", "temporaryPassword", "token", "accessToken", "refreshToken", "secret", "apiKey", "authorization"]);
+const maxIdempotencyKeyLength = 180;
+
+function keyPart(value, maxLength = 80) {
+  return String(value || "")
+    .trim()
+    .replace(/[^a-zA-Z0-9:._-]/g, "-")
+    .slice(0, maxLength);
+}
 
 function redactPayload(value) {
   if (Array.isArray(value)) return value.map(redactPayload);
@@ -17,19 +24,21 @@ function redactPayload(value) {
   );
 }
 
-function eventKey(event) {
+export function eventKey(event) {
   if (event.idempotencyKey) return event.idempotencyKey;
   const entityId = event.entityId || event.payload?.entityId || null;
   const reference = event.payload?.reference || event.payload?.payment?.provider_reference || null;
   if (!entityId && !reference) return null;
-  const fingerprint = JSON.stringify({
-    type: event.type,
-    userId: event.userId || event.payload?.user?.id || null,
-    entityType: event.entityType || null,
-    entityId,
-    reference
-  });
-  return tokenDigest(fingerprint);
+  const subject = entityId
+    ? ["entity", keyPart(event.entityType || "unknown", 40), keyPart(entityId, 60)]
+    : ["reference", keyPart(reference, 80)];
+  const key = [
+    "event",
+    keyPart(event.type, 60),
+    keyPart(event.userId || event.payload?.user?.id || "system", 60),
+    ...subject
+  ].join(":");
+  return key.length <= maxIdempotencyKeyLength ? key : key.slice(0, maxIdempotencyKeyLength);
 }
 
 async function insertEventLog(event, client = pool) {
