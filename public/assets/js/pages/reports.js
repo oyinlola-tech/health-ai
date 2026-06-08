@@ -14,22 +14,70 @@ async function renderReports() {
     const response = await cachedRequest("reports", "/reports");
     const reports = response.data?.reports || [];
     setMain(`
-      ${renderReportOverview(reports)}
-      <section class="form-card">
+      ${renderPatientReportWorkspace(reports)}
+      <section class="form-card patient-upload-card">
         <form class="form" data-upload-form novalidate>
           <div class="form-message" data-form-message hidden></div>
+          <div class="card-header"><div><h2>Secure upload</h2><p class="muted">Files are sent to backend-controlled upload storage and processed through the extraction pipeline.</p></div>${icon("lock")}</div>
           ${field("Report title", "title", "text", false)}
           <div class="field"><label for="report">Medical report file <span class="required">*</span></label><input id="report" name="report" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp" required /><span class="field-error" data-error-for="report"></span></div>
           <button class="btn btn-primary" type="submit">${icon("upload_file")}Upload securely</button>
         </form>
       </section>
-      <section class="stack"><h2>Report library</h2>${listCard(reports, { iconName: "description", title: "No reports found", description: "Upload your first report to begin.", actionLabel: "Choose a file", actionHref: "/reports" }, renderReportItem)}</section>
+      ${renderReportLibraryTable(reports)}
     `);
     bindUploadForm();
+    bindOperationsControls();
   } catch (error) {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
     setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
+}
+
+function renderPatientReportWorkspace(reports = []) {
+  const total = reports.length;
+  const analyzed = reports.filter((report) => ["completed", "analyzed"].includes(String(report.extraction_status || report.status || "").toLowerCase())).length;
+  const processing = reports.filter((report) => ["processing", "pending", "uploaded"].includes(String(report.extraction_status || report.status || "").toLowerCase())).length;
+  const failed = reports.filter((report) => String(report.extraction_status || report.status || "").toLowerCase() === "failed").length;
+  const confidenceValues = reports.map((report) => Number(report.analysis_confidence)).filter(Number.isFinite);
+  const averageConfidence = confidenceValues.length ? Math.round(confidenceValues.reduce((sum, value) => sum + value, 0) / confidenceValues.length) : 0;
+  return `
+    <section class="patient-command">
+      <section class="ops-header patient-hero">
+        <div>
+          <p class="eyebrow">Health records</p>
+          <h1>Reports, processing, and analysis in one place.</h1>
+          <p class="lead">Track uploads, extraction quality, and AI summaries without digging through raw files.</p>
+        </div>
+        <div class="ops-header-actions"><a class="btn btn-primary" href="#report">${icon("upload_file")}Add report</a><a class="btn btn-secondary" href="/chat">Ask AI</a></div>
+      </section>
+      ${MetricGrid([
+        StatCard("Reports", total, "Uploaded records", "description", "Library"),
+        StatCard("Analyzed", analyzed, "Completed extraction", "task_alt", "Ready"),
+        StatCard("Processing", processing, "In progress", "progress_activity", "Pipeline"),
+        StatCard("Confidence", averageConfidence ? `${averageConfidence}%` : "Measured", "Average OCR score", "verified", failed ? "Review" : "Stable")
+      ])}
+      ${AnalyticsCard("Processing quality", "Status mix from your real report history.", SegmentChart([{ label: "Analyzed", value: analyzed }, { label: "Processing", value: processing }, { label: "Needs review", value: failed }]), [{ label: "Upload report", href: "/reports", primary: true }])}
+    </section>
+  `;
+}
+
+function renderReportLibraryTable(reports = []) {
+  const rows = reports.map((report) => ({
+    report: report.id ? `<a class="item-title" href="/report/${escapeHtml(report.id)}">${escapeHtml(reportTitle(report))}</a>` : reportTitle(report),
+    status: displayStatus(report.extraction_status || report.status || "uploaded"),
+    confidence: confidenceText(report.analysis_confidence),
+    updated: report.updated_at ? new Date(report.updated_at).toLocaleString() : "Recently"
+  }));
+  return DataTable({
+    title: "Report library",
+    description: "Searchable health records with extraction status and confidence.",
+    rows,
+    columns: [["report", "Report"], ["status", "Status"], ["confidence", "Confidence"], ["updated", "Updated"]],
+    searchKey: "report",
+    emptyKey: "reports",
+    actions: [{ label: "Choose a file", href: "/reports", primary: true }]
+  });
 }
 
 function renderReportStatusBar(label, count, total, className = "") {

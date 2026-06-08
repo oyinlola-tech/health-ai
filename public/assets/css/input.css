@@ -479,4 +479,45 @@
       align-items: flex-start;
     }
   }
+
+  .patient-command,
+  .patient-chat-command {
+    display: grid;
+    gap: 24px;
+  }
+
+  .patient-hero {
+    background: linear-gradient(180deg, #ffffff, #fff8f6);
+  }
+
+  .patient-upload-card,
+  .patient-filter-card {
+    border-top: 2px solid var(--mx-accent);
+  }
+
+  .patient-command .chat-workspace,
+  .patient-chat-command .chat-workspace {
+    margin-top: 0;
+  }
+
+  .patient-command .data-table-card,
+  .patient-chat-command .data-table-card {
+    min-width: 0;
+  }
+
+  @media (max-width: 767px) {
+    .patient-command,
+    .patient-chat-command {
+      gap: 16px;
+    }
+
+    .patient-hero h1 {
+      font-size: 30px;
+    }
+
+    .patient-command .metric-grid,
+    .patient-chat-command .metric-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 }

@@ -53,7 +53,22 @@ function renderChatTopics(messages = []) {
 }
 
 function renderChatWorkspace(messages = [], subscription = {}) {
-  return `<section class="chat-workspace">
+  return `<section class="patient-chat-command">
+    <section class="ops-header patient-hero">
+      <div>
+        <p class="eyebrow">AI health chat</p>
+        <h1>Ask carefully, keep context close.</h1>
+        <p class="lead">Your saved conversations stay organized beside plan access and recent topics.</p>
+      </div>
+      <div class="ops-header-actions"><a class="btn btn-secondary" href="/reports">Open reports</a><a class="btn btn-primary" href="/doctors">Find doctor</a></div>
+    </section>
+    ${MetricGrid([
+      StatCard("Messages", messages.length, "Saved chat items", "forum", "Context"),
+      StatCard("Plan", chatPlanLabel(subscription), "AI access", "workspace_premium", "Access"),
+      StatCard("Topics", chatTopics(messages).length, "Recent threads", "topic", "History"),
+      StatCard("Reports", "Linked", "Use report context", "description", "Care")
+    ])}
+    <section class="chat-workspace">
     <aside class="chat-sidebar">
       <div class="chat-sidebar-header">
         <h2>Chats</h2>
@@ -77,7 +92,7 @@ function renderChatWorkspace(messages = [], subscription = {}) {
         <button class="icon-button" type="submit" aria-label="Send message">${icon("send")}</button>
       </form>
     </section>
-  </section>`;
+  </section></section>`;
 }
 
 function renderAiChatMessages(messages = []) {
@@ -170,12 +185,28 @@ async function renderDoctors() {
   try {
     const [response, subscription] = await Promise.all([apiRequest("/doctors"), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
     const doctors = response.data?.doctors || [];
-    setMain(`${pageHeader(meta)}${renderEntitlementBanner(subscription.data || {}, "doctorBookings")}<section class="form-card"><form class="form" data-doctor-search><div class="grid grid-3">${field("Search doctors", "q", "text", false)}${field("Specialization", "specialization", "text", false)}<div class="field"><label for="availableOnly">Availability</label><select id="availableOnly" name="availableOnly"><option value="">Any</option><option value="true">Has availability</option></select></div></div><button class="btn btn-primary" type="submit">${icon("search")}Search</button></form></section><section class="grid grid-3" data-doctor-results>${doctors.length ? doctors.map(renderDoctorCard).join("") : emptyState({ iconName: "stethoscope", title: "No verified doctors available", description: "Verified doctors appear here after admin approval and availability setup.", actionLabel: "", actionHref: "" })}</section>`);
+    setMain(`
+      <section class="patient-command">
+        <section class="ops-header patient-hero">
+          <div><p class="eyebrow">Doctor care</p><h1>Find verified clinical support.</h1><p class="lead">Search the approved doctor directory and use backend-enforced booking access.</p></div>
+          <div class="ops-header-actions"><a class="btn btn-primary" href="/appointments">${icon("calendar_month")}Appointments</a><a class="btn btn-secondary" href="/subscription">Plan access</a></div>
+        </section>
+        ${MetricGrid([
+          StatCard("Doctors", doctors.length, "Verified directory", "stethoscope", "Network"),
+          StatCard("Available", doctors.filter((doctor) => doctor.has_availability).length, "Listed slots", "event_available", "Access"),
+          StatCard("Plan", chatPlanLabel(subscription.data || {}), "Booking entitlement", "workspace_premium", "Care"),
+          StatCard("Specialties", new Set(doctors.map((doctor) => doctor.specialization || doctor.specialty).filter(Boolean)).size, "Clinical areas", "medical_services", "Match")
+        ])}
+        ${renderEntitlementBanner(subscription.data || {}, "doctorBookings")}
+        <section class="form-card patient-filter-card"><form class="form" data-doctor-search><div class="grid grid-3">${field("Search doctors", "q", "text", false)}${field("Specialization", "specialization", "text", false)}<div class="field"><label for="availableOnly">Availability</label><select id="availableOnly" name="availableOnly"><option value="">Any</option><option value="true">Has availability</option></select></div></div><button class="btn btn-primary" type="submit">${icon("search")}Search</button></form></section>
+        <section class="grid grid-3" data-doctor-results>${doctors.length ? doctors.map(renderDoctorCard).join("") : EmptyState("stethoscope", "Doctor directory is ready", "Verified doctors will appear here after approval and availability setup.", [{ label: "Check appointments", href: "/appointments" }])}</section>
+      </section>
+    `);
     const searchForm = document.querySelector("[data-doctor-search]");
     const runSearch = async (form) => {
       const params = new URLSearchParams(new FormData(form));
       const filtered = await apiRequest(`/doctors?${params.toString()}`);
-      document.querySelector("[data-doctor-results]").innerHTML = (filtered.data?.doctors || []).map(renderDoctorCard).join("") || emptyState({ iconName: "stethoscope", title: "No doctors matched", description: "Try another search or filter.", actionLabel: "", actionHref: "" });
+      document.querySelector("[data-doctor-results]").innerHTML = (filtered.data?.doctors || []).map(renderDoctorCard).join("") || EmptyState("manage_search", "Refine your doctor search", "Try a different specialty, name, or availability filter.", [{ label: "Reset search", href: "/doctors" }]);
     };
     const debouncedSearch = debounce((form) => runSearch(form).catch(() => {
       document.querySelector("[data-doctor-results]").innerHTML = errorState("We could not update doctor results", false);
@@ -338,7 +369,28 @@ async function renderAppointments() {
   try {
     const response = await apiRequest("/appointments");
     const appointments = response.data?.appointments || [];
-    setMain(`${pageHeader(meta)}<section class="stack">${listCard(appointments, { iconName: "calendar_month", title: "No appointments", description: "Book a verified doctor to start a consultation workflow.", actionLabel: "Find doctors", actionHref: "/doctors" }, renderAppointmentItem)}</section>`);
+    const rows = appointments.map((appointment) => ({
+      appointment: appointment.reason || "Doctor consultation",
+      participant: [appointment.doctor_first_name, appointment.doctor_last_name, appointment.patient_first_name, appointment.patient_last_name].filter(Boolean).slice(0, 2).join(" ") || "Care team",
+      status: displayStatus(appointment.status || "scheduled"),
+      time: appointment.scheduled_at ? new Date(appointment.scheduled_at).toLocaleString() : "Scheduling"
+    }));
+    setMain(`
+      <section class="patient-command">
+        <section class="ops-header patient-hero">
+          <div><p class="eyebrow">Care schedule</p><h1>Appointments without the clutter.</h1><p class="lead">Track active requests, confirmed consultations, and clinical next steps.</p></div>
+          <div class="ops-header-actions"><a class="btn btn-primary" href="/doctors">${icon("stethoscope")}Find doctors</a><a class="btn btn-secondary" href="/chat">Ask AI</a></div>
+        </section>
+        ${MetricGrid([
+          StatCard("Appointments", appointments.length, "Total care items", "calendar_month", "Schedule"),
+          StatCard("Active", appointments.filter((item) => !/completed|cancelled/i.test(item.status || "")).length, "Open workflows", "event_available", "Care"),
+          StatCard("Completed", appointments.filter((item) => /completed/i.test(item.status || "")).length, "Closed consults", "task_alt", "History"),
+          StatCard("Messages", "Ready", "Consultation rooms", "forum", "Realtime")
+        ])}
+        ${DataTable({ title: "Appointment queue", description: "Searchable appointment records from the backend.", rows, columns: [["appointment", "Appointment"], ["participant", "Participant"], ["status", "Status"], ["time", "Time"]], searchKey: "appointment", emptyKey: "doctors", actions: [{ label: "Find doctors", href: "/doctors", primary: true }] })}
+      </section>
+    `);
+    bindOperationsControls();
   } catch {
     setMain(`${pageHeader(meta)}${errorState("We could not load appointments")}`);
   }

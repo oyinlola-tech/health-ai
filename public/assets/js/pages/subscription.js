@@ -46,11 +46,17 @@ async function renderSubscription() {
     const subscription = data.subscription || {};
     const trial = data.trial || {};
     setMain(`
-      ${pageHeader(meta)}
-      <section class="grid grid-3">
-        ${summaryCard("Current Plan", "workspace_premium", data.plan || "FREE", "/update-plan")}
-        ${summaryCard("Renewal Date", "event_repeat", subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : "No renewal", "/billing-history")}
-        ${summaryCard("Status", "verified", subscription.status || "free", "/subscription")}
+      <section class="patient-command">
+        <section class="ops-header patient-hero">
+          <div><p class="eyebrow">Plan and access</p><h1>Understand exactly what your account can do.</h1><p class="lead">Plan, trial, AI quota, billing, and upgrade actions are grouped into one access workspace.</p></div>
+          <div class="ops-header-actions"><a class="btn btn-secondary" href="/billing-history">Billing history</a><a class="btn btn-primary" href="/update-plan">Update plan</a></div>
+        </section>
+        ${MetricGrid([
+          StatCard("Current Plan", data.plan || "FREE", "Account tier", "workspace_premium", "Access"),
+          StatCard("Renewal", subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : "Flexible", "Billing date", "event_repeat", "Plan"),
+          StatCard("Status", subscription.status || trial.status || "free", "Subscription state", "verified", "Account"),
+          StatCard("Trial", trial.daysRemaining ?? "Managed", trial.status || "Trial state", "schedule", "Access")
+        ])}
       </section>
       ${trial.status ? `<section class="card stack"><div class="card-header"><div><h2>Free Trial</h2><p class="muted">${trial.status === "active" ? `${trial.daysRemaining} day${trial.daysRemaining === 1 ? "" : "s"} remaining` : "Trial expired. Free access now applies."}</p></div><span class="badge ${trial.status === "active" ? "badge-success" : "badge-warning"}">${escapeHtml(trial.status)}</span></div></section>` : ""}
       ${renderUsageOverview(data)}
@@ -151,8 +157,28 @@ async function renderBillingHistory() {
   try {
     const response = await apiRequest("/subscriptions/billing-history");
     const payments = response.data?.payments || [];
-    const rows = payments.map((payment) => `<tr><td>${escapeHtml(payment.provider_reference)}</td><td>${money(payment.amount_naira ?? payment.amount_cents, payment.currency)}</td><td><span class="badge ${badgeClassForStatus(payment.status)}">${escapeHtml(payment.status)}</span></td><td>${new Date(payment.created_at).toLocaleDateString()}</td></tr>`).join("");
-    setMain(`${pageHeader(meta)}<section class="table-card stack"><h2>Transaction History</h2><div class="table-wrap"><table><thead><tr><th>Reference</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>${rows || `<tr><td colspan="4">No billing transactions yet.</td></tr>`}</tbody></table></div></section>`);
+    const rows = payments.map((payment) => ({
+      reference: payment.provider_reference || "Payment record",
+      amount: money(payment.amount_naira ?? payment.amount_cents, payment.currency),
+      status: payment.status || "recorded",
+      date: payment.created_at ? new Date(payment.created_at).toLocaleDateString() : "Recently"
+    }));
+    setMain(`
+      <section class="patient-command">
+        <section class="ops-header patient-hero">
+          <div><p class="eyebrow">Billing history</p><h1>Payment records, tidy and searchable.</h1><p class="lead">OPay transactions, payment status, and billing evidence stay grouped for support and review.</p></div>
+          <div class="ops-header-actions"><a class="btn btn-secondary" href="/subscription">Subscription</a><a class="btn btn-primary" href="/update-plan">Update plan</a></div>
+        </section>
+        ${MetricGrid([
+          StatCard("Transactions", payments.length, "Billing records", "receipt_long", "History"),
+          StatCard("Verified", payments.filter((payment) => /verified|success|paid/i.test(payment.status || "")).length, "Confirmed payments", "verified", "OPay"),
+          StatCard("Failed", payments.filter((payment) => /failed/i.test(payment.status || "")).length, "Needs attention", "error", "Review"),
+          StatCard("Refunds", payments.filter((payment) => /refund/i.test(payment.status || "")).length, "Reversals", "undo", "Support")
+        ])}
+        ${DataTable({ title: "Transaction history", description: "Search payment records by reference, amount, status, or date.", rows, columns: [["reference", "Reference"], ["amount", "Amount"], ["status", "Status"], ["date", "Date"]], searchKey: "reference", emptyKey: "payments", actions: [{ label: "Manage plan", href: "/subscription", primary: true }] })}
+      </section>
+    `);
+    bindOperationsControls();
   } catch {
     setMain(`${pageHeader(meta)}${errorState("We could not load billing history")}`);
   }
