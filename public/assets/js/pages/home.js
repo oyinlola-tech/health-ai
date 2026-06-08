@@ -121,10 +121,11 @@ function bindAuthForm() {
 
 function authRedirectTarget(user = {}, accessToken = getAccessToken()) {
   const next = new URLSearchParams(location.search).get("next");
-  const blocked = new Set(["/login", "/register", "/splash", "/onboarding", "/chat"]);
+  const blocked = new Set(["/login", "/register", "/splash", "/onboarding"]);
   const tokenRole = String(decodeAccessTokenPayload(accessToken).role || "").toLowerCase();
   const isAdminUser = String(user.role || "").toLowerCase() === "admin" || tokenRole === "admin";
-  const roleHome = isAdminUser ? "/admin" : "/dashboard";
+  const isDoctorUser = String(user.role || "").toLowerCase() === "doctor" || tokenRole === "doctor";
+  const roleHome = isAdminUser ? "/admin" : isDoctorUser ? "/doctor" : "/chat";
   if (!next) return roleHome;
   try {
     const target = new URL(next, window.location.origin);
@@ -142,24 +143,15 @@ function authRedirectTarget(user = {}, accessToken = getAccessToken()) {
 
 async function renderPatientDashboard() {
   const meta = routeTitle("/dashboard");
-  setMain(`${pageHeader(meta)}${loadingState("Loading your health workspace")}`);
+  setMain(`${pageHeader(meta)}${loadingState("Loading chat")}`);
   try {
-    const [history, subscription, reportsResult, appointmentsResult, notificationsResult] = await Promise.all([
+    const [history, subscription] = await Promise.all([
       apiRequest("/ai/chat-history"),
-      cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} })),
-      cachedRequest("reports", "/reports").catch(() => ({ data: { reports: [] } })),
-      apiRequest("/appointments").catch(() => ({ data: { appointments: [] } })),
-      apiRequest("/notifications").catch(() => ({ data: { notifications: [] } }))
+      cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))
     ]);
     const messages = history.data?.messages || [];
-    const reports = reportsResult.data?.reports || [];
-    const appointments = appointmentsResult.data?.appointments || [];
-    const notifications = notificationsResult.data?.notifications || [];
-    setMain(`
-      ${renderPatientCommandCenter({ messages, subscription: subscription.data || {}, reports, appointments, notifications })}
-    `);
+    setMain(renderChatWorkspace(messages, subscription.data || {}));
     bindAiChatForm();
-    bindOperationsControls();
   } catch (error) {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
     setMain(`${pageHeader(meta)}${errorState(message)}`);

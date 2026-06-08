@@ -2,11 +2,12 @@
 
 ## Executive Summary
 
-The patient-facing experience was upgraded to match the premium Admin and Doctor operations redesign. The user workspace now presents reports, AI chat, appointments, profile, settings, subscription, and billing as a calm personal health command center instead of disconnected forms and lists.
+The patient-facing experience was upgraded to match the premium Admin and Doctor operations redesign, with AI chat restored as the first and primary user surface. Supporting areas such as reports, appointments, profile, settings, subscription, and billing remain polished, but the user entry point is now chat-first.
 
 ## Improvements
 
-- Added a premium patient dashboard using real backend data from chat history, reports, appointments, notifications, and subscription usage.
+- Made Chat the primary signed-in landing experience for patient users.
+- Simplified `/dashboard` so it renders the chat workspace directly instead of a broad command center.
 - Redesigned Reports into a health records workspace with KPIs, processing charts, secure upload hierarchy, and a searchable report table.
 - Upgraded AI Chat with KPI context, plan access, recent topics, and stronger patient-oriented framing.
 - Redesigned Doctors and Appointments with verified-care metrics, search/filter controls, and searchable appointment queues.

@@ -13,7 +13,7 @@ function renderShell() {
     <div class="app-shell">
       <header class="site-header">
         <div class="container header-inner">
-          <a class="brand" href="/dashboard" aria-label="MedExplain AI home">
+          <a class="brand" href="/chat" aria-label="MedExplain AI chat">
             <span class="brand-mark">${icon("health_and_safety")}</span>
             <span class="brand-text">
               <span class="brand-name">MedExplain AI</span>
@@ -151,7 +151,7 @@ function renderFooter() {
       <div class="container">
         <div class="footer-grid">
           <div class="stack">
-            <a class="brand" href="/dashboard" aria-label="MedExplain AI home">
+            <a class="brand" href="/chat" aria-label="MedExplain AI chat">
               <span class="brand-mark">${icon("health_and_safety")}</span>
               <span class="brand-text"><span class="brand-name">MedExplain AI</span><span class="brand-tagline">Healthcare intelligence, calmly explained.</span></span>
             </a>

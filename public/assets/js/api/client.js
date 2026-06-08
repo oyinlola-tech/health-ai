@@ -53,7 +53,10 @@ function currentUserRole() {
 }
 
 function signedInHomePath() {
-  return currentUserRole() === "admin" ? "/admin" : "/dashboard";
+  const role = currentUserRole();
+  if (role === "admin") return "/admin";
+  if (role === "doctor") return "/doctor";
+  return "/chat";
 }
 
 async function ensureCsrfToken() {

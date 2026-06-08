@@ -16,10 +16,7 @@ async function renderChat() {
       cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))
     ]);
     const messages = history.data?.messages || [];
-    setMain(`
-      ${pageHeader(meta)}
-      ${renderChatWorkspace(messages, subscription.data || {})}
-    `);
+    setMain(renderChatWorkspace(messages, subscription.data || {}));
     bindAiChatForm();
   } catch (error) {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";

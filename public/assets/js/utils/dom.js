@@ -22,6 +22,7 @@ function icon(name) {
 
 function isActive(href) {
   if (href === "/dashboard") return state.path === "/" || state.path === "/dashboard";
+  if (href === "/chat") return state.path === "/chat" || state.path === "/dashboard";
   return state.path === href || state.path.startsWith(`${href}/`);
 }
 
@@ -40,4 +41,3 @@ function debounce(callback, delay = 350) {
     timer = window.setTimeout(() => callback(...args), delay);
   };
 }
-
