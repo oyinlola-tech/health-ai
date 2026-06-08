@@ -30,11 +30,14 @@ function renderChatWorkspace(messages = []) {
       <form class="chat-composer" data-ai-chat-form novalidate>
         <div class="form-message" data-form-message hidden></div>
         <label class="sr-only" for="message">Ask MedExplain AI</label>
+        <input class="chat-file-input" id="chat-report-upload" name="report" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" data-chat-file-input>
+        <div class="chat-attachment-chip" data-chat-attachment hidden></div>
         <div class="chat-input-shell">
-          <span class="chat-input-icon" aria-hidden="true">${icon("psychology")}</span>
+          <button class="icon-button chat-upload-button" type="button" data-chat-upload-button aria-label="Upload a report for AI context">${icon("upload_file")}</button>
           <textarea id="message" name="message" placeholder="Ask anything about your health reports..." required></textarea>
           <button class="icon-button chat-send-button" type="submit" aria-label="Send message">${icon("send")}</button>
         </div>
+        <span class="field-error" data-error-for="message"></span>
       </form>
     </section>
   </section>`;
@@ -66,14 +69,61 @@ function bindAiChatForm() {
   const form = document.querySelector("[data-ai-chat-form]");
   const textareaField = form?.querySelector('[name="message"]');
   const inputShell = form?.querySelector(".chat-input-shell");
+  const fileInput = form?.querySelector("[data-chat-file-input]");
+  const uploadButton = form?.querySelector("[data-chat-upload-button]");
+  const attachmentChip = form?.querySelector("[data-chat-attachment]");
+  let attachedReport = null;
   const syncComposerState = () => {
     if (!textareaField) return;
     textareaField.style.height = "auto";
     textareaField.style.height = `${Math.min(textareaField.scrollHeight, 160)}px`;
     inputShell?.toggleAttribute("data-has-value", Boolean(textareaField.value.trim()));
   };
+  const renderAttachment = () => {
+    if (!attachmentChip) return;
+    if (!attachedReport) {
+      attachmentChip.hidden = true;
+      attachmentChip.innerHTML = "";
+      return;
+    }
+    attachmentChip.hidden = false;
+    attachmentChip.innerHTML = `${icon("description")}<span><strong>${escapeHtml(attachedReport.title || attachedReport.original_name || "Uploaded report")}</strong><small>${escapeHtml(displayStatus(attachedReport.extraction_status || attachedReport.status || "processing"))}</small></span><button class="icon-button" type="button" data-clear-chat-report aria-label="Remove attached report">${icon("close")}</button>`;
+  };
   textareaField?.addEventListener("input", syncComposerState);
+  uploadButton?.addEventListener("click", () => fileInput?.click());
+  attachmentChip?.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-clear-chat-report]")) return;
+    attachedReport = null;
+    if (fileInput) fileInput.value = "";
+    renderAttachment();
+    showFormMessage(form, "success", "Report context removed.");
+  });
+  fileInput?.addEventListener("change", async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    const body = new FormData();
+    body.append("report", file);
+    body.append("title", file.name.replace(/\.[^.]+$/, ""));
+    uploadButton.disabled = true;
+    uploadButton.dataset.loading = "true";
+    showFormMessage(form, "success", "Uploading report for AI context...");
+    try {
+      const response = await apiRequest("/reports", { method: "POST", body, timeoutMs: 60000, timeoutMessage: "Report upload is taking longer than expected. Please try again." });
+      attachedReport = response.data?.report || null;
+      state.dataCache.delete("reports");
+      renderAttachment();
+      showFormMessage(form, "success", "Report attached. Ask a question and AI will use the extracted content.");
+    } catch (error) {
+      attachedReport = null;
+      renderAttachment();
+      showFormMessage(form, "error", error?.status === 403 ? "Your account does not currently have access to report uploads." : error.message || "Report upload failed. Please try again.");
+    } finally {
+      uploadButton.disabled = false;
+      delete uploadButton.dataset.loading;
+    }
+  });
   syncComposerState();
+  renderAttachment();
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!validateForm(form)) return;
@@ -87,7 +137,7 @@ function bindAiChatForm() {
       syncComposerState();
       const response = await apiRequest("/ai/chat", {
         method: "POST",
-        body: { message },
+        body: { message, ...(attachedReport?.id ? { reportId: attachedReport.id } : {}) },
         timeoutMs: appConfig.aiRequestTimeoutMs,
         timeoutMessage: "AI is taking longer than expected. Please try again."
       });

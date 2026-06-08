@@ -407,15 +407,29 @@ export const aiService = {
   async chat({ user, message, reportId }) {
     await legalService.requireConsent(user.id, consentTypes.AI_ANALYSIS, "AI analysis consent is required before using AI chat.");
     await entitlementService.assertCanUse(user, features.AI_CHAT);
+    let report = null;
     if (reportId) {
-      const report = await reportRepository.findById(reportId);
+      report = await reportRepository.findById(reportId);
       if (!report) throw errors.notFound("Report not found.");
       if (user.role === "Patient" && report.patient_id !== user.id) throw errors.forbidden("You can only chat about your own reports.");
+      ensureReportCanBeAnalyzed(report);
     }
 
+    const reportContext = report
+      ? [
+          `Report title: ${report.title}`,
+          `Extraction confidence: ${report.analysis_confidence ?? "unknown"}%`,
+          `Medical entities: ${JSON.stringify(report.medical_entities_json || {})}`,
+          `Lab values: ${JSON.stringify(report.lab_results_json || [])}`,
+          `Extracted report text:\n${report.extracted_text}`
+        ].join("\n")
+      : "";
     const { prompt, contextChunks } = await buildGroundedPrompt({
-      baseInput: message,
-      taskInput: untrustedInputBlock("Patient question", message)
+      baseInput: [message, reportContext].filter(Boolean).join("\n"),
+      taskInput: [
+        untrustedInputBlock("Patient question", message),
+        report ? untrustedInputBlock("Attached report content", reportContext) : ""
+      ].filter(Boolean).join("\n\n")
     });
     const result = await aiGateway.generateJson({
       user,
