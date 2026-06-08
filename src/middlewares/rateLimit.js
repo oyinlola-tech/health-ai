@@ -81,7 +81,7 @@ export const sensitiveAuthRateLimit = rateLimit({
 
 export const aiEndpointRateLimit = rateLimit({
   windowMs: 60 * 1000,
-  max: env.AI_PER_MINUTE_REQUEST_LIMIT || 8,
+  max: env.AI_PER_MINUTE_REQUEST_LIMIT || 20,
   keyGenerator: (req) => req.user?.id || ipRateKey(req.ip),
   standardHeaders: true,
   legacyHeaders: false
