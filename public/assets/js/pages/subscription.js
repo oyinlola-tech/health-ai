@@ -46,18 +46,6 @@ async function renderSubscription() {
     const subscription = data.subscription || {};
     const trial = data.trial || {};
     setMain(`
-      <section class="patient-command">
-        <section class="ops-header patient-hero">
-          <div><p class="eyebrow">Plan and access</p><h1>Understand exactly what your account can do.</h1><p class="lead">Plan, trial, AI quota, billing, and upgrade actions are grouped into one access workspace.</p></div>
-          <div class="ops-header-actions"><a class="btn btn-secondary" href="/billing-history">Billing history</a><a class="btn btn-primary" href="/update-plan">Update plan</a></div>
-        </section>
-        ${MetricGrid([
-          StatCard("Current Plan", data.plan || "FREE", "Account tier", "workspace_premium", "Access"),
-          StatCard("Renewal", subscription.current_period_end ? new Date(subscription.current_period_end).toLocaleDateString() : "Flexible", "Billing date", "event_repeat", "Plan"),
-          StatCard("Status", subscription.status || trial.status || "free", "Subscription state", "verified", "Account"),
-          StatCard("Trial", trial.daysRemaining ?? "Managed", trial.status || "Trial state", "schedule", "Access")
-        ])}
-      </section>
       ${trial.status ? `<section class="card stack"><div class="card-header"><div><h2>Free Trial</h2><p class="muted">${trial.status === "active" ? `${trial.daysRemaining} day${trial.daysRemaining === 1 ? "" : "s"} remaining` : "Trial expired. Free access now applies."}</p></div><span class="badge ${trial.status === "active" ? "badge-success" : "badge-warning"}">${escapeHtml(trial.status)}</span></div></section>` : ""}
       ${renderUsageOverview(data)}
       ${renderAiUsageOverview(aiUsage.data?.usage || {})}
@@ -165,16 +153,6 @@ async function renderBillingHistory() {
     }));
     setMain(`
       <section class="patient-command">
-        <section class="ops-header patient-hero">
-          <div><p class="eyebrow">Billing history</p><h1>Payment records, tidy and searchable.</h1><p class="lead">OPay transactions, payment status, and billing evidence stay grouped for support and review.</p></div>
-          <div class="ops-header-actions"><a class="btn btn-secondary" href="/subscription">Subscription</a><a class="btn btn-primary" href="/update-plan">Update plan</a></div>
-        </section>
-        ${MetricGrid([
-          StatCard("Transactions", payments.length, "Billing records", "receipt_long", "History"),
-          StatCard("Verified", payments.filter((payment) => /verified|success|paid/i.test(payment.status || "")).length, "Confirmed payments", "verified", "OPay"),
-          StatCard("Failed", payments.filter((payment) => /failed/i.test(payment.status || "")).length, "Needs attention", "error", "Review"),
-          StatCard("Refunds", payments.filter((payment) => /refund/i.test(payment.status || "")).length, "Reversals", "undo", "Support")
-        ])}
         ${DataTable({ title: "Transaction history", description: "Search payment records by reference, amount, status, or date.", rows, columns: [["reference", "Reference"], ["amount", "Amount"], ["status", "Status"], ["date", "Date"]], searchKey: "reference", emptyKey: "payments", actions: [{ label: "Manage plan", href: "/subscription", primary: true }] })}
       </section>
     `);

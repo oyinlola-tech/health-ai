@@ -11,12 +11,9 @@ async function renderChat() {
   const meta = routeTitle("/chat");
   setMain(`${pageHeader(meta)}${loadingState("Loading chat")}`);
   try {
-    const [history, subscription] = await Promise.all([
-      apiRequest("/ai/chat-history"),
-      cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))
-    ]);
+    const history = await apiRequest("/ai/chat-history");
     const messages = history.data?.messages || [];
-    setMain(renderChatWorkspace(messages, subscription.data || {}));
+    setMain(renderChatWorkspace(messages));
     bindAiChatForm();
   } catch (error) {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
@@ -24,61 +21,9 @@ async function renderChat() {
   }
 }
 
-function chatPlanLabel(subscription = {}) {
-  const plan = subscription.plan || "FREE";
-  if (plan === "FREE_TRIAL") return "Free trial";
-  return String(plan).toLowerCase().replace(/(^|\s)\S/g, (letter) => letter.toUpperCase());
-}
-
-function chatTopicTitle(message = {}) {
-  const content = String(message.content || "").replace(/\s+/g, " ").trim();
-  if (!content) return "New conversation";
-  return content.length > 44 ? `${content.slice(0, 44)}...` : content;
-}
-
-function chatTopics(messages = []) {
-  const userMessages = messages.filter((message) => String(message.role || "").toLowerCase() === "user");
-  return (userMessages.length ? userMessages : messages).slice(-8).reverse();
-}
-
-function renderChatTopics(messages = []) {
-  const topics = chatTopics(messages);
-  if (!topics.length) return `<p class="muted">Previous chats will appear here after you send messages.</p>`;
-  return topics
-    .map((message, index) => `<a class="chat-topic" href="#message-${escapeHtml(message.id || index)}"><span>${escapeHtml(chatTopicTitle(message))}</span><small>${escapeHtml(message.created_at ? new Date(message.created_at).toLocaleDateString() : "Recent")}</small></a>`)
-    .join("");
-}
-
-function renderChatWorkspace(messages = [], subscription = {}) {
-  return `<section class="patient-chat-command">
-    <section class="ops-header patient-hero">
-      <div>
-        <p class="eyebrow">AI health chat</p>
-        <h1>Ask carefully, keep context close.</h1>
-        <p class="lead">Your saved conversations stay organized beside plan access and recent topics.</p>
-      </div>
-      <div class="ops-header-actions"><a class="btn btn-secondary" href="/reports">Open reports</a><a class="btn btn-primary" href="/doctors">Find doctor</a></div>
-    </section>
-    ${MetricGrid([
-      StatCard("Messages", messages.length, "Saved chat items", "forum", "Context"),
-      StatCard("Plan", chatPlanLabel(subscription), "AI access", "workspace_premium", "Access"),
-      StatCard("Topics", chatTopics(messages).length, "Recent threads", "topic", "History"),
-      StatCard("Reports", "Linked", "Use report context", "description", "Care")
-    ])}
-    <section class="chat-workspace">
-    <aside class="chat-sidebar">
-      <div class="chat-sidebar-header">
-        <h2>Chats</h2>
-        <span class="badge">${escapeHtml(chatPlanLabel(subscription))}</span>
-      </div>
-      <nav class="chat-topic-list" aria-label="Previous chat topics">
-        ${renderChatTopics(messages)}
-      </nav>
-    </aside>
+function renderChatWorkspace(messages = []) {
+  return `<section class="chat-workspace">
     <section class="chat-panel">
-      <div class="chat-panel-header">
-        <div><h2>MedExplain AI</h2><p class="muted">Messages, reports, conversations, and responses are saved for AI improvement unless turned off in Settings.</p></div>
-      </div>
       <div class="chat-thread" data-ai-chat-thread>
         ${renderAiChatMessages(messages)}
       </div>
@@ -89,7 +34,7 @@ function renderChatWorkspace(messages = [], subscription = {}) {
         <button class="icon-button" type="submit" aria-label="Send message">${icon("send")}</button>
       </form>
     </section>
-  </section></section>`;
+  </section>`;
 }
 
 function renderAiChatMessages(messages = []) {
@@ -107,7 +52,7 @@ function renderAiChatMessage(message, index = 0) {
 
 function chatErrorMessage(error) {
   if (error?.status === 401) return "Please sign in again.";
-  if (error?.payload?.error?.code === "AI_BUDGET_EXCEEDED") return "AI access is temporarily limited for your account. Please try again later or check your subscription.";
+  if (error?.payload?.error?.code === "AI_BUDGET_EXCEEDED") return "AI is temporarily limited. Please try again later or check your subscription.";
   if (error?.payload?.error?.code === "PLAN_LIMIT_REACHED") return "Your current plan limit has been reached. Manage your plan to continue.";
   if (error?.status === 403) return error?.message || "Your account does not currently have access to AI chat.";
   if (error?.payload?.error?.code === "CONFIGURATION_ERROR") return "AI service is not configured for this environment.";
@@ -184,16 +129,6 @@ async function renderDoctors() {
     const doctors = response.data?.doctors || [];
     setMain(`
       <section class="patient-command">
-        <section class="ops-header patient-hero">
-          <div><p class="eyebrow">Doctor care</p><h1>Find verified clinical support.</h1><p class="lead">Search the approved doctor directory and use backend-enforced booking access.</p></div>
-          <div class="ops-header-actions"><a class="btn btn-primary" href="/appointments">${icon("calendar_month")}Appointments</a><a class="btn btn-secondary" href="/subscription">Plan access</a></div>
-        </section>
-        ${MetricGrid([
-          StatCard("Doctors", doctors.length, "Verified directory", "stethoscope", "Network"),
-          StatCard("Available", doctors.filter((doctor) => doctor.has_availability).length, "Listed slots", "event_available", "Access"),
-          StatCard("Plan", chatPlanLabel(subscription.data || {}), "Booking entitlement", "workspace_premium", "Care"),
-          StatCard("Specialties", new Set(doctors.map((doctor) => doctor.specialization || doctor.specialty).filter(Boolean)).size, "Clinical areas", "medical_services", "Match")
-        ])}
         ${renderEntitlementBanner(subscription.data || {}, "doctorBookings")}
         <section class="form-card patient-filter-card"><form class="form" data-doctor-search><div class="grid grid-3">${field("Search doctors", "q", "text", false)}${field("Specialization", "specialization", "text", false)}<div class="field"><label for="availableOnly">Availability</label><select id="availableOnly" name="availableOnly"><option value="">Any</option><option value="true">Has availability</option></select></div></div><button class="btn btn-primary" type="submit">${icon("search")}Search</button></form></section>
         <section class="grid grid-3" data-doctor-results>${doctors.length ? doctors.map(renderDoctorCard).join("") : EmptyState("stethoscope", "Doctor directory is ready", "Verified doctors will appear here after approval and availability setup.", [{ label: "Check appointments", href: "/appointments" }])}</section>
@@ -374,16 +309,6 @@ async function renderAppointments() {
     }));
     setMain(`
       <section class="patient-command">
-        <section class="ops-header patient-hero">
-          <div><p class="eyebrow">Care schedule</p><h1>Appointments without the clutter.</h1><p class="lead">Track active requests, confirmed consultations, and clinical next steps.</p></div>
-          <div class="ops-header-actions"><a class="btn btn-primary" href="/doctors">${icon("stethoscope")}Find doctors</a><a class="btn btn-secondary" href="/chat">Ask AI</a></div>
-        </section>
-        ${MetricGrid([
-          StatCard("Appointments", appointments.length, "Total care items", "calendar_month", "Schedule"),
-          StatCard("Active", appointments.filter((item) => !/completed|cancelled/i.test(item.status || "")).length, "Open workflows", "event_available", "Care"),
-          StatCard("Completed", appointments.filter((item) => /completed/i.test(item.status || "")).length, "Closed consults", "task_alt", "History"),
-          StatCard("Messages", "Ready", "Consultation rooms", "forum", "Realtime")
-        ])}
         ${DataTable({ title: "Appointment queue", description: "Searchable appointment records from the backend.", rows, columns: [["appointment", "Appointment"], ["participant", "Participant"], ["status", "Status"], ["time", "Time"]], searchKey: "appointment", emptyKey: "doctors", actions: [{ label: "Find doctors", href: "/doctors", primary: true }] })}
       </section>
     `);

@@ -145,91 +145,14 @@ async function renderPatientDashboard() {
   const meta = routeTitle("/dashboard");
   setMain(`${pageHeader(meta)}${loadingState("Loading chat")}`);
   try {
-    const [history, subscription] = await Promise.all([
-      apiRequest("/ai/chat-history"),
-      cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))
-    ]);
+    const history = await apiRequest("/ai/chat-history");
     const messages = history.data?.messages || [];
-    setMain(renderChatWorkspace(messages, subscription.data || {}));
+    setMain(renderChatWorkspace(messages));
     bindAiChatForm();
   } catch (error) {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
     setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
-}
-
-function renderPatientCommandCenter({ messages = [], subscription = {}, reports = [], appointments = [], notifications = [] }) {
-  const analyzedReports = reports.filter((report) => /completed|analyzed/i.test(`${report.extraction_status || report.status || ""}`)).length;
-  const unreadNotifications = notifications.filter((item) => !item.read_at).length;
-  const upcomingAppointments = appointments.filter((item) => !/cancelled|completed/i.test(`${item.status || ""}`)).length;
-  const careRows = [
-    ...reports.slice(0, 4).map((report) => ({
-      item: reportTitle(report),
-      type: "Report",
-      status: displayStatus(report.extraction_status || report.status || "uploaded"),
-      action: report.id ? `<a class="item-title" href="/report/${escapeHtml(report.id)}">Open</a>` : "Review"
-    })),
-    ...appointments.slice(0, 4).map((appointment) => ({
-      item: appointment.reason || "Doctor appointment",
-      type: "Appointment",
-      status: displayStatus(appointment.status || "scheduled"),
-      action: "Review"
-    }))
-  ];
-
-  return `
-    <section class="patient-command">
-      <section class="ops-header patient-hero">
-        <div>
-          <p class="eyebrow">Personal health command center</p>
-          <h1>Your health workspace is organized.</h1>
-          <p class="lead">Reports, AI conversations, doctor care, and subscription access are gathered into one calm operating view.</p>
-        </div>
-        <div class="ops-header-actions">
-          <a class="btn btn-primary" href="/reports">${icon("upload_file")}Upload report</a>
-          <a class="btn btn-secondary" href="/doctors">Find doctor</a>
-        </div>
-      </section>
-      ${MetricGrid([
-        StatCard("Reports", reports.length, `${analyzedReports} analyzed`, "description", "Library"),
-        StatCard("AI Chats", messages.length, "Saved conversations", "psychology", chatPlanLabel(subscription)),
-        StatCard("Appointments", upcomingAppointments, "Active care items", "calendar_month", "Care"),
-        StatCard("Notifications", unreadNotifications, "Unread updates", "notifications", "Inbox")
-      ])}
-      <section class="ops-grid ops-grid-2">
-        ${AnalyticsCard("Care activity", "Your report, appointment, and AI activity from backend records.", TrendChart([{ label: "Reports", value: reports.length }, { label: "Chats", value: messages.length }, { label: "Appointments", value: appointments.length }, { label: "Notifications", value: notifications.length }]), [{ label: "Reports", href: "/reports" }])}
-        ${AnalyticsCard("Plan access", "Monthly limits and account access are enforced on the backend.", renderPatientUsageSummary(subscription), [{ label: "Manage plan", href: "/subscription" }])}
-      </section>
-      <section class="ops-grid ops-grid-2">
-        ${DataTable({
-          title: "Care queue",
-          description: "The most relevant reports and appointments in your account.",
-          rows: careRows,
-          columns: [["item", "Item"], ["type", "Type"], ["status", "Status"], ["action", "Action"]],
-          searchKey: "item",
-          emptyKey: "reports",
-          actions: [{ label: "Upload report", href: "/reports", primary: true }, { label: "Book care", href: "/doctors" }]
-        })}
-        ${ActivityTimeline("Recent health activity", [...reports, ...appointments, ...notifications].slice(0, 6), "doctor")}
-      </section>
-      ${renderChatWorkspace(messages, subscription)}
-    </section>
-  `;
-}
-
-function renderPatientUsageSummary(subscription = {}) {
-  const usage = subscription.usage || {};
-  const items = [
-    ["Report analysis", usage.reportAnalysis],
-    ["AI chat", usage.aiChat],
-    ["Doctor bookings", usage.doctorBookings]
-  ];
-  return `<div class="segment-chart">${items.map(([label, item = {}]) => {
-    const used = Number(item.used || 0);
-    const limit = item.limit === null || item.limit === undefined ? null : Number(item.limit || 0);
-    const percent = limit ? Math.min(100, Math.round((used / limit) * 100)) : used ? 100 : 0;
-    return `<div class="segment-row"><div><strong>${escapeHtml(label)}</strong><span>${limit === null ? `${used} used` : `${used}/${limit}`}</span></div><div class="meter-track"><span style="width:${percent}%"></span></div></div>`;
-  }).join("")}</div>`;
 }
 
 function money(amount, currency = "NGN") {

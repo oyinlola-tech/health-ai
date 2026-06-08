@@ -8,6 +8,7 @@ The patient-facing experience was upgraded to match the premium Admin and Doctor
 
 - Made Chat the primary signed-in landing experience for patient users.
 - Simplified `/dashboard` so it renders the chat workspace directly instead of a broad command center.
+- Removed patient-side hero copy, stat summaries, and decorative context cards from the primary user pages so the interface stays focused on the active task.
 - Redesigned Reports into a health records workspace with KPIs, processing charts, secure upload hierarchy, and a searchable report table.
 - Upgraded AI Chat with KPI context, plan access, recent topics, and stronger patient-oriented framing.
 - Redesigned Doctors and Appointments with verified-care metrics, search/filter controls, and searchable appointment queues.

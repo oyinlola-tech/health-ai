@@ -15,16 +15,6 @@ async function renderProfile() {
     const user = response.data?.user || response.data || {};
     setMain(`
       <section class="patient-command">
-        <section class="ops-header patient-hero">
-          <div><p class="eyebrow">Account profile</p><h1>Your identity, access, and care context.</h1><p class="lead">Keep the account details doctors, reports, billing, and support rely on clean and current.</p></div>
-          <div class="ops-header-actions"><a class="btn btn-secondary" href="/settings">Settings</a><a class="btn btn-primary" href="/subscription">Plan</a></div>
-        </section>
-        ${MetricGrid([
-          StatCard("Role", user.role || "Patient", "Workspace access", "badge", "Identity"),
-          StatCard("Status", user.status || "Active", "Account posture", "verified_user", "Access"),
-          StatCard("Email", user.email ? "Set" : "Review", "Primary contact", "mail", "Contact"),
-          StatCard("Consent", user.consentPromptLearning || user.consent_prompt_learning ? "On" : "Off", "AI improvement", "privacy_tip", "Privacy")
-        ])}
         <section class="ops-grid ops-grid-2">
           ${AnalyticsCard("Profile details", "Personal account details used across the patient workspace.", `<form class="form ops-form" data-profile-form novalidate><div class="form-message" data-form-message hidden></div>${field("First name", "firstName", "text", true, user.firstName || "")}${field("Last name", "lastName", "text", true, user.lastName || "")}<button class="btn btn-primary" type="submit">${icon("save")}Save profile</button></form>`, [])}
           ${AnalyticsCard("Account pathways", "Fast access to the workspaces tied to your profile.", `<div class="segment-chart"><div class="segment-row"><div><strong>Reports</strong><span>Health records</span></div><a class="item-title" href="/reports">Open</a></div><div class="segment-row"><div><strong>Doctors</strong><span>Care network</span></div><a class="item-title" href="/doctors">Open</a></div><div class="segment-row"><div><strong>Privacy</strong><span>Consent center</span></div><a class="item-title" href="/consent">Open</a></div></div>`, [])}
@@ -261,18 +251,6 @@ async function renderSettings() {
     const billingAddress = settings.billingAddress || {};
     const subscription = subscriptionResponse.data || {};
     setMain(`
-      <section class="patient-command">
-        <section class="ops-header patient-hero">
-          <div><p class="eyebrow">Settings center</p><h1>Account controls with a clear hierarchy.</h1><p class="lead">Security, privacy, notifications, billing, and subscription controls are grouped for repeated use.</p></div>
-          <div class="ops-header-actions"><a class="btn btn-secondary" href="/profile">Profile</a><a class="btn btn-primary" href="/consent">Consent</a></div>
-        </section>
-        ${MetricGrid([
-          StatCard("Profile", profile.email ? "Ready" : "Review", "Identity settings", "account_circle", "Account"),
-          StatCard("Security", "Managed", "Password controls", "lock", "Access"),
-          StatCard("Privacy", privacy.profileVisibility || "private", "Sharing rules", "privacy_tip", "Control"),
-          StatCard("Plan", subscription.plan || "FREE", "Billing access", "workspace_premium", "Subscription")
-        ])}
-      </section>
       <section class="grid grid-2">
         <article class="form-card">
           <form class="form" data-settings-profile-form novalidate>

@@ -14,7 +14,6 @@ async function renderReports() {
     const response = await cachedRequest("reports", "/reports");
     const reports = response.data?.reports || [];
     setMain(`
-      ${renderPatientReportWorkspace(reports)}
       <section class="form-card patient-upload-card">
         <form class="form" data-upload-form novalidate>
           <div class="form-message" data-form-message hidden></div>
@@ -32,34 +31,6 @@ async function renderReports() {
     const message = error?.status === 401 ? "Please sign in again." : "Server connection unavailable. Please try again.";
     setMain(`${pageHeader(meta)}${errorState(message)}`);
   }
-}
-
-function renderPatientReportWorkspace(reports = []) {
-  const total = reports.length;
-  const analyzed = reports.filter((report) => ["completed", "analyzed"].includes(String(report.extraction_status || report.status || "").toLowerCase())).length;
-  const processing = reports.filter((report) => ["processing", "pending", "uploaded"].includes(String(report.extraction_status || report.status || "").toLowerCase())).length;
-  const failed = reports.filter((report) => String(report.extraction_status || report.status || "").toLowerCase() === "failed").length;
-  const confidenceValues = reports.map((report) => Number(report.analysis_confidence)).filter(Number.isFinite);
-  const averageConfidence = confidenceValues.length ? Math.round(confidenceValues.reduce((sum, value) => sum + value, 0) / confidenceValues.length) : 0;
-  return `
-    <section class="patient-command">
-      <section class="ops-header patient-hero">
-        <div>
-          <p class="eyebrow">Health records</p>
-          <h1>Reports, processing, and analysis in one place.</h1>
-          <p class="lead">Track uploads, extraction quality, and AI summaries without digging through raw files.</p>
-        </div>
-        <div class="ops-header-actions"><a class="btn btn-primary" href="#report">${icon("upload_file")}Add report</a><a class="btn btn-secondary" href="/chat">Ask AI</a></div>
-      </section>
-      ${MetricGrid([
-        StatCard("Reports", total, "Uploaded records", "description", "Library"),
-        StatCard("Analyzed", analyzed, "Completed extraction", "task_alt", "Ready"),
-        StatCard("Processing", processing, "In progress", "progress_activity", "Pipeline"),
-        StatCard("Confidence", averageConfidence ? `${averageConfidence}%` : "Measured", "Average OCR score", "verified", failed ? "Review" : "Stable")
-      ])}
-      ${AnalyticsCard("Processing quality", "Status mix from your real report history.", SegmentChart([{ label: "Analyzed", value: analyzed }, { label: "Processing", value: processing }, { label: "Needs review", value: failed }]), [{ label: "Upload report", href: "/reports", primary: true }])}
-    </section>
-  `;
 }
 
 function renderReportLibraryTable(reports = []) {
