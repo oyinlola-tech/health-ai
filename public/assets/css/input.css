@@ -500,6 +500,15 @@
     margin-top: 0;
   }
 
+  .chat-workspace[data-primary-chat] {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: min(780px, calc(100vh - 160px));
+  }
+
+  .chat-workspace[data-primary-chat] .chat-panel {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
   .patient-command .data-table-card,
   .patient-chat-command .data-table-card {
     min-width: 0;

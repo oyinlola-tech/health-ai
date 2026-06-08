@@ -1082,6 +1082,15 @@ thead th:last-child {
   box-shadow: var(--shadow-card);
 }
 
+.chat-workspace[data-primary-chat] {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: min(780px, calc(100vh - 160px));
+}
+
+.chat-workspace[data-primary-chat] .chat-panel {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
 .chat-sidebar {
   display: grid;
   grid-template-rows: auto 1fr;

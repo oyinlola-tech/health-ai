@@ -22,7 +22,7 @@ async function renderChat() {
 }
 
 function renderChatWorkspace(messages = []) {
-  return `<section class="chat-workspace">
+  return `<section class="chat-workspace" data-primary-chat>
     <section class="chat-panel">
       <div class="chat-thread" data-ai-chat-thread>
         ${renderAiChatMessages(messages)}
