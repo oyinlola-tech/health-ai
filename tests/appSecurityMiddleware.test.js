@@ -10,6 +10,16 @@ describe("app security middleware", () => {
     expect(response.headers["ratelimit-remaining"]).toBeDefined();
   });
 
+  it("serves legacy favicon requests without consuming the SPA route quota", async () => {
+    const app = createApp();
+
+    await request(app).get("/favicon.ico").expect(200);
+
+    for (let index = 0; index < 12; index += 1) {
+      await request(app).get("/dashboard").expect(200);
+    }
+  });
+
   it("rejects unsafe API requests without a CSRF token before route handlers run", async () => {
     const response = await request(createApp()).post("/api/auth/login").send({
       email: "patient@example.com",

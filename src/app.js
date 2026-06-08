@@ -20,6 +20,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.resolve(__dirname, "../public");
 const appEntry = path.join(publicDir, "index.html");
 const sitemapEntry = path.join(publicDir, "sitemap.html");
+const faviconEntry = path.join(publicDir, "assets/brand/favicon.svg");
 
 const legacyFrontendRedirects = new Map([
   ["/index.html", "/"],
@@ -243,6 +244,7 @@ export function createApp() {
     })
   );
   app.use(requestIdMiddleware);
+  app.get("/favicon.ico", (_req, res) => res.type("image/svg+xml").sendFile(faviconEntry));
   app.use(appRateLimit);
   app.use(compression());
   app.use(cookieParser(env.COOKIE_SECRET));

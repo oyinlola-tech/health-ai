@@ -53,14 +53,16 @@ export const appRateLimit = rateLimit({
   windowMs: env.RATE_LIMIT_WINDOW_MS,
   max: Math.max(env.RATE_LIMIT_MAX * 5, 600),
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  skipSuccessfulRequests: true
 });
 
 export const publicReadRateLimit = rateLimit({
   windowMs: env.RATE_LIMIT_WINDOW_MS,
   max: Math.max(env.RATE_LIMIT_MAX * 3, 300),
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  skipSuccessfulRequests: true
 });
 
 export const authRateLimit = rateLimit({
