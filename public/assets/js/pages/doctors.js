@@ -118,10 +118,14 @@ function renderThinkingMessage() {
   return `<article class="message-bubble thinking-bubble" data-thinking-message data-role="assistant"><p class="caption">MedExplain AI</p><p><span class="thinking-dots"><span></span><span></span><span></span></span><span data-thinking-text>Reading your message</span></p></article>`;
 }
 
+function formatChatContent(content = "") {
+  return escapeHtml(content).replace(/\n/g, "<br>");
+}
+
 function renderAiChatMessage(message, index = 0) {
   const role = String(message.role || "assistant").toLowerCase();
   const label = role === "user" ? "You" : "MedExplain AI";
-  return `<article class="message-bubble" id="message-${escapeHtml(message.id || index)}" data-role="${escapeHtml(role)}"><p class="caption">${escapeHtml(label)}</p><p>${escapeHtml(message.content || "")}</p></article>`;
+  return `<article class="message-bubble" id="message-${escapeHtml(message.id || index)}" data-role="${escapeHtml(role)}"><p class="caption">${escapeHtml(label)}</p><p>${formatChatContent(message.content || "")}</p></article>`;
 }
 
 function chatErrorMessage(error) {

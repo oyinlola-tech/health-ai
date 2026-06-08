@@ -149,6 +149,28 @@ function responseSummary(response) {
   return response.summary;
 }
 
+function uniqueList(items = []) {
+  return [...new Set(items.map((item) => String(item || "").trim()).filter(Boolean))];
+}
+
+function responseSection(title, items = []) {
+  const rows = uniqueList(items).slice(0, 5);
+  if (!rows.length) return "";
+  return [`${title}:`, ...rows.map((item) => `- ${item}`)].join("\n");
+}
+
+function chatResponseText(response) {
+  const sections = [
+    response.summary,
+    responseSection("A few questions that would help me guide you better", response.recommendedQuestions),
+    responseSection("Possible things to consider", response.possibleExplanations),
+    response.seekMedicalAttention || ["HIGH", "CRITICAL"].includes(response.urgencyLevel)
+      ? "Please seek urgent medical care now if symptoms are severe, worsening quickly, or include trouble breathing, chest pain, confusion, fainting, weakness on one side, severe sudden headache, stiff neck, coughing blood, or blue lips."
+      : "For now, monitor how you feel, rest, drink fluids if you can, and consider contacting a clinician if symptoms persist, worsen, or you are worried."
+  ].filter(Boolean);
+  return sections.join("\n\n");
+}
+
 function sourcesFromContextChunks(contextChunks) {
   return contextChunks
     .filter((chunk) => chunk?.url)
@@ -260,6 +282,8 @@ function medicalChatPromptContract() {
     "- Give calm, educational next-step guidance and explain when a clinician should be contacted.",
     "- Mention urgent warning signs when relevant without creating panic.",
     "- If the user attached a report, use it as context, but do not make diagnoses.",
+    "- Do not say that no medical test results were provided unless the user specifically asked you to interpret a lab report.",
+    "- For symptom-only questions, behave like a symptom guidance chat, not a report interpreter.",
     "",
     "For symptom messages, prioritize:",
     "- When it started and whether it is getting worse",
@@ -267,7 +291,9 @@ function medicalChatPromptContract() {
     "- Fever, chest pain, breathing trouble, fainting, severe pain, confusion, bleeding, pregnancy, age, and major medical history when relevant",
     "- What the user has already tried",
     "",
-    "If the user gives limited symptom detail, the summary should include a brief acknowledgement, 3 to 5 focused questions, and safe general guidance.",
+    "If the user gives limited symptom detail, the summary should briefly acknowledge the symptoms and give one safe immediate next step.",
+    "Put 3 to 5 focused follow-up questions in recommendedQuestions.",
+    "Put general non-diagnostic possibilities in possibleExplanations when useful.",
     "",
     "OUTPUT FORMAT (STRICT JSON ONLY)",
     "Return ONLY valid JSON.",
@@ -499,6 +525,7 @@ export const aiService = {
       metadata: { threadId: activeThreadId, reportId, contextCount: contextChunks.length }
     });
     const response = parseChatMedicalResponse(result.text);
+    const assistantMessage = chatResponseText(response);
     const interaction = await aiRepository.createInteraction({
       userId: user.id,
       reportId,
@@ -516,7 +543,7 @@ export const aiService = {
     });
     const messageMetadata = { threadId: activeThreadId, reportId: reportId || null };
     await aiRepository.storeMessage({ userId: user.id, role: "user", content: message, metadata: messageMetadata });
-    await aiRepository.storeMessage({ userId: user.id, role: "assistant", content: responseSummary(response), aiInteractionId: interaction.id, metadata: messageMetadata });
+    await aiRepository.storeMessage({ userId: user.id, role: "assistant", content: assistantMessage, aiInteractionId: interaction.id, metadata: messageMetadata });
     await entitlementService.recordUsage(user, features.AI_CHAT, { reportId: reportId || null });
     await eventTracker.track({
       userId: user.id,
@@ -525,7 +552,7 @@ export const aiService = {
       entityId: reportId || interaction.id,
       metadata: { model: result.model, cacheHit: result.cacheHit, contextCount: contextChunks.length, threadId: activeThreadId }
     });
-    return { interaction, message: responseSummary(response), response, threadId: activeThreadId };
+    return { interaction, message: assistantMessage, response, threadId: activeThreadId };
   },
 
   async history(user) {
