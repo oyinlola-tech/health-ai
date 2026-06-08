@@ -13,7 +13,15 @@ const operationEmptyCopy = {
   support: ["Support queue is ready", "Support signals are assembled from notifications, audit activity, and account events as they arrive."],
   ai: ["AI operations are ready", "Gemini usage, blocked requests, and cache performance will appear after model activity is recorded."],
   subscriptions: ["Subscription controls are ready", "Plan adoption and subscription health will appear here from the billing system."],
-  coupons: ["Promotion controls are ready", "Create the first code when the growth team is ready to run a server-enforced campaign."]
+  coupons: ["Promotion controls are ready", "Create the first code when the growth team is ready to run a server-enforced campaign."],
+  doctorAppointments: ["No appointments scheduled", "Upcoming consultations will appear here when patients book with you."],
+  doctorQueue: ["Patient queue is clear", "Patients with active appointments or shared reports will appear here when care is assigned."],
+  doctorReports: ["No reports assigned", "Shared patient reports will appear here after consent and appointment access are confirmed."],
+  doctorConsultations: ["No active consultations", "Patient conversations will appear here when consultation rooms are opened."],
+  doctorMessages: ["No patient messages", "Messages from consultation rooms will appear here when patients contact you."],
+  doctorProfile: ["Profile workspace is ready", "Use this area to keep your public clinical details clear and trustworthy."],
+  doctorVerification: ["Verification status is ready", "Credential updates and verification decisions will appear here when available."],
+  doctorAnalytics: ["Analytics will appear with activity", "Care volume and response patterns will populate after appointments and messages are recorded."]
 };
 
 const adminSections = [
@@ -442,19 +450,154 @@ function renderSystemHealth(context) {
 }
 
 function renderDoctorSection(section, context) {
-  const rows = doctorRowsFor(section.href, context);
-  const title = section.label === "Clinical Overview" ? "Clinical command center" : section.label;
-  return SectionScaffold({
-    stats: [
-      StatCard("Appointments", context.appointments.length, "Scheduled consults", "calendar_month", "Care"),
-      StatCard("Reports", context.reports.length, "Assigned files", "description", "Review"),
-      StatCard("Consultations", context.consultations.length, "Patient conversations", "forum", "Clinical"),
-      StatCard("Availability", "Managed", "Scheduler active", "schedule", "Access")
-    ],
-    chart: AnalyticsCard(title, "Patient flow, report review, and consultation volume from doctor APIs.", SegmentChart([{ label: "Appointments", value: context.appointments.length }, { label: "Reports", value: context.reports.length }, { label: "Consultations", value: context.consultations.length }]), [{ label: "Open messages", href: "/chat" }]),
-    table: DataTable({ title, description: "Doctor workspace records filtered for this clinical section.", rows, columns: [["name", "Record"], ["detail", "Detail"], ["status", "Status"], ["time", "Time"]], searchKey: "name", emptyKey: "doctors", actions: [{ label: "Workspace center", href: section.href }] }),
-    secondary: section.href === "/doctor/appointments" || section.href === "/doctor/settings" ? AvailabilityCard() : ActivityTimeline("Clinical activity", [...context.appointments, ...context.reports].slice(0, 6), "doctor")
-  });
+  if (section.href === "/doctor") return renderDoctorOverview(context);
+  if (section.href === "/doctor/settings") return AvailabilityCard();
+
+  const config = doctorSectionConfig(section.href, section.label);
+  if (config.bodyOnly) return AnalyticsCard(config.title, config.description, config.summary(context), config.actions);
+  return `
+    ${AnalyticsCard(config.title, config.description, config.summary(context), config.actions)}
+    ${DataTable({
+      title: config.tableTitle,
+      description: config.tableDescription,
+      rows: config.rows(context),
+      columns: config.columns,
+      searchKey: config.searchKey,
+      emptyKey: config.emptyKey,
+      actions: config.actions
+    })}
+  `;
+}
+
+function renderDoctorOverview(context) {
+  const upcoming = doctorRowsFor("/doctor/appointments", context).slice(0, 5);
+  const reports = doctorRowsFor("/doctor/medical-reports", context).slice(0, 5);
+  return `
+    <section class="metric-grid doctor-focus-grid">
+      ${StatCard("Today", context.appointments.length, "Scheduled appointments", "calendar_month", "Care")}
+      ${StatCard("Reports", context.reports.length, "Ready for review", "clinical_notes", "Review")}
+      ${StatCard("Messages", context.consultations.length, "Open consultation threads", "forum", "Clinical")}
+    </section>
+    <section class="ops-grid ops-grid-2">
+      ${DataTable({ title: "Upcoming care", description: "Appointments that need your attention next.", rows: upcoming, columns: [["name", "Patient"], ["detail", "Reason"], ["status", "Status"], ["time", "Time"]], searchKey: "name", emptyKey: "doctorAppointments", actions: [{ label: "Appointments", href: "/doctor/appointments" }] })}
+      ${DataTable({ title: "Reports to review", description: "Patient reports shared with your clinical workspace.", rows: reports, columns: [["name", "Report"], ["detail", "Status"], ["time", "Updated"]], searchKey: "name", emptyKey: "doctorReports", actions: [{ label: "Medical reports", href: "/doctor/medical-reports" }] })}
+    </section>
+  `;
+}
+
+function doctorSectionConfig(route, fallbackTitle) {
+  const configs = {
+    "/doctor/patient-queue": {
+      title: "Patient queue",
+      description: "Patients currently tied to appointments, reports, or active care conversations.",
+      tableTitle: "Patients",
+      tableDescription: "Scan assigned patients and open the next care action.",
+      columns: [["name", "Patient"], ["detail", "Context"], ["status", "Status"], ["time", "Updated"]],
+      rows: (context) => doctorPatientRows(context),
+      searchKey: "name",
+      emptyKey: "doctorQueue",
+      actions: [{ label: "Appointments", href: "/doctor/appointments" }],
+      summary: (context) => DoctorFocusSummary("Care load", [{ label: "Appointments", value: context.appointments.length }, { label: "Shared reports", value: context.reports.length }, { label: "Consultations", value: context.consultations.length }])
+    },
+    "/doctor/appointments": {
+      title: "Appointments",
+      description: "Scheduled consultations and appointment requests that need clinical follow-through.",
+      tableTitle: "Appointment schedule",
+      tableDescription: "Review appointment timing, status, and patient context.",
+      columns: [["name", "Patient"], ["detail", "Reason"], ["status", "Status"], ["time", "Scheduled"]],
+      rows: (context) => doctorRowsFor("/doctor/appointments", context),
+      searchKey: "name",
+      emptyKey: "doctorAppointments",
+      actions: [{ label: "Availability", href: "/doctor/settings" }],
+      summary: (context) => DoctorFocusSummary("Schedule", [{ label: "Scheduled", value: context.appointments.length }, { label: "Active consults", value: context.consultations.length }])
+    },
+    "/doctor/consultations": {
+      title: "Consultations",
+      description: "Active patient consultation rooms and care conversations.",
+      tableTitle: "Consultation rooms",
+      tableDescription: "Open patient conversations and continue care safely.",
+      columns: [["name", "Consultation"], ["detail", "Patient"], ["status", "Status"], ["time", "Updated"]],
+      rows: (context) => doctorRowsFor("/doctor/consultations", context),
+      searchKey: "name",
+      emptyKey: "doctorConsultations",
+      actions: [{ label: "Messages", href: "/doctor/messages" }],
+      summary: (context) => DoctorFocusSummary("Conversation load", [{ label: "Open rooms", value: context.consultations.length }, { label: "Appointments", value: context.appointments.length }])
+    },
+    "/doctor/medical-reports": {
+      title: "Medical reports",
+      description: "Patient reports shared with you for clinical review.",
+      tableTitle: "Assigned reports",
+      tableDescription: "Review extracted patient files and report status.",
+      columns: [["name", "Report"], ["detail", "Status"], ["status", "Review"], ["time", "Updated"]],
+      rows: (context) => doctorRowsFor("/doctor/medical-reports", context),
+      searchKey: "name",
+      emptyKey: "doctorReports",
+      actions: [{ label: "Patient queue", href: "/doctor/patient-queue" }],
+      summary: (context) => DoctorFocusSummary("Review queue", [{ label: "Reports", value: context.reports.length }, { label: "Appointments", value: context.appointments.length }])
+    },
+    "/doctor/messages": {
+      title: "Messages",
+      description: "Clinical messages from active consultation threads.",
+      tableTitle: "Patient messages",
+      tableDescription: "Track conversations that need a response.",
+      columns: [["name", "Thread"], ["detail", "Patient"], ["status", "Status"], ["time", "Updated"]],
+      rows: (context) => doctorRowsFor("/doctor/messages", context),
+      searchKey: "name",
+      emptyKey: "doctorMessages",
+      actions: [{ label: "Consultations", href: "/doctor/consultations" }],
+      summary: (context) => DoctorFocusSummary("Inbox", [{ label: "Threads", value: context.consultations.length }, { label: "Appointments", value: context.appointments.length }])
+    },
+    "/doctor/profile": {
+      title: "Profile",
+      description: "Your public doctor profile should communicate trust, specialty, and availability clearly.",
+      tableTitle: "Profile signals",
+      tableDescription: "Profile details will appear here when the doctor profile API returns them.",
+      columns: [["name", "Item"], ["detail", "Detail"], ["status", "Status"], ["time", "Updated"]],
+      rows: (context) => doctorProfileRows(context),
+      searchKey: "name",
+      emptyKey: "doctorProfile",
+      actions: [{ label: "Verification", href: "/doctor/verification-status" }],
+      bodyOnly: true,
+      summary: () => EmptyState("account_circle", "Profile workspace is ready", operationEmptyCopy.doctorProfile[1], [{ label: "Verification", href: "/doctor/verification-status" }])
+    },
+    "/doctor/verification-status": {
+      title: "Verification",
+      description: "Credential status and trust signals for your doctor account.",
+      tableTitle: "Verification records",
+      tableDescription: "Credential records will appear here when verification data is available.",
+      columns: [["name", "Credential"], ["detail", "Detail"], ["status", "Status"], ["time", "Updated"]],
+      rows: (context) => doctorProfileRows(context),
+      searchKey: "name",
+      emptyKey: "doctorVerification",
+      actions: [{ label: "Profile", href: "/doctor/profile" }],
+      bodyOnly: true,
+      summary: () => EmptyState("verified_user", "Verification center is ready", operationEmptyCopy.doctorVerification[1], [{ label: "Profile", href: "/doctor/profile" }])
+    },
+    "/doctor/analytics": {
+      title: "Analytics",
+      description: "Care activity, review volume, and patient communication patterns.",
+      tableTitle: "Activity breakdown",
+      tableDescription: "Operational activity from real appointments, reports, and consultations.",
+      columns: [["name", "Metric"], ["detail", "Value"], ["status", "Status"]],
+      rows: (context) => doctorAnalyticsRows(context),
+      searchKey: "name",
+      emptyKey: "doctorAnalytics",
+      actions: [{ label: "Overview", href: "/doctor" }],
+      summary: (context) => SegmentChart([{ label: "Appointments", value: context.appointments.length }, { label: "Reports", value: context.reports.length }, { label: "Consultations", value: context.consultations.length }])
+    }
+  };
+  return configs[route] || {
+    title: fallbackTitle,
+    description: "Focused doctor workspace.",
+    tableTitle: fallbackTitle,
+    tableDescription: "Records from your clinical workspace.",
+    columns: [["name", "Record"], ["detail", "Detail"], ["status", "Status"], ["time", "Time"]],
+    rows: (context) => doctorRowsFor(route, context),
+    searchKey: "name",
+    emptyKey: "doctorQueue",
+    actions: [],
+    summary: () => EmptyState("medical_services", "Workspace ready", "Clinical records will appear here when available.", [])
+  };
 }
 
 function SectionScaffold({ stats, chart, table, secondary = "" }) {
@@ -470,6 +613,26 @@ function SectionScaffold({ stats, chart, table, secondary = "" }) {
 
 function MetricGrid(cards) {
   return `<section class="metric-grid">${cards.join("")}</section>`;
+}
+
+function DoctorFocusSummary(title, items = []) {
+  const rows = items.filter((item) => item.value !== undefined && item.value !== null);
+  if (!rows.length) return EmptyState("medical_services", "Workspace ready", "Clinical records will appear here when available.", []);
+  return `
+    <div class="segment-chart" aria-label="${escapeHtml(title)}">
+      ${rows
+        .map(
+          (row) => `<div class="segment-row"><div><strong>${escapeHtml(row.label)}</strong><span>${escapeHtml(row.value)}</span></div><div class="meter-track"><span style="width:${summaryMeterWidth(row.value, rows)}%"></span></div></div>`
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function summaryMeterWidth(value, rows) {
+  if (typeof value !== "number") return 100;
+  const max = Math.max(1, ...rows.map((row) => (typeof row.value === "number" ? row.value : 0)));
+  return Math.max(8, Math.round((value / max) * 100));
 }
 
 function StatCard(title, value, label, iconName, trend = "") {
@@ -716,7 +879,46 @@ function bindAdminCouponForm() {
 function doctorRowsFor(route, context) {
   if (route.includes("report")) return context.reports.map((report) => ({ name: report.title || report.file_name || "Medical report", detail: report.status || "Review", status: displayStatus(report.status || "received"), time: formatDate(report.created_at || report.updated_at) }));
   if (route.includes("consultation") || route.includes("message")) return context.consultations.map((item) => ({ name: item.title || item.reason || "Consultation", detail: item.patient_name || item.status || "Patient room", status: displayStatus(item.status || "active"), time: formatDate(item.created_at || item.updated_at) }));
-  return context.appointments.map((item) => ({ name: item.reason || "Appointment", detail: [item.patient_first_name, item.patient_last_name].filter(Boolean).join(" ") || "Patient", status: displayStatus(item.status || "scheduled"), time: formatDate(item.scheduled_at || item.created_at) }));
+  return context.appointments.map((item) => ({ name: patientName(item), detail: item.reason || "Appointment", status: displayStatus(item.status || "scheduled"), time: formatDate(item.scheduled_at || item.created_at) }));
+}
+
+function doctorPatientRows(context) {
+  const appointments = context.appointments.map((item) => ({
+    name: patientName(item),
+    detail: item.reason || "Appointment",
+    status: displayStatus(item.status || "scheduled"),
+    time: formatDate(item.scheduled_at || item.created_at)
+  }));
+  const consultations = context.consultations.map((item) => ({
+    name: item.patient_name || item.patientName || "Patient",
+    detail: item.title || item.reason || "Consultation",
+    status: displayStatus(item.status || "active"),
+    time: formatDate(item.updated_at || item.created_at)
+  }));
+  const reports = context.reports.map((report) => ({
+    name: report.patient_name || report.patientName || report.owner_name || "Patient",
+    detail: report.title || report.file_name || "Medical report",
+    status: displayStatus(report.status || "received"),
+    time: formatDate(report.updated_at || report.created_at)
+  }));
+  return [...appointments, ...consultations, ...reports];
+}
+
+function doctorProfileRows() {
+  return [];
+}
+
+function doctorAnalyticsRows(context) {
+  const rows = [
+    { name: "Appointments", detail: context.appointments.length, status: "Tracked" },
+    { name: "Reports", detail: context.reports.length, status: "Tracked" },
+    { name: "Consultations", detail: context.consultations.length, status: "Tracked" }
+  ];
+  return rows.some((row) => Number(row.detail) > 0) ? rows : [];
+}
+
+function patientName(item = {}) {
+  return [item.patient_first_name, item.patient_last_name, item.patientFirstName, item.patientLastName].filter(Boolean).slice(0, 2).join(" ") || item.patient_name || item.patientName || "Patient";
 }
 
 function adminSharedMetrics(context) {
