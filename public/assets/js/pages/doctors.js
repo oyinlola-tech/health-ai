@@ -13,6 +13,7 @@ async function renderChat() {
   try {
     const history = await apiRequest("/ai/chat-history");
     const messages = history.data?.messages || [];
+    window.medExplainChatMessages = messages;
     setMain(renderChatWorkspace(messages));
     bindAiChatForm();
   } catch (error) {
@@ -22,10 +23,31 @@ async function renderChat() {
 }
 
 function renderChatWorkspace(messages = []) {
-  return `<section class="chat-workspace" data-primary-chat>
+  const threads = chatThreadsFromMessages(messages);
+  const activeThread = threads[0] || null;
+  return `<section class="chat-workspace ai-chat-workspace" data-chat-workspace>
+    <aside class="chat-sidebar ai-chat-sidebar" aria-label="Past conversations">
+      <div class="chat-sidebar-header">
+        <div>
+          <h2>Chats</h2>
+          <p class="muted">Recent conversations</p>
+        </div>
+        <button class="icon-button" type="button" data-new-chat aria-label="New chat">${icon("add")}</button>
+      </div>
+      <div class="chat-topic-list" data-chat-thread-list>
+        ${renderChatThreadList(threads, activeThread?.id)}
+      </div>
+    </aside>
     <section class="chat-panel">
+      <header class="chat-panel-header ai-chat-header">
+        <div>
+          <h2 data-chat-title>${escapeHtml(activeThread?.title || "New chat")}</h2>
+          <p class="muted" data-chat-subtitle>Ask about symptoms, reports, medications, next steps, or general health questions.</p>
+        </div>
+        <button class="btn btn-secondary" type="button" data-new-chat>${icon("edit_square")}New chat</button>
+      </header>
       <div class="chat-thread" data-ai-chat-thread>
-        ${renderAiChatMessages(messages)}
+        ${renderAiChatMessages(activeThread?.messages || [])}
       </div>
       <form class="chat-composer" data-ai-chat-form novalidate>
         <div class="form-message" data-form-message hidden></div>
@@ -35,7 +57,7 @@ function renderChatWorkspace(messages = []) {
         <div class="chat-input-shell">
           <button class="icon-button chat-upload-button" type="button" data-chat-upload-button aria-label="Upload a report for AI context">${icon("upload_file")}</button>
           <textarea id="message" name="message" placeholder="Ask anything about your health reports..." required></textarea>
-          <button class="icon-button chat-send-button" type="submit" aria-label="Send message">${icon("send")}</button>
+          <button class="icon-button chat-send-button" type="submit" data-chat-send-button aria-label="Send message">${icon("send")}</button>
         </div>
         <span class="field-error" data-error-for="message"></span>
       </form>
@@ -43,11 +65,41 @@ function renderChatWorkspace(messages = []) {
   </section>`;
 }
 
+function chatThreadsFromMessages(messages = []) {
+  const threads = [];
+  let current = null;
+  messages.forEach((message, index) => {
+    const role = String(message.role || "assistant").toLowerCase();
+    if (role === "user" || !current) {
+      current = {
+        id: `thread-${threads.length}`,
+        title: String(role === "user" ? message.content || "New conversation" : "MedExplain AI").slice(0, 72),
+        createdAt: message.created_at || message.createdAt || "",
+        messages: []
+      };
+      threads.push(current);
+    }
+    current.messages.push({ ...message, id: message.id || `${current.id}-${index}` });
+  });
+  return threads.reverse();
+}
+
+function renderChatThreadList(threads = [], activeId = "") {
+  if (!threads.length) return `<section class="chat-sidebar-empty"><div class="state-icon">${icon("forum")}</div><p class="muted">Your saved chats will appear here after you start talking.</p></section>`;
+  return threads
+    .map((thread) => `<button class="chat-topic" type="button" data-chat-thread-id="${escapeHtml(thread.id)}"${thread.id === activeId ? ' aria-current="true"' : ""}><span>${escapeHtml(thread.title)}</span><small>${escapeHtml(thread.messages.length)} message${thread.messages.length === 1 ? "" : "s"}</small></button>`)
+    .join("");
+}
+
 function renderAiChatMessages(messages = []) {
   if (!messages.length) {
-    return `<section class="chat-empty"><div class="state-icon">${icon("psychology")}</div><h2>How can I help with your health today?</h2><p class="muted">Ask about a report, symptom context, or next questions to discuss with a clinician.</p></section>`;
+    return `<section class="chat-empty"><div class="state-icon">${icon("psychology")}</div><h2>How can I help with your health today?</h2><p class="muted">Ask about symptoms, medication questions, report context, or what to discuss with a clinician. Uploading a file is optional.</p></section>`;
   }
   return messages.map((message, index) => renderAiChatMessage(message, index)).join("");
+}
+
+function renderThinkingMessage() {
+  return `<article class="message-bubble thinking-bubble" data-thinking-message data-role="assistant"><p class="caption">MedExplain AI</p><p><span class="thinking-dots"><span></span><span></span><span></span></span><span data-thinking-text>Reading your message</span></p></article>`;
 }
 
 function renderAiChatMessage(message, index = 0) {
@@ -71,7 +123,15 @@ function bindAiChatForm() {
   const inputShell = form?.querySelector(".chat-input-shell");
   const fileInput = form?.querySelector("[data-chat-file-input]");
   const uploadButton = form?.querySelector("[data-chat-upload-button]");
+  const sendButton = form?.querySelector("[data-chat-send-button]");
   const attachmentChip = form?.querySelector("[data-chat-attachment]");
+  const thread = document.querySelector("[data-ai-chat-thread]");
+  const threadList = document.querySelector("[data-chat-thread-list]");
+  const titleTarget = document.querySelector("[data-chat-title]");
+  const subtitleTarget = document.querySelector("[data-chat-subtitle]");
+  let activeController = null;
+  let thinkingTimer = null;
+  let stopRequested = false;
   let attachedReport = null;
   const syncComposerState = () => {
     if (!textareaField) return;
@@ -89,8 +149,70 @@ function bindAiChatForm() {
     attachmentChip.hidden = false;
     attachmentChip.innerHTML = `${icon("description")}<span><strong>${escapeHtml(attachedReport.title || attachedReport.original_name || "Uploaded report")}</strong><small>${escapeHtml(displayStatus(attachedReport.extraction_status || attachedReport.status || "processing"))}</small></span><button class="icon-button" type="button" data-clear-chat-report aria-label="Remove attached report">${icon("close")}</button>`;
   };
+  const setChatStatus = (stateName, message) => {
+    showFormMessage(form, stateName, message);
+  };
+  const setThinkingState = (isThinking) => {
+    if (!sendButton) return;
+    sendButton.dataset.state = isThinking ? "thinking" : "idle";
+    sendButton.setAttribute("aria-label", isThinking ? "Stop response" : "Send message");
+    sendButton.innerHTML = isThinking ? icon("stop") : icon("send");
+  };
+  const startThinkingStatus = () => {
+    const steps = ["Reading your message", "Checking trusted context", "Preparing a careful answer"];
+    let index = 0;
+    setChatStatus("success", steps[index]);
+    thinkingTimer = window.setInterval(() => {
+      index = (index + 1) % steps.length;
+      setChatStatus("success", steps[index]);
+      document.querySelector("[data-thinking-text]")?.replaceChildren(document.createTextNode(steps[index]));
+    }, 1400);
+  };
+  const stopThinkingStatus = () => {
+    if (thinkingTimer) window.clearInterval(thinkingTimer);
+    thinkingTimer = null;
+  };
+  const setActiveThreadTitle = (title = "New chat") => {
+    if (titleTarget) titleTarget.textContent = title;
+    if (subtitleTarget) subtitleTarget.textContent = title === "New chat" ? "Ask about symptoms, reports, medications, next steps, or general health questions." : "Conversation loaded from your saved chat history.";
+  };
+  const clearThreadSelection = () => {
+    threadList?.querySelectorAll(".chat-topic").forEach((item) => item.removeAttribute("aria-current"));
+  };
+  const refreshThreadList = () => {
+    if (!threadList) return;
+    const threads = chatThreadsFromMessages(window.medExplainChatMessages || []);
+    threadList.innerHTML = renderChatThreadList(threads, threads[0]?.id);
+  };
   textareaField?.addEventListener("input", syncComposerState);
   uploadButton?.addEventListener("click", () => fileInput?.click());
+  document.querySelectorAll("[data-new-chat]").forEach((button) => {
+    button.addEventListener("click", () => {
+      stopRequested = Boolean(activeController);
+      activeController?.abort();
+      stopThinkingStatus();
+      setThinkingState(false);
+      clearThreadSelection();
+      attachedReport = null;
+      renderAttachment();
+      if (thread) thread.innerHTML = renderAiChatMessages([]);
+      setActiveThreadTitle();
+      textareaField?.focus();
+      setChatStatus("success", "New chat ready.");
+    });
+  });
+  threadList?.addEventListener("click", (event) => {
+    const item = event.target.closest("[data-chat-thread-id]");
+    if (!item) return;
+    const threads = chatThreadsFromMessages(window.medExplainChatMessages || []);
+    const selected = threads.find((threadItem) => threadItem.id === item.dataset.chatThreadId);
+    if (!selected || !thread) return;
+    clearThreadSelection();
+    item.setAttribute("aria-current", "true");
+    thread.innerHTML = renderAiChatMessages(selected.messages);
+    setActiveThreadTitle(selected.title);
+    thread.scrollTop = thread.scrollHeight;
+  });
   attachmentChip?.addEventListener("click", (event) => {
     if (!event.target.closest("[data-clear-chat-report]")) return;
     attachedReport = null;
@@ -124,31 +246,51 @@ function bindAiChatForm() {
   });
   syncComposerState();
   renderAttachment();
+  window.medExplainChatMessages = window.medExplainChatMessages || [];
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (activeController) {
+      stopRequested = true;
+      activeController.abort();
+      return;
+    }
     if (!validateForm(form)) return;
     const message = textareaField.value.trim();
-    const thread = document.querySelector("[data-ai-chat-thread]");
-    setSubmitLoading(form, true);
+    activeController = new AbortController();
+    stopRequested = false;
+    setThinkingState(true);
+    startThinkingStatus();
     try {
       thread.innerHTML = `${thread.querySelector(".chat-empty") ? "" : thread.innerHTML}`;
       thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "user", content: message }));
+      thread.insertAdjacentHTML("beforeend", renderThinkingMessage());
+      thread.scrollTop = thread.scrollHeight;
       textareaField.value = "";
       syncComposerState();
       const response = await apiRequest("/ai/chat", {
         method: "POST",
         body: { message, ...(attachedReport?.id ? { reportId: attachedReport.id } : {}) },
+        signal: activeController.signal,
         timeoutMs: appConfig.aiRequestTimeoutMs,
         timeoutMessage: "AI is taking longer than expected. Please try again."
       });
       const assistantMessage = response.data?.message || response.data?.response?.summary || "Response saved.";
+      document.querySelector("[data-thinking-message]")?.remove();
       thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "assistant", content: assistantMessage }));
+      window.medExplainChatMessages.push({ role: "user", content: message }, { role: "assistant", content: assistantMessage });
+      refreshThreadList();
+      setActiveThreadTitle(message.slice(0, 72));
       thread.scrollTop = thread.scrollHeight;
-      showFormMessage(form, "success", "Message sent.");
+      setChatStatus("success", "Answer ready.");
     } catch (error) {
-      showFormMessage(form, "error", chatErrorMessage(error));
+      document.querySelector("[data-thinking-message]")?.remove();
+      const stopped = stopRequested || activeController?.signal.aborted;
+      setChatStatus(stopped ? "success" : "error", stopped ? "Response stopped." : chatErrorMessage(error));
     } finally {
-      setSubmitLoading(form, false);
+      activeController = null;
+      stopRequested = false;
+      stopThinkingStatus();
+      setThinkingState(false);
     }
   });
 }
