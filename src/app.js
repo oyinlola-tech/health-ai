@@ -244,8 +244,8 @@ export function createApp() {
     })
   );
   app.use(requestIdMiddleware);
-  app.get("/favicon.ico", (_req, res) => res.type("image/svg+xml").sendFile(faviconEntry));
   app.use(appRateLimit);
+  app.get("/favicon.ico", (_req, res) => res.type("image/svg+xml").sendFile(faviconEntry));
   app.use(compression());
   app.use(cookieParser(env.COOKIE_SECRET));
   app.use(
