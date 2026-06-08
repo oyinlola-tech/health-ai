@@ -577,14 +577,51 @@ function ActionBar(actions = []) {
 
 function CouponForm() {
   return `
-    <form class="form ops-form" data-coupon-form novalidate>
+    <form class="form ops-form coupon-form" data-coupon-form novalidate>
       <div class="form-message" data-form-message hidden></div>
-      <label>Code<input name="code" autocomplete="off" placeholder="Generated if blank"></label>
-      <label>Discount type<select name="discountType"><option value="percentage">Percentage</option><option value="fixed">Fixed Naira</option></select></label>
-      <label>Discount value<input name="discountValue" type="number" min="1" required></label>
-      <label>Max uses<input name="maxUses" type="number" min="1"></label>
-      <label>Expiry date<input name="expiryDate" type="datetime-local"></label>
-      <button class="btn btn-primary" type="submit">${icon("add")}Create coupon</button>
+      <div class="coupon-field field">
+        <label for="coupon-code">Code</label>
+        <div class="control-shell">
+          <span class="control-icon">${icon("sell")}</span>
+          <input id="coupon-code" name="code" autocomplete="off" inputmode="text" placeholder="Generated if blank">
+        </div>
+      </div>
+      <div class="coupon-form-grid">
+        <div class="coupon-field field">
+          <label for="coupon-discount-type">Discount type</label>
+          <div class="control-shell control-shell-select">
+            <span class="control-icon">${icon("percent")}</span>
+            <select id="coupon-discount-type" name="discountType" data-discount-type>
+              <option value="percentage">Percentage</option>
+              <option value="fixed">Fixed Naira</option>
+            </select>
+          </div>
+        </div>
+        <div class="coupon-field field">
+          <label for="coupon-discount-value">Discount value <span class="required">*</span></label>
+          <div class="control-shell" data-discount-control>
+            <span class="control-icon" data-discount-symbol>%</span>
+            <input id="coupon-discount-value" name="discountValue" type="number" min="1" required placeholder="10">
+          </div>
+        </div>
+      </div>
+      <div class="coupon-form-grid">
+        <div class="coupon-field field">
+          <label for="coupon-max-uses">Max uses</label>
+          <div class="control-shell">
+            <span class="control-icon">${icon("groups")}</span>
+            <input id="coupon-max-uses" name="maxUses" type="number" min="1" placeholder="Optional">
+          </div>
+        </div>
+        <div class="coupon-field field">
+          <label for="coupon-expiry-date">Expiry date</label>
+          <div class="control-shell">
+            <span class="control-icon">${icon("event")}</span>
+            <input id="coupon-expiry-date" name="expiryDate" type="datetime-local">
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full coupon-submit" type="submit">${icon("add")}Create coupon</button>
     </form>
   `;
 }
@@ -645,7 +682,22 @@ function couponFormPayload(form) {
 }
 
 function bindAdminCouponForm() {
-  document.querySelector("[data-coupon-form]")?.addEventListener("submit", async (event) => {
+  const form = document.querySelector("[data-coupon-form]");
+  if (!form) return;
+  const discountType = form.querySelector("[data-discount-type]");
+  const discountSymbol = form.querySelector("[data-discount-symbol]");
+  const syncDiscountSymbol = () => {
+    if (discountSymbol) discountSymbol.textContent = discountType?.value === "fixed" ? "₦" : "%";
+  };
+  syncDiscountSymbol();
+  discountType?.addEventListener("change", syncDiscountSymbol);
+  form.querySelectorAll("input, select").forEach((control) => {
+    const syncValueState = () => control.closest(".control-shell")?.toggleAttribute("data-has-value", Boolean(control.value));
+    syncValueState();
+    control.addEventListener("input", syncValueState);
+    control.addEventListener("change", syncValueState);
+  });
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     setSubmitLoading(form, true);

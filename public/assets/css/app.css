@@ -2176,6 +2176,95 @@ thead th:last-child {
   gap: 16px;
 }
 
+.coupon-form {
+  gap: 24px;
+}
+
+.coupon-form-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.coupon-field label {
+  color: var(--mx-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.control-shell {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  min-height: 56px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff, #fff8f6);
+  border: 1px solid var(--mx-border);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 8px 18px rgba(43, 39, 36, 0.05);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.control-shell:focus-within {
+  border-color: var(--mx-accent);
+  box-shadow: 0 0 0 4px rgba(255, 110, 92, 0.16), 0 12px 24px rgba(43, 39, 36, 0.08);
+  transform: translateY(-1px);
+}
+
+.control-shell[data-has-value] {
+  background: #ffffff;
+}
+
+.control-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 100%;
+  color: var(--mx-accent);
+  font-size: 18px;
+  font-weight: 700;
+  background: rgba(255, 110, 92, 0.1);
+}
+
+.coupon-form .control-shell input,
+.coupon-form .control-shell select {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 16px;
+  color: var(--mx-primary);
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font-weight: 600;
+}
+
+.coupon-form .control-shell input::placeholder {
+  color: var(--mx-secondary);
+  font-weight: 500;
+}
+
+.coupon-form .control-shell select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--mx-secondary) 50%), linear-gradient(135deg, var(--mx-secondary) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 40px;
+}
+
+.coupon-form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+  filter: sepia(1) saturate(1.4) hue-rotate(320deg);
+}
+
+.coupon-submit {
+  min-height: 56px;
+  justify-content: center;
+}
+
 .ops-skeleton {
   display: grid;
   gap: 24px;
