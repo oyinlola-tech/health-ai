@@ -52,8 +52,8 @@ function renderAiChatMessage(message, index = 0) {
 
 function chatErrorMessage(error) {
   if (error?.status === 401) return "Please sign in again.";
-  if (error?.payload?.error?.code === "AI_BUDGET_EXCEEDED") return "AI is temporarily limited. Please try again later or check your subscription.";
-  if (error?.payload?.error?.code === "PLAN_LIMIT_REACHED") return "Your current plan limit has been reached. Manage your plan to continue.";
+  if (error?.payload?.error?.code === "AI_BUDGET_EXCEEDED") return "AI is temporarily limited. Please try again later.";
+  if (error?.payload?.error?.code === "PLAN_LIMIT_REACHED") return "This request is temporarily limited. Please try again later.";
   if (error?.status === 403) return error?.message || "Your account does not currently have access to AI chat.";
   if (error?.payload?.error?.code === "CONFIGURATION_ERROR") return "AI service is not configured for this environment.";
   return error?.message || "Server connection unavailable. Please try again.";
@@ -118,18 +118,17 @@ function doctorName(doctor) {
 }
 
 function renderDoctorCard(doctor) {
-  return `<article class="card stack"><div class="card-header"><div><h3>Dr. ${escapeHtml(doctorName(doctor))}</h3><p class="muted">${escapeHtml(doctor.specialization || doctor.specialty || "General Medicine")}</p></div><span class="badge badge-success">Verified</span></div><div class="actions"><span class="badge">${doctor.has_availability ? "Available slots" : "No slots listed"}</span><span class="badge">${doctor.consultation_fee_cents ? money(doctor.consultation_fee_cents) : "Premium included"}</span></div><a class="btn btn-quiet" href="/doctor/${doctor.id}">View profile</a></article>`;
+  return `<article class="card stack"><div class="card-header"><div><h3>Dr. ${escapeHtml(doctorName(doctor))}</h3><p class="muted">${escapeHtml(doctor.specialization || doctor.specialty || "General Medicine")}</p></div><span class="badge badge-success">Verified</span></div><div class="actions"><span class="badge">${doctor.has_availability ? "Available slots" : "No slots listed"}</span><span class="badge">${doctor.consultation_fee_cents ? money(doctor.consultation_fee_cents) : "Consultation access"}</span></div><a class="btn btn-quiet" href="/doctor/${doctor.id}">View profile</a></article>`;
 }
 
 async function renderDoctors() {
   const meta = routeTitle("/doctors");
   setMain(`${pageHeader(meta)}${loadingState("Loading verified doctors")}`);
   try {
-    const [response, subscription] = await Promise.all([apiRequest("/doctors"), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
+    const response = await apiRequest("/doctors");
     const doctors = response.data?.doctors || [];
     setMain(`
       <section class="patient-command">
-        ${renderEntitlementBanner(subscription.data || {}, "doctorBookings")}
         <section class="form-card patient-filter-card"><form class="form" data-doctor-search><div class="grid grid-3">${field("Search doctors", "q", "text", false)}${field("Specialization", "specialization", "text", false)}<div class="field"><label for="availableOnly">Availability</label><select id="availableOnly" name="availableOnly"><option value="">Any</option><option value="true">Has availability</option></select></div></div><button class="btn btn-primary" type="submit">${icon("search")}Search</button></form></section>
         <section class="grid grid-3" data-doctor-results>${doctors.length ? doctors.map(renderDoctorCard).join("") : EmptyState("stethoscope", "Doctor directory is ready", "Verified doctors will appear here after approval and availability setup.", [{ label: "Check appointments", href: "/appointments" }])}</section>
       </section>
@@ -268,14 +267,13 @@ async function renderDoctorProfile() {
   const meta = routeTitle("/doctor/:id");
   setMain(`${pageHeader(meta)}${loadingState("Loading doctor profile")}`);
   try {
-    const [response, subscription] = await Promise.all([apiRequest(`/doctors/${id}`), cachedRequest("subscription", "/subscriptions/me").catch(() => ({ data: {} }))]);
+    const response = await apiRequest(`/doctors/${id}`);
     const doctor = response.data?.doctor || {};
     const availability = doctor.availability || [];
     setMain(`
       ${pageHeader(meta)}
-      ${renderEntitlementBanner(subscription.data || {}, "doctorBookings")}
       <section class="grid grid-2">
-        <article class="card card-accent stack"><div class="card-header"><div><h2>Dr. ${escapeHtml(doctorName(doctor))}</h2><p class="muted">${escapeHtml(doctor.specialization || doctor.specialty || "General Medicine")}</p></div><span class="badge badge-success">${escapeHtml(doctor.verification_status || "VERIFIED")}</span></div><p>${escapeHtml(doctor.bio || "This doctor has not added a public bio yet.")}</p><div class="actions"><span class="badge">${doctor.years_experience || 0} years experience</span><span class="badge">${doctor.consultation_fee_cents ? money(doctor.consultation_fee_cents) : "Premium included"}</span></div></article>
+        <article class="card card-accent stack"><div class="card-header"><div><h2>Dr. ${escapeHtml(doctorName(doctor))}</h2><p class="muted">${escapeHtml(doctor.specialization || doctor.specialty || "General Medicine")}</p></div><span class="badge badge-success">${escapeHtml(doctor.verification_status || "VERIFIED")}</span></div><p>${escapeHtml(doctor.bio || "This doctor has not added a public bio yet.")}</p><div class="actions"><span class="badge">${doctor.years_experience || 0} years experience</span><span class="badge">${doctor.consultation_fee_cents ? money(doctor.consultation_fee_cents) : "Consultation access"}</span></div></article>
         <form class="form-card form" data-appointment-form novalidate>
           <h2>Book consultation</h2>
           <div class="form-message" data-form-message hidden></div>

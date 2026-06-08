@@ -1,5 +1,5 @@
 /**
- * @file Premium doctor and admin operations workspaces.
+ * @file Doctor and admin operations workspaces.
  * @module assets/js/pages/workspaces.js
  */
 
@@ -7,13 +7,11 @@ const operationEmptyCopy = {
   users: ["Account intelligence is ready", "As verified user activity arrives, this view will organize records, roles, and account posture for review."],
   doctors: ["Doctor operations are ready", "Approved clinicians, verification status, and care capacity will appear here after backend records are available."],
   reports: ["Report operations are ready", "Uploaded medical reports will populate this queue with processing status, confidence, and review actions."],
-  payments: ["Revenue records are ready", "Completed payments, refunds, and failed charge attempts will appear here from the billing system."],
+  payments: ["Revenue records are ready", "Completed payments, refunds, and failed charge attempts will appear here from backend finance records."],
   logs: ["Control-plane activity is ready", "Audit activity will appear here as platform actions are recorded."],
   recruitment: ["Recruitment intake is ready", "Doctor applications will appear here after candidates submit the careers workflow."],
   support: ["Support queue is ready", "Support signals are assembled from notifications, audit activity, and account events as they arrive."],
-  ai: ["AI operations are ready", "Gemini usage, blocked requests, and cache performance will appear after model activity is recorded."],
-  subscriptions: ["Subscription controls are ready", "Plan adoption and subscription health will appear here from the billing system."],
-  coupons: ["Promotion controls are ready", "Create the first code when the growth team is ready to run a server-enforced campaign."]
+  ai: ["AI operations are ready", "Gemini usage, blocked requests, and cache performance will appear after model activity is recorded."]
 };
 
 const adminSections = [
@@ -24,8 +22,6 @@ const adminSections = [
   { label: "AI Operations", href: "/admin/ai-operations", icon: "auto_awesome", group: "Operations" },
   { label: "Security Center", href: "/admin/security", icon: "shield_lock", group: "Trust" },
   { label: "Compliance Center", href: "/admin/compliance", icon: "policy", group: "Trust" },
-  { label: "Subscription Management", href: "/admin/subscriptions", icon: "workspace_premium", group: "Business" },
-  { label: "Coupon Management", href: "/admin/coupons", icon: "sell", group: "Business" },
   { label: "Recruitment", href: "/admin/recruitment", icon: "badge", group: "Operations" },
   { label: "Support Center", href: "/admin/support", icon: "support_agent", group: "Operations" },
   { label: "Audit Logs", href: "/admin/audit-logs", icon: "fact_check", group: "Trust" },
@@ -77,7 +73,6 @@ async function renderAdminDashboard() {
   const context = await loadAdminContext(section.href);
   setMain(AdminLayout(renderAdminSection(section.href, context), meta));
   bindOperationsControls();
-  if (section.href === "/admin/coupons") bindAdminCouponForm();
 }
 
 async function loadDoctorContext() {
@@ -104,8 +99,7 @@ async function loadAdminContext(sectionHref) {
     apiRequest("/doctors")
   ];
   if (sectionHref === "/admin/user-analytics") requests.push(apiRequest(`/admin/analytics${location.search || ""}`));
-  if (sectionHref === "/admin/coupons") requests.push(apiRequest("/admin/coupons"));
-  const [users, logs, reportMetrics, monetization, aiCosts, applications, doctors, analytics, coupons] = await Promise.allSettled(requests);
+  const [users, logs, reportMetrics, monetization, aiCosts, applications, doctors, analytics] = await Promise.allSettled(requests);
   return {
     users: users.value?.data?.users || [],
     logs: logs.value?.data?.auditLogs || [],
@@ -114,8 +108,7 @@ async function loadAdminContext(sectionHref) {
     ai: aiCosts.value?.data?.dashboard || {},
     applications: applications.value?.data?.applications || [],
     doctors: doctors.value?.data?.doctors || [],
-    analytics: analytics?.value?.data?.analytics || {},
-    coupons: coupons?.value?.data?.coupons || []
+    analytics: analytics?.value?.data?.analytics || {}
   };
 }
 
@@ -184,14 +177,12 @@ function OpsHeader(meta) {
 function adminDescription(route) {
   return {
     "/admin": "A board-level operating view across revenue, users, doctors, AI, security, compliance, and system health.",
-    "/admin/revenue": "Revenue movement, payment posture, refunds, failed charge signals, and monetization controls.",
+    "/admin/revenue": "Revenue movement, payment posture, refunds, failed charge signals, and finance controls.",
     "/admin/user-analytics": "User growth, segmentation, activation, account search, and recent behavior.",
     "/admin/doctor-operations": "Doctor directory, verification state, care capacity, and clinical operations queues.",
     "/admin/ai-operations": "AI spend, request volume, cache performance, blocked requests, and budget controls.",
     "/admin/security": "Authentication-sensitive events, access posture, and security review queues.",
     "/admin/compliance": "Consent, auditability, policy health, and operational compliance evidence.",
-    "/admin/subscriptions": "Subscriber health, churn signals, plan adoption, and billing actions.",
-    "/admin/coupons": "Promotion creation, discount controls, usage limits, and campaign safety.",
     "/admin/recruitment": "Doctor applicant intake, status review, and hiring operations.",
     "/admin/support": "Support workload, patient-facing signals, and account assistance queues.",
     "/admin/audit-logs": "Searchable control-plane history for operational and security actions.",
@@ -208,8 +199,6 @@ function renderAdminSection(route, context) {
   if (route === "/admin/ai-operations") return renderAiOperations(context);
   if (route === "/admin/security") return renderSecurityCenter(context);
   if (route === "/admin/compliance") return renderComplianceCenter(context);
-  if (route === "/admin/subscriptions") return renderSubscriptionManagement(context);
-  if (route === "/admin/coupons") return renderCouponManagement(context);
   if (route === "/admin/recruitment") return renderRecruitment(context);
   if (route === "/admin/support") return renderSupportCenter(context);
   if (route === "/admin/audit-logs") return renderAuditLogs(context);
@@ -220,13 +209,13 @@ function renderAdminSection(route, context) {
 function renderExecutiveOverview(context, shared) {
   return `
     ${MetricGrid([
-      StatCard("Revenue", money(shared.revenue), "Monthly billing", "payments", shared.failedPayments ? "Review failures" : "Stable"),
+      StatCard("Revenue", money(shared.revenue), "Monthly finance", "payments", shared.failedPayments ? "Review failures" : "Stable"),
       StatCard("Users", shared.users, "Total accounts", "groups", `${shared.doctors} doctors`),
       StatCard("AI Requests", shared.aiRequests, "Model workload", "auto_awesome", `${shared.blockedAi} blocked`),
       StatCard("System", shared.failedReports, "Failed extractions", "dns", shared.failedReports ? "Needs review" : "Healthy")
     ])}
     <section class="ops-grid ops-grid-2">
-      ${AnalyticsCard("Revenue trajectory", "Billing movement from monetization records.", TrendChart([{ label: "Revenue", value: shared.revenue }, { label: "Failed", value: shared.failedPayments }, { label: "Refunds", value: Number(context.monetization.refunds || 0) }]), [{ label: "Open revenue", href: "/admin/revenue" }])}
+      ${AnalyticsCard("Revenue trajectory", "Finance movement from monetization records.", TrendChart([{ label: "Revenue", value: shared.revenue }, { label: "Failed", value: shared.failedPayments }, { label: "Refunds", value: Number(context.monetization.refunds || 0) }]), [{ label: "Open revenue", href: "/admin/revenue" }])}
       ${AnalyticsCard("AI operating load", "Request volume, cache efficiency, and blocked activity.", TrendChart([{ label: "Requests", value: shared.aiRequests }, { label: "Blocked", value: shared.blockedAi }, { label: "Cache", value: Number(context.ai.cacheHitRate || 0) }]), [{ label: "Open AI operations", href: "/admin/ai-operations" }])}
     </section>
     <section class="ops-grid ops-grid-2">
@@ -259,12 +248,12 @@ function renderRevenueAnalytics(context) {
   ];
   return SectionScaffold({
     stats: [
-      StatCard("Monthly Revenue", money(revenue.monthly_revenue_cents || 0), "Collected this period", "payments", "Billing"),
+      StatCard("Monthly Revenue", money(revenue.monthly_revenue_cents || 0), "Collected this period", "payments", "Finance"),
       StatCard("Failed Payments", Number(revenue.failed_payments || 0), "Requires recovery", "credit_card_off", "Risk"),
       StatCard("Refund Rate", `${revenue.refund_rate || 0}%`, "Customer reversals", "undo", "Quality"),
-      StatCard("Active Subscribers", Number(revenue.active_subscribers || 0), "Current premium base", "workspace_premium", "Growth")
+      StatCard("Active Accounts", Number(revenue.active_subscribers || 0), "Current account base", "groups", "Growth")
     ],
-    chart: AnalyticsCard("Revenue quality", "Billing health from real monetization records.", TrendChart(rows.map((row) => ({ label: row.metric, value: Number(String(row.value).replace(/\D/g, "")) || 0 }))), [{ label: "Subscriptions", href: "/admin/subscriptions" }]),
+    chart: AnalyticsCard("Revenue quality", "Finance health from real monetization records.", TrendChart(rows.map((row) => ({ label: row.metric, value: Number(String(row.value).replace(/\D/g, "")) || 0 }))), [{ label: "System health", href: "/admin/system-health" }]),
     table: DataTable({ title: "Revenue ledger", description: "Financial posture summarized by the backend.", rows, columns: [["metric", "Metric"], ["value", "Value"], ["status", "Status"]], searchKey: "metric", emptyKey: "payments", actions: [{ label: "Refresh billing", href: "/admin/revenue" }] })
   });
 }
@@ -282,11 +271,11 @@ function renderUserAnalytics(context) {
   return SectionScaffold({
     stats: [
       StatCard("Total Users", metrics.totalUsers ?? users.length, "Registered accounts", "groups", "Identity"),
-      StatCard("Paying Users", metrics.payingUsers ?? 0, "Premium accounts", "workspace_premium", "Revenue"),
-      StatCard("Trial Users", metrics.freeTrialUsers ?? 0, "Evaluation cohort", "schedule", "Activation"),
+      StatCard("Doctor Accounts", roleCount(users, "doctor"), "Clinical users", "stethoscope", "Care"),
+      StatCard("Admin Accounts", roleCount(users, "admin"), "Operations users", "admin_panel_settings", "Access"),
       StatCard("Active 7 Days", metrics.activeUsersLast7Days ?? 0, "Recent behavior", "monitoring", "Usage")
     ],
-    chart: AnalyticsCard("User mix", "Role and subscription segmentation.", SegmentChart([{ label: "Patients", value: roleCount(users, "patient") }, { label: "Doctors", value: roleCount(users, "doctor") }, { label: "Admins", value: roleCount(users, "admin") }]), [{ label: "Apply date filters", href: "/admin/user-analytics" }]),
+    chart: AnalyticsCard("User mix", "Role and activity segmentation.", SegmentChart([{ label: "Patients", value: roleCount(users, "patient") }, { label: "Doctors", value: roleCount(users, "doctor") }, { label: "Admins", value: roleCount(users, "admin") }]), [{ label: "Apply date filters", href: "/admin/user-analytics" }]),
     table: DataTable({ title: "Account directory", description: "Searchable users from the admin API.", rows, columns: [["name", "Name"], ["email", "Email"], ["role", "Role"], ["status", "Status"]], searchKey: "email", emptyKey: "users", actions: [{ label: "Support center", href: "/admin/support" }] })
   });
 }
@@ -363,48 +352,6 @@ function renderComplianceCenter(context) {
     chart: AnalyticsCard("Evidence coverage", "Compliance evidence by operational control.", TrendChart(rows.map((row) => ({ label: row.control, value: Number(row.evidence || 0) }))), [{ label: "Security center", href: "/admin/security" }]),
     table: DataTable({ title: "Compliance controls", description: "Evidence-oriented control surface for operations review.", rows, columns: [["control", "Control"], ["evidence", "Evidence"], ["status", "Status"]], searchKey: "control", emptyKey: "logs", actions: [{ label: "Review audit trail", href: "/admin/audit-logs" }] })
   });
-}
-
-function renderSubscriptionManagement(context) {
-  const revenue = context.monetization;
-  const rows = [
-    { plan: "Active subscribers", count: revenue.active_subscribers || 0, status: "Live" },
-    { plan: "Trial accounts", count: context.analytics.metrics?.freeTrialUsers || 0, status: "Evaluating" },
-    { plan: "Paying accounts", count: context.analytics.metrics?.payingUsers || 0, status: "Converted" },
-    { plan: "Churn rate", count: `${revenue.churn_rate || 0}%`, status: "Measured" }
-  ];
-  return SectionScaffold({
-    stats: [
-      StatCard("Active Subscribers", revenue.active_subscribers || 0, "Premium base", "workspace_premium", "Plan"),
-      StatCard("Churn Rate", `${revenue.churn_rate || 0}%`, "Retention signal", "trending_down", "Risk"),
-      StatCard("Revenue", money(revenue.monthly_revenue_cents || 0), "Subscription income", "payments", "Billing"),
-      StatCard("Failed Payments", revenue.failed_payments || 0, "Recovery queue", "credit_card_off", "Action")
-    ],
-    chart: AnalyticsCard("Subscriber health", "Plan posture and retention signals.", TrendChart(rows.map((row) => ({ label: row.plan, value: Number(String(row.count).replace(/\D/g, "")) || 0 }))), [{ label: "Revenue analytics", href: "/admin/revenue" }]),
-    table: DataTable({ title: "Subscription ledger", description: "Backend subscription and monetization summary.", rows, columns: [["plan", "Segment"], ["count", "Count"], ["status", "Status"]], searchKey: "plan", emptyKey: "subscriptions", actions: [{ label: "Coupon controls", href: "/admin/coupons" }] })
-  });
-}
-
-function renderCouponManagement(context) {
-  const coupons = context.coupons.map((coupon) => ({
-    code: coupon.code,
-    discount: coupon.discount_type === "percentage" ? `${coupon.discount_value}%` : money(coupon.discount_value || 0),
-    usage: `${coupon.used_count || 0}${coupon.max_uses ? `/${coupon.max_uses}` : ""}`,
-    status: coupon.is_active ? "Active" : "Disabled"
-  }));
-  return `
-    ${MetricGrid([
-      StatCard("Coupons", coupons.length, "Promotion records", "sell", "Growth"),
-      StatCard("Active", coupons.filter((coupon) => coupon.status === "Active").length, "Enabled campaigns", "check_circle", "Live"),
-      StatCard("Used", context.coupons.reduce((sum, coupon) => sum + Number(coupon.used_count || 0), 0), "Redemptions", "redeem", "Usage"),
-      StatCard("Revenue Guard", "Server", "Discount validation", "shield_lock", "Safe")
-    ])}
-    <section class="ops-grid ops-grid-2">
-      ${AnalyticsCard("Create coupon", "Discounts are validated on the backend during checkout.", CouponForm(), [])}
-      ${AnalyticsCard("Campaign activity", "Usage and status across active promotion codes.", TrendChart(coupons.map((coupon) => ({ label: coupon.code, value: Number(String(coupon.usage).split("/")[0] || 0) }))), [{ label: "Refresh coupons", href: "/admin/coupons" }])}
-    </section>
-    ${DataTable({ title: "Coupon registry", description: "Promotion codes returned by the admin coupon API.", rows: coupons, columns: [["code", "Code"], ["discount", "Discount"], ["usage", "Usage"], ["status", "Status"]], searchKey: "code", emptyKey: "coupons", actions: [{ label: "Revenue analytics", href: "/admin/revenue" }] })}
-  `;
 }
 
 function renderRecruitment(context) {
@@ -610,20 +557,6 @@ function ActionBar(actions = []) {
   return `<div class="actions">${actions.map((action) => `<a class="btn ${action.primary ? "btn-primary" : "btn-secondary"}" href="${action.href}">${escapeHtml(action.label)}</a>`).join("")}</div>`;
 }
 
-function CouponForm() {
-  return `
-    <form class="form ops-form" data-coupon-form novalidate>
-      <div class="form-message" data-form-message hidden></div>
-      <label>Code<input name="code" autocomplete="off" placeholder="Generated if blank"></label>
-      <label>Discount type<select name="discountType"><option value="percentage">Percentage</option><option value="fixed">Fixed Naira</option></select></label>
-      <label>Discount value<input name="discountValue" type="number" min="1" required></label>
-      <label>Max uses<input name="maxUses" type="number" min="1"></label>
-      <label>Expiry date<input name="expiryDate" type="datetime-local"></label>
-      <button class="btn btn-primary" type="submit">${icon("add")}Create coupon</button>
-    </form>
-  `;
-}
-
 function AvailabilityCard() {
   return AnalyticsCard(
     "Availability scheduler",
@@ -662,34 +595,6 @@ function bindDoctorWorkspaceActions() {
       showFormMessage(form, "success", "Availability saved.");
     } catch (error) {
       showFormMessage(form, "error", error.message || "Availability could not be saved.");
-    } finally {
-      setSubmitLoading(form, false);
-    }
-  });
-}
-
-function couponFormPayload(form) {
-  const payload = Object.fromEntries(new FormData(form).entries());
-  if (!payload.code) delete payload.code;
-  if (!payload.maxUses) delete payload.maxUses;
-  if (payload.expiryDate) payload.expiryDate = new Date(payload.expiryDate).toISOString();
-  else delete payload.expiryDate;
-  payload.discountValue = Number(payload.discountValue);
-  if (payload.maxUses) payload.maxUses = Number(payload.maxUses);
-  return payload;
-}
-
-function bindAdminCouponForm() {
-  document.querySelector("[data-coupon-form]")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    setSubmitLoading(form, true);
-    try {
-      await apiRequest("/admin/coupons", { method: "POST", body: couponFormPayload(form) });
-      showFormMessage(form, "success", "Coupon created.");
-      window.setTimeout(() => rerenderCurrentRoute(), 500);
-    } catch (error) {
-      showFormMessage(form, "error", error.message || "Coupon could not be created.");
     } finally {
       setSubmitLoading(form, false);
     }
