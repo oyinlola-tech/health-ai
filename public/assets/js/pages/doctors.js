@@ -30,8 +30,11 @@ function renderChatWorkspace(messages = []) {
       <form class="chat-composer" data-ai-chat-form novalidate>
         <div class="form-message" data-form-message hidden></div>
         <label class="sr-only" for="message">Ask MedExplain AI</label>
-        <textarea id="message" name="message" placeholder="Ask anything about your health reports..." required></textarea>
-        <button class="icon-button" type="submit" aria-label="Send message">${icon("send")}</button>
+        <div class="chat-input-shell">
+          <span class="chat-input-icon" aria-hidden="true">${icon("psychology")}</span>
+          <textarea id="message" name="message" placeholder="Ask anything about your health reports..." required></textarea>
+          <button class="icon-button chat-send-button" type="submit" aria-label="Send message">${icon("send")}</button>
+        </div>
       </form>
     </section>
   </section>`;
@@ -61,10 +64,19 @@ function chatErrorMessage(error) {
 
 function bindAiChatForm() {
   const form = document.querySelector("[data-ai-chat-form]");
+  const textareaField = form?.querySelector('[name="message"]');
+  const inputShell = form?.querySelector(".chat-input-shell");
+  const syncComposerState = () => {
+    if (!textareaField) return;
+    textareaField.style.height = "auto";
+    textareaField.style.height = `${Math.min(textareaField.scrollHeight, 160)}px`;
+    inputShell?.toggleAttribute("data-has-value", Boolean(textareaField.value.trim()));
+  };
+  textareaField?.addEventListener("input", syncComposerState);
+  syncComposerState();
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!validateForm(form)) return;
-    const textareaField = form.querySelector('[name="message"]');
     const message = textareaField.value.trim();
     const thread = document.querySelector("[data-ai-chat-thread]");
     setSubmitLoading(form, true);
@@ -72,6 +84,7 @@ function bindAiChatForm() {
       thread.innerHTML = `${thread.querySelector(".chat-empty") ? "" : thread.innerHTML}`;
       thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "user", content: message }));
       textareaField.value = "";
+      syncComposerState();
       const response = await apiRequest("/ai/chat", {
         method: "POST",
         body: { message },
