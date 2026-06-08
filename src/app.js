@@ -246,6 +246,8 @@ export function createApp() {
     })
   );
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+  // Double-submit CSRF protection is enforced for every unsafe request before handlers run.
+  app.use(csrfProtection);
   app.use((req, res, next) => {
     const canonical = legacyFrontendRedirects.get(req.path);
     if (canonical) return res.redirect(301, canonical);
@@ -276,9 +278,7 @@ export function createApp() {
       }
     })
   );
-  // Double-submit CSRF protection is enforced for every unsafe /api request before route handlers run.
-  // codeql[js/missing-token-validation]
-  app.use("/api", apiRateLimit, csrfProtection, sanitizeRequest, apiRoutes);
+  app.use("/api", apiRateLimit, sanitizeRequest, apiRoutes);
   app.use(notFoundHandler);
   app.use(errorHandler);
 

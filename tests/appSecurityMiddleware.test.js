@@ -22,4 +22,14 @@ describe("app security middleware", () => {
       message: "Invalid CSRF token."
     });
   });
+
+  it("rejects unsafe non-API requests without a CSRF token before handlers run", async () => {
+    const response = await request(createApp()).post("/login").send({});
+
+    expect(response.status).toBe(403);
+    expect(response.body.error).toMatchObject({
+      code: "FORBIDDEN",
+      message: "Invalid CSRF token."
+    });
+  });
 });
