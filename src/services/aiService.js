@@ -55,6 +55,7 @@ const medicalAiResponseSchema = z
 
 const chatResponseSchema = z
   .object({
+    isHealthRelated: z.boolean().default(true),
     summary: z.string().min(1).max(3000),
     keyFindings: z.array(z.string().max(1000)).max(20).default([]),
     abnormalResults: z.array(z.unknown()).default([]),
@@ -119,6 +120,7 @@ function parseChatMedicalResponse(text) {
   if (!legacy.success) throw errors.badRequest("AI response failed schema validation.", parsed.error.flatten());
 
   return {
+    isHealthRelated: true,
     summary: legacy.data.report_overview.summary,
     keyFindings: legacy.data.key_insights || [],
     abnormalResults: [],
@@ -160,6 +162,7 @@ function responseSection(title, items = []) {
 }
 
 function chatResponseText(response) {
+  if (!response.isHealthRelated) return response.summary;
   const sections = [
     response.summary,
     responseSection("A few questions that would help me guide you better", response.recommendedQuestions),
@@ -277,6 +280,8 @@ function medicalChatPromptContract() {
     "",
     "Your role:",
     "- Answer the user's CURRENT message, not an old question.",
+    "- If the user asks a harmless general question, greeting, or non-medical question, answer it appropriately and briefly.",
+    "- Do not force every response to be medical. Be helpful first, and apply medical safety rules only when the message is health-related.",
     "- Use recent conversation context only to understand continuity.",
     "- If the user describes symptoms, ask practical follow-up questions when details are missing.",
     "- Give calm, educational next-step guidance and explain when a clinician should be contacted.",
@@ -284,6 +289,8 @@ function medicalChatPromptContract() {
     "- If the user attached a report, use it as context, but do not make diagnoses.",
     "- Do not say that no medical test results were provided unless the user specifically asked you to interpret a lab report.",
     "- For symptom-only questions, behave like a symptom guidance chat, not a report interpreter.",
+    "- Set isHealthRelated to false for greetings and non-health questions. When isHealthRelated is false, leave recommendedQuestions and possibleExplanations empty unless they genuinely help answer the general question.",
+    "- Only include the medical disclaimer for health-related responses.",
     "",
     "For symptom messages, prioritize:",
     "- When it started and whether it is getting worse",
@@ -301,6 +308,7 @@ function medicalChatPromptContract() {
     "No extra text.",
     "Use this schema exactly:",
     "{",
+    '  "isHealthRelated": true,',
     '  "summary": "",',
     '  "keyFindings": [""],',
     '  "abnormalResults": [],',
@@ -311,7 +319,8 @@ function medicalChatPromptContract() {
     '  "sourcesUsed": [{"source":"MedlinePlus|NIH|PubMed|Internal report","title":"source title","url":"https://example.org"}]',
     "}",
     "",
-    `Always include this medical disclaimer in the summary or key findings: ${medicalDisclaimer}`,
+    `For health-related responses, include this medical disclaimer in the summary or key findings: ${medicalDisclaimer}`,
+    "For non-health responses, do not include the medical disclaimer and do not add clinician, hydration, monitoring, or symptom advice.",
     "FINAL INSTRUCTION",
     "Return ONLY the JSON object following the schema exactly."
   ].join("\n");

@@ -69,6 +69,7 @@ const user = {
 
 function structuredAiResponse(overrides = {}) {
   return {
+    isHealthRelated: true,
     summary: "Your result needs review, but there is no emergency signal in the provided text.",
     keyFindings: ["Hemoglobin is within the listed reference range."],
     abnormalResults: [
@@ -171,6 +172,22 @@ describe("aiService structured response handling", () => {
 
     expect(result.message).toContain(payload.summary);
     expect(result.response).toEqual(payload);
+  });
+
+  it("answers non-health questions without medical boilerplate", async () => {
+    const aiService = await loadService();
+    const payload = structuredAiResponse({
+      isHealthRelated: false,
+      summary: "A noun is a word that names a person, place, thing, or idea.",
+      possibleExplanations: [],
+      recommendedQuestions: []
+    });
+    mocks.generateJson.mockResolvedValue({ text: JSON.stringify(payload), model: "gemini-test-flash", cacheHit: false });
+
+    const result = await aiService.chat({ user, message: "What is a noun?" });
+
+    expect(result.message).toBe(payload.summary);
+    expect(result.message).not.toMatch(/clinician|fluids|medical advice/i);
   });
 
   it("rejects malformed AI JSON before persisting chat messages", async () => {
