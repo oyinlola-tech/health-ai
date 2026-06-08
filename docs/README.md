@@ -19,6 +19,7 @@ This directory keeps project documentation organized away from the repository ro
 Only these documentation files should remain in the repository root:
 
 - `README.md`
+- `SECURITY.md`
 - `AGENTS.md`
 - `DESIGN.md`
 - `.env.example`
