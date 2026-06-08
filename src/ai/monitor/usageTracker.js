@@ -19,14 +19,21 @@ const promptInjectionPatterns = [
 const legacyCurrencySuffix = ["U", "SD"].join("");
 const legacyCostKey = `cost${legacyCurrencySuffix.charAt(0)}${legacyCurrencySuffix.slice(1).toLowerCase()}`;
 const legacyLimitKey = `monthly_cost_limit_${legacyCurrencySuffix.toLowerCase()}`;
+const legacyUsdToNairaRate = 1500;
 
 function legacyEnvKey(name) {
   return name.replace("NAIRA", legacyCurrencySuffix);
 }
 
+function legacyCentsEnvKey(name) {
+  return name.replace("NAIRA", "CENTS");
+}
+
 function envNumber(name, fallback) {
-  const value = process.env[name] ?? process.env[legacyEnvKey(name)];
-  return value === undefined ? fallback : Number(value);
+  if (process.env[name] !== undefined) return Number(process.env[name]);
+  if (process.env[legacyEnvKey(name)] !== undefined) return Number(process.env[legacyEnvKey(name)]) * legacyUsdToNairaRate;
+  if (process.env[legacyCentsEnvKey(name)] !== undefined) return (Number(process.env[legacyCentsEnvKey(name)]) / 100) * legacyUsdToNairaRate;
+  return fallback;
 }
 
 function estimateTokens(text) {

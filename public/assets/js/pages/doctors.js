@@ -65,23 +65,39 @@ function renderChatWorkspace(messages = []) {
   </section>`;
 }
 
+function createClientThreadId() {
+  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (char) => (Number(char) ^ (Math.random() * 16) >> (Number(char) / 4)).toString(16));
+}
+
+function chatMessageThreadId(message = {}) {
+  const metadata = message.metadata || {};
+  if (metadata.threadId) return metadata.threadId;
+  if (metadata.thread_id) return metadata.thread_id;
+  window.medExplainLegacyThreadId = window.medExplainLegacyThreadId || createClientThreadId();
+  return window.medExplainLegacyThreadId;
+}
+
 function chatThreadsFromMessages(messages = []) {
-  const threads = [];
-  let current = null;
+  const threadMap = new Map();
   messages.forEach((message, index) => {
     const role = String(message.role || "assistant").toLowerCase();
-    if (role === "user" || !current) {
-      current = {
-        id: `thread-${threads.length}`,
-        title: String(role === "user" ? message.content || "New conversation" : "MedExplain AI").slice(0, 72),
+    const threadId = chatMessageThreadId(message);
+    if (!threadMap.has(threadId)) {
+      threadMap.set(threadId, {
+        id: threadId,
+        title: "New chat",
         createdAt: message.created_at || message.createdAt || "",
+        updatedAt: message.created_at || message.createdAt || "",
         messages: []
-      };
-      threads.push(current);
+      });
     }
-    current.messages.push({ ...message, id: message.id || `${current.id}-${index}` });
+    const current = threadMap.get(threadId);
+    if (role === "user" && current.title === "New chat") current.title = String(message.content || "New chat").slice(0, 72);
+    current.updatedAt = message.created_at || message.createdAt || current.updatedAt;
+    current.messages.push({ ...message, id: message.id || `${threadId}-${index}` });
   });
-  return threads.reverse();
+  return [...threadMap.values()].sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
 }
 
 function renderChatThreadList(threads = [], activeId = "") {
@@ -110,7 +126,8 @@ function renderAiChatMessage(message, index = 0) {
 
 function chatErrorMessage(error) {
   if (error?.status === 401) return "Please sign in again.";
-  if (error?.payload?.error?.code === "AI_BUDGET_EXCEEDED") return "AI is temporarily limited. Please try again later.";
+  if (error?.payload?.error?.code === "AI_BUDGET_EXCEEDED") return "AI usage was limited by the current budget setting. Please try again after the quota resets or ask an admin to review AI limits.";
+  if (error?.payload?.error?.code === "AI_RATE_LIMITED" || error?.status === 429) return "Please pause briefly before sending another AI message.";
   if (error?.payload?.error?.code === "PLAN_LIMIT_REACHED") return "This request is temporarily limited. Please try again later.";
   if (error?.status === 403) return error?.message || "Your account does not currently have access to AI chat.";
   if (error?.payload?.error?.code === "CONFIGURATION_ERROR") return "AI service is not configured for this environment.";
@@ -129,6 +146,8 @@ function bindAiChatForm() {
   const threadList = document.querySelector("[data-chat-thread-list]");
   const titleTarget = document.querySelector("[data-chat-title]");
   const subtitleTarget = document.querySelector("[data-chat-subtitle]");
+  const initialThreads = chatThreadsFromMessages(window.medExplainChatMessages || []);
+  let activeThreadId = initialThreads[0]?.id || createClientThreadId();
   let activeController = null;
   let thinkingTimer = null;
   let stopRequested = false;
@@ -182,7 +201,7 @@ function bindAiChatForm() {
   const refreshThreadList = () => {
     if (!threadList) return;
     const threads = chatThreadsFromMessages(window.medExplainChatMessages || []);
-    threadList.innerHTML = renderChatThreadList(threads, threads[0]?.id);
+    threadList.innerHTML = renderChatThreadList(threads, activeThreadId);
   };
   textareaField?.addEventListener("input", syncComposerState);
   uploadButton?.addEventListener("click", () => fileInput?.click());
@@ -192,6 +211,7 @@ function bindAiChatForm() {
       activeController?.abort();
       stopThinkingStatus();
       setThinkingState(false);
+      activeThreadId = createClientThreadId();
       clearThreadSelection();
       attachedReport = null;
       renderAttachment();
@@ -207,6 +227,7 @@ function bindAiChatForm() {
     const threads = chatThreadsFromMessages(window.medExplainChatMessages || []);
     const selected = threads.find((threadItem) => threadItem.id === item.dataset.chatThreadId);
     if (!selected || !thread) return;
+    activeThreadId = selected.id;
     clearThreadSelection();
     item.setAttribute("aria-current", "true");
     thread.innerHTML = renderAiChatMessages(selected.messages);
@@ -269,15 +290,17 @@ function bindAiChatForm() {
       syncComposerState();
       const response = await apiRequest("/ai/chat", {
         method: "POST",
-        body: { message, ...(attachedReport?.id ? { reportId: attachedReport.id } : {}) },
+        body: { message, threadId: activeThreadId, ...(attachedReport?.id ? { reportId: attachedReport.id } : {}) },
         signal: activeController.signal,
         timeoutMs: appConfig.aiRequestTimeoutMs,
         timeoutMessage: "AI is taking longer than expected. Please try again."
       });
       const assistantMessage = response.data?.message || response.data?.response?.summary || "Response saved.";
+      activeThreadId = response.data?.threadId || activeThreadId;
       document.querySelector("[data-thinking-message]")?.remove();
       thread.insertAdjacentHTML("beforeend", renderAiChatMessage({ role: "assistant", content: assistantMessage }));
-      window.medExplainChatMessages.push({ role: "user", content: message }, { role: "assistant", content: assistantMessage });
+      const metadata = { threadId: activeThreadId };
+      window.medExplainChatMessages.push({ role: "user", content: message, metadata }, { role: "assistant", content: assistantMessage, metadata });
       refreshThreadList();
       setActiveThreadTitle(message.slice(0, 72));
       thread.scrollTop = thread.scrollHeight;

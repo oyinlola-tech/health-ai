@@ -2,7 +2,8 @@ import { z } from "zod";
 
 export const chatSchema = z.object({
   message: z.string().min(1).max(4000),
-  reportId: z.string().uuid().optional()
+  reportId: z.string().uuid().optional(),
+  threadId: z.string().uuid().optional()
 });
 
 export const feedbackSchema = z.object({

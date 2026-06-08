@@ -24,15 +24,27 @@ export const aiRepository = {
     return rows[0] || null;
   },
 
-  async storeMessage({ userId, role, content, aiInteractionId = null }, client = pool) {
+  async storeMessage({ userId, role, content, aiInteractionId = null, metadata = {} }, client = pool) {
     const id = createId();
     const { rows } = await client.query(
-      `insert into chat_messages (id, user_id, role, content, ai_interaction_id)
-       values ($1, $2, $3, $4, $5)
+      `insert into chat_messages (id, user_id, role, content, ai_interaction_id, metadata)
+       values ($1, $2, $3, $4, $5, $6::jsonb)
        returning *`,
-      [id, userId, role, content, aiInteractionId]
+      [id, userId, role, content, aiInteractionId, JSON.stringify(metadata)]
     );
     return rows[0];
+  },
+
+  async listThreadMessages(userId, threadId, limit = 20, client = pool) {
+    const { rows } = await client.query(
+      `select * from chat_messages
+       where user_id = $1
+         and json_unquote(json_extract(metadata, '$.threadId')) = $2
+       order by created_at desc
+       limit $3`,
+      [userId, threadId, limit]
+    );
+    return rows.reverse();
   },
 
   async listChatMessages(userId, limit = 50, client = pool) {

@@ -565,7 +565,8 @@ export const openApiSpec = {
         required: ["message"],
         properties: {
           message: { type: "string", minLength: 1, maxLength: 4000 },
-          reportId: { type: "string", format: "uuid" }
+          reportId: { type: "string", format: "uuid" },
+          threadId: { type: "string", format: "uuid", description: "Keeps follow-up messages in the active AI chat until the user starts a new chat." }
         }
       },
       AiFinding: {
@@ -633,7 +634,8 @@ export const openApiSpec = {
             properties: {
               interaction: { type: "object", additionalProperties: true },
               message: { type: "string", description: "Plain answer retained for frontend compatibility." },
-              response: { $ref: "#/components/schemas/AiStructuredResponse" }
+              response: { $ref: "#/components/schemas/AiStructuredResponse" },
+              threadId: { type: "string", format: "uuid" }
             }
           }
         }

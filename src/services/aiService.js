@@ -12,6 +12,7 @@ import { socketHub } from "../sockets/hub.js";
 import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
 import { eventBus } from "../modules/events/event.bus.js";
 import { eventTypes } from "../modules/events/event.types.js";
+import { createId } from "../utils/uuid.js";
 
 const medicalDisclaimer =
   "This information is for educational purposes only and is not medical advice. Please consult a qualified healthcare professional for interpretation and diagnosis.";
@@ -243,7 +244,54 @@ function medicalReportPromptContract() {
   ].join("\n");
 }
 
-async function buildGroundedPrompt({ baseInput, taskInput }) {
+function medicalChatPromptContract() {
+  return [
+    "You are MedExplain AI, a careful health education chat assistant.",
+    "",
+    "You are NOT a doctor.",
+    "You do NOT diagnose.",
+    "You do NOT prescribe medication or dosages.",
+    "You do NOT replace emergency care or a licensed clinician.",
+    "",
+    "Your role:",
+    "- Answer the user's CURRENT message, not an old question.",
+    "- Use recent conversation context only to understand continuity.",
+    "- If the user describes symptoms, ask practical follow-up questions when details are missing.",
+    "- Give calm, educational next-step guidance and explain when a clinician should be contacted.",
+    "- Mention urgent warning signs when relevant without creating panic.",
+    "- If the user attached a report, use it as context, but do not make diagnoses.",
+    "",
+    "For symptom messages, prioritize:",
+    "- When it started and whether it is getting worse",
+    "- Severity, location, duration, and triggers",
+    "- Fever, chest pain, breathing trouble, fainting, severe pain, confusion, bleeding, pregnancy, age, and major medical history when relevant",
+    "- What the user has already tried",
+    "",
+    "If the user gives limited symptom detail, the summary should include a brief acknowledgement, 3 to 5 focused questions, and safe general guidance.",
+    "",
+    "OUTPUT FORMAT (STRICT JSON ONLY)",
+    "Return ONLY valid JSON.",
+    "No markdown.",
+    "No extra text.",
+    "Use this schema exactly:",
+    "{",
+    '  "summary": "",',
+    '  "keyFindings": [""],',
+    '  "abnormalResults": [],',
+    '  "possibleExplanations": [""],',
+    '  "recommendedQuestions": [""],',
+    '  "urgencyLevel": "LOW | MEDIUM | HIGH | CRITICAL",',
+    '  "seekMedicalAttention": false,',
+    '  "sourcesUsed": [{"source":"MedlinePlus|NIH|PubMed|Internal report","title":"source title","url":"https://example.org"}]',
+    "}",
+    "",
+    `Always include this medical disclaimer in the summary or key findings: ${medicalDisclaimer}`,
+    "FINAL INSTRUCTION",
+    "Return ONLY the JSON object following the schema exactly."
+  ].join("\n");
+}
+
+async function buildGroundedPrompt({ baseInput, taskInput, promptContract = medicalReportPromptContract() }) {
   const chunks = await searchMedicalContext(baseInput);
   const context = formatMedicalContext(chunks);
   const grounding = context
@@ -255,9 +303,16 @@ async function buildGroundedPrompt({ baseInput, taskInput }) {
     : "TRUSTED MEDICAL CONTEXT\nNo indexed trusted-source context was available for this request. Be conservative and avoid unsupported claims.";
 
   return {
-    prompt: [medicalReportPromptContract(), grounding, taskInput].join("\n\n"),
+    prompt: [promptContract, grounding, taskInput].join("\n\n"),
     contextChunks: chunks
   };
+}
+
+function formatChatHistory(messages = []) {
+  return messages
+    .slice(-12)
+    .map((item) => `${String(item.role || "assistant").toUpperCase()}: ${String(item.content || "").slice(0, 1200)}`)
+    .join("\n");
 }
 
 function untrustedInputBlock(label, value) {
@@ -404,9 +459,11 @@ export const aiService = {
     }
   },
 
-  async chat({ user, message, reportId }) {
+  async chat({ user, message, reportId, threadId }) {
     await legalService.requireConsent(user.id, consentTypes.AI_ANALYSIS, "AI analysis consent is required before using AI chat.");
     await entitlementService.assertCanUse(user, features.AI_CHAT);
+    const activeThreadId = threadId || createId();
+    const recentMessages = await aiRepository.listThreadMessages(user.id, activeThreadId, 12);
     let report = null;
     if (reportId) {
       report = await reportRepository.findById(reportId);
@@ -425,19 +482,21 @@ export const aiService = {
         ].join("\n")
       : "";
     const { prompt, contextChunks } = await buildGroundedPrompt({
-      baseInput: [message, reportContext].filter(Boolean).join("\n"),
+      baseInput: [message, formatChatHistory(recentMessages), reportContext].filter(Boolean).join("\n"),
       taskInput: [
+        recentMessages.length ? untrustedInputBlock("Recent conversation context", formatChatHistory(recentMessages)) : "",
         untrustedInputBlock("Patient question", message),
         report ? untrustedInputBlock("Attached report content", reportContext) : ""
-      ].filter(Boolean).join("\n\n")
+      ].filter(Boolean).join("\n\n"),
+      promptContract: medicalChatPromptContract()
     });
     const result = await aiGateway.generateJson({
       user,
       endpoint: "ai.chat",
       taskType: "simple_chat",
       prompt,
-      cacheContext: { reportId, contextUrls: contextChunks.map((chunk) => chunk.url) },
-      metadata: { reportId, contextCount: contextChunks.length }
+      cacheContext: { threadId: activeThreadId, reportId, contextUrls: contextChunks.map((chunk) => chunk.url) },
+      metadata: { threadId: activeThreadId, reportId, contextCount: contextChunks.length }
     });
     const response = parseChatMedicalResponse(result.text);
     const interaction = await aiRepository.createInteraction({
@@ -455,17 +514,18 @@ export const aiService = {
       model: result.model,
       usedForLearning: consentAllowsLearning(user)
     });
-    await aiRepository.storeMessage({ userId: user.id, role: "user", content: message });
-    await aiRepository.storeMessage({ userId: user.id, role: "assistant", content: responseSummary(response), aiInteractionId: interaction.id });
+    const messageMetadata = { threadId: activeThreadId, reportId: reportId || null };
+    await aiRepository.storeMessage({ userId: user.id, role: "user", content: message, metadata: messageMetadata });
+    await aiRepository.storeMessage({ userId: user.id, role: "assistant", content: responseSummary(response), aiInteractionId: interaction.id, metadata: messageMetadata });
     await entitlementService.recordUsage(user, features.AI_CHAT, { reportId: reportId || null });
     await eventTracker.track({
       userId: user.id,
       eventType: analyticsEvents.AI_CHAT,
       entityType: reportId ? "reports" : "ai_interactions",
       entityId: reportId || interaction.id,
-      metadata: { model: result.model, cacheHit: result.cacheHit, contextCount: contextChunks.length }
+      metadata: { model: result.model, cacheHit: result.cacheHit, contextCount: contextChunks.length, threadId: activeThreadId }
     });
-    return { interaction, message: responseSummary(response), response };
+    return { interaction, message: responseSummary(response), response, threadId: activeThreadId };
   },
 
   async history(user) {
