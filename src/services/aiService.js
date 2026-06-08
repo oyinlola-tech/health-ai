@@ -86,7 +86,7 @@ function consentAllowsLearning(user) {
 }
 
 function extractJson(text) {
-  const trimmed = text.trim();
+  const trimmed = typeof text === "string" ? text.trim() : JSON.stringify(text || {}).trim();
   if (trimmed.startsWith("{") && trimmed.endsWith("}")) return trimmed;
 
   const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
