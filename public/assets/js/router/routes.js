@@ -66,6 +66,22 @@ const primaryNav = [
   { label: "Profile", href: "/profile", icon: "account_circle" }
 ];
 
+const doctorPrimaryNav = [
+  { label: "Overview", href: "/doctor", icon: "space_dashboard" },
+  { label: "Queue", href: "/doctor/patient-queue", icon: "groups" },
+  { label: "Appointments", href: "/doctor/appointments", icon: "calendar_month" },
+  { label: "Reports", href: "/doctor/medical-reports", icon: "clinical_notes" },
+  { label: "Messages", href: "/doctor/messages", icon: "forum" }
+];
+
+const adminPrimaryNav = [
+  { label: "Overview", href: "/admin", icon: "space_dashboard" },
+  { label: "Revenue", href: "/admin/revenue", icon: "monitoring" },
+  { label: "Users", href: "/admin/user-analytics", icon: "groups" },
+  { label: "Doctors", href: "/admin/doctor-operations", icon: "stethoscope" },
+  { label: "System", href: "/admin/system-health", icon: "dns" }
+];
+
 const footerSections = [
   { title: "Company", links: [["About", "/"], ["Contact", "/contact"]] },
   { title: "Product", links: [["Reports", "/reports"], ["Doctors", "/doctors"], ["Doctor careers", "/doctor-careers"], ["Subscription", "/subscription"]] },

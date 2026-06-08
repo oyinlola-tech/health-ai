@@ -8,21 +8,34 @@
 // -----------------------------------------------------------------------------
 
 function renderShell() {
+  const role = currentUserRole();
+  const navigationItems = rolePrimaryNav(role);
+  const homeHref = signedInHomePath();
+  const headerUtility =
+    role === "admin"
+      ? { label: "Support", href: "/admin/support", icon: "support_agent" }
+      : role === "doctor"
+        ? { label: "Settings", href: "/doctor/settings", icon: "settings" }
+        : { label: "Help", href: "/help", icon: "help" };
+  const mobileUtilityLinks =
+    role === "patient" || !role
+      ? `<a class="nav-link" href="/subscription">${icon("workspace_premium")}<span>Subscription</span></a>`
+      : `<a class="nav-link" href="${homeHref}">${icon(role === "admin" ? "admin_panel_settings" : "medical_services")}<span>${role === "admin" ? "Admin" : "Doctor"} home</span></a>`;
   document.body.innerHTML = `
     <a class="skip-link btn btn-primary" href="#main-content">Skip to main content</a>
     <div class="app-shell">
       <header class="site-header">
         <div class="container header-inner">
-          <a class="brand" href="/chat" aria-label="MedExplain AI chat">
+          <a class="brand" href="${homeHref}" aria-label="MedExplain AI home">
             <span class="brand-mark">${icon("health_and_safety")}</span>
             <span class="brand-text">
               <span class="brand-name">MedExplain AI</span>
               <span class="brand-tagline">Clarity for health decisions</span>
             </span>
           </a>
-          <nav class="desktop-nav" aria-label="Primary navigation">${navLinks()}</nav>
+          <nav class="desktop-nav" aria-label="Primary navigation">${navLinks(navigationItems)}</nav>
           <div class="header-actions">
-            <a class="nav-link" href="/help">${icon("help")}<span>Help</span></a>
+            <a class="nav-link" href="${headerUtility.href}">${icon(headerUtility.icon)}<span>${headerUtility.label}</span></a>
             <div class="header-menu" data-header-menu="notifications">
               <button class="icon-button" type="button" aria-label="Notifications" aria-expanded="false" data-header-menu-button>${icon("notifications")}</button>
               <div class="header-dropdown" data-header-dropdown hidden>
@@ -40,12 +53,12 @@ function renderShell() {
             <button class="mobile-menu-button" type="button" aria-controls="mobile-drawer" aria-expanded="false">${icon("menu")}<span class="sr-only">Menu</span></button>
           </div>
         </div>
-        <nav class="mobile-drawer" id="mobile-drawer" aria-label="Mobile menu">${navLinks()}<a class="nav-link" href="/subscription">${icon("workspace_premium")}<span>Subscription</span></a></nav>
+        <nav class="mobile-drawer" id="mobile-drawer" aria-label="Mobile menu">${navLinks(navigationItems)}${mobileUtilityLinks}</nav>
       </header>
       <main class="page-main" id="main-content" tabindex="-1"></main>
       <div class="realtime-toast" data-realtime-toast hidden></div>
       ${renderFooter()}
-      <nav class="bottom-nav" aria-label="Mobile primary navigation">${primaryNav
+      <nav class="bottom-nav" aria-label="Mobile primary navigation">${navigationItems
         .map((item) => `<a href="${item.href}"${isActive(item.href) ? ' aria-current="page"' : ""}>${icon(item.icon)}<span>${item.label}</span></a>`)
         .join("")}</nav>
     </div>
@@ -107,11 +120,18 @@ async function loadProfileMenu() {
     const response = await apiRequest("/me");
     const user = response.data?.user || {};
     const name = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || "Your account";
+    const role = String(user.role || currentUserRole()).toLowerCase();
+    const workspaceLink =
+      role === "admin"
+        ? `<a class="dropdown-link" href="/admin">${icon("admin_panel_settings")}Admin workspace</a>`
+        : role === "doctor"
+          ? `<a class="dropdown-link" href="/doctor">${icon("medical_services")}Doctor workspace</a>`
+          : `<a class="dropdown-link" href="/subscription">${icon("workspace_premium")}Subscription</a>`;
     target.dataset.loaded = "true";
     target.innerHTML = `
       <div class="dropdown-profile"><strong>${escapeHtml(name)}</strong><p class="muted">${escapeHtml(user.email || "")}</p></div>
       <a class="dropdown-link" href="/settings">${icon("settings")}Settings</a>
-      <a class="dropdown-link" href="/subscription">${icon("workspace_premium")}Subscription</a>
+      ${workspaceLink}
       <button class="dropdown-link" type="button" data-logout-action>${icon("logout")}Sign out</button>
     `;
     target.querySelector("[data-logout-action]")?.addEventListener("click", async () => {
@@ -146,12 +166,13 @@ function bindHeaderMenus() {
 }
 
 function renderFooter() {
+  const homeHref = signedInHomePath();
   return `
     <footer class="site-footer">
       <div class="container">
         <div class="footer-grid">
           <div class="stack">
-            <a class="brand" href="/chat" aria-label="MedExplain AI chat">
+            <a class="brand" href="${homeHref}" aria-label="MedExplain AI home">
               <span class="brand-mark">${icon("health_and_safety")}</span>
               <span class="brand-text"><span class="brand-name">MedExplain AI</span><span class="brand-tagline">Healthcare intelligence, calmly explained.</span></span>
             </a>

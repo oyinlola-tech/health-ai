@@ -26,7 +26,13 @@ function isActive(href) {
   return state.path === href || state.path.startsWith(`${href}/`);
 }
 
-function navLinks(items = primaryNav) {
+function rolePrimaryNav(role = currentUserRole()) {
+  if (role === "admin") return adminPrimaryNav;
+  if (role === "doctor") return doctorPrimaryNav;
+  return primaryNav;
+}
+
+function navLinks(items = rolePrimaryNav()) {
   return items
     .map(
       (item) => `<a class="nav-link" href="${item.href}"${isActive(item.href) ? ' aria-current="page"' : ""}>${icon(item.icon)}<span>${item.label}</span></a>`
