@@ -248,6 +248,8 @@ export function createApp() {
   app.get("/favicon.ico", (_req, res) => res.type("image/svg+xml").sendFile(faviconEntry));
   app.use(compression());
   app.use(cookieParser(env.COOKIE_SECRET));
+  // Double-submit CSRF protection is enforced for every unsafe request before body parsing and handlers run.
+  app.use(csrfProtection);
   app.use(
     express.json({
       limit: "1mb",
@@ -257,8 +259,6 @@ export function createApp() {
     })
   );
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
-  // Double-submit CSRF protection is enforced for every unsafe request before handlers run.
-  app.use(csrfProtection);
   app.use((req, res, next) => {
     const canonical = legacyFrontendRedirects.get(req.path);
     if (canonical) return res.redirect(301, canonical);
