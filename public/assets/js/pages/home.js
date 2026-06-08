@@ -20,12 +20,14 @@ function renderSplash() {
         </div>
       </div>
       <div class="hero-panel hero-visual">
-        <div class="icon-tile">${icon("health_and_safety")}</div>
+        ${HeroLottie("Guided healthcare onboarding animation")}
+        <div class="icon-tile hero-fallback-icon">${icon("health_and_safety")}</div>
         <h2>Understand health information without panic.</h2>
         <p class="muted">MedExplain AI keeps medical explanations grounded, private, and connected to real account access.</p>
       </div>
     </section>
   `);
+  hydrateHeroLottie();
 }
 
 function renderOnboarding() {
@@ -59,7 +61,7 @@ function renderLanding() {
   setMain(`
     <section class="page-hero">
       <div class="hero-panel">${pageHeader(meta)}<div class="actions"><a class="btn btn-primary" href="/reports">${icon("upload_file")}Upload a report</a><a class="btn btn-secondary" href="/doctors">Find a doctor</a></div></div>
-      <div class="hero-panel hero-visual"><div class="icon-tile">${icon("verified_user")}</div><h2>Designed to reduce uncertainty.</h2><p class="muted">Every screen prioritizes clear next steps, privacy, and calm healthcare language.</p></div>
+      <div class="hero-panel hero-visual">${HeroLottie("Calm healthcare assistant animation")}<div class="icon-tile hero-fallback-icon">${icon("verified_user")}</div><h2>Designed to reduce uncertainty.</h2><p class="muted">Every screen prioritizes clear next steps, privacy, and calm healthcare language.</p></div>
     </section>
     <section class="grid grid-3" aria-label="Core workflows">
       ${featureCard("Reports", "description", "Upload medical reports and receive secure AI-assisted explanations.", "/reports")}
@@ -67,6 +69,21 @@ function renderLanding() {
       ${featureCard("Consultations", "stethoscope", "Connect with verified doctors when human guidance matters.", "/doctors")}
     </section>
   `);
+  hydrateHeroLottie();
+}
+
+function HeroLottie(label) {
+  return `<div class="lottie-stage" aria-label="${escapeHtml(label)}"><dotlottie-wc class="lottie-motion" data-lottie-motion src="https://lottie.host/4db68bbd-31f6-4cd8-84eb-189de081159a/IGmMCqhzpt.lottie" autoplay loop></dotlottie-wc></div>`;
+}
+
+function hydrateHeroLottie() {
+  if (!document.querySelector("[data-lottie-motion]")) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (customElements.get("dotlottie-wc") || document.querySelector('script[src*="@lottiefiles/dotlottie-wc"]')) return;
+  const script = document.createElement("script");
+  script.type = "module";
+  script.src = "https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.16/dist/dotlottie-wc.js";
+  document.head.appendChild(script);
 }
 
 function featureCard(title, iconName, description, href) {

@@ -19,14 +19,14 @@ MedExplain AI is a secure healthcare workspace for medical report explanation, t
 ## Features
 
 - AI medical report explanation.
-- AI chat with persisted conversation history.
+- AI chat with persisted conversation history, thread-aware follow-ups, symptom guidance, and appropriate general answers.
 - Report upload, report history, report detail, and analysis workflow.
 - Verified doctor marketplace, appointments, and doctor workspace.
 - Admin workspace for users, doctors, reports, subscriptions, payments, coupons, analytics, and audit logs.
 - OPay subscriptions with a safe development simulator.
 - RAG-based medical knowledge from MedlinePlus and PubMed imports.
 - Consent, privacy, settings, notification, and billing-address controls.
-- Accessible UI motion for page entry, cards, dropdowns, toasts, loading states, and chat messages.
+- Accessible UI motion for page entry, cards, dropdowns, toasts, loading states, chat messages, and pinned LottieFiles hero animation.
 
 ## Tech Stack
 
@@ -39,6 +39,7 @@ MedExplain AI is a secure healthcare workspace for medical report explanation, t
 | Realtime | WebSockets / Socket.IO |
 | Security | Rate limiting, RBAC, CSRF, input validation, upload validation, audit logs |
 | Storage | Local file system under `/uploads` |
+| Motion | CSS transitions plus LottieFiles `dotLottie-wc` on public hero screens |
 
 ## Architecture
 
@@ -88,6 +89,19 @@ Login -> Dashboard -> Manage users/doctors/reports -> Monitor payments/subscript
 - Secure file upload validation with MIME, extension, path, size, magic-byte, and malware-signature checks.
 - OPay payment verification is server-side only.
 - RAG context is limited to trusted medical sources.
+
+Security reporting and operational policy are documented in [`SECURITY.md`](SECURITY.md).
+
+## Motion And LottieFiles
+
+The public landing and splash hero visuals use the LottieFiles `dotLottie-wc` web component pinned to `0.9.16`, with an animation loaded from `lottie.host`. The script is loaded only when the page contains a Lottie hero and the user has not requested reduced motion.
+
+The content security policy in `src/app.js` explicitly allows:
+
+- `https://unpkg.com` for the pinned LottieFiles web component.
+- `https://lottie.host` for the `.lottie` animation asset.
+
+If those origins are unavailable, the existing static icon visual remains visible.
 
 ## Local Development Mode
 
@@ -194,6 +208,10 @@ POST /api/system/test-gemini
 ## Documentation
 
 Project reports, audits, architecture notes, implementation summaries, API specs, security documents, and decisions live in [`docs/`](docs/README.md).
+
+Security policy:
+
+- [`SECURITY.md`](SECURITY.md)
 
 Recent recovery reports are available at the project root:
 

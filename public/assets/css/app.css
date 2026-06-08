@@ -370,6 +370,26 @@ textarea:disabled {
   position: relative;
 }
 
+.lottie-stage {
+  position: absolute;
+  inset: 16px 16px auto auto;
+  width: min(240px, 48%);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.lottie-motion {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-fallback-icon {
+  z-index: 1;
+}
+
 .eyebrow,
 .caption {
   color: var(--color-secondary);
@@ -1789,6 +1809,10 @@ thead th:last-child {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .lottie-stage {
+    display: none;
   }
 }
 
