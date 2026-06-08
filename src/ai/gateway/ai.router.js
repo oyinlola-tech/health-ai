@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { env } from "../../config/env.js";
 import { aiUsageRepository } from "../../repositories/aiUsageRepository.js";
-import { errors } from "../../utils/errors.js";
+import { AppError, errors } from "../../utils/errors.js";
 import { createId } from "../../utils/uuid.js";
 import { aiResponseCache, createCacheKey } from "../cache/lruCache.js";
 import { assertBudget, estimateUsage, inspectPromptSafety, optimizePromptForCost, recordFailedUsage, recordUsage } from "../monitor/usageTracker.js";
@@ -27,6 +27,21 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function isProviderUnavailable(error) {
+  const message = String(error?.message || "");
+  return /fetch failed|network|econn|socket|timeout|temporarily unavailable|service unavailable/i.test(message) || error?.status === 503 || error?.statusCode === 503;
+}
+
+function providerError(error) {
+  if (error instanceof AppError) return error;
+  if (isProviderUnavailable(error)) {
+    return new AppError("The AI provider is currently unreachable. Please try again in a moment.", 503, "AI_PROVIDER_UNAVAILABLE", {
+      provider: "google_gemini"
+    });
+  }
+  return error;
+}
+
 async function generateContentWithRetry(taskType, prompt) {
   let lastError;
   for (let attempt = 0; attempt <= env.AI_CALL_RETRIES; attempt += 1) {
@@ -38,7 +53,7 @@ async function generateContentWithRetry(taskType, prompt) {
       await wait(env.AI_CALL_RETRY_MS * (attempt + 1));
     }
   }
-  throw lastError;
+  throw providerError(lastError);
 }
 
 function featureTypeForTask(taskType, endpoint) {

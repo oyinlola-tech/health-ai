@@ -128,6 +128,7 @@ function chatErrorMessage(error) {
   if (error?.status === 401) return "Please sign in again.";
   if (error?.payload?.error?.code === "AI_BUDGET_EXCEEDED") return "AI usage was limited by the current budget setting. Please try again after the quota resets or ask an admin to review AI limits.";
   if (error?.payload?.error?.code === "AI_RATE_LIMITED" || error?.status === 429) return "Please pause briefly before sending another AI message.";
+  if (error?.payload?.error?.code === "AI_PROVIDER_UNAVAILABLE") return "Google Gemini is unreachable right now. Please check your connection and try again in a moment.";
   if (error?.payload?.error?.code === "PLAN_LIMIT_REACHED") return "This request is temporarily limited. Please try again later.";
   if (error?.status === 403) return error?.message || "Your account does not currently have access to AI chat.";
   if (error?.payload?.error?.code === "CONFIGURATION_ERROR") return "AI service is not configured for this environment.";
