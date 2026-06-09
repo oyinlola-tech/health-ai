@@ -248,7 +248,6 @@ export function createApp() {
   app.get("/favicon.ico", (_req, res) => res.type("image/svg+xml").sendFile(faviconEntry));
   app.use(compression());
   app.use(cookieParser(env.COOKIE_SECRET));
-  // Double-submit CSRF protection is enforced for every unsafe request before body parsing and handlers run.
   app.use(csrfProtection);
   app.use(
     express.json({
