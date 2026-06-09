@@ -42,4 +42,16 @@ describe("app security middleware", () => {
       message: "Invalid CSRF token."
     });
   });
+
+  it("allows unsafe requests to continue when the CSRF header matches the signed cookie", async () => {
+    const agent = request.agent(createApp());
+    const csrfResponse = await agent.get("/api/auth/csrf").expect(200);
+
+    const response = await agent.post("/login").set("X-CSRF-Token", csrfResponse.body.data.csrfToken).send({});
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toMatchObject({
+      code: "ROUTE_NOT_FOUND"
+    });
+  });
 });
