@@ -1,13 +1,11 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { env } from "../../config/env.js";
+import { geminiProvider } from "../../ai/gateway/geminiProvider.js";
 import { errors } from "../../utils/errors.js";
 
 const EXPECTED_EMBEDDING_DIMENSION = 768;
 
-function embeddingModel() {
+function ensureEmbeddingConfigured() {
   if (!env.GEMINI_API_KEY) throw errors.config("GEMINI_API_KEY is required for RAG embeddings.");
-  const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-  return genAI.getGenerativeModel({ model: env.GEMINI_EMBEDDING_MODEL });
 }
 
 function validateEmbedding(values) {
@@ -21,9 +19,8 @@ function validateEmbedding(values) {
 }
 
 export async function embedText(text) {
-  const model = embeddingModel();
-  const result = await model.embedContent(text);
-  return validateEmbedding(result.embedding?.values || []);
+  ensureEmbeddingConfigured();
+  return validateEmbedding(await geminiProvider.embed({ model: env.GEMINI_EMBEDDING_MODEL, text }));
 }
 
 export async function embedChunks(chunks, { batchSize = 16 } = {}) {

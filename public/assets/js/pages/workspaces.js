@@ -286,22 +286,23 @@ function renderDoctorOperations(context) {
 function renderAiOperations(context) {
   const summary = context.ai.summary || {};
   const costs = context.ai.costs || {};
-  const featureRows = costs.featureCostBreakdown || [];
-  const rows = featureRows.map((item) => ({
-    feature: item.feature_type || "AI feature",
+  const modelRows = costs.modelUsageBreakdown || [];
+  const rows = modelRows.map((item) => ({
+    model: item.model_used || "unassigned",
     requests: item.requests || 0,
+    tokens: item.tokens || 0,
     cost: money(item.cost_ngn || 0),
-    status: "Measured"
+    status: item.failovers > 0 ? `${item.failovers} failovers` : `${item.cache_hits || 0} cache hits`
   }));
   return SectionScaffold({
     stats: [
       StatCard("Requests", summary.total_requests || 0, "Model workload", "auto_awesome", "Gemini"),
-      StatCard("Blocked", summary.blocked_requests || 0, "Budget or abuse guard", "block", "Control"),
+      StatCard("Tokens", summary.total_tokens || 0, "Prompt and completion", "data_usage", "Usage"),
       StatCard("Cache Hit", `${context.ai.cacheHitRate || 0}%`, "Reuse efficiency", "cached", "Cost"),
-      StatCard("Spend", money(context.ai.monthlySpendNaira || 0), "Monthly AI cost", "payments", "Budget")
+      StatCard("RAG Hit", `${context.ai.ragHitRate || 0}%`, "Grounding confidence", "manage_search", `${summary.failovers || 0} failovers`)
     ],
-    chart: AnalyticsCard("AI budget posture", "Spend, forecast, blocked requests, and cache efficiency.", TrendChart([{ label: "Spend", value: Number(context.ai.monthlySpendNaira || 0) }, { label: "Forecast", value: Number(context.ai.forecastedBurnRateNaira || 0) }, { label: "Blocked", value: Number(summary.blocked_requests || 0) }, { label: "Cache", value: Number(context.ai.cacheHitRate || 0) }]), [{ label: "System health", href: "/admin/system-health" }]),
-    table: DataTable({ title: "Feature cost breakdown", description: "AI usage grouped by backend feature.", rows, columns: [["feature", "Feature"], ["requests", "Requests"], ["cost", "Cost"], ["status", "Status"]], searchKey: "feature", emptyKey: "ai", actions: [{ label: "AI cost center", href: "/admin/ai-operations" }] })
+    chart: AnalyticsCard("AI platform health", "Requests, cache reuse, RAG grounding, and failover activity.", TrendChart([{ label: "Requests", value: Number(summary.total_requests || 0) }, { label: "Cache", value: Number(context.ai.cacheHitRate || 0) }, { label: "RAG", value: Number(context.ai.ragHitRate || 0) }, { label: "Failovers", value: Number(summary.failovers || 0) }]), [{ label: "System health", href: "/admin/system-health" }]),
+    table: DataTable({ title: "Requests per model", description: "Model usage, token load, estimated cost, cache reuse, and failovers.", rows, columns: [["model", "Model"], ["requests", "Requests"], ["tokens", "Tokens"], ["cost", "Cost"], ["status", "Status"]], searchKey: "model", emptyKey: "ai", actions: [{ label: "AI diagnostics", href: "/admin/system-health" }] })
   });
 }
 

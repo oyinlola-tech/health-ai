@@ -1,55 +1,23 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { env } from "../../config/env.js";
 import { aiUsageRepository } from "../../repositories/aiUsageRepository.js";
-import { AppError, errors } from "../../utils/errors.js";
 import { createId } from "../../utils/uuid.js";
-import { aiResponseCache, createCacheKey } from "../cache/lruCache.js";
 import { assertBudget, estimateUsage, inspectPromptSafety, optimizePromptForCost, recordFailedUsage, recordUsage } from "../monitor/usageTracker.js";
-
-const jsonGenerationConfig = {
-  responseMimeType: "application/json"
-};
-
-function selectModel(taskType) {
-  if (taskType === "medical_report") return env.GEMINI_REPORT_MODEL || env.GEMINI_PRO_MODEL;
-  if (taskType === "doctor_assist") return env.GEMINI_REPORT_MODEL || env.GEMINI_PRO_MODEL;
-  if (taskType === "realtime_chat" || taskType === "voice") return env.GEMINI_LIVE_MODEL;
-  if (taskType === "tts") return env.GEMINI_TTS_MODEL;
-  if (taskType === "fallback") return env.GEMINI_FALLBACK_MODEL;
-  if (taskType === "summary") return env.GEMINI_FLASH_MODEL;
-  return env.GEMINI_FLASH_MODEL;
-}
-
-function modelFor(taskType) {
-  if (!env.GEMINI_API_KEY) throw errors.config("GEMINI_API_KEY is required for AI operations.");
-  const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-  return genAI.getGenerativeModel({ model: selectModel(taskType), generationConfig: jsonGenerationConfig });
-}
+import { contextCache, createContextCacheKey } from "./contextCache.js";
+import { geminiProvider } from "./geminiProvider.js";
+import { modelRegistry } from "./modelRegistry.js";
+import { fallbackModel, selectModel } from "./modelRouter.js";
+import { retrieveGroundingContext } from "./ragLayer.js";
+import { formatGatewayResponse, providerError } from "./responseFormatter.js";
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function isProviderUnavailable(error) {
-  const message = String(error?.message || "");
-  return /fetch failed|network|econn|socket|timeout|temporarily unavailable|service unavailable/i.test(message) || error?.status === 503 || error?.statusCode === 503;
-}
-
-function providerError(error) {
-  if (error instanceof AppError) return error;
-  if (isProviderUnavailable(error)) {
-    return new AppError("The AI provider is currently unreachable. Please try again in a moment.", 503, "AI_PROVIDER_UNAVAILABLE", {
-      provider: "google_gemini"
-    });
-  }
-  return error;
-}
-
-async function generateContentWithRetry(taskType, prompt) {
+async function generateContentWithRetry({ model, prompt }) {
   let lastError;
   for (let attempt = 0; attempt <= env.AI_CALL_RETRIES; attempt += 1) {
     try {
-      return await modelFor(taskType).generateContent(prompt);
+      return await geminiProvider.generateJson({ model, prompt });
     } catch (error) {
       lastError = error;
       if (attempt === env.AI_CALL_RETRIES) break;
@@ -59,6 +27,27 @@ async function generateContentWithRetry(taskType, prompt) {
   throw providerError(lastError);
 }
 
+async function generateWithFailover({ model, prompt, taskType }) {
+  try {
+    const result = await generateContentWithRetry({ model, prompt });
+    return { ...result, model, failover: null };
+  } catch (error) {
+    const backup = fallbackModel();
+    if (!backup || backup === model) throw error;
+    const result = await generateContentWithRetry({ model: backup, prompt });
+    return {
+      ...result,
+      model: backup,
+      failover: {
+        from: model,
+        to: backup,
+        taskType,
+        reason: error.code || error.message || "provider_failure"
+      }
+    };
+  }
+}
+
 function featureTypeForTask(taskType, endpoint) {
   if (taskType === "medical_report" || endpoint === "reports.analyze") return "report_analysis";
   if (taskType === "doctor_assist") return "doctor_assist_request";
@@ -66,19 +55,76 @@ function featureTypeForTask(taskType, endpoint) {
   return "chat_message";
 }
 
+async function groundingFor({ question, prompt, retrievedChunks, medicalContext, metadata }) {
+  if (Array.isArray(retrievedChunks) && medicalContext !== null && medicalContext !== undefined) {
+    return {
+      chunks: retrievedChunks,
+      medicalContext,
+      confidence: Number(metadata.ragConfidence || 0),
+      grounded: Boolean(metadata.ragGrounded)
+    };
+  }
+  return retrieveGroundingContext(question || prompt);
+}
+
+async function logFailover({ user, endpoint, featureType, requestId, failover, safetyFlags }) {
+  if (!failover) return;
+  await aiUsageRepository.create({
+    userId: user?.id,
+    endpoint,
+    featureType,
+    modelUsed: failover.to,
+    tokensUsed: 0,
+    promptTokens: 0,
+    responseTokens: 0,
+    costEstimate: 0,
+    costNaira: 0,
+    cacheHit: false,
+    requestId,
+    status: "failover",
+    metadata: failover,
+    safetyFlags
+  });
+}
+
 export const aiGateway = {
   selectModel,
+  modelRegistry,
 
-  async generateJson({ user, endpoint, taskType, prompt, cacheContext = {}, metadata = {} }) {
+  async generateJson({
+    user,
+    endpoint,
+    taskType,
+    prompt,
+    question = null,
+    reportId = null,
+    patientId = null,
+    retrievedChunks = null,
+    medicalContext = null,
+    cacheContext = {},
+    metadata = {}
+  }) {
     const requestId = createId();
     const model = selectModel(taskType);
     const featureType = featureTypeForTask(taskType, endpoint);
     const optimizedPrompt = optimizePromptForCost(prompt);
     const safety = inspectPromptSafety(optimizedPrompt);
-    const cacheKey = createCacheKey({ userId: user?.id, model, featureType, prompt: optimizedPrompt, cacheContext });
-    const cached = aiResponseCache.get(cacheKey);
+    const rag = await groundingFor({ question, prompt: optimizedPrompt, retrievedChunks, medicalContext, metadata });
+    const cacheIdentity = createContextCacheKey({
+      question: question || optimizedPrompt,
+      reportId,
+      patientId: patientId || user?.id || null,
+      retrievedChunks: rag.chunks,
+      medicalContext: rag.medicalContext,
+      taskType,
+      model,
+      cacheContext
+    });
+    const cacheLevel = contextCache.levelFor({ userId: user?.id, patientId: patientId || user?.id, reportId, threadId: cacheContext.threadId });
+    const cacheKey = cacheIdentity.cacheKey;
     const startedAt = Date.now();
 
+    const cached = await contextCache.get(cacheKey);
     if (cached) {
       await recordUsage({
         userId: user?.id,
@@ -86,33 +132,22 @@ export const aiGateway = {
         featureType,
         model,
         prompt: optimizedPrompt,
-        response: cached,
+        response: cached.text,
         cacheHit: true,
         requestId,
         responseTimeMs: Date.now() - startedAt,
-        metadata: { ...metadata, cacheKey, cacheLayer: "memory" },
+        metadata: { ...metadata, cacheKey, cacheLayer: cached.layer, cacheLevel, ragConfidence: rag.confidence, ragGrounded: rag.grounded },
         safetyFlags: safety.flags
       });
-      return { text: cached, model, cacheHit: true, requestId, cost: { estimatedNaira: 0 } };
-    }
-
-    const persistentCache = await aiUsageRepository.findCache(cacheKey);
-    if (persistentCache) {
-      aiResponseCache.set(cacheKey, persistentCache.response_text);
-      await recordUsage({
-        userId: user?.id,
-        endpoint,
-        featureType,
+      return formatGatewayResponse({
+        text: cached.text,
         model,
-        prompt: optimizedPrompt,
-        response: persistentCache.response_text,
         cacheHit: true,
         requestId,
-        responseTimeMs: Date.now() - startedAt,
-        metadata: { ...metadata, cacheKey, cacheLayer: "database" },
-        safetyFlags: safety.flags
+        cost: { estimatedNaira: 0 },
+        rag: { confidence: rag.confidence, grounded: rag.grounded, chunkCount: rag.chunks.length },
+        cache: { key: cacheKey, level: cacheLevel, layer: cached.layer }
       });
-      return { text: persistentCache.response_text, model, cacheHit: true, requestId, cost: { estimatedNaira: 0 } };
     }
 
     const estimated = estimateUsage({ prompt: optimizedPrompt, model });
@@ -126,37 +161,52 @@ export const aiGateway = {
       prompt: optimizedPrompt,
       requestId,
       safetyFlags: safety.flags,
-      metadata: { ...metadata, cacheKey }
+      metadata: { ...metadata, cacheKey, cacheLevel, ragConfidence: rag.confidence, ragGrounded: rag.grounded }
     });
 
     try {
-      const result = await generateContentWithRetry(taskType, optimizedPrompt);
-      const text = result.response.text();
-      aiResponseCache.set(cacheKey, text);
-      await aiUsageRepository.storeCache({
+      const result = await generateWithFailover({ model, prompt: optimizedPrompt, taskType });
+      await contextCache.set({
         cacheKey,
-        promptHash: safety.promptHash,
+        promptHash: cacheIdentity.promptHash || safety.promptHash,
         featureType,
-        modelUsed: model,
-        responseText: text,
-        ttlSeconds: env.AI_CACHE_TTL_SECONDS,
-        metadata: { ...metadata, requestId }
+        modelUsed: result.model,
+        responseText: result.text,
+        metadata: {
+          ...metadata,
+          requestId,
+          cacheLevel,
+          retrievedChunksHash: cacheIdentity.retrievedChunksHash,
+          medicalContextHash: cacheIdentity.medicalContextHash,
+          ragConfidence: rag.confidence,
+          ragGrounded: rag.grounded
+        }
       });
       await recordUsage({
         userId: user?.id,
         endpoint,
         featureType,
-        model,
+        model: result.model,
         prompt: optimizedPrompt,
-        response: text,
+        response: result.text,
         cacheHit: false,
         requestId,
         responseTimeMs: Date.now() - startedAt,
-        metadata: { ...metadata, cacheKey },
+        metadata: { ...metadata, cacheKey, cacheLevel, ragConfidence: rag.confidence, ragGrounded: rag.grounded, failover: result.failover },
         safetyFlags: safety.flags
       });
+      await logFailover({ user, endpoint, featureType, requestId, failover: result.failover, safetyFlags: safety.flags });
 
-      return { text, model, cacheHit: false, requestId, cost: estimated };
+      return formatGatewayResponse({
+        text: result.text,
+        model: result.model,
+        cacheHit: false,
+        requestId,
+        cost: estimated,
+        failover: result.failover,
+        rag: { confidence: rag.confidence, grounded: rag.grounded, chunkCount: rag.chunks.length },
+        cache: { key: cacheKey, level: cacheLevel, layer: "miss" }
+      });
     } catch (error) {
       await recordFailedUsage({
         userId: user?.id,
@@ -166,10 +216,10 @@ export const aiGateway = {
         prompt: optimizedPrompt,
         requestId,
         responseTimeMs: Date.now() - startedAt,
-        metadata: { ...metadata, cacheKey },
+        metadata: { ...metadata, cacheKey, cacheLevel, ragConfidence: rag.confidence, ragGrounded: rag.grounded },
         error
       });
-      throw error;
+      throw providerError(error);
     }
   }
 };

@@ -339,7 +339,8 @@ async function buildGroundedPrompt({ baseInput, taskInput, promptContract = medi
 
   return {
     prompt: [promptContract, grounding, taskInput].join("\n\n"),
-    contextChunks: chunks
+    contextChunks: chunks,
+    medicalContext: context
   };
 }
 
@@ -422,7 +423,7 @@ export const aiService = {
         ].join("\n")
       )
     ].join("\n");
-    const { prompt, contextChunks } = await buildGroundedPrompt({
+    const { prompt, contextChunks, medicalContext } = await buildGroundedPrompt({
       baseInput: [
         report.title,
         report.extracted_text,
@@ -439,8 +440,13 @@ export const aiService = {
         endpoint: "reports.analyze",
         taskType: "medical_report",
         prompt,
+        question: [report.title, report.extracted_text].join("\n"),
+        reportId: report.id,
+        patientId: report.patient_id || user.id,
+        retrievedChunks: contextChunks,
+        medicalContext,
         cacheContext: { reportId: report.id, updatedAt: report.updated_at, contextUrls: contextChunks.map((chunk) => chunk.url) },
-        metadata: { reportId: report.id, contextCount: contextChunks.length }
+        metadata: { reportId: report.id, contextCount: contextChunks.length, ragConfidence: contextChunks[0]?.similarity || 0 }
       });
       socketHub.toUser(user.id, "ai_processing_progress", { reportId: report.id, progress: 75, status: "Validating structured analysis" });
       const response = parseStructuredMedicalResponse(result.text);
@@ -516,7 +522,7 @@ export const aiService = {
           `Extracted report text:\n${report.extracted_text}`
         ].join("\n")
       : "";
-    const { prompt, contextChunks } = await buildGroundedPrompt({
+    const { prompt, contextChunks, medicalContext } = await buildGroundedPrompt({
       baseInput: [message, formatChatHistory(recentMessages), reportContext].filter(Boolean).join("\n"),
       taskInput: [
         recentMessages.length ? untrustedInputBlock("Recent conversation context", formatChatHistory(recentMessages)) : "",
@@ -530,8 +536,13 @@ export const aiService = {
       endpoint: "ai.chat",
       taskType: "simple_chat",
       prompt,
+      question: message,
+      reportId: reportId || null,
+      patientId: user.id,
+      retrievedChunks: contextChunks,
+      medicalContext,
       cacheContext: { threadId: activeThreadId, reportId, contextUrls: contextChunks.map((chunk) => chunk.url) },
-      metadata: { threadId: activeThreadId, reportId, contextCount: contextChunks.length }
+      metadata: { threadId: activeThreadId, reportId, contextCount: contextChunks.length, ragConfidence: contextChunks[0]?.similarity || 0 }
     });
     const response = parseChatMedicalResponse(result.text);
     const assistantMessage = chatResponseText(response);

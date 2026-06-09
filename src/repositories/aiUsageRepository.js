@@ -255,6 +255,8 @@ export const aiUsageRepository = {
               coalesce(sum(input_tokens), 0) as input_tokens,
               coalesce(sum(output_tokens), 0) as output_tokens,
               sum(case when cache_hit then 1 else 0 end) as cache_hits,
+              sum(case when json_unquote(json_extract(metadata, '$.ragGrounded')) = 'true' then 1 else 0 end) as rag_hits,
+              sum(case when status = 'failover' or blocked_reason = 'model_failover' then 1 else 0 end) as failovers,
               sum(case when blocked_reason is not null then 1 else 0 end) as blocked_requests,
               coalesce(round(avg(response_time_ms)), 0) as average_response_time_ms
        from ai_usage_logs`
@@ -279,12 +281,15 @@ export const aiUsageRepository = {
   },
 
   async costs(client = pool) {
-    const [modelBreakdown, expensiveQueries, featureBreakdown, topUsers, dailySpend] = await Promise.all([
+    const [modelBreakdown, expensiveQueries, featureBreakdown, topUsers, dailySpend, cacheLevels] = await Promise.all([
       client.query(
         `select model_used,
                 count(*) as requests,
                 coalesce(sum(cost_ngn), 0) as cost_ngn,
-                coalesce(sum(tokens_used), 0) as tokens
+                coalesce(sum(tokens_used), 0) as tokens,
+                sum(case when cache_hit then 1 else 0 end) as cache_hits,
+                sum(case when status = 'failover' or blocked_reason = 'model_failover' then 1 else 0 end) as failovers,
+                coalesce(round(avg(response_time_ms)), 0) as average_latency_ms
          from ai_usage_logs
          group by model_used
          order by cost_ngn desc`
@@ -301,7 +306,9 @@ export const aiUsageRepository = {
                 count(*) as requests,
                 coalesce(sum(cost_ngn), 0) as cost_ngn,
                 coalesce(round(avg(tokens_used)), 0) as average_tokens,
-                sum(case when cache_hit then 1 else 0 end) as cache_hits
+                sum(case when cache_hit then 1 else 0 end) as cache_hits,
+                sum(case when json_unquote(json_extract(metadata, '$.ragGrounded')) = 'true' then 1 else 0 end) as rag_hits,
+                sum(case when status = 'failover' or blocked_reason = 'model_failover' then 1 else 0 end) as failovers
          from ai_usage_logs
          where created_at >= date_format(current_date, '%Y-%m-01')
          group by feature_type
@@ -326,6 +333,14 @@ export const aiUsageRepository = {
          where created_at >= date_sub(now(), interval 30 day)
          group by day
          order by day`
+      ),
+      client.query(
+        `select coalesce(json_unquote(json_extract(metadata, '$.cacheLevel')), 'unknown') as cache_level,
+                count(*) as requests,
+                sum(case when cache_hit then 1 else 0 end) as hits
+         from ai_usage_logs
+         group by cache_level
+         order by cache_level`
       )
     ]);
 
@@ -334,7 +349,8 @@ export const aiUsageRepository = {
       mostExpensiveQueries: expensiveQueries.rows,
       featureCostBreakdown: featureBreakdown.rows,
       topAiUsers: topUsers.rows,
-      dailySpend: dailySpend.rows
+      dailySpend: dailySpend.rows,
+      cacheLevels: cacheLevels.rows
     };
   },
 
@@ -351,7 +367,9 @@ export const aiUsageRepository = {
       emergencyThrottle: Boolean(globalBudget?.emergency_throttle),
       forecastedBurnRateNaira: forecastedBurnRate,
       cacheHitRate:
-        summary.total_requests > 0 ? Number(((summary.cache_hits / summary.total_requests) * 100).toFixed(2)) : 0
+        summary.total_requests > 0 ? Number(((summary.cache_hits / summary.total_requests) * 100).toFixed(2)) : 0,
+      ragHitRate:
+        summary.total_requests > 0 ? Number(((summary.rag_hits / summary.total_requests) * 100).toFixed(2)) : 0
     };
   }
 };

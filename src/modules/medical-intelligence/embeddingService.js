@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { env } from "../../config/env.js";
 import { pool } from "../../config/database.js";
+import { geminiProvider } from "../../ai/gateway/geminiProvider.js";
 import { createId } from "../../utils/uuid.js";
 
 const EXPECTED_EMBEDDING_DIMENSION = 768;
@@ -25,10 +25,7 @@ function validateEmbedding(values) {
 
 async function fetchGeminiEmbedding(text) {
   if (!env.GEMINI_API_KEY) return null;
-  const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: env.GEMINI_EMBEDDING_MODEL });
-  const result = await model.embedContent(text);
-  return validateEmbedding(result.embedding?.values || []);
+  return validateEmbedding(await geminiProvider.embed({ model: env.GEMINI_EMBEDDING_MODEL, text }));
 }
 
 async function findCachedEmbedding(textHash, client = pool) {
