@@ -26,11 +26,11 @@ The application is designed around these controls:
 
 - Backend-only AI calls through the Gemini gateway.
 - Role-based access control for patient, doctor, and admin routes.
-- CSRF protection for unsafe requests.
+- JWT bearer access tokens for protected API routes.
+- httpOnly refresh cookies scoped only to `/api/auth/refresh`.
+- SameSite=strict refresh cookies and origin checks on the refresh endpoint.
 - Rate limiting for app, auth, AI, upload, booking, payment, coupon, and webhook paths.
 - Bcrypt password hashing.
-- JWT access tokens with httpOnly refresh cookies.
-- Signed cookies and double-submit CSRF tokens.
 - Parameterized MySQL queries.
 - Strict upload validation and storage under `/uploads`.
 - Audit logging for security-sensitive workflows.
@@ -39,7 +39,7 @@ The application is designed around these controls:
 
 ## Secrets And Credentials
 
-Never commit `.env`, API keys, payment credentials, JWT secrets, cookie secrets, CSRF secrets, encryption secrets, or SMTP credentials.
+Never commit `.env`, API keys, payment credentials, JWT secrets, cookie secrets, encryption secrets, or SMTP credentials.
 
 Production deployments must replace all development defaults, especially:
 
@@ -47,7 +47,6 @@ Production deployments must replace all development defaults, especially:
 - `JWT_ACCESS_SECRET`
 - `JWT_REFRESH_SECRET`
 - `COOKIE_SECRET`
-- `CSRF_SECRET`
 - `PAYMENT_DATA_ENCRYPTION_SECRET`
 - `MESSAGE_ENCRYPTION_SECRET`
 - `GEMINI_API_KEY`

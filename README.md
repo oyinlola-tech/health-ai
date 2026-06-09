@@ -219,6 +219,9 @@ Security policy:
 
 Recent recovery and validation reports are available in `docs/`:
 
+- [`AI_ARCHITECTURE_REPORT.md`](docs/architecture/AI_ARCHITECTURE_REPORT.md)
+- [`AUTH_FLOW_DIAGRAM.md`](docs/architecture/AUTH_FLOW_DIAGRAM.md)
+- [`CSRF_DECISION_REPORT.md`](docs/security/CSRF_DECISION_REPORT.md)
 - [`SYSTEM_INVENTORY.md`](docs/reports/SYSTEM_INVENTORY.md)
 - [`DATABASE_HEALTH_REPORT.md`](docs/reports/DATABASE_HEALTH_REPORT.md)
 - [`AUTH_RECOVERY_REPORT.md`](docs/security/AUTH_RECOVERY_REPORT.md)

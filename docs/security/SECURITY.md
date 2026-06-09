@@ -9,8 +9,8 @@
 - Input sanitization for request bodies, params, and query strings.
 - Zod validation at route boundaries.
 - JWT access tokens and rotating refresh tokens.
-- httpOnly refresh cookies.
-- CSRF token validation for unsafe methods.
+- httpOnly refresh cookies scoped only to `/api/auth/refresh`.
+- SameSite=strict refresh cookies and refresh endpoint origin checks.
 - RBAC for Admin, Doctor, and Patient roles.
 - Ownership checks for patient-owned resources.
 - File upload MIME, extension, and size validation.
