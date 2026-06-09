@@ -11,8 +11,11 @@ const jsonGenerationConfig = {
 };
 
 function selectModel(taskType) {
-  if (taskType === "medical_report") return env.GEMINI_PRO_MODEL;
-  if (taskType === "doctor_assist") return env.GEMINI_PRO_MODEL;
+  if (taskType === "medical_report") return env.GEMINI_REPORT_MODEL || env.GEMINI_PRO_MODEL;
+  if (taskType === "doctor_assist") return env.GEMINI_REPORT_MODEL || env.GEMINI_PRO_MODEL;
+  if (taskType === "realtime_chat" || taskType === "voice") return env.GEMINI_LIVE_MODEL;
+  if (taskType === "tts") return env.GEMINI_TTS_MODEL;
+  if (taskType === "fallback") return env.GEMINI_FALLBACK_MODEL;
   if (taskType === "summary") return env.GEMINI_FLASH_MODEL;
   return env.GEMINI_FLASH_MODEL;
 }

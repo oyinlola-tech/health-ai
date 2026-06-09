@@ -4,10 +4,13 @@
 
 Implemented dynamic model selection:
 
-- Medical report analysis uses `GEMINI_PRO_MODEL`
-- Doctor assist requests use `GEMINI_PRO_MODEL`
-- Simple chat uses `GEMINI_FLASH_MODEL`
-- Summaries use `GEMINI_FLASH_MODEL`
+- Primary report analysis uses `GEMINI_REPORT_MODEL`, falling back to `GEMINI_PRO_MODEL`, defaulting to `gemini-3-flash`
+- Doctor assist requests use `GEMINI_REPORT_MODEL`, falling back to `GEMINI_PRO_MODEL`, defaulting to `gemini-3-flash`
+- REST AI chat and summaries use `GEMINI_FLASH_MODEL`, defaulting to `gemini-3.1-flash-lite`
+- Realtime chat and future voice tasks use `GEMINI_LIVE_MODEL`, defaulting to `gemini-3.1-flash-live-preview`
+- Future TTS tasks use `GEMINI_TTS_MODEL`, defaulting to `gemini-3.1-flash-tts`
+- Fallback model configuration uses `GEMINI_FALLBACK_MODEL`, defaulting to `gemini-3.1-flash-lite`
+- Embeddings use `GEMINI_EMBEDDING_MODEL`, defaulting to `gemini-embedding-2`
 
 The frontend does not choose models.
 

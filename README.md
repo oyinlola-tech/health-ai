@@ -154,7 +154,11 @@ ADMIN_PASSWORD=change-this-password
 JWT_ACCESS_SECRET=replace-with-a-strong-secret
 JWT_REFRESH_SECRET=replace-with-a-strong-secret
 GEMINI_API_KEY=your-gemini-key
-GEMINI_FLASH_MODEL=gemini-2.5-flash
+GEMINI_CHAT_MODEL=gemini-3-flash
+GEMINI_REPORT_MODEL=gemini-3-flash
+GEMINI_LIVE_MODEL=gemini-3.1-flash-live-preview
+GEMINI_EMBEDDING_MODEL=gemini-embedding-2
+GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite
 OPAY_MOCK_MODE=true
 ```
 
