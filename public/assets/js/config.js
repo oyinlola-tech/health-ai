@@ -5,7 +5,6 @@
 export const appConfig = {
   appName: "MedExplain AI",
   apiBaseUrl: "/api",
-  csrfHeader: "X-CSRF-Token",
   accessTokenKey: "mx_access_token",
   owner: {
     name: "Oluwayemi Oyinlola Michael",

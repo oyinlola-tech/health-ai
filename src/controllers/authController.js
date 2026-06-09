@@ -1,5 +1,4 @@
 import { authService } from "../services/authService.js";
-import { issueCsrfToken } from "../middlewares/csrf.js";
 import { sendSuccess } from "../utils/response.js";
 import { env } from "../config/env.js";
 import { analyticsEvents, eventTracker } from "../modules/analytics/event.tracker.js";
@@ -11,8 +10,9 @@ const refreshCookieName = "mx_refresh";
 function refreshCookieOptions() {
   return {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "strict",
     secure: env.NODE_ENV === "production",
+    path: "/api/auth/refresh",
     maxAge: env.JWT_REFRESH_TTL_SECONDS * 1000
   };
 }
@@ -28,10 +28,6 @@ function clearRefreshCookie(res) {
 }
 
 export const authController = {
-  csrf(req, res) {
-    return sendSuccess(res, { csrfToken: issueCsrfToken(req, res) });
-  },
-
   async register(req, res) {
     const result = await authService.registerPatient(req.body, req);
     setRefreshCookie(res, result.refreshToken);
@@ -78,7 +74,7 @@ export const authController = {
   },
 
   async logout(req, res) {
-    await authService.logout(req.cookies?.[refreshCookieName]);
+    await authService.logoutUser(req.user.id);
     clearRefreshCookie(res);
     return sendSuccess(res, { loggedOut: true });
   },

@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-22C55E" alt="Backend stack" />
   <img src="https://img.shields.io/badge/Database-MySQL%20%28AMPPS%29-F59E0B" alt="Database stack" />
   <img src="https://img.shields.io/badge/AI-Gemini%20via%20Backend-FF6E5C" alt="AI stack" />
-  <img src="https://img.shields.io/badge/Security-RBAC%20%2B%20CSRF%20%2B%20Audit-EF4444" alt="Security controls" />
+  <img src="https://img.shields.io/badge/Security-JWT%20%2B%20RBAC%20%2B%20Audit-EF4444" alt="Security controls" />
 </p>
 
 MedExplain AI is a secure healthcare workspace for medical report explanation, trusted-source AI support, verified doctor consultations, doctor recruitment, OPay subscriptions, notifications, and user-controlled privacy settings.
@@ -37,7 +37,7 @@ MedExplain AI is a secure healthcare workspace for medical report explanation, t
 | Database | MySQL, AMPPS-compatible local setup |
 | AI | Gemini API through backend services only |
 | Realtime | WebSockets / Socket.IO |
-| Security | Rate limiting, RBAC, CSRF, input validation, upload validation, audit logs |
+| Security | Rate limiting, JWT bearer auth, RBAC, strict refresh cookies, input validation, upload validation, audit logs |
 | Storage | Local file system under `/uploads` |
 | Motion | CSS transitions plus LottieFiles `dotLottie-wc` on public hero screens |
 
@@ -81,7 +81,7 @@ Login -> Dashboard -> Manage users/doctors/reports -> Monitor payments/subscript
 ## Security Features
 
 - Rate limiting for authentication, AI, payments, uploads, webhooks, and bookings.
-- CSRF protection for unsafe API requests.
+- JWT access tokens are sent with `Authorization: Bearer ...`; refresh tokens are httpOnly cookies scoped only to `/api/auth/refresh`.
 - Role-based access control for patients, doctors, and admins.
 - Consent and privacy controls for data processing preferences.
 - Sensitive data handling through backend-controlled services and server-side validation.
@@ -118,7 +118,7 @@ In this mode:
 - Payment references and successful verification are simulated through backend business logic.
 - Payment records, subscriptions, entitlements, analytics, email events, and audit logs still run.
 - SMTP delivery is skipped safely when SMTP credentials are absent.
-- Authentication, authorization, CSRF, rate limiting, database validation, and entitlement checks are not bypassed.
+- Authentication, authorization, refresh-cookie hardening, rate limiting, database validation, and entitlement checks are not bypassed.
 
 Production ignores OPay mock mode and must have real payment credentials configured.
 
@@ -162,7 +162,7 @@ GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite
 OPAY_MOCK_MODE=true
 ```
 
-Production also requires live OPay credentials, webhook secrets, cookie/CSRF secrets, encryption secrets, and SMTP settings.
+Production also requires live OPay credentials, webhook secrets, JWT/cookie secrets, encryption secrets, and SMTP settings.
 
 3. Bootstrap database and seed required system data:
 

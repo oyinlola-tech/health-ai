@@ -9,7 +9,6 @@
 
 const appConfig = {
   apiBaseUrl: "/api",
-  csrfHeader: "x-csrf-token",
   accessTokenKey: "medexplain_access_token",
   requestTimeoutMs: 20000,
   aiRequestTimeoutMs: 90000
@@ -22,8 +21,6 @@ function loadRealtimeClient() {
   script.defer = true;
   document.head.appendChild(script);
 }
-
-let csrfToken = null;
 
 function getAccessToken() {
   return sessionStorage.getItem(appConfig.accessTokenKey);
@@ -59,19 +56,10 @@ function signedInHomePath() {
   return "/chat";
 }
 
-async function ensureCsrfToken() {
-  if (csrfToken) return csrfToken;
-  const response = await fetch(`${appConfig.apiBaseUrl}/auth/csrf`, { credentials: "include" });
-  const payload = await response.json();
-  csrfToken = payload?.data?.csrfToken;
-  return csrfToken;
-}
-
 async function refreshAccessToken() {
   const response = await fetch(`${appConfig.apiBaseUrl}/auth/refresh`, {
     method: "POST",
-    credentials: "include",
-    headers: { [appConfig.csrfHeader]: await ensureCsrfToken() }
+    credentials: "include"
   });
   if (!response.ok) {
     clearAccessToken();
@@ -94,9 +82,6 @@ async function apiRequest(path, options = {}) {
 
   const token = getAccessToken();
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  if (!["GET", "HEAD", "OPTIONS"].includes(method)) {
-    headers.set(appConfig.csrfHeader, await ensureCsrfToken());
-  }
 
   let response;
   try {

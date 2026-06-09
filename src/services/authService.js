@@ -178,6 +178,10 @@ export const authService = {
     }
   },
 
+  async logoutUser(userId) {
+    await userRepository.revokeUserRefreshTokens(userId);
+  },
+
   async requestPasswordReset(email) {
     const user = await userRepository.findByEmail(email);
     if (!user) return { sent: true };

@@ -19,7 +19,6 @@ const errorResponses = {
 };
 
 const bearerAuth = [{ bearerAuth: [] }];
-const csrfHeader = [{ $ref: "#/components/parameters/CsrfToken" }];
 
 function jsonRequest(schemaRef) {
   return {
@@ -48,10 +47,7 @@ function operation({ tags, summary, security, parameters = [], requestBody, resp
 }
 
 function stateChangingOperation(options) {
-  return operation({
-    ...options,
-    parameters: [...csrfHeader, ...(options.parameters || [])]
-  });
+  return operation(options);
 }
 
 export const openApiSpec = {
@@ -60,7 +56,7 @@ export const openApiSpec = {
     title: "MedExplain AI API",
     version: "1.0.0",
     description:
-      "Interactive API documentation for testing the MedExplain AI backend. For POST, PUT, PATCH, and DELETE requests, call GET /auth/csrf first and pass the returned token as X-CSRF-Token."
+      "Interactive API documentation for testing the MedExplain AI backend. Protected API routes use JWT access tokens in Authorization headers; the refresh endpoint uses a narrowly scoped httpOnly refresh-token cookie."
   },
   servers: [
     {
@@ -92,13 +88,6 @@ export const openApiSpec = {
     },
     "/config/public": {
       get: operation({ tags: ["System"], summary: "Get public frontend configuration" })
-    },
-    "/auth/csrf": {
-      get: operation({
-        tags: ["Auth"],
-        summary: "Issue a CSRF token cookie and return the token",
-        responses: { 200: successResponse }
-      })
     },
     "/auth/register": {
       post: stateChangingOperation({
@@ -443,13 +432,6 @@ export const openApiSpec = {
       }
     },
     parameters: {
-      CsrfToken: {
-        name: "X-CSRF-Token",
-        in: "header",
-        required: true,
-        schema: { type: "string" },
-        description: "Use the token returned by GET /auth/csrf. The same request must include the mx_csrf cookie set by that endpoint."
-      },
       Id: {
         name: "id",
         in: "path",

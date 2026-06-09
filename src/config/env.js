@@ -11,8 +11,7 @@ const booleanFromEnv = z
 const developmentSecrets = new Set([
   "development-access-secret-change-before-production",
   "development-refresh-secret-change-before-production",
-  "development-cookie-secret-change-before-production",
-  "development-csrf-secret-change-before-production"
+  "development-cookie-secret-change-before-production"
 ]);
 
 const envSchema = z
@@ -41,7 +40,6 @@ const envSchema = z
     JWT_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
     JWT_REFRESH_TTL_SECONDS: z.coerce.number().int().positive().default(2592000),
     COOKIE_SECRET: z.string().min(16).default("development-cookie-secret-change-before-production"),
-    CSRF_SECRET: z.string().min(16).default("development-csrf-secret-change-before-production"),
     CORS_ORIGINS: z.string().default("http://localhost:3000"),
     RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900000),
     RATE_LIMIT_MAX: z.coerce.number().int().positive().default(120),
@@ -115,7 +113,7 @@ const envSchema = z
   .superRefine((value, ctx) => {
     if (value.NODE_ENV !== "production") return;
 
-    for (const key of ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET", "COOKIE_SECRET", "CSRF_SECRET"]) {
+    for (const key of ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET", "COOKIE_SECRET"]) {
       if (developmentSecrets.has(value[key])) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

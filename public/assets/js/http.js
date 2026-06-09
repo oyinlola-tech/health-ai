@@ -1,25 +1,10 @@
 import { appConfig } from "./config.js";
 import { clearAccessToken, getAccessToken, setAccessToken } from "./auth.js";
 
-let csrfToken = null;
-
-async function ensureCsrfToken() {
-  if (csrfToken) return csrfToken;
-  const response = await fetch(`${appConfig.apiBaseUrl}/auth/csrf`, {
-    credentials: "include"
-  });
-  const payload = await response.json();
-  csrfToken = payload?.data?.csrfToken;
-  return csrfToken;
-}
-
 async function refreshAccessToken() {
   const response = await fetch(`${appConfig.apiBaseUrl}/auth/refresh`, {
     method: "POST",
-    credentials: "include",
-    headers: {
-      [appConfig.csrfHeader]: await ensureCsrfToken()
-    }
+    credentials: "include"
   });
   if (!response.ok) {
     clearAccessToken();
@@ -41,9 +26,6 @@ export async function apiRequest(path, options = {}) {
 
   const token = getAccessToken();
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  if (!["GET", "HEAD", "OPTIONS"].includes(method)) {
-    headers.set(appConfig.csrfHeader, await ensureCsrfToken());
-  }
 
   const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
     ...options,
